@@ -1,0 +1,61 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
+ "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+
+<svg
+    width="200"
+    height="200"
+    viewBox="0 0 200 200"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+>
+    <path
+        d="M60 80L20 40C15 35 10 20 20 10C30 0 45 5 50 10L90 50"
+        stroke="#C4A484"
+        stroke-width="10"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+    />
+    <path
+        d="M140 80L180 40C185 35 190 20 180 10C170 0 155 5 150 10L110 50"
+        stroke="#C4A484"
+        stroke-width="10"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+    />
+    <path
+        d="M60 80L90 100L110 100L140 80"
+        stroke="#8B5A2B"
+        stroke-width="10"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+    />
+    <path
+        d="M90 100L85 140"
+        stroke="#8B5A2B"
+        stroke-width="10"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+    />
+    <path
+        d="M110 100L115 140"
+        stroke="#8B5A2B"
+        stroke-width="10"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+    />
+    <path
+        d="M85 140L60 150C50 155 45 170 60 180C70 190 85 185 90 180L120 150"
+        stroke="#C4A484"
+        stroke-width="10"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+    />
+    <path
+        d="M115 140L140 150C150 155 155 170 140 180C130 190 115 185 110 180L80 150"
+        stroke="#C4A484"
+        stroke-width="10"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+    />
+</svg>

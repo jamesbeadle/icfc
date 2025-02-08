@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* global.css */
+:root {
+  --dialog-width: 90% !important;
+  --dialog-max-width: 600px !important;
+  --dialog-min-height: 100px !important;
+  --dialog-height: auto !important;
+  --dialog-max-height: 80vh !important;
+  --dialog-border-radius: 1px !important;
+}
+
+.brand-button {
+  background-color: white;
+  color: black;
+  @apply px-4 py-2;
+}
