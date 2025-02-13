@@ -1,4 +1,3 @@
-import Base "base_types";
 module ICFCTypes {
 
   public type ClubId = Nat16;

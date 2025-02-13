@@ -1,4 +1,4 @@
-import Base "base_types";
+import Base "mo:waterway-mops/BaseTypes";
 import Result "mo:base/Result";
 import BaseCommands "queries/base_commands";
 import T "icfc_types";
