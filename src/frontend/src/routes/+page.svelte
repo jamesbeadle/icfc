@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import Layout from "./Layout.svelte";
+    import { appStore } from "$lib/stores/app-store";
 
   let isLoading = true;
   let totalICFC = 25_000_000;
@@ -15,7 +16,7 @@
 
   onMount(async () => {
     try {
-      // Fetch funding data dynamically if needed
+      await appStore.checkServerVersion();
     } catch (error) {
       console.error("Error fetching funding data:", error);
     } finally {
@@ -25,6 +26,9 @@
 </script>
 
 <Layout>
+  {#if true}
+    <p>Coming soon</p>
+  {:else}
   <div class="max-w-4xl mx-auto p-6 space-y-2 bg-gray-800 shadow-lg rounded-lg">
     <h1 class="text-2xl font-bold text-center">ICFC</h1>
     <h1 class="text-xl font-bold text-center">Football Ownership Unleashed</h1>
@@ -72,4 +76,5 @@
       <a href="/whitepaper" class="text-xs my-2 text-center w-full">Whitepaper</a>
     </div>
   </div>
+  {/if}
 </Layout>

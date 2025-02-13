@@ -10,7 +10,9 @@
 
   import "../app.css";
   import { goto } from "$app/navigation";
-    import IcfcAppsModal from "$lib/components/shared/icfc-apps-modal.svelte";
+  import IcfcAppsModal from "$lib/components/shared/icfc-apps-modal.svelte";
+  import { appStore } from "$lib/stores/app-store";
+    import Toasts from "$lib/components/toasts/toasts.svelte";
 
   let worker: { syncAuthIdle: (auth: AuthStoreData) => void } | undefined;
   let isLoggedIn: Boolean;
@@ -32,6 +34,7 @@
 
   onMount(async () => {
     await userStore.sync();
+    await appStore.checkServerVersion();
   });
 
   $: worker, $authStore, (() => worker?.syncAuthIdle($authStore))();
@@ -92,5 +95,5 @@
       </div>
     </div>
     <IcfcAppsModal isOpen={showApps} on:close={() => showApps = false} />
-
+    <Toasts />
 {/await}

@@ -1,2 +1,22 @@
+type Result = 
+ variant {
+   err: Error;
+   ok: AppStatusDTO;
+ };
+type Error = 
+ variant {
+   AlreadyExists;
+   DecodeError;
+   InvalidData;
+   NotAllowed;
+   NotAuthorized;
+   NotFound;
+ };
+type AppStatusDTO = 
+ record {
+   onHold: bool;
+   version: text;
+ };
 service : {
+  getAppStatus: () -> (Result) query;
 }

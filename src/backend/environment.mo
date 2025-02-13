@@ -7,6 +7,7 @@ module Environment {
   public let NNS_LEDGER_CANISTER_ID = "ryjl3-tyaaa-aaaaa-aaaba-cai"; 
   public let BACKEND_CANISTER_ID = "clcgn-hiaaa-aaaal-qshqq-cai";
   public let FRONTEND_CANISTER_ID = "cqh2i-5qaaa-aaaal-qshsa-cai";
+  public let SNS_GOVERNANCE_CANISTER_ID = "detjl-sqaaa-aaaaq-aacqa-cai";
 
   public let ADMIN_PRINCIPALS = [
     "", //JB
