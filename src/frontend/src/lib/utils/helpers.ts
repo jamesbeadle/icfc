@@ -627,14 +627,12 @@ enum PlayerEvent {
   HighestScoringPlayer,
 }
 
-
 enum Position {
   GOALKEEPER,
   DEFENDER,
   MIDFIELDER,
   FORWARD,
 }
-
 
 export function getImageURL(blob: any): string {
   let byteArray;
