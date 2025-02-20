@@ -13,6 +13,7 @@
   import IcfcAppsModal from "$lib/components/shared/icfc-apps-modal.svelte";
   import { appStore } from "$lib/stores/app-store";
     import Toasts from "$lib/components/toasts/toasts.svelte";
+    import LogoIcon from "$lib/icons/LogoIcon.svelte";
 
   let worker: { syncAuthIdle: (auth: AuthStoreData) => void } | undefined;
   let isLoggedIn: Boolean;
@@ -75,7 +76,7 @@
     <div class="flex h-screen w-full">
       <header class="fixed top h-16 flex items-center justify-between w-full px-4 bg-gray-900 text-white shadow-md">
           <div class="flex items-center">
-          <span class="text-xl font-semibold">ICFC</span>
+            <LogoIcon className='w-8' />
           </div>
       
           <div class="flex items-center gap-4">
