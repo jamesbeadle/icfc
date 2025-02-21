@@ -42,7 +42,7 @@
   
         <!-- Modal Footer -->
         <div class="mt-4 flex justify-end">
-          <button on:click={closeModal} class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200">
+          <button on:click={closeModal} class="px-4 py-2 bg-BrandBlue text-white rounded-lg hover:bg-BrandYellow transition duration-200">
             Close
           </button>
         </div>

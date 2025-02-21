@@ -36,7 +36,16 @@ export default {
       "5xl": "3.052rem",
     },
     extend: {
-      colors: {},
+      colors: {
+        BrandBlue: "#1979F2",
+        BrandDarkBlue: "#446C9D",
+        BrandSlateBlue: "#455A73",
+        BrandGray: "#2F2F2F",
+        BrandOrange: "#EC6A46",
+        BrandLightOrange: "#FF9702",
+        BrandYellow: "#FED06A",
+        BrandRed: "#F22C18",
+      },
     },
   },
   plugins: [],
