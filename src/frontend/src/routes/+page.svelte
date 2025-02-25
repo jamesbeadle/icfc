@@ -20,15 +20,15 @@
 </script>
 
 <Layout>
-  <div class="min-h-screen w-full flex flex-col justify-center items-center p-4 bg-BrandBlue">
+  <div class="min-h-screen w-full flex flex-col justify-center items-center p-4 bg-BrandGray">
     <div class="hidden md:flex w-full max-w-6xl mx-auto items-center">
       <div class="flex-shrink-0 mx-24">
         <LogoIcon className="w-64" />
       </div>
       <div class="flex-grow">
-        <h1 class="text-5xl font-bold mb-4">{title}</h1>
+        <h1 class="text-5xl font-bold mb-4 cta-text">{title}</h1>
         <p class="text-xl mb-8">{description}</p>
-        <button class="bg-BrandSlateBlue hover:bg-BrandDarkBlue text-white font-semibold py-3 px-8 rounded">
+        <button class="brand-button">
           Connect
         </button>
       </div>
@@ -41,7 +41,7 @@
       <div class="max-w-md"> 
         <h1 class="text-4xl font-bold mb-4">{title}</h1>
         <p class="text-lg mb-8">{description}</p>
-        <button class="bg-BrandSlateBlue hover:bg-BrandDarkBlue text-white font-semibold py-3 px-8 rounded-full">
+        <button class="brand-button">
           Connect
         </button>
       </div>

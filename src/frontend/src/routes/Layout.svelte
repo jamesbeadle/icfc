@@ -86,7 +86,7 @@
             </button>
 
             {#if !isLoggedIn}
-                <button class="px-4 py-2 text-sm font-medium bg-blue-600 hover:bg-blue-500 rounded-lg transition" on:click={handleLogin}>
+                <button class="px-4 py-2 text-sm font-medium bg-blue-600 hover:bg-BrandBlue rounded-lg transition" on:click={handleLogin}>
                     Connect
                 </button>
             {/if}
