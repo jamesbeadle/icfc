@@ -3,10 +3,9 @@
   import Layout from "./Layout.svelte";
   import { appStore } from "$lib/stores/app-store";
   import LogoIcon from "$lib/icons/LogoIcon.svelte";
+    import { authStore } from "$lib/stores/auth-store";
 
   let isLoading = true;
-  const title = "Join The Club";
-  const description = "Join the world's first fully decentralised football club today.";
 
   onMount(async () => {
     try {
@@ -17,6 +16,11 @@
       isLoading = false;
     }
   });
+
+  function handleLogout() {
+    console.log("here")
+    authStore.signOut();
+  }
 </script>
 
 <Layout>
@@ -25,26 +29,9 @@
       <div class="flex-shrink-0 mx-24">
         <LogoIcon className="w-64" />
       </div>
-      <div class="flex-grow">
-        <h1 class="text-5xl font-bold mb-4 cta-text">{title}</h1>
-        <p class="text-xl mb-8">{description}</p>
-        <button class="brand-button">
-          Connect
-        </button>
-      </div>
-    </div>
-
-    <div class="md:hidden w-full flex flex-col justify-center items-center text-center">
-      <div class="mb-8">
-        <LogoIcon className="w-48 mx-auto" /> 
-      </div>
-      <div class="max-w-md"> 
-        <h1 class="text-4xl font-bold mb-4">{title}</h1>
-        <p class="text-lg mb-8">{description}</p>
-        <button class="brand-button">
-          Connect
-        </button>
-      </div>
+      <button on:click={handleLogout} class="brand-button">
+        Disconnect
+      </button>
     </div>
   </div>
 </Layout>

@@ -15,6 +15,7 @@
     import Toasts from "$lib/components/toasts/toasts.svelte";
     import LogoIcon from "$lib/icons/LogoIcon.svelte";
 
+    
   let worker: { syncAuthIdle: (auth: AuthStoreData) => void } | undefined;
   let isLoggedIn: Boolean;
   let showApps = false;
@@ -36,6 +37,7 @@
   onMount(async () => {
     await userStore.sync();
     await appStore.checkServerVersion();
+    checkUser();
   });
 
   $: worker, $authStore, (() => worker?.syncAuthIdle($authStore))();
@@ -45,25 +47,22 @@
     const spinner = document.querySelector("body > #app-spinner");
     spinner?.remove();
   })();
+
   async function handleLogin() {
-        let params: AuthSignInParams = {
-            domain: import.meta.env.VITE_AUTH_PROVIDER_URL,
-        };
-        await authStore.signIn(params);
-        checkUser();
-    }
+    let params: AuthSignInParams = {
+        domain: import.meta.env.VITE_AUTH_PROVIDER_URL,
+    };
+    await authStore.signIn(params);
+    checkUser();
+  }
 
-    async function checkUser(){
-        authStore.subscribe((store) => {
-            isLoggedIn = false;
-            //isLoggedIn = store.identity !== null && store.identity !== undefined;
-        });
-    }
-
-    function handleLogout() {
-        authStore.signOut();
-        goto("/");
-    }
+  async function checkUser(){
+    console.log("checking")
+    authStore.subscribe((store) => {
+      console.log(store.identity)
+      isLoggedIn = store.identity !== null && store.identity !== undefined;
+    });
+  }
 </script>
 
 <svelte:window on:storage={syncAuthStore} />
@@ -95,8 +94,9 @@
         <div class="w-full flex mt-16 p-4">
           <slot></slot>
         </div>
+      {:else}
+        <slot></slot>
       {/if}
-      <slot></slot>
     </div>
     <IcfcAppsModal isOpen={showApps} on:close={() => showApps = false} />
     <Toasts />
