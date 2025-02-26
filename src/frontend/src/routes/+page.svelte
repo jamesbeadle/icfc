@@ -3,7 +3,8 @@
   import Layout from "./Layout.svelte";
   import { appStore } from "$lib/stores/app-store";
   import LogoIcon from "$lib/icons/LogoIcon.svelte";
-    import { authStore } from "$lib/stores/auth-store";
+  import { authStore } from "$lib/stores/auth-store";
+    import IcpLogo from "$lib/icons/ICPLogo.svelte";
 
   let isLoading = true;
 
@@ -24,14 +25,31 @@
 </script>
 
 <Layout>
-  <div class="min-h-screen w-full flex flex-col justify-center items-center p-4 bg-BrandGray">
-    <div class="hidden md:flex w-full max-w-6xl mx-auto items-center">
-      <div class="flex-shrink-0 mx-24">
-        <LogoIcon className="w-64" />
+  <div class="flex flex-col md:flex-row min-h-screen w-full bg-BrandGray">
+    <div class="w-full md:w-1/2 bg-cover bg-center" style="background-image: url('background.jpg')">
+      <div class="h-full flex items-end p-4 bg-gradient-to-t from-black/70 to-transparent">
+        <h1 class="text-white text-2xl font-bold text-center py-32 md:py-0">
+          Be Part of the World's First Fully Decentralised Football Club
+        </h1>
       </div>
-      <button on:click={handleLogout} class="brand-button">
-        Disconnect
-      </button>
+    </div>
+  
+    <div class="w-full md:w-1/2 flex flex-col items-center justify-center p-4 bg-BrandGray text-white">
+      <div class="w-full max-w-sm">
+        <LogoIcon className="mx-auto mb-4 w-24 h-24" />
+        <h2 class="text-2xl cta-text text-center mb-4">JOIN THE CLUB</h2>
+        <p class="text-center mb-6 text-BrandGrayShade6">
+          Own the game. Shape the future. Join a global community where fans make the decisions.
+        </p>
+        <div class="space-y-4">
+          <button class="w-full bg-BrandGrayShade1 hover:bg-BrandGrayShade3 text-white py-2 rounded flex items-center justify-center">
+            <span class="mr-2"><IcpLogo /></span> Internet Identity
+          </button>
+        </div>
+        <p class="text-center mt-6 text-white text-sm">
+          Have questions? Read our Whitepaper
+        </p>
+      </div>
     </div>
   </div>
 </Layout>
