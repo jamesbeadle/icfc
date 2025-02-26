@@ -12,7 +12,9 @@ module ICFCTypes {
     membershipClaims: [MembershipClaim];
     createdOn: Int;
     profilePicture: Blob;
+    profilePictureExtension: Text;
     termsAgreed: Bool;
+    appPrincipalIds: [(Text, Base.PrincipalId)];
   };
 
   public type MembershipType = {
