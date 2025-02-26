@@ -56,6 +56,11 @@
     checkUser();
   }
 
+  async function handleLogout() {
+    await authStore.signOut();
+    checkUser();
+  }
+
   async function checkUser(){
     console.log("checking")
     authStore.subscribe((store) => {
@@ -80,15 +85,12 @@
             </div>
         
             <div class="flex items-center gap-4">
-            <button on:click={() => showApps = true} class="px-4 py-2 text-sm font-medium bg-gray-800 hover:bg-gray-700 rounded-lg transition">
-                Apps
-            </button>
-
-            {#if !isLoggedIn}
-                <button class="px-4 py-2 text-sm font-medium bg-blue-600 hover:bg-BrandBlue rounded-lg transition" on:click={handleLogin}>
-                    Connect
-                </button>
-            {/if}
+              <button on:click={() => showApps = true} class="px-4 py-2 text-sm font-medium bg-gray-800 hover:bg-gray-700 rounded-lg transition">
+                  Apps
+              </button>
+              <button class="px-4 py-2 text-sm font-medium bg-blue-600 hover:bg-BrandBlue rounded-lg transition" on:click={handleLogout}>
+                Disconnect
+              </button>
             </div>
         </header>
         <div class="w-full flex mt-16 p-4">

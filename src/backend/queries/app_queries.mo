@@ -12,6 +12,7 @@ module AppQueries {
         profilePicture: Blob;
         profilePictureExtension: Text;
         termsAgreed: Bool;
+        unconfirmedAppPrincipalIds: [(Text, Base.PrincipalId)];
         appPrincipalIds: [(Text, Base.PrincipalId)];
     };
 }
