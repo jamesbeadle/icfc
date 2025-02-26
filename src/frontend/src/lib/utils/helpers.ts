@@ -676,8 +676,6 @@ export function deserializeData(data: string): any {
   });
 }
 
-
-
 export interface Deferred<T> {
   promise: Promise<T>;
   resolve: (value: T | PromiseLike<T>) => void;

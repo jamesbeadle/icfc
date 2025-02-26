@@ -3,10 +3,13 @@
   import Layout from "./Layout.svelte";
   import { appStore } from "$lib/stores/app-store";
   import LogoIcon from "$lib/icons/LogoIcon.svelte";
-  import { authStore } from "$lib/stores/auth-store";
+  import { authStore, type AuthSignInParams } from "$lib/stores/auth-store";
     import IcpLogo from "$lib/icons/ICPLogo.svelte";
+    import { userStore } from "$lib/stores/user-store";
 
-  let isLoading = true;
+  let isLoggedIn: Boolean;
+    let termsAgreed: Boolean;
+    let isLoading = true;
 
   onMount(async () => {
     try {
@@ -18,9 +21,30 @@
     }
   });
 
-  function handleLogout() {
-    console.log("here")
-    authStore.signOut();
+
+
+  async function handleLogin() {
+    let params: AuthSignInParams = {
+        domain: import.meta.env.VITE_AUTH_PROVIDER_URL,
+    };
+    await authStore.signIn(params);
+    checkUser();
+  }
+
+  async function checkUser(){
+      authStore.subscribe((store) => {
+          isLoggedIn = store.identity !== null && store.identity !== undefined;
+      });
+      userStore.subscribe((store) => {
+          if(store == null){
+              return;
+          }
+          termsAgreed = store == null 
+              ? false 
+              : store.termsAcceptedDate == undefined 
+                  ? false 
+                  : store.termsAcceptedDate > 0;
+      });
   }
 </script>
 
@@ -42,7 +66,9 @@
           Own the game. Shape the future. Join a global community where fans make the decisions.
         </p>
         <div class="space-y-4">
-          <button class="w-full bg-BrandGrayShade1 hover:bg-BrandGrayShade3 text-white py-2 rounded flex items-center justify-center">
+          <button 
+            on:click={handleLogin}          
+            class="w-full bg-BrandGrayShade1 hover:bg-BrandGrayShade3 text-white py-2 rounded flex items-center justify-center">
             <span class="mr-2"><IcpLogo /></span> Internet Identity
           </button>
         </div>
