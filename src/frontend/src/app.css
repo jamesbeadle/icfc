@@ -12,10 +12,12 @@
   --dialog-border-radius: 1px !important;
 }
 
+.cta-text {
+  font-family: "Bungee" !important;
+}
+
 .brand-button {
-  background-color: white;
-  color: black;
-  @apply px-4 py-2;
+  @apply bg-BrandBlue hover:bg-BrandInfo text-white font-semibold py-3 px-8 rounded cta-text;
 }
 
 .bg-frontend-update {

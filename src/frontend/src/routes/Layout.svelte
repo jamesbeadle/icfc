@@ -15,6 +15,7 @@
     import Toasts from "$lib/components/toasts/toasts.svelte";
     import LogoIcon from "$lib/icons/LogoIcon.svelte";
 
+    
   let worker: { syncAuthIdle: (auth: AuthStoreData) => void } | undefined;
   let isLoggedIn: Boolean;
   let showApps = false;
@@ -36,6 +37,7 @@
   onMount(async () => {
     await userStore.sync();
     await appStore.checkServerVersion();
+    checkUser();
   });
 
   $: worker, $authStore, (() => worker?.syncAuthIdle($authStore))();
@@ -45,25 +47,27 @@
     const spinner = document.querySelector("body > #app-spinner");
     spinner?.remove();
   })();
+
   async function handleLogin() {
-        let params: AuthSignInParams = {
-            domain: import.meta.env.VITE_AUTH_PROVIDER_URL,
-        };
-        await authStore.signIn(params);
-        checkUser();
-    }
+    let params: AuthSignInParams = {
+        domain: import.meta.env.VITE_AUTH_PROVIDER_URL,
+    };
+    await authStore.signIn(params);
+    checkUser();
+  }
 
-    async function checkUser(){
-        authStore.subscribe((store) => {
-            isLoggedIn = false;
-            //isLoggedIn = store.identity !== null && store.identity !== undefined;
-        });
-    }
+  async function handleLogout() {
+    await authStore.signOut();
+    checkUser();
+  }
 
-    function handleLogout() {
-        authStore.signOut();
-        goto("/");
-    }
+  async function checkUser(){
+    console.log("checking")
+    authStore.subscribe((store) => {
+      console.log(store.identity)
+      isLoggedIn = store.identity !== null && store.identity !== undefined;
+    });
+  }
 </script>
 
 <svelte:window on:storage={syncAuthStore} />
@@ -81,22 +85,20 @@
             </div>
         
             <div class="flex items-center gap-4">
-            <button on:click={() => showApps = true} class="px-4 py-2 text-sm font-medium bg-gray-800 hover:bg-gray-700 rounded-lg transition">
-                Apps
-            </button>
-
-            {#if !isLoggedIn}
-                <button class="px-4 py-2 text-sm font-medium bg-blue-600 hover:bg-blue-500 rounded-lg transition" on:click={handleLogin}>
-                    Connect
-                </button>
-            {/if}
+              <button on:click={() => showApps = true} class="px-4 py-2 text-sm font-medium bg-gray-800 hover:bg-gray-700 rounded-lg transition">
+                  Apps
+              </button>
+              <button class="px-4 py-2 text-sm font-medium bg-blue-600 hover:bg-BrandBlue rounded-lg transition" on:click={handleLogout}>
+                Disconnect
+              </button>
             </div>
         </header>
         <div class="w-full flex mt-16 p-4">
           <slot></slot>
         </div>
+      {:else}
+        <slot></slot>
       {/if}
-      <slot></slot>
     </div>
     <IcfcAppsModal isOpen={showApps} on:close={() => showApps = false} />
     <Toasts />

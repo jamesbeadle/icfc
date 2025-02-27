@@ -1,7 +1,41 @@
-type Result = 
+type Result_1 = 
  variant {
    err: Error;
    ok: AppStatusDTO;
+ };
+type Result = 
+ variant {
+   err: Error;
+   ok: Profile;
+ };
+type Profile = 
+ record {
+   appPrincipalIds: vec record {
+                          text;
+                          PrincipalId;
+                        };
+   createdOn: int;
+   displayName: text;
+   membershipClaims: vec MembershipClaim;
+   membershipType: MembershipType;
+   principalId: PrincipalId;
+   profilePicture: blob;
+   profilePictureExtension: text;
+   termsAgreed: bool;
+   username: text;
+ };
+type PrincipalId = text;
+type MembershipType = 
+ variant {
+   Annual;
+   Lifetime;
+   Monthly;
+ };
+type MembershipClaim = 
+ record {
+   claimedOn: int;
+   expiresOn: opt int;
+   membershipType: MembershipType;
  };
 type Error = 
  variant {
@@ -18,5 +52,6 @@ type AppStatusDTO =
    version: text;
  };
 service : {
-  getAppStatus: () -> (Result) query;
+  getAppStatus: () -> (Result_1) query;
+  getProfile: () -> (Result) query;
 }

@@ -9,31 +9,50 @@ import Nat64 "mo:base/Nat64";
 import Time "mo:base/Time";
 import Array "mo:base/Array";
 import Principal "mo:base/Principal";
-import BaseCommands "queries/base_commands";
 import ckBTCLedger "canister:ckBTC_ledger";
-import ICFCTypes "icfc_types";
+import T "icfc_types";
+import BaseCommands "commands/base_commands";
 
 actor class Main(_startBlock : Nat) {
 
   private var latestTransactionIndex : Nat = 0;
   private var logData = Buffer.Buffer<Text>(0);
-  private stable var ckBTCTransactions : Trie.Trie<Text, ICFCTypes.User> = Trie.empty();
+
+  private stable var ckBTCTransactions : Trie.Trie<Text, T.Profile> = Trie.empty();
+  private stable var profiles : [T.Profile] = [];
 
   private var appStatus : Base.AppStatus = {
     onHold = false;
     version = "0.0.1";
   };
 
-  public shared query func getAppStatus() : async Result.Result<BaseCommands.AppStatusDTO, ICFCTypes.Error> {
-    return #ok(appStatus);
+  public shared query ({ caller }) func getProfile() : async Result.Result<T.Profile, T.Error> {
+    assert not Principal.isAnonymous(caller);
+    let principalId = Principal.toText(caller);
+
+    let foundProfile = Array.find(
+      profiles,
+      func(profile : T.Profile) : Bool {
+        profile.principalId == principalId;
+      },
+    );
+    switch (foundProfile) {
+      case (?profile) {
+        return #ok(profile);
+      };
+      case (null) {
+        return #err(#NotFound);
+      };
+    };
   };
 
-  // TODO: Implement Get and Set Profiles
+  public shared query func getAppStatus() : async Result.Result<BaseCommands.AppStatusDTO, T.Error> {
+    return #ok(appStatus);
+  };
 
   public query func getLogs() : async [Text] {
     Buffer.toArray(logData);
   };
-
 
   private func log(text : Text) {
     Debug.print(text);
@@ -92,7 +111,7 @@ actor class Main(_startBlock : Nat) {
     };
   };
 
-  system func postupgrade(){
+  system func postupgrade() {
     latestTransactionIndex := _startBlock;
-  }
+  };
 };
