@@ -39,8 +39,8 @@ module ICFCTypes {
   };
 
   public type Club = {
-    id : ClubId;
-    name : Text;
+    id: ClubId;
+    name: Text;
   };
 
   public type ScoutedPlayer = {
