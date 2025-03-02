@@ -9,7 +9,7 @@
     in:slide={{ delay: 300, duration: 600 }}
   >
     {#if heading}
-      <h2 class="text-2xl font-semibold text-BrandGrayShade4 mb-2">
+      <h2 class="text-2xl font-semibold text-BrandGrayShade4 mb-2 cta-text">
         {heading}
       </h2>
     {/if}
