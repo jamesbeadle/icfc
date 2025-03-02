@@ -81,25 +81,21 @@
     <FullScreenSpinner />
   </div>
 {:then _}
-  <div class="flex flex-col justify-between h-screen default-text">
+  <div class="flex flex-col min-h-screen default-text">
     {#if isLoading}
       <FullScreenSpinner />
     {:else}
-
       {#if isLoggedIn}
         <Header {onLogout} {showApps} />
-        <main class="page-wrapper">
+        <main class="flex-grow page-wrapper bg-fgbg text-BrandGrayShade5">
           <slot />
         </main>
         <Footer />
       {:else}
-
-        <Landing />
-
+        <slot />
       {/if}
       <IcfcAppsModal {showApps} on:close={() => $showApps = false} />
       <Toasts />
     {/if}
   </div>
-
 {/await}

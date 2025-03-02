@@ -1,6 +1,18 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-fgbg text-BrandGrayShade5;
+  font-family: "Poppins", sans-serif;
+}
+
+.page-wrapper {
+  @apply p-6 md:p-8;
+}
 
 /* global.css */
 :root {
@@ -42,4 +54,21 @@
 
 .tkbg {
   @apply bg-tkbg text-white;
+}
+
+.page-wrapper {
+  @apply w-full mt-16;
+}
+
+.neon-hover:hover {
+  @apply text-BrandBlue;
+  filter: drop-shadow(0 0 10px rgba(25, 121, 242, 0.7));
+  transition: filter 0.3s ease;
+}
+.neon-hover:hover {
+  filter: drop-shadow(0 0 20px rgba(25, 121, 242, 1));
+}
+
+footer {
+  margin-top: auto; /* Ensures the footer sticks to the bottom */
 }
