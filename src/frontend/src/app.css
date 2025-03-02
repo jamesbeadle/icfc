@@ -23,3 +23,23 @@
 .bg-frontend-update {
   @apply bg-black text-white;
 }
+
+.jbbg {
+  @apply bg-jbbg;
+}
+
+.fgbg {
+  @apply bg-fgbg text-white;
+}
+
+.ofplbg {
+  @apply bg-ofplbg;
+}
+
+.owslbg {
+  @apply bg-owslbg text-white;
+}
+
+.tkbg {
+  @apply bg-tkbg text-white;
+}
