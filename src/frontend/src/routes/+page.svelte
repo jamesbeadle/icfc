@@ -5,6 +5,7 @@
   import { authStore } from "$lib/stores/auth-store";
   import { userStore } from "$lib/stores/user-store";
   import FullScreenSpinner from "$lib/components/shared/full-screen-spinner.svelte";
+    import Landing from "$lib/components/landing/landing.svelte";
 
   let isLoggedIn: Boolean;
   let termsAgreed: Boolean;
@@ -44,10 +45,10 @@
   {#if isLoading}
     <FullScreenSpinner />
   {:else}
-    {#if user}
+    {#if isLoggedIn}
       <p>Logged in with principal ID {user.principalId}</p>
     {:else}
-      <p>Logged in, please create a profile.</p>
+      <Landing />
     {/if}
   {/if}
 </Layout>

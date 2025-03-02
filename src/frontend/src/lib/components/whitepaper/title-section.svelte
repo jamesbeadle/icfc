@@ -9,7 +9,7 @@
   class="mb-8" 
   in:fade={{ delay: 200, duration: 800 }}
 >
-  <h1 class="text-4xl md:text-5xl font-bold text-BrandGrayShade5 tracking-tight">
+  <h1 class="text-4xl md:text-5xl font-bold text-BrandGrayShade5 tracking-tight cta-text">
     {title}
   </h1>
   {#if subtitle}
