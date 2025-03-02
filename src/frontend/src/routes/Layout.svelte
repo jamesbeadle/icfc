@@ -15,11 +15,12 @@
   import Header from "$lib/components/shared/header.svelte";
   import Footer from "$lib/components/shared/footer.svelte";
     import { writable } from "svelte/store";
+    import Landing from "$lib/components/landing/landing.svelte";
 
   let worker: { syncAuthIdle: (auth: AuthStoreData) => void } | undefined;
 
-  let showHeader = true;
   let isLoading = true;
+  let isLoggedIn = false;
   let showApps = writable(false);
 
   const init = async () => {
@@ -39,11 +40,15 @@
 
   onMount(async () => {
     try{
-      await userStore.sync();
+      authStore.subscribe((store) => {
+          isLoggedIn = store.identity !== null && store.identity !== undefined;
+          userStore.sync();
+      });
       await appStore.checkServerVersion();
     } catch {
 
     } finally {
+
       isLoading = false;
     }
   });
@@ -76,20 +81,25 @@
     <FullScreenSpinner />
   </div>
 {:then _}
-  <div class="flex flex-col justify-between h-screen default-text ${showHeader ? 'bg-background' : ''}">
-    {#if showHeader}
-      <Header {onLogout} {showApps} />
-      <main class="page-wrapper">
-        <slot />
-      </main>
-      <Footer />
+  <div class="flex flex-col justify-between h-screen default-text">
+    {#if isLoading}
+      <FullScreenSpinner />
     {:else}
-      <main class="flex-1">
-        <slot />
-      </main>
+
+      {#if isLoggedIn}
+        <Header {onLogout} {showApps} />
+        <main class="page-wrapper">
+          <slot />
+        </main>
+        <Footer />
+      {:else}
+
+        <Landing />
+
+      {/if}
+      <IcfcAppsModal {showApps} on:close={() => $showApps = false} />
+      <Toasts />
     {/if}
-    <IcfcAppsModal {showApps} on:close={() => $showApps = false} />
-    <Toasts />
   </div>
 
 {/await}
