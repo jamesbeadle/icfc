@@ -2,10 +2,9 @@
   import { onMount } from "svelte";
   import Layout from "./Layout.svelte";
   import { appStore } from "$lib/stores/app-store";
-  import { authStore } from "$lib/stores/auth-store";
+  import { authStore, type AuthSignInParams } from "$lib/stores/auth-store";
   import { userStore } from "$lib/stores/user-store";
-  import FullScreenSpinner from "$lib/components/shared/full-screen-spinner.svelte";
-    import Landing from "$lib/components/landing/landing.svelte";
+  import LandingPage from "$lib/components/homepage/landingPage/landing-page.svelte";
 
   let isLoggedIn: Boolean;
   let termsAgreed: Boolean;
@@ -42,13 +41,13 @@
 </script>
 
 <Layout>
-  {#if isLoading}
-    <FullScreenSpinner />
-  {:else}
-    {#if isLoggedIn}
-      <p>Logged in with principal ID {user.principalId}</p>
+  {#if !isLoggedIn}
+    <LandingPage />
     {:else}
-      <Landing />
-    {/if}
+      {#if user}
+        <p>Logged in with principal ID {user.principalId}</p>
+      {:else}
+        <p>Logged in, please create a profile.</p>
+      {/if}
   {/if}
 </Layout>
