@@ -2,7 +2,6 @@
     import { authStore, type AuthSignInParams } from "$lib/stores/auth-store";
     import { goto } from "$app/navigation";
     import LandingPageDisplay from "./landing-page-display.svelte";
-    import IcpLogo from "$lib/icons/ICPLogo.svelte";
     
     async function handleLoginClick() {
         let params: AuthSignInParams = {
@@ -14,12 +13,12 @@
 </script>
 
 <div class="flex flex-col w-full h-screen space-y-4 md:bg-BrandGray md:p-3 md:flex-row">
-    <div class="relative flex flex-col w-full bg-center bg-cover md:rounded-lg md:w-1/2" style="background-image: url('background.jpg')">
+    <div class="relative flex flex-col w-full h-full bg-center bg-cover md:rounded-lg md:w-1/2" style="background-image: url('background.jpg')">
         <div class="items-end h-full p-4 md:flex bg-gradient-to-t from-black/70 to-transparent md:rounded-lg">
             <h1 class="hidden w-full text-2xl font-bold text-center lg:text-3xl md:block md:pb-8 lg:pb-0">
                 Be Part of the World's First Fully Decentralised Football Club
             </h1>
-            <div class="py-8 mx-4 rounded-lg bg-BrandGray md:hidden">
+            <div class="flex items-center justify-center min-h-[55%] mx-4 my-24 rounded-lg bg-BrandGray md:hidden">
                 <LandingPageDisplay {handleLoginClick} />
             </div>
     
