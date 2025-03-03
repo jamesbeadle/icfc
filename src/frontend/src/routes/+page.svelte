@@ -7,9 +7,9 @@
   import LandingPage from "$lib/components/homepage/landingPage/landing-page.svelte";
 
   let isLoggedIn: Boolean;
-    let termsAgreed: Boolean;
-    let isLoading = true;
-    let user: any = undefined;
+  let termsAgreed: Boolean;
+  let isLoading = true;
+  let user: any = undefined;
 
   onMount(async () => {
     try {
@@ -43,11 +43,11 @@
 <Layout>
   {#if !isLoggedIn}
     <LandingPage />
-  {:else}
-    {#if user}
-      <p>Logged in with principal ID {user.principalId}</p>
     {:else}
-      <p>Logged in, please create a profile.</p>
-    {/if}
+      {#if user}
+        <p>Logged in with principal ID {user.principalId}</p>
+      {:else}
+        <p>Logged in, please create a profile.</p>
+      {/if}
   {/if}
 </Layout>
