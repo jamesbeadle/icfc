@@ -23,7 +23,7 @@
             </div>
     
             <div class="pt-4 pb-6 md:hidden">
-                <h2 class="mx-4 text-xl text-center xxs:pb-8 text-bold md:hidden">
+                <h2 class="mx-4 text-2xl text-center xxs:pb-8 text-bold md:hidden">
                     Be Part of the World's First Fully Decentralised Football Club
                 </h2>
             </div>
