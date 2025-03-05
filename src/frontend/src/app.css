@@ -23,3 +23,27 @@
 .bg-frontend-update {
   @apply bg-black text-white;
 }
+
+.brand-card {
+  @apply p-4 rounded;
+}
+
+.bg-footballgod-card {
+  @apply bg-FootballGodBackground text-FootballGodFont brand-card;
+}
+
+.bg-openfpl-card {
+  @apply bg-OpenFPLBackground text-OpenFPLFont brand-card;
+}
+
+.bg-transferkings-card {
+  @apply bg-TransferKingsBackground text-TransferKingsFont brand-card;
+}
+
+.bg-openwsl-card {
+  @apply bg-OpenWSLBackground text-OpenWSLFont brand-card;
+}
+
+.bg-jeffbets-card {
+  @apply bg-JeffBetsBackground text-JeffBetsFont brand-card;
+}

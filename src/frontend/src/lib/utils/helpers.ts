@@ -7,6 +7,18 @@ export function uint8ArrayToBase64(bytes: Uint8Array): string {
   return btoa(binary);
 }
 
+export function formatSecondsUnixDateToReadable(unixSeconds: number) {
+  const date = new Date(unixSeconds);
+  const options: Intl.DateTimeFormatOptions = {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  };
+
+  return new Intl.DateTimeFormat("en-UK", options).format(date);
+}
+
 export function formatUnixDateToReadable(unixNano: number) {
   const date = new Date(unixNano / 1000000);
   const options: Intl.DateTimeFormatOptions = {

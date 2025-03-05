@@ -65,6 +65,7 @@
     console.log("checking")
     authStore.subscribe((store) => {
       console.log(store.identity)
+      console.log(store.identity?.getPrincipal().toString())
       isLoggedIn = store.identity !== null && store.identity !== undefined;
     });
   }

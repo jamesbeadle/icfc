@@ -12,6 +12,18 @@
       },
       "source": ["build/"],
       "type": "assets"
+    },
+    "sns_governance": {
+      "build": "",
+      "candid": "governance/candid/sns_governance.did",
+      "remote": {
+        "id": {
+          "ic": "detjl-sqaaa-aaaaq-aacqa-cai",
+          "local": "detjl-sqaaa-aaaaq-aacqa-cai"
+        }
+      },
+      "type": "custom",
+      "wasm": ""
     }
   },
   "defaults": {
