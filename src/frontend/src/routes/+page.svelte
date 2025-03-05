@@ -129,26 +129,38 @@
     {:else}
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 p-4">
         {#each neurons as neuron, index}
-          <div class="relative h-[400px] w-full max-w-[260px] mx-auto overflow-hidden rounded-2xl bg-BrandInfo shadow-lg">
-            <div class="absolute inset-0 opacity-40 overflow-hidden flex items-center">
+          <div class="relative h-[400px] w-full max-w-[260px] mx-auto overflow-hidden rounded-2xl bg-BrandBlue shadow-lg">
+            <div class="absolute inset-0 opacity-10 overflow-hidden flex items-center">
               <LogoIcon 
-                className="h-[450px] w-auto m-4" 
+                className="h-[450px] w-auto m-8" 
               />
             </div>
 
-            <div class="absolute top-0 w-full p-4">
-              <h2 class="text-xs">ICFC NEURON:</h2>
-              <p class="text-xs text-wrap">{Principal.fromUint8Array(new Uint8Array(neuron.id[0]?.id!)).toHex()}</p>
+            <div class="absolute top-0 w-full p-4 text-white/70">
+              <h2 class="text-xs cta-text">ICFC NEURON:</h2>
+              <p class="text-xxs text-wrap">{Principal.fromUint8Array(new Uint8Array(neuron.id[0]?.id!)).toHex()}</p>
               <div class="w-full h-px bg-white/50 my-2"></div>
             </div>
 
             <div class="absolute bottom-0 w-full p-4">
               <div class="w-full h-px bg-white/50 mb-2"></div> 
               <p class="text-xs uppercase text-white/70">Dissolve Delay: {convertBigIntSeconds(Object.values(neuron.dissolve_state[0]!)[0])}</p>
-              <span class="font-bold text-white text-lg block">
+              <span class="font-bold text-white text-lg block cta-text">
                 {formatICFC(Number(neuron.cached_neuron_stake_e8s) / 100_000_000)} ICFC
               </span>
               <p class="text-xs text-white/70">Created: {formatSecondsUnixDateToReadable(Number(neuron.created_timestamp_seconds))}</p>
+              {#if Number(neuron.cached_neuron_stake_e8s) / 100_000_000 >= 100_000}
+                <button class="brand-button w-full">Claim Lifetime Membership</button>
+              {/if}
+              {#if Number(neuron.cached_neuron_stake_e8s) / 100_000_000 < 100_000 && Number(neuron.cached_neuron_stake_e8s) / 100_000_000 >= 10_000}
+                <button class="brand-button w-full">Claim Season Membership</button>
+              {/if}
+              {#if Number(neuron.cached_neuron_stake_e8s) / 100_000_000 < 10_000 && Number(neuron.cached_neuron_stake_e8s) / 100_000_000 >= 1_000}
+                <button class="brand-button w-full">Claim Monthly Membership</button>
+              {/if}
+              {#if Number(neuron.cached_neuron_stake_e8s) / 100_000_000 < 1_000}
+                <button class="brand-button w-full">Please Stake 1,000 ICFC to receive rewards</button>
+              {/if}
             </div>
           </div>
         {/each}
@@ -158,7 +170,6 @@
 </Layout>
 
 <style>
-  /* Ensure the SVG is positioned correctly and stays faint */
   .absolute {
     position: absolute;
   }
