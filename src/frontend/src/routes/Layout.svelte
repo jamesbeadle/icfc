@@ -15,11 +15,13 @@
   import FullScreenSpinner from "$lib/components/shared/full-screen-spinner.svelte";
     import type { Profile } from "../../../declarations/backend/backend.did";
     import LandingPage from "$lib/components/homepage/landingPage/landing-page.svelte";
+    import IcfcLinkAccountsModal from "$lib/components/shared/icfc-link-accounts-modal.svelte";
     
   let worker: { syncAuthIdle: (auth: AuthStoreData) => void } | undefined;
   let isLoading = true;
   let isLoggedIn = false;
   let showApps = false;
+  let showLinkAccounts = false;
   let user: Profile | null = null;
 
 
@@ -92,6 +94,9 @@
                 <button on:click={() => showApps = true} class="px-4 py-2 text-sm font-medium bg-gray-800 hover:bg-gray-700 rounded-lg transition">
                     Apps
                 </button>
+                <button on:click={() => showLinkAccounts = true} class="px-4 py-2 text-sm font-medium bg-gray-800 hover:bg-gray-700 rounded-lg transition">
+                  Link Accounts
+                </button>
                 <button class="px-4 py-2 text-sm font-medium bg-blue-600 hover:bg-BrandBlue rounded-lg transition" on:click={handleLogout}>
                   Disconnect
                 </button>
@@ -105,6 +110,7 @@
         {/if}    
       {/if}
       <IcfcAppsModal isOpen={showApps} on:close={() => showApps = false} />
+      <IcfcLinkAccountsModal isOpen={showApps} on:close={() => showApps = false} />
     </div>
     <Toasts />
 {/await}

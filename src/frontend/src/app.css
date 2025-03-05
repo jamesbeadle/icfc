@@ -17,7 +17,7 @@
 }
 
 .brand-button {
-  @apply bg-BrandBlue hover:bg-BrandInfo text-white font-semibold py-3 px-8 rounded cta-text;
+  @apply bg-BrandGray hover:bg-BrandInfo text-white px-4 py-2 rounded-lg font-medium transition-colors duration-300 cta-text;
 }
 
 .bg-frontend-update {
@@ -53,7 +53,46 @@
 }
 
 .text-wrap {
-  word-break: break-all; /* Breaks the text at any character to prevent overflow */
-  max-width: 100%; /* Ensures the text stays within the container */
-  overflow-wrap: break-word; /* Alternative for modern browsers, allows breaking long words */
+  word-break: break-all;
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+
+.brand-button {
+}
+
+.grid-cols-1.sm\:grid-cols-2.md\:grid-cols-3.lg\:grid-cols-4 {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+@media (min-width: 640px) {
+  .grid-cols-1.sm\:grid-cols-2.md\:grid-cols-3.lg\:grid-cols-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 768px) {
+  .grid-cols-1.sm\:grid-cols-2.md\:grid-cols-3.lg\:grid-cols-4 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1024px) {
+  .grid-cols-1.sm\:grid-cols-2.md\:grid-cols-3.lg\:grid-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.hover\:shadow-2xl:hover {
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.transition-shadow {
+  transition: box-shadow 0.3s ease;
+}
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

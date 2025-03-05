@@ -20,6 +20,7 @@
 
     <link crossorigin="anonymous" href="/manifest.webmanifest" rel="manifest" />
     <link rel="preload" href="/background.jpg" as="image" />
+    <link rel="preload" href="/star.png" as="image" />
 
     <link
       rel="icon"
@@ -41,10 +42,7 @@
       name="apple-mobile-web-app-title"
       content="ICFC: Football Ownership Unleashed"
     />
-    <link
-      rel="apple-touch-icon"
-      href="/favicons/apple-touch-icon.png"
-    />
+    <link rel="apple-touch-icon" href="/favicons/apple-touch-icon.png" />
     <link
       rel="mask-icon"
       href="/favicons/safari-pinned-tab.svg"
@@ -52,18 +50,15 @@
     />
 
     <meta name="msapplication-TileColor" content="#7F56F1" />
-    <meta
-      name="msapplication-config"
-      content="/favicons/browserconfig.xml"
-    />
+    <meta name="msapplication-config" content="/favicons/browserconfig.xml" />
 
     <meta content="#7F56F1" name="theme-color" />
-    
-		<link href="/_app/immutable/assets/index.YZVkBtCd.css" rel="stylesheet">
-		<link rel="modulepreload" href="/_app/immutable/entry/start.U-hFtcPo.js">
-		<link rel="modulepreload" href="/_app/immutable/chunks/CGt4ZTJy.js">
-		<link rel="modulepreload" href="/_app/immutable/chunks/C-wxpSn3.js">
-		<link rel="modulepreload" href="/_app/immutable/entry/app.BYmfHEqI.js">
+
+    <link href="/_app/immutable/assets/index.C5BcjQJz.css" rel="stylesheet" />
+    <link rel="modulepreload" href="/_app/immutable/entry/start.BvP5mjRT.js" />
+    <link rel="modulepreload" href="/_app/immutable/chunks/DNJ0VDh_.js" />
+    <link rel="modulepreload" href="/_app/immutable/chunks/Vw-W1w79.js" />
+    <link rel="modulepreload" href="/_app/immutable/entry/app.61pu2s1D.js" />
 
     <style>
       html,
@@ -77,8 +72,7 @@
         font-family: "Poppins";
         font-style: normal;
         font-weight: 400;
-        src: url("/poppins-regular-webfont.woff2")
-          format("woff2");
+        src: url("/poppins-regular-webfont.woff2") format("woff2");
       }
 
       @font-face {
@@ -215,23 +209,23 @@
   </head>
   <body data-sveltekit-preload-data="hover">
     <div style="display: contents">
-			<script>
-				{
-					__sveltekit_16zbxma = {
-						base: ""
-					};
+      <script>
+        {
+          __sveltekit_1k1r670 = {
+            base: "",
+          };
 
-					const element = document.currentScript.parentElement;
+          const element = document.currentScript.parentElement;
 
-					Promise.all([
-						import("/_app/immutable/entry/start.U-hFtcPo.js"),
-						import("/_app/immutable/entry/app.BYmfHEqI.js")
-					]).then(([kit, app]) => {
-						kit.start(app, element);
-					});
-				}
-			</script>
-		</div>
+          Promise.all([
+            import("/_app/immutable/entry/start.BvP5mjRT.js"),
+            import("/_app/immutable/entry/app.61pu2s1D.js"),
+          ]).then(([kit, app]) => {
+            kit.start(app, element);
+          });
+        }
+      </script>
+    </div>
 
     <svg
       id="app-spinner"
