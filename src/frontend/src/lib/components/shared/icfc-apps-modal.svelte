@@ -11,6 +11,7 @@
     const apps = [
       { name: "FootballGod", description: "A fully decentralised football dataset, managed by the fans.", link: "https://footballgod.xyz" },
       { name: "OpenFPL", description: "Web3 Fantasy Football.", link: "https://openfpl.xyz" },
+      { name: "Transfer Kings", description: "Official ICFC Trading Card Game.", link: "https://transferkings.xyz" },
       { name: "OpenWSL", description: "Web3 Fantasy Football.", link: "https://openwsl.xyz" },
       { name: "Jeff Bets", description: "Converastional AI powered fixed odds pattern based betting.", link: "https://jeffbets.com" }
     ];

@@ -47,3 +47,13 @@
 .bg-jeffbets-card {
   @apply bg-JeffBetsBackground text-JeffBetsFont brand-card;
 }
+
+.svg-background {
+  @apply absolute inset-0 z-0 h-full w-full;
+}
+
+.text-wrap {
+  word-break: break-all; /* Breaks the text at any character to prevent overflow */
+  max-width: 100%; /* Ensures the text stays within the container */
+  overflow-wrap: break-word; /* Alternative for modern browsers, allows breaking long words */
+}

@@ -60,6 +60,10 @@ export default {
         OpenWSLFont: "#FFFFFF",
         JeffBetsFont: "#000000",
       },
+      perspective: {
+        500: "500px",
+        1000: "1000px",
+      },
     },
   },
   plugins: [],

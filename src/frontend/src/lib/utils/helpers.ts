@@ -8,7 +8,7 @@ export function uint8ArrayToBase64(bytes: Uint8Array): string {
 }
 
 export function formatSecondsUnixDateToReadable(unixSeconds: number) {
-  const date = new Date(unixSeconds);
+  const date = new Date(unixSeconds * 1000);
   const options: Intl.DateTimeFormatOptions = {
     weekday: "long",
     year: "numeric",
