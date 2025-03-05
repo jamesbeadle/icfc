@@ -4,7 +4,6 @@
   import { appStore } from "$lib/stores/app-store";
   import { authStore, type AuthSignInParams } from "$lib/stores/auth-store";
   import { userStore } from "$lib/stores/user-store";
-  import LandingPage from "$lib/components/homepage/landingPage/landing-page.svelte";
   import type { OptionIdentity } from "$lib/types/identity";
   import { createAgent } from "@dfinity/utils";
   import { SnsGovernanceCanister } from "@dfinity/sns";
@@ -12,6 +11,7 @@
   import type { Neuron } from "@dfinity/sns/dist/candid/sns_governance";
   import { formatSecondsUnixDateToReadable } from "$lib/utils/helpers";
     import LogoIcon from "$lib/icons/LogoIcon.svelte";
+    import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
   
 
   let isLoggedIn: Boolean;
@@ -19,6 +19,7 @@
   let isLoading = true;
   let user: any = undefined;
   let identity: OptionIdentity;
+  let loadingNeurons = true;
   let neurons: Neuron[] = [];
   let principalId = '';
 
@@ -66,6 +67,8 @@
       neurons = userNeurons.sort(sortByHighestNeuron);
     } catch (error) {
       console.error(error);
+    } finally {
+      loadingNeurons = false;
     }
   }
 
@@ -113,17 +116,17 @@
 </script>
 
 <Layout>
-  {#if !isLoggedIn}
-    <LandingPage />
-  {:else}
-    <div class="w-full flex flex-col p-4 space-y-2">
-      <p>Principal Id: {principalId}</p>
-      <p>Welcome to ICFC, your linked neurons are below:</p>
-      {#if neurons.length === 0}
-        <div>
-          <p>You have no neurons</p>
-        </div>
-      {/if}
+  <div class="w-full flex flex-col p-4 space-y-2">
+    <p>Principal Id: {principalId}</p>
+    <p>Welcome to ICFC, your linked neurons are below:</p>
+    {#if neurons.length === 0}
+      <div>
+        <p>You have no neurons</p>
+      </div>
+    {/if}
+    {#if loadingNeurons}
+      <LocalSpinner />
+    {:else}
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 p-4">
         {#each neurons as neuron, index}
           <div class="relative h-[400px] w-full max-w-[260px] mx-auto overflow-hidden rounded-2xl bg-BrandInfo shadow-lg">
@@ -150,8 +153,8 @@
           </div>
         {/each}
       </div>
-    </div>
-  {/if}
+    {/if}
+  </div>
 </Layout>
 
 <style>
