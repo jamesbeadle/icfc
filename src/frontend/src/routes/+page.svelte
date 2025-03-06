@@ -21,7 +21,8 @@
   let user: any = undefined;
   let identity: OptionIdentity;
   let loadingNeurons = true;
-  let neurons: Neuron[] = [];
+  let neurons: Neuron[] = [
+  ];
   let principalId = '';
 
   onMount(async () => {
