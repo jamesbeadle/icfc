@@ -66,10 +66,6 @@
     const spinner = document.querySelector("body > #app-spinner");
     spinner?.remove();
   })();
-
-  async function handleLogout() {
-    await authStore.signOut();
-  }
   
 </script>
 
@@ -91,15 +87,7 @@
               </div>
           
               <div class="flex items-center gap-4">
-                <button on:click={() => showApps = true} class="px-4 py-2 text-sm font-medium bg-gray-800 hover:bg-gray-700 rounded-lg transition">
-                    Apps
-                </button>
-                <button on:click={() => showLinkAccounts = true} class="px-4 py-2 text-sm font-medium bg-gray-800 hover:bg-gray-700 rounded-lg transition">
-                  Link Accounts
-                </button>
-                <button class="px-4 py-2 text-sm font-medium bg-blue-600 hover:bg-BrandBlue rounded-lg transition" on:click={handleLogout}>
-                  Disconnect
-                </button>
+                
               </div>
           </header>
           <div class="w-full flex mt-16 p-4">
@@ -110,7 +98,7 @@
         {/if}    
       {/if}
       <IcfcAppsModal isOpen={showApps} on:close={() => showApps = false} />
-      <IcfcLinkAccountsModal isOpen={showApps} on:close={() => showApps = false} />
+      <IcfcLinkAccountsModal isOpen={showLinkAccounts} on:close={() => showLinkAccounts = false} />
     </div>
     <Toasts />
 {/await}
