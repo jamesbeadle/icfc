@@ -7,8 +7,7 @@
     <p class="sub-header">
         Token Sale 
     </p>
-    
-        
+
     <p>
         Total Tokens for Sale: 25 million ICFC (formerly FPL).
     </p>
@@ -56,29 +55,21 @@
         Financial Projections 
     </p>
 
-
-    Revenue Model & Sustainability
-Diversified Revenue Streams
-ICFC ensure long-term financial stability through:
-Matchday Earnings: Ticket sales and stadium revenue.
-Merchandise & Sponsorships: Attracting bands interested in community-driven teams. 
-Scouting Network Services: Selling scouting data to other clubs. 
-Event Hosting: Renting out stadium spaces for additional income. 
-
-Revenue Allocation & Club Independence Statement
-Match Day Revenue:
-All earnings generated on match days are the sole revenue of the individual clubs. This income is dedicated exclusively to the club’s operations, development, and community activities. No portion of match day revenue will be diverted into any communal fund.
-ICFC Revenue:
-For clubs acquired by ICFC, their revenue streams will remain fully with each club. We are not pooling or redistributing club revenue into a central pot. If additional financial support is needed, ICFC will provide direct cash injections into the clubs rather than reallocating existing revenue.
-This approach ensures that each club retains financial independence and continues to reinvest in its own growth and success, while still benefiting from the strategic support provided by ICFC.
-
-
     <p class="small-header">
         RWA Acquisition 
     </p>
 
     <p>
         The largest use of funds will be to purchase a UK football club through a broker here in the UK to run through the ICFC DAO.
+    </p>
+
+    <p>
+        For clubs acquired by ICFC, their revenue streams will remain fully with each club. 
+        If additional financial support is needed, ICFC will aim to provide direct cash injections into the clubs rather than reallocating existing revenue.
+    </p>
+    <p>
+        This approach ensures that each club retains financial independence and continues to reinvest in its own growth and success, 
+        while still benefiting from the strategic support provided by ICFC.
     </p>
 
 </div>

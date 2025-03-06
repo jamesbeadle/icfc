@@ -179,6 +179,17 @@ Shared Success: Club-generated revenue benefits token holders.
 
 
 
+Diversified Revenue Streams
+ICFC ensure long-term financial stability through:
+Matchday Earnings: Ticket sales and stadium revenue.
+Merchandise & Sponsorships: Attracting bands interested in community-driven teams. 
+Scouting Network Services: Selling scouting data to other clubs. 
+Event Hosting: Renting out stadium spaces for additional income. 
+
+Revenue Allocation & Club Independence Statement
+Match Day Revenue:
+All earnings generated on match days are the sole revenue of the individual clubs. This income is dedicated exclusively to the club’s operations, development, and community activities. No portion of match day revenue will be diverted into any communal fund.
+
 
 
 
