@@ -13,10 +13,11 @@
   import Toasts from "$lib/components/toasts/toasts.svelte";
   import LogoIcon from "$lib/icons/LogoIcon.svelte";
   import FullScreenSpinner from "$lib/components/shared/full-screen-spinner.svelte";
-    import type { Profile } from "../../../declarations/backend/backend.did";
-    import LandingPage from "$lib/components/homepage/landingPage/landing-page.svelte";
-    import IcfcLinkAccountsModal from "$lib/components/shared/icfc-link-accounts-modal.svelte";
-    import Sidebar from "$lib/components/shared/sidebar.svelte";
+  import type { Profile } from "../../../declarations/backend/backend.did";
+  import LandingPage from "$lib/components/homepage/landingPage/landing-page.svelte";
+  import IcfcLinkAccountsModal from "$lib/components/shared/icfc-link-accounts-modal.svelte";
+  import Sidebar from "$lib/components/shared/sidebar.svelte";
+  import { page } from "$app/state";
     
   let worker: { syncAuthIdle: (auth: AuthStoreData) => void } | undefined;
   let isLoading = true;
@@ -68,7 +69,10 @@
     const spinner = document.querySelector("body > #app-spinner");
     spinner?.remove();
   })();
-  
+
+  $: isWhitepaper = browser && page.url.pathname === "/whitepaper";
+  $: isSale = browser && page.url.pathname === "/sale";
+
   function toggleMenu() {
     isMenuOpen = !isMenuOpen;
   }
@@ -86,7 +90,7 @@
       {#if isLoading}
         <FullScreenSpinner />
       {:else}
-        {#if isLoggedIn}
+        {#if isLoggedIn || isWhitepaper || isSale}
           <Sidebar {isMenuOpen} {toggleMenu} />
            {#if isMenuOpen}
               <div 
@@ -94,7 +98,7 @@
                 on:click={toggleMenu}
               ></div>
             {/if}
-
+          
           <header class="fixed top h-16 flex items-center justify-between w-full px-4 bg-gray-900 text-white shadow-md">
               <div class="flex items-center">
                 <LogoIcon className='w-8' />

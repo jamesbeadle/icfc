@@ -96,3 +96,24 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+.horizontal-divider {
+  min-height: 2px;
+  @apply self-stretch flex-shrink-0 h-px bg-gray-400 my-4;
+}
+
+.main-title {
+  @apply text-4xl cta-text;
+}
+
+.section-title {
+  @apply text-3xl cta-text;
+}
+
+.sub-header {
+  @apply text-2xl cta-text;
+}
+
+.small-header {
+  @apply text-lg cta-text;
+}
