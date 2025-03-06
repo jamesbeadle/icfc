@@ -161,7 +161,7 @@
         All tokens received by fans are locked for one year from the received date. After which fans can begin dissolving their tokens, setup liquidity pools and trade them.
     </p>
     
-    <p class="small-headear">
+    <p class="small-header">
         ICFC DAO Tokens
     </p>
     
@@ -204,19 +204,19 @@
 
 
 
-    <p>
+    <p class="small-header">
         These sub-DAOs:
     </p>
 
     <ul>
         <li>
-            <b>Issue Governance Tokens</b> that provide voting rights on club decisions.
+            <b class="cta-text">Issue Governance Tokens</b> that provide voting rights on club decisions.
         </li>
         <li>
-            <b>Manage a Club Treasury</b> funded by matchday revenue, sponsorships and merchandise sales.
+            <b class="cta-text">Manage a Club Treasury</b> funded by matchday revenue, sponsorships and merchandise sales.
         </li>
         <li>
-            <b>Implement On-Chain Proposals</b> for hiring managers, player scouting & transfers, infrastructure investment and sponsorships.
+            <b class="cta-text">Implement On-Chain Proposals</b> for hiring managers, player scouting & transfers, infrastructure investment and sponsorships.
         </li>
     </ul>
 
@@ -230,18 +230,18 @@
 
     <ul>
         <li>
-            Add & remove a player to the club’s scout, transfer & loan list.
+            - Add & remove a player to the club’s scout, transfer & loan list.
         </li>
         <li>
-            Create, renegotiate or terminante a player's contract as a group.
+            - Create, renegotiate or terminante a player's contract as a group.
         </li>
         <li>
-            Hire & fire the team's manager as a group.
+            - Hire & fire the team's manager as a group.
         </li>
-        <li>Add & remove the captaincy of a club.</li>
-        <li>Sponsorship deal approvals.</li>
-        <li>Manage club branding, marketing & sponsorship decisions. </li>
-        <li>Propose facilities upgrades and general fan motions.</li>
+        <li>- Add & remove the captaincy of a club.</li>
+        <li>- Sponsorship deal approvals.</li>
+        <li>- Manage club branding, marketing & sponsorship decisions. </li>
+        <li>- Propose facilities upgrades and general fan motions.</li>
     </ul>
 
     <p>
@@ -254,10 +254,16 @@
 
     <ul>
         <li>
-            Matchday Earnings: Ticket sales and stadium revenue.
-            Merchandise & Sponsorships: Attracting bands interested in community-driven teams. 
-            Scouting Network Services: Selling scouting data to other clubs. 
-            Event Hosting: Renting out stadium spaces for additional income. 
+            <b class="cta-text">Matchday Earnings:</b> Ticket sales and stadium revenue.
+        </li>
+        <li>
+            <b class="cta-text">Merchandise & Sponsorships:</b> Attracting bands interested in community-driven teams. 
+        </li>
+        <li>
+            <b class="cta-text">Scouting Network Services:</b> Selling scouting data to other clubs. 
+        </li>
+        <li>
+            <b class="cta-text">Event Hosting:</b> Renting out stadium spaces for additional income. 
         </li>
     </ul>
 

@@ -43,4 +43,8 @@
             - Development & Partnerships: Inquiries can be directed through on-chain proposals or by contacting the ICFC DAO.
         </li>
     </ul>
+    <br />
+    <br />
+    <br />
+    <br />
 </div>

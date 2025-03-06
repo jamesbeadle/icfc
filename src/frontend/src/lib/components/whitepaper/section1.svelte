@@ -18,19 +18,19 @@
 
     <ul>
         <li>
-            <b>- Boost ICP Adoption & Value: </b> Drive large-scale user adoption, increasing ecosystem demand.
+            <b class="cta-text">- Boost ICP Adoption & Value: </b> Drive large-scale user adoption, increasing ecosystem demand.
         </li>
         <li>                
-            <b>- Enhance Fan Engagement: </b> Reward supporters for physically attending matches, strengthening loyalty and participation.
+            <b class="cta-text">- Enhance Fan Engagement: </b> Reward supporters for physically attending matches, strengthening loyalty and participation.
         </li>
         <li>
-            <b>- Build a Football Reality Movement: </b> Inspired by the Wrexham model, ICFC will produce content blending real-world football and blockchain technology to reach mainstream audiences. 
+            <b class="cta-text">- Build a Football Reality Movement: </b> Inspired by the Wrexham model, ICFC will produce content blending real-world football and blockchain technology to reach mainstream audiences. 
         </li>
         <li>
-            <b>- Promote Transparency: </b> On-chain governance eliminates opaque boardroom decisions.
+            <b class="cta-text">- Promote Transparency: </b> On-chain governance eliminates opaque boardroom decisions.
         </li>
         <li>
-            <b>- Unleash Global Potential: </b> Allowing anyone worldwide to own tokens in a club, expanding the fan base and investment scope.
+            <b class="cta-text">- Unleash Global Potential: </b> Allowing anyone worldwide to own tokens in a club, expanding the fan base and investment scope.
         </li>
 
     </ul>
