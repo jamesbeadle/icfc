@@ -93,11 +93,11 @@
     </p>
 
     <p class="text-xs">
-        Note Free Bets on JeffBets
+        Note Free Bets on Jeff Bets
     </p>
 
     <p class="text-xs">
-        Free bets will be 1% of the total bets placed on JeffBets. This 1% will be placed into a free bet pool and then distributed to the number of players based on their membership. A month where more bets are placed will result in an increased value in the betting pool as the amount of FPL placed is greater. 
+        Free bets will be 1% of the total bets placed on Jeff Bets. This 1% will be placed into a free bet pool and then distributed to the number of players based on their membership. A month where more bets are placed will result in an increased value in the betting pool as the amount of FPL placed is greater. 
     </p>
             
             

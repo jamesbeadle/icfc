@@ -62,7 +62,7 @@
     </p>
 
     <p>
-        At the core of ICFC’s economic stability is a revolutionary burning mechanism designed to offset in-game rewards, powered by our very own fixed-odds betting platform, JeffBets (gambling license pending). But this isn’t just another betting platform. Jeff is the world’s first AI betting agent. Unlike traditional betting platforms where users manually place bets, Jeff autonomously bets on your behalf using advanced statistical pattern recognition, mirroring your usual strategies but with the precision and speed only AI can deliver. Jeff isn’t an algorithm. Jeff is an intelligent betting companion.
+        At the core of ICFC’s economic stability is a revolutionary burning mechanism designed to offset in-game rewards, powered by our very own fixed-odds betting platform, Jeff Bets (gambling license pending). But this isn’t just another betting platform. Jeff is the world’s first AI betting agent. Unlike traditional betting platforms where users manually place bets, Jeff autonomously bets on your behalf using advanced statistical pattern recognition, mirroring your usual strategies but with the precision and speed only AI can deliver. Jeff isn’t an algorithm. Jeff is an intelligent betting companion.
     </p>
 
     <p>
