@@ -24,6 +24,13 @@
     
     <p>We will showcase the unique abilities of the SNS governance procedure provided by the Internet Computer through the popular medium of showcasing the running of a football club through a TV show.</p>
 
+    <p>
+        To enhance and streamline this model, ICFC is exploring a strategic partnership with consultants who work directly with football clubs. This collaboration would facilitate the development of an automated system designed to handle the acquisition, management, and decentralisation process, ensuring a seamless transition of governance to the fans. 
+    </p>
+    <p>
+        For many club owners, selling a club isn’t just a financial transaction, it’s about safeguarding their legacy and ensuring the long-term success of the club. Community-led solutions like ICFC’s decentralised governance model offer an attractive pathway for these owners, providing a future where clubs remain deeply connected to their supporters, rather than being subject to short-term commercial interests. 
+    </p>
+
     <p class="sub-header">ICFC DAO & Sub-DAO Governance Model</p>
 
     <p class="small-header">
@@ -51,22 +58,31 @@
 
     <p class="small-header">Sub-DAOs (Club-Level Governance)</p>
 
+    <p>
+        The club's sub-DAO will oversee player decisions, managerial appointments, and facility upgrades, ensuring that critical football-related operations remain decentralised and community-driven.
+    </p>
 
-    The Club DAO will oversee player decisions, managerial appointments, and facility upgrades, ensuring that critical football-related operations remain decentralised and community-driven.
-    This ensures governance is shifted to the local fanbase. Unlike a fully open decentralisation sale, this process prioritises attendance-based decentralisation, where active match-going supporters have the opportunity to participate in club governance. 
+    <p>
+        Fans who purchase tickets will receive sub-DAO tokens as part of the transaction. 
+        These tokens represent governance rights within the club’s decentralised structure, 
+        reinforcing a system where committed supporters, those who attend and engage with the club, play a key role in decision-making. 
+    </p>
 
-    Fans who purchase tickets will receive sub-DAO tokens as part of the transaction. These tokens represent governance rights within the club’s decentralised structure, reinforcing a system where committed supporters, those who attend and engage with the club, play a key role in decision-making. 
+    <p>
+        Unlike a fully open decentralisation sale, this process prioritises attendance-based decentralisation, where active match-going supporters have the opportunity to participate in club governance. 
+    </p>
 
-    This also ensures that power isn’t distributed anonymously or speculatively and instead aligns with the club’s most engaged and invested fans. 
+    <p>
+        This process also ensures that power isn’t distributed anonymously or speculatively and instead aligns with the club’s most engaged and invested fans. 
+    </p>
 
-    Over time, this framework builds a community-driven governance model, where those who contribute to the club’s success on and off the pitch have a say in its future. 
-
-    These fan based decentralisation sales will be run through the ICFC website, with tokens only purchasable through attending club matches & events.
-
-    To enhance and streamline this model, ICFC is exploring a strategic partnership with consultants who work directly with football clubs. This collaboration would facilitate the development of an automated system designed to handle the acquisition, management, and decentralisation process, ensuring a seamless transition of governance to the fans. 
-
-    For many club owners, selling a club isn’t just a financial transaction, it’s about safeguarding their legacy and ensuring the long-term success of the club. Community-led solutions like ICFC’s decentralised governance model offer an attractive pathway for these owners, providing a future where clubs remain deeply connected to their supporters, rather than being subject to short-term commercial interests. 
-
+    <p>
+        Over time, this framework builds a community-driven governance model, where those who contribute to the club’s success on and off the pitch have a say in its future. 
+    </p>
+    
+    <p>
+        These fan based decentralisation sales will be run through the ICFC website, with tokens only purchasable through attending club matches & events.
+    </p>
 
 
     <p>
@@ -122,6 +138,39 @@
         Fans who stake their sub-DAO tokens will earn maturity interest as a reward for keeping their neurons active. This incentive not only encourages long-term commitment and network stability but also provides a tangible benefit for fans who choose to maintain their stake, rather than dissolving their neurons prematurely. Maturity interest figures will be set inline with the ICFC DAO and can be changed by the sub-DAO by proposal.
     </p>
 
+
+
+    <p>
+        Historic Supporters: Attendance-Based Decentralisation
+    </p>
+    
+    
+    
+    Fans who physically attend matches & events earn governance tokens, ensuring voting power remains with the most engaged supporters. Long term supporters of clubs that are purchased will be invited to attend in person events, where they’ll be rewarded with a Historic Supporter Neuron. This will ensure that fans are well-equipped to ensure they know how to govern their club.
+    
+    The ICFC DAO will retain a small stake and minor voting power (10%) in every club purchased. This ensures long-term stability, strategic alignment and responsible decentralisation across all sub-DAO by:
+    Preventing governance deadlocks or manipulation by bad actors.
+    Ensuring clubs remain aligned with ICFC’s broader mission.
+    ICFC neuron holders get a say in all clubs via the Guardian DAO’s collective voting stake.
+    
+    All tokens acquired by the ICFC DAO to act as guardian will remain staked, indefinitely. 
+    ICFC’s innovative governance model is powered by a bespoke decentralisation platform that forms the backbone of our sub-DAO ecosystem. This platform is purpose-built to empower football clubs by embedding fan influence directly into every operational decision. By using the platform’s advanced, real-time capabilities, sub-DAOs can operate autonomously, ensuring that clubs are always aligned with the collective will of their supporters.
+    The platform enables swift translation of fan input into actionable governance and operational decisions. This ensures that clubs not only remain agile and responsive but also maintain continuous, efficient management, paving the way for sustained success and a dynamic, fan-led future in football.
+    
+
+
+    <p>
+        All tokens received are locked for six months, except for historic neuron tokens, which remain locked for two years - after which fans can begin dissolving their tokens.
+
+Every year, a larger number of tokens is minted than in the previous year, ensuring that ownership primarily rests with recent attendees while earlier participation gradually carries less weight.
+
+    </p>
+
+
+
+
+
+
     <p>
         These sub-DAOs:
     </p>
@@ -166,40 +215,6 @@
         By using blockchain-based governance, ICFC empowers fans and stakeholders to participate in club decisions, running 100% on a decentralised blockchain.
     </p>
 
-    <p>
-        Historic Supporters: Attendance-Based Decentralisation
-    </p>
-    
-    
-    
-    Fans who physically attend matches & events earn governance tokens, ensuring voting power remains with the most engaged supporters. Long term supporters of clubs that are purchased will be invited to attend in person events, where they’ll be rewarded with a Historic Supporter Neuron. This will ensure that fans are well-equipped to ensure they know how to govern their club.
-    
-    The ICFC DAO will retain a small stake and minor voting power (10%) in every club purchased. This ensures long-term stability, strategic alignment and responsible decentralisation across all sub-DAO by:
-    Preventing governance deadlocks or manipulation by bad actors.
-    Ensuring clubs remain aligned with ICFC’s broader mission.
-    ICFC neuron holders get a say in all clubs via the Guardian DAO’s collective voting stake.
-    
-    All tokens acquired by the ICFC DAO to act as guardian will remain staked, indefinitely. 
-    ICFC’s innovative governance model is powered by a bespoke decentralisation platform that forms the backbone of our sub-DAO ecosystem. This platform is purpose-built to empower football clubs by embedding fan influence directly into every operational decision. By using the platform’s advanced, real-time capabilities, sub-DAOs can operate autonomously, ensuring that clubs are always aligned with the collective will of their supporters.
-    The platform enables swift translation of fan input into actionable governance and operational decisions. This ensures that clubs not only remain agile and responsive but also maintain continuous, efficient management, paving the way for sustained success and a dynamic, fan-led future in football.
-    
-
-
-    <p>
-        All tokens received are locked for six months, except for historic neuron tokens, which remain locked for two years - after which fans can begin dissolving their tokens.
-
-Every year, a larger number of tokens is minted than in the previous year, ensuring that ownership primarily rests with recent attendees while earlier participation gradually carries less weight.
-
-    </p>
-
-
-
-
-
-
-
-
-
 
 Diversified Revenue Streams
 ICFC ensure long-term financial stability through:
@@ -222,11 +237,13 @@ All earnings generated on match days are the sole revenue of the individual club
         The DAO Documentary
     </p>
 
+    <p>
+        ICFC isn’t just a revolution in football ownership, it’s the catalyst that will propel the Internet Computer into mainstream adoption. 
+    </p>
 
-ICFC isn’t just a revolution in football ownership, it’s the catalyst that will propel the Internet Computer into mainstream adoption. 
-
-Think of Wrexham’s Hollywood-backed resurgence - The ICFC DAO will merge football, entertainment & blockchain into a new medium where fans truly engage with their football club. This new medium will heavily feature the capabilities of the ICP blockchain (internetcomputer.org), enabling it to become a household name among everyday people.
-
+    <p>
+        Think of Wrexham’s Hollywood-backed resurgence - The ICFC DAO will merge football, entertainment & blockchain into a new medium where fans truly engage with their football club. This new medium will heavily feature the capabilities of the ICP blockchain (internetcomputer.org), enabling it to become a household name among everyday people.
+    </p>
 
     <p>Our plan for mass adoption using a 'Welcome to Wrexham' style show.</p>
 
