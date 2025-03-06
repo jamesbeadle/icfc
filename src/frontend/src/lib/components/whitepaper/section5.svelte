@@ -207,21 +207,21 @@ All earnings generated on match days are the sole revenue of the individual club
     </p>
 
     <p class="sub-header">
-        Fan Podcasts
+        ICFC Sports Writer & Fan Podcast Accounts: Community-Driven Football Media 
     </p>
 
-    ICFC Sports Writer & Fan Podcast Accounts: Community-Driven Football Media
-ICFC introduces a community-powered sports media platform, allowing football writers and fan podcasters to create, share, and monetise their content. 
-For just 1 ICP, users can set up a verified Sports Writer or Fan Podcast account on icfc.app, unlocking tools to build their audience, publish exclusive articles, and host podcasts.
-This system fosters a more organic, fan-driven football media landscape, where passionate supporters can connect through match analysis, tactical breakdowns, transfer news, and in-depth discussions. Fans can subscribe to their favourite writers and podcasters through a subscription-based model, offering exclusive access to premium content, bonus episodes, behind-the-scenes insights, or interactive Q&A sessions.
-By decentralising football journalism and fan-driven content, ICFC provides a platform where engagement, insight, and storytelling thrive, giving supporters direct access to the most authentic voices in football media - created by the fans, for the fans.
-
-
-    <p class="sub-header">
-        Sports Writers
+    <p>
+        ICFC introduces a community-powered sports media platform, allowing football writers and fan podcasters to create, share, and monetise their content. 
     </p>
-
-    <p class="sub-header">AI Data Expansion</p>
+    <p>
+        A user can set up a verified Sports Writer or Fan Podcast account on icfc.app for 1 ICP, unlocking tools to build their audience, publish exclusive articles, and host podcasts.
+    </p>
+    <p>
+        This system fosters a more organic, fan-driven football media landscape, where passionate supporters can connect through match analysis, tactical breakdowns, transfer news, and in-depth discussions. Fans can subscribe to their favourite writers and podcasters through a subscription-based model, offering exclusive access to premium content, bonus episodes, behind-the-scenes insights, or interactive Q&A sessions.
+    </p>
+    <p>
+        By decentralising football journalism and fan-driven content, ICFC provides a platform where engagement, insight, and storytelling thrive, giving supporters direct access to the most authentic voices in football media - created by the fans, for the fans.
+    </p>
 
 
 </div>
