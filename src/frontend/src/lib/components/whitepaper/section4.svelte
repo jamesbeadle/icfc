@@ -4,6 +4,26 @@
         Decentralisation Sale 2: Financial Focus
     </p> 
 
+    <p>
+        A swap will occur throughout April 2025, if successful, decentralising 25% of the ICFC platform. 
+    </p>
+
+    <p>
+        ICFC operates as a Decentralised Autonomous Organisation (DAO) with a structured financial model:
+    </p>
+
+    <p>
+        The DAO will hold cryptocurrency balance of Bitcoin (ckBTC), ICP and ICFC tokens along with any user ICRC token assets deposited into our ecosystem for our range of football based applications.
+    </p>
+
+    <p>
+        Waterway Labs holds VP Control over ICFC to ensure effective software delivery, enhance treasury balances, and execute strategic growth initiatives.
+    </p>
+
+    <p>
+        Waterway Labs will legally own any football clubs acquired and will be responsible for generating profits and reinvesting back into club development.
+    </p>
+    
     <p class="sub-header">
         Token Sale 
     </p>
@@ -48,12 +68,14 @@
         Tokens are securely locked in five non-dissolving neurons with a staggered release schedule ranging from six months to a 2.5-year delay. 
     </p>
     <p>
-        When fully dissolved, liquid ICFC tokens are added to your ICFC wallet balance.
+        When fully dissolved, liquid ICFC tokens are added to your ICFC wallet balance. Participants can log into the ICFC platform to track the dissolution of their ICFC neurons, confirming the amount that becomes liquid.
     </p>
 
     <p class="sub-header">
         Financial Projections 
     </p>
+
+    
 
     <p class="small-header">
         RWA Acquisition 
