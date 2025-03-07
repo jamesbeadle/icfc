@@ -1,6 +1,20 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ["./src/**/*.{html,js,svelte,ts}"],
+  safelist: [
+    'hover:text-OpenWSLBackground',
+    'hover:text-OpenFPLBackground',
+    'hover:text-JeffBetsBackground',
+    'hover:text-FootballGodBackground',
+    'hover:text-TransferKingsBackground',
+    'hover:text-BrandGrayShade6',
+    'bg-OpenWSLBackground',
+    'bg-OpenFPLBackground',
+    'bg-JeffBetsBackground',
+    'bg-FootballGodBackground',
+    'bg-TransferKingsBackground',
+    'bg-BrandGrayShade6',
+  ],
   theme: {
     screens: {
       xxs: "420px",
