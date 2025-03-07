@@ -7,18 +7,17 @@
   import { appStore } from "$lib/stores/app-store";
   import { initAuthWorker } from "$lib/services/worker.auth.services";
   import { authStore, type AuthSignInParams, type AuthStoreData } from "$lib/stores/auth-store";
-  import type { Profile } from "../../../declarations/backend/backend.did";
   
   import "../app.css";
   import IcfcAppsModal from "$lib/components/shared/icfc-apps-modal.svelte";
   import Toasts from "$lib/components/toasts/toasts.svelte";
   import LogoIcon from "$lib/icons/LogoIcon.svelte";
   import FullScreenSpinner from "$lib/components/shared/full-screen-spinner.svelte";
-  import type { Profile } from "../../../declarations/backend/backend.did";
   import LandingPage from "$lib/components/homepage/landingPage/landing-page.svelte";
   import IcfcLinkAccountsModal from "$lib/components/shared/icfc-link-accounts-modal.svelte";
   import Sidebar from "$lib/components/shared/sidebar.svelte";
   import { page } from "$app/state";
+    import type { Profile } from "../../../declarations/backend/backend.did";
     
   let worker: { syncAuthIdle: (auth: AuthStoreData) => void } | undefined;
   let isLoading = true;

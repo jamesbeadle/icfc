@@ -1,4 +1,5 @@
 <script lang="ts">
+    import InfoIcon from "$lib/icons/InfoIcon.svelte";
     import SwitchSides from "$lib/icons/SwitchSides.svelte";
 
     export let app: {
@@ -32,7 +33,7 @@
                     aria-label="Show card details"
                     class="z-30 flex items-center justify-center group"
                 >
-                    <SwitchSides className="w-7 h-7 transition-transform duration-300 group-hover:rotate-180" fill="currentColor" />
+                    <InfoIcon className="w-7 h-7 transition-transform duration-300 group-hover:rotate-180" fill="currentColor" />
                 </button>
             </div>
 
