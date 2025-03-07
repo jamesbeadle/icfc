@@ -10,7 +10,7 @@
     import JeffBetsLogo from "$lib/icons/appIcons/logo/JeffBetsLogo.svelte";
     import IcpfaLogo from "$lib/icons/appIcons/logo/IcpfaLogo.svelte";
     import Layout from "../Layout.svelte";
-    import AppCard from "$lib/components/shared/AppCard.svelte";
+    import AppCard from "$lib/components/shared/app-card.svelte";
 
     let flippedCards = new Set();
 
