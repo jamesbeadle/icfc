@@ -11,49 +11,90 @@ import Nat64 "mo:base/Nat64";
 import Int "mo:base/Int";
 import Blob "mo:base/Blob";
 import Nat8 "mo:base/Nat8";
+import Buffer "mo:base/Buffer";
+import Timer "mo:base/Timer";
 import T "icfc_types";
 import BaseCommands "commands/base_commands";
 import ckBTCLedger "canister:ckbtc_ledger";
+import Account "lib/Account";
+import Environment "environment";
+// import icpLedger "canister:icp_ledger";
 
 actor class Self() = this {
   private stable var profiles : [T.Profile] = [];
+  private stable var podcasts : [T.Podcast] = [];
 
-  stable var goal : Nat = 0; // Goal in ckBTC (100ckBTC = 10^8 units)
-  stable var initialized : Bool = false;
-  stable var owner : ?Principal = null;
+  private stable var saleParticipants : [T.SaleParticipant] = [];
+
+  private stable var goal : Nat = 0; // Goal in ckBTC (100ckBTC = 10^8 units)
+  private stable var isSaleActive : Bool = false;
+  
 
   private type Subaccount = Blob;
+  private var icfcCexchange: Nat = 400; //400 ckSatoshis per ICFC
 
   private var appStatus : Base.AppStatus = {
     onHold = false;
     version = "0.0.1";
   };
 
-  public shared ({ caller }) func initialize(initial_goal : Nat) : async () {
-    if (initialized) {
-      throw Error.reject("Canister already initialized");
+  public shared ({ caller }) func startSale() : async Result.Result<Text, Text> {
+    if (not callerAllowed(caller)) {
+      throw Error.reject("Only the admin can start the sale");
     };
-    owner := ?caller;
-    goal := initial_goal;
-    initialized := true;
+
+    if (not isSaleActive) {
+      let secondsInDay = 86_400;
+      let nanosecondsInSecond = 1_000_000_000;
+      let thirtyDaysInSeconds = 30 * secondsInDay;
+      let thirtyDaysInNanoseconds = thirtyDaysInSeconds * nanosecondsInSecond;
+
+      let callback = func() : async () {
+        await endSale();
+        isSaleActive := false;
+      };
+
+      ignore Timer.setTimer<system>(#nanoseconds(thirtyDaysInNanoseconds), callback);
+      isSaleActive := true;
+
+      return #ok("Sale started");
+    } else {
+      return #err("Sale is already active");
+    };
+
   };
 
-  private func is_owner(caller : Principal) : Bool {
-    switch (owner) {
-      case (?owner) {
-        return caller == owner;
-      };
-      case (null) {
-        return false;
-      };
+  private func endSale() : async () {
+    let saleProgress = await get_goal_progress();
+    let decimal = await ckBTCLedger.icrc1_decimals();
+
+    let totalRaised = saleProgress / Nat.pow(10, Nat8.toNat(decimal));
+
+    if (totalRaised < 50) {
+      // min goal not reached
+      let _ = await returnParticipantsckBTC();
+      return;
     };
+  };
+
+  private func callerAllowed(caller : Principal) : Bool {
+    let foundCaller = Array.find<Base.PrincipalId>(
+      Environment.ADMIN_PRINCIPALS,
+      func(canisterId : Base.CanisterId) : Bool {
+        Principal.toText(caller) == canisterId;
+      },
+    );
+    return Option.isSome(foundCaller);
   };
 
   public shared ({ caller }) func set_goal(new_goal : Nat) : async () {
-    if (Option.isNull(owner) or is_owner(caller)) {
+    if (not callerAllowed(caller)) {
       throw Error.reject("Only the owner can update the goal");
     };
-    goal := new_goal;
+
+    let decimal = await ckBTCLedger.icrc1_decimals();
+
+    goal := new_goal * Nat.pow(10, Nat8.toNat(decimal)); // sets goal in ckSatoshi
   };
 
   public shared query ({ caller }) func getProfile() : async Result.Result<T.Profile, T.Error> {
@@ -79,48 +120,9 @@ actor class Self() = this {
   public shared query func getAppStatus() : async Result.Result<BaseCommands.AppStatusDTO, T.Error> {
     return #ok(appStatus);
   };
-  private func defaultSubaccount() : Subaccount {
-    Blob.fromArrayMut(Array.init(32, 0 : Nat8));
-  };
 
-  public func approve_funds(amount : Nat) : async Result.Result<(), ckBTCLedger.ApproveError> {
-    let fee = await ckBTCLedger.icrc1_fee();
-    let decimals = Nat8.toNat(await ckBTCLedger.icrc1_decimals());
-    let adjusted_amount = amount * Nat.pow(10, 8 - decimals);
-    let adjusted_fee = fee * Nat.pow(10, 8 - decimals);
-
-    let approve_result = await ckBTCLedger.icrc2_approve({
-      from_subaccount = ?defaultSubaccount(); // need to fix this 
-      spender = {
-        owner = Principal.fromActor(this);
-        subaccount = null;
-      };
-      to = {
-        owner = Principal.fromActor(this);
-        subaccount = null;
-      };
-      amount = adjusted_amount;
-      fee = ?adjusted_fee;
-      expected_allowance = null;
-      expires_at = null;
-      memo = null;
-      created_at_time = ?Nat64.fromNat(Int.abs(Time.now()));
-    });
-
-    switch (approve_result) {
-      case (#Ok(_)) {
-        return #ok(());
-      };
-      case (#Err(err)) {
-        return #err(err);
-      };
-    };
-  };
-
-  public shared ({ caller }) func contribute(amount : Nat) : async Result.Result<(), Text> {
-    if (not initialized) {
-      return #err("The canister is not initialized");
-    };
+  // amount is in ckSatoshi
+  public shared ({ caller }) func participate(amount : Nat) : async Result.Result<(), Text> {
 
     let current_balance = await ckBTCLedger.icrc1_balance_of({
       owner = Principal.fromActor(this);
@@ -134,29 +136,32 @@ actor class Self() = this {
     if (current_balance + amount > goal) {
       return #err("Contribution would exceed the goal");
     };
-    let fee = await ckBTCLedger.icrc1_fee();
-    let decimals = Nat8.toNat(await ckBTCLedger.icrc1_decimals());
-    let adjusted_amount = amount * Nat.pow(10, 8 - decimals);
-    let adjusted_fee = fee * Nat.pow(10, 8 - decimals);
 
-    let transfer_result = await ckBTCLedger.icrc2_transfer_from({
-      spender_subaccount = ?defaultSubaccount();
-      from = {
-        owner = caller;
-        subaccount = null;
-      };
+    let fee = await ckBTCLedger.icrc1_fee();
+
+    let transfer_result = await ckBTCLedger.icrc1_transfer({
+      from_subaccount = ?Account.principalToSubaccount(caller);
       to = {
         owner = Principal.fromActor(this);
         subaccount = null;
       };
-      amount = adjusted_amount;
-      fee = ?adjusted_fee;
+      amount = amount - fee;
+      fee = ?fee;
       memo = null;
       created_at_time = ?Nat64.fromNat(Int.abs(Time.now()));
     });
 
+    let icfc_staked = amount / icfcCexchange;
+
     switch (transfer_result) {
       case (#Ok(_)) {
+        let particapantsBuffer = Buffer.fromArray<T.SaleParticipant>(saleParticipants);
+        particapantsBuffer.add({
+          user = caller;
+          amount = amount;
+          icfc_staked = icfc_staked;
+        });
+        saleParticipants := Buffer.toArray(particapantsBuffer);
         return #ok(());
       };
       case (#Err(err)) {
@@ -169,44 +174,34 @@ actor class Self() = this {
     return caller;
   };
 
-  public shared ({ caller }) func withdraw() : async Result.Result<(), Text> {
-    if (not initialized) {
-      return #err("The canister is not initialized");
-    };
-
-    if (Option.isNull(owner) or not is_owner(caller)) {
-      return #err("Only the owner can withdraw");
-    };
-
-    let balance = await ckBTCLedger.icrc1_balance_of({
-      owner = Principal.fromActor(this);
-      subaccount = null;
-    });
+  private func returnParticipantsckBTC() : async Result.Result<Nat, Text> {
+    let participants = saleParticipants;
+    saleParticipants := [];
     let fee = await ckBTCLedger.icrc1_fee();
-    // Transfer the balance to the owner
-    let transfer_result = await ckBTCLedger.icrc1_transfer({
-      to = {
-        owner = switch (owner) {
-          case (?principal) principal;
-          case (null) throw Error.reject("Owner is not set");
+    var total = 0;
+    for (participant in Array.vals(participants)) {
+      let transfer_result = await ckBTCLedger.icrc1_transfer({
+        from_subaccount = ?Account.defaultSubaccount();
+        to = {
+          owner = Principal.fromActor(this);
+          subaccount = ?Account.principalToSubaccount(participant.user);
         };
-        subaccount = null;
-      };
-      amount = balance - fee;
-      fee = ?fee;
-      memo = null;
-      created_at_time = ?Nat64.fromNat(Int.abs(Time.now()));
-      from_subaccount = ?defaultSubaccount();
-    });
+        amount = participant.amount - fee;
+        fee = ?fee;
+        memo = null;
+        created_at_time = ?Nat64.fromNat(Int.abs(Time.now()));
+      });
 
-    switch (transfer_result) {
-      case (#Ok(_)) {
-        return #ok(());
-      };
-      case (#Err(err)) {
-        return #err("Transfer failed: " # debug_show (err));
+      switch (transfer_result) {
+        case (#Ok(_)) {
+          total += participant.amount;
+        };
+        case (#Err(err)) {
+          return #err("Transfer failed: " # debug_show (err));
+        };
       };
     };
+    return #ok(total);
   };
 
   public query func get_goal() : async Nat {
@@ -214,10 +209,6 @@ actor class Self() = this {
   };
 
   public shared func get_goal_progress() : async Nat {
-    if (not initialized) {
-      throw Error.reject("The canister is not initialized");
-    };
-
     let current_balance = await ckBTCLedger.icrc1_balance_of({
       owner = Principal.fromActor(this);
       subaccount = null;
@@ -226,21 +217,13 @@ actor class Self() = this {
     return current_balance;
   };
 
-  public shared func get_current_balance() : async Nat {
-    if (not initialized) {
-      throw Error.reject("The canister is not initialized");
-    };
+  public shared ({ caller }) func get_user_balance() : async Nat {
+    // returns in ckSatoshi
     await ckBTCLedger.icrc1_balance_of({
       owner = Principal.fromActor(this);
-      subaccount = null;
+      subaccount = ?Account.principalToSubaccount(caller);
     });
   };
 
-  public shared ({ caller }) func get_user_balance() : async Nat {
-    await ckBTCLedger.icrc1_balance_of({
-      owner = caller;
-      subaccount = null;
-    });
-  };
-
+  // public shared ({caller}) func create_podcast_group()
 };

@@ -19,6 +19,19 @@ module ICFCTypes {
     profilePictureExtension : Text;
     termsAgreed : Bool;
     appPrincipalIds : [(Text, Base.PrincipalId)];
+    podcastIds: [Base.PrincipalId];
+  };
+
+  public type Podcast = {
+    id : Base.PrincipalId;
+    name : Text;
+    description : Text;
+    createdOn : Int;
+    creator : Base.PrincipalId;
+    members : [Base.PrincipalId];
+    subscriptionFee : Nat;
+    totalRevenue : Nat;
+    isGraduated : Bool;
   };
 
   public type MembershipType = {
@@ -68,4 +81,9 @@ module ICFCTypes {
     #TransferFromError : ckBTCLedger.TransferFromError;
   };
 
+  public type SaleParticipant = {
+    user : Principal;
+    amount : Nat;
+    icfc_staked: Nat;
+  };
 };
