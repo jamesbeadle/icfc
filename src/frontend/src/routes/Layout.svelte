@@ -102,9 +102,9 @@
             {/if}
           
           <header class="fixed flex items-center justify-between w-full h-16 px-4 text-white bg-gray-900 shadow-md top">
-              <div class="flex items-center">
+              <a href="/" class="flex items-center">
                 <LogoIcon className='w-8' />
-              </div>
+              </a>
           
               <div class="flex items-center gap-4">
                 <button
