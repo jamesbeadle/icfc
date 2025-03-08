@@ -107,13 +107,21 @@
 }
 
 .section-title {
-  @apply text-3xl cta-text;
+  @apply text-3xl cta-text text-BrandSuccess;
 }
 
 .sub-header {
-  @apply text-2xl cta-text;
+  @apply text-2xl cta-text text-BrandInfo;
 }
 
 .small-header {
-  @apply text-lg cta-text;
+  @apply text-lg cta-text text-BrandGrayShade3;
+}
+
+.section-header{
+  @apply text-BrandGrayShade3 cta-text
+}
+
+.page-intro{
+  @apply text-lg;
 }

@@ -1,3 +1,8 @@
+<script>
+
+    import HeaderContentSection from "../shared/header-content-section.svelte";
+
+</script>
 <div class="flex flex-col space-y-2">
 
     <p class="section-title">
@@ -43,18 +48,14 @@
     <p>
         Key responsibilities include: 
     </p>
-    <ul>
-        <li><b>Club Acquisitions: </b>Allocating capital raised to purchase clubs.</li>
-        <li><b>Governance Frameworks: </b>Providing standardised smart contracts and voting structures for clubs.</li>
-        <li><b>Liquidity Support: </b>Managing token liquidity pools.</li>
-        <li><b>Meta-Governance: </b>Proposing high-level strategies that impact the entire ecosystem.</li>
-        <li><b>Building Reserves: </b>Strengthening financial resilience and treasury stability via on-chain mechanisms.</li>
-    </ul>
     
-
-
-
-
+    <ul class="space-y-4">
+        <HeaderContentSection title='Club Acquisitions' content='Allocating capital raised to purchase clubs.' />
+        <HeaderContentSection title='Governance Frameworks' content='Providing standardised smart contracts and voting structures for clubs.' />
+        <HeaderContentSection title='Liquidity Support' content='Managing token liquidity pools.' />
+        <HeaderContentSection title='Parent Governance' content='Proposing high-level strategies that impact the entire ecosystem.' />
+        <HeaderContentSection title='Building Reserves' content='Strengthening financial resilience and treasury stability via on-chain mechanisms.' />
+    </ul>
 
     <p class="small-header">Sub-DAOs (Club-Level Governance)</p>
 
@@ -94,16 +95,10 @@
         Governance tokens will be issued through:
     </p>
 
-    <ul>
-        <li>
-            - Attendance-Based Minting: Tickets verified on-chain (QR codes, NFC, mobile wallets) to reward match attendees. 
-        </li>
-        <li>
-            - Event & Social Media Engagement: Fans participating in events, training sessions or online campaigns earn tokens. 
-        </li>
-        <li>
-            - Player & Scouting Rewards: Players and scouts receive tokens for contributing to club development.         
-        </li>
+    <ul class="space-y-4">
+        <HeaderContentSection title='Attendance-Based Minting' content='Tickets verified on-chain (QR codes, NFC, mobile wallets) to reward match attendees.' />
+        <HeaderContentSection title='Event & Social Media Engagement' content='Fans participating in events, training sessions or online campaigns earn tokens.' />
+        <HeaderContentSection title='Player & Scouting Rewards' content='Players and scouts receive tokens for contributing to club development.' />
     </ul>
 
     <p class="small-header">
@@ -114,19 +109,11 @@
         The sub-DAO token split will be as follows: 
     </p>
     
-    <ul>
-        <li>
-            Historic Supporters: 25%
-        </li>
-        <li>
-            Season Supporters: 25%
-        </li>
-        <li>
-            Club Treasury (For club events and player social media promotion): 40%
-        </li>
-        <li>
-            ICFC: 10%
-        </li>
+    <ul class="space-y-4">
+        <HeaderContentSection title='Historic Supporters' content='25%.' />
+        <HeaderContentSection title='Season Supporters' content='25%.' />
+        <HeaderContentSection title='Club Treasury (For club events and player social media promotion)' content='40%.' />
+        <HeaderContentSection title='ICFC' content='10%.' />
     </ul>
     
     <p>
@@ -169,16 +156,10 @@
         The ICFC DAO will retain a small stake and minor voting power (10%) in every club purchased. This ensures long-term stability, strategic alignment and responsible decentralisation across all sub-DAO by:
     </p>
 
-    <ul>
-        <li>
-            - Preventing governance deadlocks or manipulation by bad actors.
-        </li>
-        <li>
-            - Ensuring clubs remain aligned with ICFC’s broader mission.
-        </li>
-        <li>
-            - ICFC neuron holders get a say in all clubs via the Guardian DAO’s collective voting stake.
-        </li>
+    <ul class="space-y-4">
+        <HeaderContentSection title='Governance' content='Preventing governance deadlocks or manipulation by bad actors.' />
+        <HeaderContentSection title='Mission' content='Ensuring clubs remain aligned with ICFC’s broader mission.' />
+        <HeaderContentSection title='Participation' content='ICFC neuron holders get a say in all clubs via the ICFC DAO’s collective voting stake.' />
     </ul>
     
     <p>
@@ -208,16 +189,10 @@
         These sub-DAOs:
     </p>
 
-    <ul>
-        <li>
-            <b class="cta-text">Issue Governance Tokens</b> that provide voting rights on club decisions.
-        </li>
-        <li>
-            <b class="cta-text">Manage a Club Treasury</b> funded by matchday revenue, sponsorships and merchandise sales.
-        </li>
-        <li>
-            <b class="cta-text">Implement On-Chain Proposals</b> for hiring managers, player scouting & transfers, infrastructure investment and sponsorships.
-        </li>
+    <ul class="space-y-4">
+        <HeaderContentSection title='Issue Governance Tokens' content='Issue Governance Tokens that provide voting rights on club decisions.' />
+        <HeaderContentSection title='Manage a Club Treasury' content='Manage a Club Treasury funded by matchday revenue, sponsorships and merchandise sales.' />
+        <HeaderContentSection title='Implement On-Chain Proposals' content='Implement On-Chain Proposals for hiring managers, player scouting & transfers, infrastructure investment and sponsorships.' />
     </ul>
 
     <p>
@@ -228,20 +203,14 @@
         Some of the proposal types we believe fans should be able to execute are:
     </p>
 
-    <ul>
-        <li>
-            - Add & remove a player to the club’s scout, transfer & loan list.
-        </li>
-        <li>
-            - Create, renegotiate or terminante a player's contract as a group.
-        </li>
-        <li>
-            - Hire & fire the team's manager as a group.
-        </li>
-        <li>- Add & remove the captaincy of a club.</li>
-        <li>- Sponsorship deal approvals.</li>
-        <li>- Manage club branding, marketing & sponsorship decisions. </li>
-        <li>- Propose facilities upgrades and general fan motions.</li>
+    <ul class="space-y-4">
+        <HeaderContentSection title='' content="Add & remove a player to the club’s scout, transfer & loan list." />
+        <HeaderContentSection title='' content="Create, renegotiate or terminante a player's contract as a group." />
+        <HeaderContentSection title='' content="Hire & fire the team's manager as a group." />
+        <HeaderContentSection title='' content="Add & remove the captaincy of a club." />
+        <HeaderContentSection title='' content="Sponsorship deal approvals." />
+        <HeaderContentSection title='' content="Manage club branding, marketing & sponsorship decisions." />
+        <HeaderContentSection title='' content="Propose facilities upgrades and general fan motions." />
     </ul>
 
     <p>
@@ -252,19 +221,11 @@
         ICFC will ensure long-term financial stability of clubs it owns through maximising available revenue streams:
     </p>
 
-    <ul>
-        <li>
-            <b class="cta-text">Matchday Earnings:</b> Ticket sales and stadium revenue.
-        </li>
-        <li>
-            <b class="cta-text">Merchandise & Sponsorships:</b> Attracting bands interested in community-driven teams. 
-        </li>
-        <li>
-            <b class="cta-text">Scouting Network Services:</b> Selling scouting data to other clubs. 
-        </li>
-        <li>
-            <b class="cta-text">Event Hosting:</b> Renting out stadium spaces for additional income. 
-        </li>
+    <ul class="space-y-4">
+        <HeaderContentSection title='Matchday Earnings' content="Ticket sales and stadium revenue." />
+        <HeaderContentSection title='Merchandise & Sponsorships' content="Attracting bands interested in community-driven teams." />
+        <HeaderContentSection title='Scouting Network Services' content="Selling scouting data to other clubs." />
+        <HeaderContentSection title='Event Hosting' content="Renting out stadium spaces for additional income." />
     </ul>
 
     <p class="small-header">

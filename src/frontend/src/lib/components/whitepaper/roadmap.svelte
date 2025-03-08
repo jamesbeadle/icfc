@@ -1,3 +1,8 @@
+<script>
+
+    import HeaderContentSection from "../shared/header-content-section.svelte";
+
+</script>
 <div class="flex flex-col space-y-2">
 
     <p class="section-title">
@@ -12,16 +17,10 @@
         ICFC is redefining the football landscape, shifting ownership and governance directly into the hands of fans, players and communities. Our model provides:     
     </p>
 
-    <ul>
-        <li>
-            - Empowered Community: Fans become stakeholders, making key club decisions. 
-        </li>
-        <li>
-            - Transparent Operations: On-chain governance eliminates secrecy. 
-        </li>
-        <li>
-            - Sustainable Growth: Long-term incentives ensure stability. 
-        </li>
+    <ul class="space-y-4">
+        <HeaderContentSection title='Empowered Community' content="Fans become stakeholders, making key club decisions." />
+        <HeaderContentSection title='Transparent Operations' content="On-chain governance eliminates secrecy." />
+        <HeaderContentSection title='Sustainable Growth' content="Long-term incentives ensure stability." />
     </ul>
 
     <p>
@@ -32,16 +31,10 @@
         Get Involved:
     </p>
 
-    <ul>
-        <li>
-            - Website: icfc.app
-        </li>
-        <li>
-            - Community Channels: Official forums & social media groups coming soon.
-        </li>
-        <li>
-            - Development & Partnerships: Inquiries can be directed through on-chain proposals or by contacting the ICFC DAO.
-        </li>
+    <ul class="space-y-4">
+        <HeaderContentSection title='Website' content="icfc.app." />
+        <HeaderContentSection title='Community Channels' content="Official forums & social media groups coming soon." />
+        <HeaderContentSection title='Development & Partnerships' content="Inquiries can be directed through on-chain proposals or by contacting the ICFC DAO." />
     </ul>
     <br />
     <br />

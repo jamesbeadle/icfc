@@ -1,11 +1,16 @@
 <div class="flex flex-col space-y-2">
 
     <p class="section-title">
-        The ICFC Token
+        The ICFC DAO
     </p> 
     
-    <p>
-        We utilise the ICFC token throughout our ecosystem to ensure that we can balance the DAO's token supply through the online services we offer.
+    <p class="page-intro">
+        The ICFC utility token is used throughout our ecosystem within various governance, payment and rewawrd mechanisms.
+        Each mechanism has been carefully thought out to balance token supply through the online services we offer.
+    </p>
+
+    <p class="sub-header">
+        Tokenisation Mechanisms Integrated into the ICFC Ecosystem
     </p>
 
     <p class="small-header">Governance Rewards</p>
@@ -29,10 +34,6 @@
         These prize pools give the DAO another tokenomic lever to pull when needed, allowing us to reward members for winning in OpenFPL, OpenWSL and any other future games we create.
     </p>
             
-
-    <p class="sub-header">
-        Other Tokenisation Mechanisms Integrated into the ICFC Ecosystem
-    </p>
     
     <p class="small-header">
         ICFC Membership

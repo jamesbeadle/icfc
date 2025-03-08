@@ -1,3 +1,8 @@
+<script>
+
+    import HeaderContentSection from "../shared/header-content-section.svelte";
+
+</script>
 <div class="flex flex-col space-y-2">
 
     <p class="section-title">
@@ -42,13 +47,14 @@
     <p>
         These revenue streams include:
     </p>
-    <ul>
-        <li>- Purchase of trading cards on Transfer Kings (ICFC).</li>
-        <li>- Private league revenue from OpenFPL and OpenWSL (ICFC).</li>
-        <li>Share of content creator subscriptions (ICFC).</li>
-        <li>In app sponsorship (ICP / ICFC / ckBTC).</li>
-        <li>Off-chain podcast advertising revenue (ICP / ICFC / ckBTC).</li>
-        <li>Off-chain merchandise revenue (ICP / ICFC / ckBTC).</li>
+
+    <ul class="space-y-4">
+        <HeaderContentSection title='' content="Purchase of trading cards on Transfer Kings (ICFC)." />
+        <HeaderContentSection title='' content="Private league revenue from OpenFPL and OpenWSL (ICFC)." />
+        <HeaderContentSection title='' content="Share of content creator subscriptions (ICFC)." />
+        <HeaderContentSection title='' content="In app sponsorship (ICP / ICFC / ckBTC)." />
+        <HeaderContentSection title='' content="Off-chain podcast advertising revenue (ICP / ICFC / ckBTC)." />
+        <HeaderContentSection title='' content="Off-chain merchandise revenue (ICP / ICFC / ckBTC)." />
     </ul>
     <p>
         These channels provide a balanced mix of ICFC, ICP & ckBTC revenue, enhancing the DAO's financial resilience.
@@ -61,13 +67,10 @@
     <p>
         ICFC will provide a platform for content creators, enabling fan-driven media, analysis, and engagement. Content creators can earn revenue through:
     </p>
-    <ul>
-        <li>
-            <span>Exclusive ICFC Content: </span> The tooling for content creators will grow with site development, enabling any fan to perform post match analysis for their channel, organise interview and perform match analysis, competing with other fans to create the most popular football show.
-        </li>
-        <li>
-            <span>Sports Writers: </span> Articulate sports writers will finally be able to compete against other writers in a fan driven environment, earning ICFC for their insights in football.
-        </li>
+    
+    <ul class="space-y-4">
+        <HeaderContentSection title='Exclusive ICFC Content' content="The tooling for content creators will grow with site development, enabling any fan to perform post match analysis for their channel, organise interview and perform match analysis, competing with other fans to create the most popular football show." />
+        <HeaderContentSection title='Sports Writers' content="Articulate sports writers will finally be able to compete against other writers in a fan driven environment, earning ICFC for their insights in football." />
     </ul>
 
     <p>
@@ -86,19 +89,11 @@
         ICFC and its sub-DAO clubs will launch a fully integrated online merchandise store, offering a wide range of club-branded apparel and accessories, including:
     </p>
 
-    <ul>
-        <li>
-            Football Kits
-        </li>
-        <li>
-            Headwear
-        </li>
-        <li>
-            Water Bottles & Accessories
-        </li>
-        <li>
-            Training Gear & Fan Merchandise
-        </li>
+    <ul class="space-y-4">
+        <HeaderContentSection title='' content="Football Kits." />
+        <HeaderContentSection title='' content="Headwear." />
+        <HeaderContentSection title='' content="Water Bottles & Accessories." />
+        <HeaderContentSection title='' content="Training Gear & Fan Merchandise." />
     </ul>
     
     <p>
@@ -116,23 +111,11 @@
         Sponsorship opportunities will include:
     </p>
 
-    <ul>
-        <li>
-            <b class="cta-text">Stadium Sponsorships:</b>
-            <p>Naming rights, pitch-side advertising, digital banners.</p>
-        </li>
-        <li>
-            <b class="cta-text">Kit & Apparel Deals:</b>
-            <p>Branded partnerships on team jerseys & training gear.</p>
-        </li>
-        <li>
-            <b class="cta-text">Digital & Web3 Sponsorships:</b>
-            <p>Collaborations by sponsoring  blockchain services.</p>
-        </li>
-        <li>
-            <b class="cta-text">Event & Content Sponsorships:</b>
-            <p>Sponsored match highlights, interviews, and fan content.</p>
-        </li>
+    <ul class="space-y-4">
+        <HeaderContentSection title='Stadium Sponsorships' content="Naming rights, pitch-side advertising, digital banners." />
+        <HeaderContentSection title='Kit & Apparel Deals' content="Branded partnerships on team jerseys & training gear." />
+        <HeaderContentSection title='Digital & Web3 Sponsorships' content="Collaborations by sponsoring  blockchain services." />
+        <HeaderContentSection title='Event & Content Sponsorships' content="Sponsored match highlights, interviews, and fan content." />
     </ul>
     
     <p>
@@ -160,16 +143,10 @@
 <p>
     These collectibles will include:
 </p>
-<ul>
-    <li>
-        Player Trading Cards – Cards with rarity tiers and dynamic stats.
-    </li>
-    <li>
-        Limited-Edition Collectibles – Special moments, championship cards, and exclusive designs.
-    </li>
-    <li>
-        Marketplace & Secondary Sales – Fans can trade, stake, or sell digital assets.
-    </li>
+<ul class="space-y-4">
+    <HeaderContentSection title='Player Trading Cards' content="Cards with rarity tiers and dynamic stats." />
+    <HeaderContentSection title='Limited-Edition Collectibles' content="Special moments, championship cards, and exclusive designs." />
+    <HeaderContentSection title='Marketplace & Secondary Sales' content="Fans can trade, stake, or sell digital assets." />
 </ul>
 
 <p>

@@ -1,10 +1,15 @@
+<script>
+
+    import HeaderContentSection from "../shared/header-content-section.svelte";
+
+</script>
 <div class="flex flex-col space-y-2">
 
     <p class="section-title">
         Decentralisation Sale 2: Financial Focus
     </p> 
 
-    <p>
+    <p class="page-intro">
         A swap will occur throughout April 2025, if successful, decentralising 25% of the ICFC platform. 
     </p>
 
@@ -52,16 +57,10 @@
         Purpose of Funds:
     </p>
 
-    <ul>
-        <li>
-            Acquiring real-world football clubs.
-        </li>
-        <li>
-            Developing and refining icfc.app.
-        </li>
-        <li>
-            Seeding liquidity pools for future token trading. 
-        </li>
+    <ul class="space-y-4">
+        <HeaderContentSection title='' content="Acquiring real-world football clubs." />
+        <HeaderContentSection title='' content="Developing and refining icfc.app." />
+        <HeaderContentSection title='' content="Seeding liquidity pools for future token trading." />
     </ul>
 
     <p class="sub-header">

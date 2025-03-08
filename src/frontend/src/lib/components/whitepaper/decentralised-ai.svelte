@@ -1,3 +1,8 @@
+<script>
+
+    import HeaderContentSection from "../shared/header-content-section.svelte";
+
+</script>
 <div class="flex flex-col space-y-2">
 
 
@@ -23,20 +28,11 @@
         Objectives
     </p>
 
-    <ul>
-        <li>
-            Boost fan engagement and governance through innovative AI tools.
-        </li>
-        <li>
-            Expand the Football God dataset with in-house AI-generated insights and
-            historical data.
-        </li>
-        <li>
-            Establish ICFC as a pioneer in decentralised AI applications on ICP.
-        </li>
-        <li>
-            Support long-term growth and value creation for ICFC token holders.
-        </li>
+    <ul class="space-y-4">
+        <HeaderContentSection title='Engage' content="Boost fan engagement and governance through innovative AI tools." />
+        <HeaderContentSection title='Capture' content="Expand the Football God dataset with in-house AI-generated insights and historical data." />
+        <HeaderContentSection title='Decentralise' content="Establish ICFC as a pioneer in decentralised AI applications on ICP." />
+        <HeaderContentSection title='Expand' content="Support long-term growth and value creation for ICFC token holders." />
     </ul>
 
     <p class="small-header">
@@ -59,19 +55,10 @@
         We will implement these features by:
     </p>
 
-    <ul>
-        <li>
-            Develop and train an in-house LLM on football-specific data from Football God
-            and betting patterns, ensuring compliance with the pending gambling license.
-        </li>
-        <li>
-            Upgrade ICP canisters to support real-time conversational workloads, utilizing
-            the platform’s HTTP-serving capabilities.
-        </li>
-        <li>
-            Create a user-friendly chat interface integrated into ICFC for seamless access
-            across devices.
-        </li>
+    <ul class="space-y-4">
+        <HeaderContentSection title='' content="Develop and train an in-house LLM on football-specific data from Football God and betting patterns, ensuring compliance with the pending gambling license." />
+        <HeaderContentSection title='' content="Upgrade ICP canisters to support real-time conversational workloads, utilizing the platform’s HTTP-serving capabilities." />
+        <HeaderContentSection title='' content="Create a user-friendly chat interface integrated into ICFC for seamless access across devices." />
     </ul>
 
     <p>
@@ -99,18 +86,10 @@
         We will implement these features by:
     </p>
 
-    <ul>
-        <li>
-            Develop in-house models to extend Football God with comprehensive stats for all leagues and eras, using generative techniques to fill data gaps.
-        </li>
-        <li>
-            Collaborate with DFINITY to enhance ICP subnets, exploring the potential for
-            GPU-based nodes to boost computational power.
-        </li>
-        <li>
-            Build on-chain tools allowing fans to interact with simulations, integrated into
-            ICFC and sub-DAO dashboards.
-        </li>
+    <ul class="space-y-4">
+        <HeaderContentSection title='' content="Develop in-house models to extend Football God with comprehensive stats for all leagues and eras, using generative techniques to fill data gaps." />
+        <HeaderContentSection title='' content="Collaborate with DFINITY to enhance ICP subnets, exploring the potential for GPU-based nodes to boost computational power." />
+        <HeaderContentSection title='' content="Build on-chain tools allowing fans to interact with simulations, integrated into ICFC and sub-DAO dashboards." />
     </ul>
 
     <p>
@@ -125,66 +104,37 @@
         Challenges
     </p>
 
-    <ul>
-        <li>
-            The primary challenge is computational power, as ICP’s current architecture is
-            CPU based computation nodes.
-        </li>
-        <li>
-            Solution: Implement off-chain pre-training with on-chain inference to optimize
-            resources, while advocating for GPU-based nodes with DFINITY to future-proof
-            the system, pending resource availability.
-        </li>
+    <ul class="space-y-4">
+        <HeaderContentSection title='' content="The primary challenge is computational power, as ICP’s current architecture is CPU based computation nodes." />
+        <HeaderContentSection title='Solution' content="Implement off-chain pre-training with on-chain inference to optimize resources, while advocating for GPU-based nodes with DFINITY to future-proof the system, pending resource availability." />
     </ul>
 
     <p>
         Resources
     </p>
 
-    <ul>
-        <li>
-            Engage AI and ICP developers from the existing team to lead implementation.
-        </li>
-        <li>
-            Leverage in-house expertise to build and refine LLMs, analytical models,
-            simulators, and predictive models, with support from data scientists.
-        </li>
-        <li>
-            Utilise resources from decentralisation sale proceeds, with any excess
-            reinvested into the ICFC treasury for future AI initiatives, subject to funding.
-        </li>
+    <ul class="space-y-4">
+        <HeaderContentSection title='' content="Engage AI and ICP developers from the existing team to lead implementation." />
+        <HeaderContentSection title='' content="Leverage in-house expertise to build and refine LLMs, analytical models, simulators, and predictive models, with support from data scientists." />
+        <HeaderContentSection title='' content="Utilise resources from decentralisation sale proceeds, with any excess reinvested into the ICFC treasury for future AI initiatives, subject to funding." />
     </ul>
 
     <p>
         Benefits
     </p>
 
-    <ul>
-        <li>
-            Empowers fans with accurate, unbiased data to shape sub-DAO decisions.
-        </li>
-        <li>
-            Drives revenue growth through premium simulation access and conversational
-            features, supporting merchandise and sponsorships.
-        </li>
-        <li>
-            Promotes ICP adoption by showcasing its potential, increasing ecosystem
-            demand and token value.
-        </li>
-        <li>
-            Provides a competitive edge by owning the data and executing in-house AI on-
-            chain, surpassing projects reliant on centralised data or off-chain processing.
-        </li>
+    <ul class="space-y-4">
+        <HeaderContentSection title='' content="Empowers fans with accurate, unbiased data to shape sub-DAO decisions." />
+        <HeaderContentSection title='' content="Drives revenue growth through premium simulation access and conversational features, supporting merchandise and sponsorships." />
+        <HeaderContentSection title='' content="Promotes ICP adoption by showcasing its potential, increasing ecosystem demand and token value." />
+        <HeaderContentSection title='' content="Provides a competitive edge by owning the data and executing in-house AI on-chain, surpassing projects reliant on centralised data or off-chain processing." />
     </ul>
     <p>
         Next Steps
     </p>
-    <ul>
-        <li>
-            Finalise the resource allocation plan.
-        </li>
-        <li>
-            Initiate staff engagement and model development.
-        </li>
+
+    <ul class="space-y-4">
+        <HeaderContentSection title='' content="Finalise the resource allocation plan." />
+        <HeaderContentSection title='' content="Initiate staff engagement and model development." />
     </ul>
 </div>
