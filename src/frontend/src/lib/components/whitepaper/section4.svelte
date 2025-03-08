@@ -223,7 +223,7 @@
     </p>
     <p>
         With sponsorship earnings reinvested into the treasury and token buybacks, ICFC ensures long-term stability and sustained growth. Big brands mean big growth.
-</p>
+    </p>
 
 <p class="small-header">
     Digital Collectibles & Trading Cards
@@ -231,20 +231,32 @@
 
 <p>
     ICFC’s trading cards and digital collectibles represent a high-growth revenue stream, combining Web3 technology with traditional fan engagement. 
-
+</p>
+<p>
     These collectibles will include:
-Player Trading Cards – Cards with rarity tiers and dynamic stats.
-Limited-Edition Collectibles – Special moments, championship cards, and exclusive designs.
-Marketplace & Secondary Sales – Fans can trade, stake, or sell digital assets.
+</p>
+<ul>
+    <li>
+        Player Trading Cards – Cards with rarity tiers and dynamic stats.
+    </li>
+    <li>
+        Limited-Edition Collectibles – Special moments, championship cards, and exclusive designs.
+    </li>
+    <li>
+        Marketplace & Secondary Sales – Fans can trade, stake, or sell digital assets.
+    </li>
+</ul>
 
-By leveraging rarity, utility, and community-driven demand, ICFC's collectibles will drive high transaction volumes and long-term revenue generation.
+<p>
+    By leveraging rarity, utility, and community-driven demand, ICFC's collectibles will drive high transaction volumes and long-term revenue generation.
+</p>
 
-ICFC digital collectibles let fans own a piece of football history, from legendary match moments to exclusive player cards. With affordable entry points, every fan can start collecting, trading and building their portfolio. Like physical trading cards, these digital assets can grow in value over time, with resale royalties adding long-term potential. Exclusive drops and rare editions offer unique, limited-run memorabilia that could become the next big thing in football collecting. More than just collectibles - this is football history in your hands.
-
+<p>
+    ICFC digital collectibles let fans own a piece of football history, from legendary match moments to exclusive player cards. With affordable entry points, every fan can start collecting, trading and building their portfolio. Like physical trading cards, these digital assets can grow in value over time, with resale royalties adding long-term potential. Exclusive drops and rare editions offer unique, limited-run memorabilia that could become the next big thing in football collecting. More than just collectibles - this is football history in your hands.
 </p>
 
 <p class="sub-header">
-    Tokenisation Mechanisms Integrated into the ICFC Ecosystem
+    Other Tokenisation Mechanisms Integrated into the ICFC Ecosystem
 </p>
 
 <p class="small-header">
@@ -252,24 +264,15 @@ ICFC digital collectibles let fans own a piece of football history, from legenda
 </p>
 
 <p>
-    CFC’s membership-based revenue model is structured around staking-based access, ensuring that governance is community-driven while also generating revenue through token utility.
-Membership Structure & Staking Requirements
-Monthly Membership: Requires staking 1,000 ICFC for the maximum duration.
-Seasonal Membership (July - August): Requires staking 10,000 ICFC for the maximum duration.
-Lifetime Membership: Requires staking 100,000 ICFC (linked to an Internet Identity neuron).
-
-Membership numbers will change as the ICFC token value & supply shift. This creates a self-regulating system where participation is linked to market demand.
-
-ICFC memberships do more than grant access - they drive real value by locking up tokens, making them rarer and more valuable. Staking isn’t just about holding - it gives fans a voice in club decisions, transfers and strategy. As membership grows, so does the club’s financial strength, creating a self-sustaining football economy. More fans, more influence, more value. ICFC is a club powered by its supporters. 
-
+    The ICFC uses a Proof-Of-Stake membership mechanism to ensure the long term staking of ICFC tokens.
 </p>
 
 <p class="small-header">
-    Jeff Bets
+    Betting Stake Burning
 </p>
 
 <p>
-    As mentioned in the product ecosystem section, we will use the losing stakes from our betting platform as a burning mechanism to control total supply.
+    As mentioned in the product ecosystem section, we will use the losing stakes from our betting platform (Jeff Bets) as a burning mechanism to control total supply.
 </p>
 
 

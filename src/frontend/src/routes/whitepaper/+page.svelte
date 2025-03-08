@@ -12,14 +12,18 @@
     import Section5 from '$lib/components/whitepaper/section5.svelte';
     import Section6 from '$lib/components/whitepaper/section6.svelte';
     import Section7 from '$lib/components/whitepaper/section7.svelte';
+    import Membership from '$lib/components/whitepaper/membership.svelte';
+    import DecentralisedAi from '$lib/components/whitepaper/decentralised-ai.svelte';
   
     const sections = [
       { id: 'vision', title: 'Vision', component: Section1 },
       { id: 'ownership', title: 'Fan Ownership', component: Section2 },
-      { id: 'membership', title: 'Membership', component: Section3 },
+      { id: 'products', title: 'Profuct Details', component: Section3 },
       { id: 'token', title: 'Token Details', component: Section4 },
-      { id: 'rewards', title: 'Governance Rewards', component: Section5 },
-      { id: 'burning', title: 'Token Burning', component: Section6 },
+      { id: 'membership', title: 'Membership', component: Membership },
+      { id: 'future', title: 'Future of ICFC', component: Section5 },
+      { id: 'deai', title: 'Decentralised AI', component: DecentralisedAi },
+      { id: 'notes', title: 'Notes', component: Section6 },
       { id: 'roadmap', title: 'Roadmap', component: Section7 },
     ];
 </script>
