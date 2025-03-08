@@ -22,17 +22,17 @@
     </p>
     
     <p>
-        ICFC maintains this comprehensive world football database utilising our governance data management platform, FootballGod. 
+        ICFC maintains this comprehensive world football database utilising our governance data management platform, Football God. 
         This database serves as the backbone of ICFC’s digital ecosystem, providing a governance-backed, continuously updated repository of football intelligence. 
     </p>
 
     <p>
-        Beyond ICFC’s own applications, other ecosystem apps can integrate FootballGod’s dataset by purchasing API access, ensuring that the governance-backed intelligence collected by the ICFC community becomes a valuable, revenue-generating asset. 
+        Beyond ICFC’s own applications, other ecosystem apps can integrate Football God’s dataset by purchasing API access, ensuring that the governance-backed intelligence collected by the ICFC community becomes a valuable, revenue-generating asset. 
         This model allows third-party developers, football analysts, fantasy football platforms and sports betting applications to tap into an unparalleled football data resource, reinforcing ICFC’s position at the forefront of decentralised football intelligence.   
     </p>
 
     <p>
-        We plan to utilise our football dataset to train an AI to extend and backfill all of football data, for all leagues, for all of time. We aim for FootballGod to know everything about football, hold this data on-chain and power more and more new fan based experiences.
+        We plan to utilise our football dataset to train an AI to extend and backfill all of football data, for all leagues, for all of time. We aim for Football God to know everything about football, hold this data on-chain and power more and more new fan based experiences.
     </p>
 
     <p class="sub-header">

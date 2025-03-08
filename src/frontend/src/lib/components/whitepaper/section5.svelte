@@ -300,6 +300,13 @@
     <p class="sub-header">
         Merchandise
     </p>
+    <p>
+        ICFC and the clubs within its sub-DAOs will launch fully integrated online stores, offering a wide range of merchandise including apparel, headwear and & range of accessories. 
+    </p>
+
+    <p>
+        Our product range will be continuously updated to keep up with the latest trends, allowing fans to directly support their clubs while representing their teams with exclusive, high-quality gear. 
+    </p>
 
     <p class="sub-header">
         ICFC Sports Writer & Fan Podcast Accounts: Community-Driven Football Media 

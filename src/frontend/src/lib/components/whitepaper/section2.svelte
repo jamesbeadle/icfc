@@ -29,8 +29,8 @@
     <p class="small-header">Minting</p>
 
     <p>
-        Based on the tokens being burned through Jeff Bets the ICFC DAO is able to provide liquidity for prize pools for applications like OpenFPL and OpenWSL. 
-        These prize pool amounts give us another tokenomic lever to pull if needed, whether to control supply or increase rewards for promotional purposes.
+        The ICFC DAO provides liquidity to application prizes pools by burning the DAO's biggest potential buying pressure, betting stakes on Jeff Bets.
+        These prize pools give the DAO another tokenomic lever to pull when needed, allowing us to reward members for winning in OpenFPL, OpenWSL and any other future games we create.
     </p>
 
     <p class="sub-header">
@@ -78,11 +78,11 @@
             - Enhanced profile recognition on the ICFC website, with an official membership status displayed. 
         </li>
         <li>
-            - Enhanced profile recognition in all related linked ecosystem apps profiles (FootballGod, OpenFPL, OpenWSL, Transfer Kings & Jeff Bets). 
+            - Enhanced profile recognition in all related linked ecosystem apps profiles (Football God, OpenFPL, OpenWSL, Transfer Kings & Jeff Bets). 
         </li>
         <li>- Free Private Leagues on OpenFPL & OpenWSL.</li>
-        <li>- Free bets on Jeff Bets</li>
-        <li>- Free Transfer King Card Packs</li>
+        <li>- Free bets on Jeff Bets.</li>
+        <li>- Free Transfer King Card Packs.</li>
         <li>- Merchandise giveaways.</li>
         <li>- Tickets to ICFC football club events and matches.</li>
         <li>- Entry into prize draws featuring exclusive rewards.</li>
@@ -93,11 +93,11 @@
     </p>
 
     <p class="text-xs">
-        Note Free Bets on Jeff Bets
+        Note: Free Bets on Jeff Bets
     </p>
 
     <p class="text-xs">
-        Free bets will be 1% of the total bets placed on Jeff Bets. This 1% will be placed into a free bet pool and then distributed to the number of players based on their membership. A month where more bets are placed will result in an increased value in the betting pool as the amount of FPL placed is greater. 
+        Free bets will be 1% of the total bets placed on Jeff Bets. This 1% will be placed into a free bet pool and then distributed to the number of players based on their membership. A month where more bets are placed will result in an increased value in the betting pool as the amount of ICFC placed is greater. 
     </p>
             
             
