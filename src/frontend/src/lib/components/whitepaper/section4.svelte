@@ -17,7 +17,11 @@
     </p>
 
     <p>
-        Waterway Labs holds VP Control over ICFC to ensure effective software delivery, enhance treasury balances, and execute strategic growth initiatives.
+        Waterway Labs provides foundational support to the ICFC ecosystem, controlling around 5% of the token supply through their developer neuron. Their main focus is to add value to the ICFC ecosystem, targeting the distribution of profits to ICFC staked neuron holders.
+    </p>
+
+    <p>
+        Along with ensuring the delivery of software, Waterway Labs also ensures execution of strategic growth initiatives.
     </p>
 
     <p>
@@ -75,7 +79,56 @@
         Financial Projections 
     </p>
 
+    <p>
+        Football isn’t just a sport, it’s the biggest game on the planet. 
+        With 4 BILLION fans and endless ways to monetise its data, passion and engagement. 
+        Football is the most widely played and participated activity, uniting people across all ages, cultures and continents, in both organised and casual settings.
+    </p>
+    <p>
+        ICFC is seizing this opportunity with a fully decentralised, real-time football ecosystem, built to generate continuous token demand and a range of revenue streams. 
+        We’ve already invested in product development and team expansion using funds from our first success, OpenFPL. 
+        Now, we’re scaling up, acquiring a football club, finalising products and unlocking a number of revenue streams.
+    </p>
+
+    <p class="small-header">
+        ICFC Revenue Streams
+    </p>
+
+    <p>
+        ICFC’s revenue model is thoughtfully designed to sustain and grow the DAO while ensuring practical utility and value for its users.
+    </p>
+
+    <p class="small-header">
+        Diversified Revenue Model
+    </p>
+
+    <p>
+        ICFC’s revenue streams are diversified to ensure no reliance on any single potentially volatile asset. 
+    </p>
+
+    <p>
+        This approach ensures the long term stability and utility of the DAO, putting it in the best position to fund on-going development and promotion.
+    </p>
+
+    <p>
+        Our suite of products is designed to bring in revenue from in-application features centered around the ICFC & ICP utility token.
+    </p>
+
+    <p>
+        These revenue streams include:
+        - purchase of trading cards on transfer kings (ICFC)
+        - private league revenue from openfpl & openwsl (ICFC)
+        - share of content creator subscriptions (ICFC)
+        - in app sponsorhip (ICP / ICFC / ckBTC)
+        - off chain podcast advertising revenue (ICP / ICFC / ckBTC)
+        - off chain merchandise revenue (ICP / ICFC / ckBTC)
+
+        Revenue streams include In-game Features such as fantasy football private leagues, Membership Subscriptions, Merchandise & Online Store, Digital Collectibles & Trading Cards, Ticket Sales & Matchday Revenue, Content Creators and Sponsorship. These channels provide a balanced mix of $ICFC and $ICP revenue, enhancing the DAO's financial resilience.
+
+    </p>
     
+
+
 
     <p class="small-header">
         RWA Acquisition 
