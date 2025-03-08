@@ -90,7 +90,7 @@
         Now, we’re scaling up, acquiring a football club, finalising products and unlocking a number of revenue streams.
     </p>
 
-    <p class="small-header">
+    <p class="sub-header">
         ICFC Revenue Streams
     </p>
 
@@ -116,17 +116,75 @@
 
     <p>
         These revenue streams include:
-        - purchase of trading cards on transfer kings (ICFC)
-        - private league revenue from openfpl & openwsl (ICFC)
-        - share of content creator subscriptions (ICFC)
-        - in app sponsorhip (ICP / ICFC / ckBTC)
-        - off chain podcast advertising revenue (ICP / ICFC / ckBTC)
-        - off chain merchandise revenue (ICP / ICFC / ckBTC)
-
-        Revenue streams include In-game Features such as fantasy football private leagues, Membership Subscriptions, Merchandise & Online Store, Digital Collectibles & Trading Cards, Ticket Sales & Matchday Revenue, Content Creators and Sponsorship. These channels provide a balanced mix of $ICFC and $ICP revenue, enhancing the DAO's financial resilience.
-
+    </p>
+    <ul>
+        <li>- Purchase of trading cards on Transfer Kings (ICFC).</li>
+        <li>- Private league revenue from OpenFPL and OpenWSL (ICFC).</li>
+        <li>Share of content creator subscriptions (ICFC).</li>
+        <li>In app sponsorship (ICP / ICFC / ckBTC).</li>
+        <li>Off-chain podcast advertising revenue (ICP / ICFC / ckBTC).</li>
+        <li>Off-chain merchandise revenue (ICP / ICFC / ckBTC).</li>
+    </ul>
+    <p>
+        These channels provide a balanced mix of ICFC, ICP & ckBTC revenue, enhancing the DAO's financial resilience.
     </p>
     
+    <p class="small-header">
+        Content Creators
+    </p>
+
+    <p>
+        ICFC will provide a platform for content creators, enabling fan-driven media, analysis, and engagement. Content creators can earn revenue through:
+    </p>
+    <ul>
+        <li>
+            <span>Exclusive ICFC Content: </span> The tooling for content creators will grow with site development, enabling any fan to perform post match analysis for their channel, organise interview and perform match analysis, competing with other fans to create the most popular football show.
+        </li>
+        <li>
+            <span>Sports Writers: </span> Articulate sports writers will finally be able to compete against other writers in a fan driven environment, earning ICFC for their insights in football.
+        </li>
+    </ul>
+
+    <p>
+        This creator economy will establish a sustainable revenue model, rewarding both content producers and ICFC token holders.
+    </p>
+
+    <p class="">
+        Why This Matters for Football Fans & Investors
+    </p>
+Fans Become Creators, Creators Become Investors: ICFC empowers fans to produce content, earn rewards & grow their stake in the club.
+More Content, More Engagement, More Value: Every article, video and podcast drives fan interaction, strengthening the ICFC brand and ecosystem.
+A Club Built by its Community: Decentralised content creation means fans are in control & their contributions drive token growth.
+Competitive Spirit: Fans battle to have the biggest and most influential podcast, fueling creativity passion and deeper connections within the ecosystem.
+Exclusive Content, Exclusive Rewards: Subscriptions and premium content unlock new ways to engage while increasing ICFC token utility. 
+
+
+
+    
+<p class="small-header">
+    Merchandise & Online Store
+</p>
+<p class="small-header">
+    Sponsorship
+</p>
+<p class="small-header">
+    Digital Collectibles & Trading Cards
+</p>
+
+<p class="sub-header">
+    Tokenisation Mechanisms Integrated into the ICFC Ecosystem
+</p>
+
+<p class="small-header">
+    Jeff Bets
+</p>
+
+<p class="small-header">
+    ICFC Membership
+</p>
+
+
+
 
 
 
