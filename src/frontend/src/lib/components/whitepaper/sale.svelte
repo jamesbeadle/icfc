@@ -1,17 +1,13 @@
 <script>
 
     import HeaderContentSection from "../shared/header-content-section.svelte";
+    import WhitepaperPage from "./whitepaper-page.svelte";
 
 </script>
-<div class="flex flex-col space-y-2">
+<WhitepaperPage
+    title="Decentralisation Sale 2: Financial Focus"
+    intro="A swap will occur throughout April 2025, if successful, decentralising 25% of the ICFC platform.">
 
-    <p class="section-title">
-        Decentralisation Sale 2: Financial Focus
-    </p> 
-
-    <p class="page-intro">
-        A swap will occur throughout April 2025, if successful, decentralising 25% of the ICFC platform. 
-    </p>
 
     <p>
         ICFC operates as a Decentralised Autonomous Organisation (DAO) with a structured financial model:
@@ -93,7 +89,4 @@
         while still benefiting from the strategic support provided by ICFC.
     </p>
 
-
-
-
-</div>
+</WhitepaperPage>

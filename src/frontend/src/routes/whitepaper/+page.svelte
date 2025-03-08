@@ -14,6 +14,7 @@
     import Membership from '$lib/components/whitepaper/membership.svelte';
     import DecentralisedAi from '$lib/components/whitepaper/decentralised-ai.svelte';
     import Roadmap from '$lib/components/whitepaper/roadmap.svelte';
+    import ContentCreators from '$lib/components/whitepaper/content-creators.svelte';
   
     const sections = [
       { id: 'vision', title: 'Vision', component: Vision },
@@ -22,6 +23,7 @@
       { id: 'sale', title: 'Decentralisation Sale 2', component: Sale },
       { id: 'membership', title: 'Membership', component: Membership },
       { id: 'club-daos', title: 'Club DAOs', component: ClubDAOs },
+      { id: 'content-creators', title: 'Content Creators', component: ContentCreators },
       { id: 'deai', title: 'Decentralised AI', component: DecentralisedAi },
       { id: 'roadmap', title: 'Roadmap', component: Roadmap },
       { id: 'notes', title: 'Notes', component: Notes },

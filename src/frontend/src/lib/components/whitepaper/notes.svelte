@@ -1,15 +1,18 @@
-<div class="flex flex-col space-y-2">
+<script>
+    import WhitepaperPage from "./whitepaper-page.svelte";
 
-    <p class="section-title">
-        Further Reading
-    </p> 
+</script>
+<WhitepaperPage
+    title="Further Reading"
+    intro="The OpenFPL DAO was initially developed using the FPL token for our fantasy football platform.">
+
 
     <p class="sub-header">
         The OpenFPL DAO
     </p>
     
     <p>
-        The OpenFPL DAO was initially developed using the FPL token for our fantasy football platform. The initial whitepaper can be found at <a href="https://openfpl.xyz/whitepaper" target="_blank">https://openfpl.xyz/whitepaper</a>.
+        The initial whitepaper can be found at <a href="https://openfpl.xyz/whitepaper" target="_blank">https://openfpl.xyz/whitepaper</a>.
     </p>
     
     <p>
@@ -22,4 +25,4 @@
 
     <p>Full IC dashboard information on the DAO can be found <a href="https://dashboard.internetcomputer.org/sns/gyito-zyaaa-aaaaq-aacpq-cai" target="_blank">here</a>.</p>
 
-</div>
+</WhitepaperPage>

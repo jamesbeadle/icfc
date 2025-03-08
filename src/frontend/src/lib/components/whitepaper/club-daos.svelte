@@ -1,21 +1,22 @@
 <script>
 
     import HeaderContentSection from "../shared/header-content-section.svelte";
+    import WhitepaperPage from "./whitepaper-page.svelte";
 
 </script>
-<div class="flex flex-col space-y-2">
+<WhitepaperPage 
+    title="The Future of ICFC"
+    intro="ICFC will empower fans to own and have their say in club decisions. 
+        This new ownership structure will increase global club engagement through content related to real time decisions fans will make.">
 
-    <p class="section-title">
-        The Future of ICFC
-    </p> 
+
 
     <p class="sub-header">
         Real Club Management
     </p>
 
     <p>
-        ICFC will empower fans to own and have their say in club decisions. 
-        This new ownership structure will increase global club engagement through content related to real time decisions fans will make.
+        
     </p>
 
     <p>
@@ -269,22 +270,4 @@
         Our product range will be continuously updated to keep up with the latest trends, allowing fans to directly support their clubs while representing their teams with exclusive, high-quality gear. 
     </p>
 
-    <p class="sub-header">
-        ICFC Sports Writer & Fan Podcast Accounts: Community-Driven Football Media 
-    </p>
-
-    <p>
-        ICFC introduces a community-powered sports media platform, allowing football writers and fan podcasters to create, share, and monetise their content. 
-    </p>
-    <p>
-        A user can set up a verified Sports Writer or Fan Podcast account on icfc.app for 1 ICP, unlocking tools to build their audience, publish exclusive articles, and host podcasts.
-    </p>
-    <p>
-        This system fosters a more organic, fan-driven football media landscape, where passionate supporters can connect through match analysis, tactical breakdowns, transfer news, and in-depth discussions. Fans can subscribe to their favourite writers and podcasters through a subscription-based model, offering exclusive access to premium content, bonus episodes, behind-the-scenes insights, or interactive Q&A sessions.
-    </p>
-    <p>
-        By decentralising football journalism and fan-driven content, ICFC provides a platform where engagement, insight, and storytelling thrive, giving supporters direct access to the most authentic voices in football media - created by the fans, for the fans.
-    </p>
-
-
-</div>
+</WhitepaperPage>

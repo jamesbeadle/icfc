@@ -115,13 +115,13 @@
 }
 
 .small-header {
-  @apply text-lg cta-text text-BrandGrayShade3;
+  @apply text-lg cta-text text-BrandGrayShade4;
 }
 
 .section-header{
-  @apply text-BrandGrayShade3 cta-text
+  @apply text-BrandGrayShade4 cta-text
 }
 
 .page-intro{
-  @apply text-lg;
+  @apply text-xl;
 }
