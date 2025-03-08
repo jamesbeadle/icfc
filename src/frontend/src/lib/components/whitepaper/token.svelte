@@ -1,12 +1,8 @@
 <div class="flex flex-col space-y-2">
 
     <p class="section-title">
-        ICFC Membership: Join the Club
-    </p> 
-
-    <p class="sub-header">
         The ICFC Token
-    </p>
+    </p> 
     
     <p>
         We utilise the ICFC token throughout our ecosystem to ensure that we can balance the DAO's token supply through the online services we offer.
@@ -34,5 +30,25 @@
     </p>
             
 
+    <p class="sub-header">
+        Other Tokenisation Mechanisms Integrated into the ICFC Ecosystem
+    </p>
+    
+    <p class="small-header">
+        ICFC Membership
+    </p>
+    
+    <p>
+        The ICFC uses a Proof-Of-Stake membership mechanism to ensure the long term staking of ICFC tokens.
+    </p>
+    
+    <p class="small-header">
+        Betting Stake Burning
+    </p>
+    
+    <p>
+        As mentioned in the product ecosystem section, we will use the losing stakes from our betting platform (Jeff Bets) as a burning mechanism to control total supply.
+    </p>
+    
 
 </div>

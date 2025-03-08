@@ -1,6 +1,9 @@
 <div class="flex flex-col space-y-2">
 
 
+<p class="section-title">
+    ICFC Membership: Join the Club
+</p> 
 
 <p class="sub-header">
     Proof-of-Stake Membership

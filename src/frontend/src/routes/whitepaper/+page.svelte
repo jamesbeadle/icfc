@@ -5,26 +5,26 @@
     import TabsTrigger from './../../lib/components/whitepaper/tabs/tabs-trigger.svelte';
     import TabsContent from './../../lib/components/whitepaper/tabs/tabs-content.svelte';
 
-    import Section1 from '$lib/components/whitepaper/section1.svelte';
-    import Section2 from '$lib/components/whitepaper/section2.svelte';
-    import Section3 from '$lib/components/whitepaper/section3.svelte';
-    import Section4 from '$lib/components/whitepaper/section4.svelte';
-    import Section5 from '$lib/components/whitepaper/section5.svelte';
-    import Section6 from '$lib/components/whitepaper/section6.svelte';
-    import Section7 from '$lib/components/whitepaper/section7.svelte';
+    import Vision from '$lib/components/whitepaper/vision.svelte';
+    import Token from '$lib/components/whitepaper/token.svelte';
+    import Products from '$lib/components/whitepaper/products.svelte';
+    import Sale from '$lib/components/whitepaper/sale.svelte';
+    import ClubDAOs from '$lib/components/whitepaper/club-daos.svelte';
+    import Notes from '$lib/components/whitepaper/notes.svelte';
     import Membership from '$lib/components/whitepaper/membership.svelte';
     import DecentralisedAi from '$lib/components/whitepaper/decentralised-ai.svelte';
+    import Roadmap from '$lib/components/whitepaper/roadmap.svelte';
   
     const sections = [
-      { id: 'vision', title: 'Vision', component: Section1 },
-      { id: 'ownership', title: 'Fan Ownership', component: Section2 },
-      { id: 'products', title: 'Profuct Details', component: Section3 },
-      { id: 'token', title: 'Token Details', component: Section4 },
+      { id: 'vision', title: 'Vision', component: Vision },
+      { id: 'ownership', title: 'The ICFC DAO', component: Token },
+      { id: 'products', title: 'Our Products', component: Products },
+      { id: 'sale', title: 'Decentralisation Sale 2', component: Sale },
       { id: 'membership', title: 'Membership', component: Membership },
-      { id: 'future', title: 'Future of ICFC', component: Section5 },
+      { id: 'club-daos', title: 'Club DAOs', component: ClubDAOs },
       { id: 'deai', title: 'Decentralised AI', component: DecentralisedAi },
-      { id: 'notes', title: 'Notes', component: Section6 },
-      { id: 'roadmap', title: 'Roadmap', component: Section7 },
+      { id: 'roadmap', title: 'Roadmap', component: Roadmap },
+      { id: 'notes', title: 'Notes', component: Notes },
     ];
 </script>
 
