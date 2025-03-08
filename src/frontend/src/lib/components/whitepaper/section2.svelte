@@ -78,11 +78,11 @@
             - Enhanced profile recognition on the ICFC website, with an official membership status displayed. 
         </li>
         <li>
-            - Enhanced profile recognition in all related linked ecosystem apps profiles (FootballGod, OpenFPL, OpenWSL, Transfer Kings & Jeff Bets). 
+            - Enhanced profile recognition in all related linked ecosystem apps profiles (Football God, OpenFPL, OpenWSL, Transfer Kings & Jeff Bets). 
         </li>
         <li>- Free Private Leagues on OpenFPL & OpenWSL.</li>
-        <li>- Free bets on Jeff Bets</li>
-        <li>- Free Transfer King Card Packs</li>
+        <li>- Free bets on Jeff Bets.</li>
+        <li>- Free Transfer King Card Packs.</li>
         <li>- Merchandise giveaways.</li>
         <li>- Tickets to ICFC football club events and matches.</li>
         <li>- Entry into prize draws featuring exclusive rewards.</li>
@@ -93,11 +93,11 @@
     </p>
 
     <p class="text-xs">
-        Note Free Bets on Jeff Bets
+        Note: Free Bets on Jeff Bets
     </p>
 
     <p class="text-xs">
-        Free bets will be 1% of the total bets placed on Jeff Bets. This 1% will be placed into a free bet pool and then distributed to the number of players based on their membership. A month where more bets are placed will result in an increased value in the betting pool as the amount of FPL placed is greater. 
+        Free bets will be 1% of the total bets placed on Jeff Bets. This 1% will be placed into a free bet pool and then distributed to the number of players based on their membership. A month where more bets are placed will result in an increased value in the betting pool as the amount of ICFC placed is greater. 
     </p>
             
             
