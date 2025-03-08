@@ -2,11 +2,13 @@
   import { onMount } from "svelte"; 
   import { fade } from "svelte/transition";
   import { browser } from "$app/environment";
+  import { page } from "$app/state";
 
   import { userStore } from "$lib/stores/user-store";
   import { appStore } from "$lib/stores/app-store";
   import { initAuthWorker } from "$lib/services/worker.auth.services";
   import { authStore, type AuthSignInParams, type AuthStoreData } from "$lib/stores/auth-store";
+  import type { Profile } from "../../../declarations/backend/backend.did";
   
   import "../app.css";
   import IcfcAppsModal from "$lib/components/shared/icfc-apps-modal.svelte";
@@ -16,8 +18,6 @@
   import LandingPage from "$lib/components/homepage/landingPage/landing-page.svelte";
   import IcfcLinkAccountsModal from "$lib/components/shared/icfc-link-accounts-modal.svelte";
   import Sidebar from "$lib/components/shared/sidebar.svelte";
-  import { page } from "$app/state";
-    import type { Profile } from "../../../declarations/backend/backend.did";
     
   let worker: { syncAuthIdle: (auth: AuthStoreData) => void } | undefined;
   let isLoading = true;
@@ -91,21 +91,12 @@
         <FullScreenSpinner />
       {:else}
         {#if isLoggedIn || isWhitepaper || isSale}
-          <Sidebar {isMenuOpen} {toggleMenu} />
-           {#if isMenuOpen}
-              <button 
-                class="fixed inset-0 z-30 pointer-events-none bg-black/40 sm:bg-black/20 sm:pointer-events-auto"
-                on:click={toggleMenu}
-                on:keydown={(e) => e.key === 'Enter' && toggleMenu()}
-                aria-label="Close menu overlay"
-              ></button>
-            {/if}
-          
-          <header class="fixed flex items-center justify-between w-full h-16 px-4 text-white bg-gray-900 shadow-md top">
+          <div class="relative flex flex-col w-full min-h-screen">
+            <header class="fixed top-0 left-0 right-0 z-30 flex items-center justify-between h-16 px-4 text-white bg-gray-900 shadow-md">
               <a href="/" class="flex items-center">
                 <LogoIcon className='w-8' />
               </a>
-          
+
               <div class="flex items-center gap-4">
                 <button
                   on:click={toggleMenu}
@@ -117,10 +108,22 @@
                   </svg>
                 </button>
               </div>
-          </header>
-          <div class="flex w-full p-4 mt-16">
-            <slot></slot>
+            </header>
+
+            <main class="flex-1 w-full mt-16 overflow-x-hidden">
+              <slot></slot>
+            </main>
           </div>
+
+          <Sidebar {isMenuOpen} {toggleMenu} />
+            {#if isMenuOpen}
+              <button 
+                class="fixed inset-0 z-30 pointer-events-none bg-black/40 sm:bg-black/20 sm:pointer-events-auto"
+                on:click={toggleMenu}
+                on:keydown={(e) => e.key === 'Enter' && toggleMenu()}
+                aria-label="Close menu overlay"
+              ></button>
+            {/if}
         {:else}
           <LandingPage />
         {/if}    
