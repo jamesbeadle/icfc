@@ -149,26 +149,98 @@
         This creator economy will establish a sustainable revenue model, rewarding both content producers and ICFC token holders.
     </p>
 
-    <p class="">
-        Why This Matters for Football Fans & Investors
+    <p>
+        ICFC transforms fans into creators and creators into investors, giving them the power to shape the club while earning rewards. Every article, video and podcast fuels engagement, strengthening the ecosystem and driving token growth. With a competitive spirit at its core, fans battle to build the biggest and most influential podcasts, creating deeper connections. Decentralised content creation puts the community in control, while exclusive content and premium subscriptions enhance fan experiences and boost token utility. More content, more engagement and more value.
     </p>
-Fans Become Creators, Creators Become Investors: ICFC empowers fans to produce content, earn rewards & grow their stake in the club.
-More Content, More Engagement, More Value: Every article, video and podcast drives fan interaction, strengthening the ICFC brand and ecosystem.
-A Club Built by its Community: Decentralised content creation means fans are in control & their contributions drive token growth.
-Competitive Spirit: Fans battle to have the biggest and most influential podcast, fueling creativity passion and deeper connections within the ecosystem.
-Exclusive Content, Exclusive Rewards: Subscriptions and premium content unlock new ways to engage while increasing ICFC token utility. 
 
+    <p class="small-header">
+        Merchandise & Online Store
+    </p>
 
+    <p>
+        ICFC and its sub-DAO clubs will launch a fully integrated online merchandise store, offering a wide range of club-branded apparel and accessories, including:
+    </p>
 
+    <ul>
+        <li>
+            Football Kits
+        </li>
+        <li>
+            Headwear
+        </li>
+        <li>
+            Water Bottles & Accessories
+        </li>
+        <li>
+            Training Gear & Fan Merchandise
+        </li>
+    </ul>
     
-<p class="small-header">
-    Merchandise & Online Store
+    <p>
+        The online store will serve as a direct revenue stream, allowing fans to purchase using ICFC tokens or your local currency, while also integrating limited-edition merchandise to drive exclusivity and demand.
+    </p>
+
+    <p class="small-header">
+        Sponsorship
+    </p>
+
+    <p>
+        Sponsorships are a major revenue driver for ICFC, leveraging brand partnerships, advertising, and strategic collaborations to drive adoption. 
+    </p>
+    <p>
+        Sponsorship opportunities will include:
+    </p>
+
+    <ul>
+        <li>
+            <b class="cta-text">Stadium Sponsorships:</b>
+            <p>Naming rights, pitch-side advertising, digital banners.</p>
+        </li>
+        <li>
+            <b class="cta-text">Kit & Apparel Deals:</b>
+            <p>Branded partnerships on team jerseys & training gear.</p>
+        </li>
+        <li>
+            <b class="cta-text">Digital & Web3 Sponsorships:</b>
+            <p>Collaborations by sponsoring  blockchain services.</p>
+        </li>
+        <li>
+            <b class="cta-text">Event & Content Sponsorships:</b>
+            <p>Sponsored match highlights, interviews, and fan content.</p>
+        </li>
+    </ul>
+    
+    <p>
+        By combining traditional sponsorship models with Web3 integrations, ICFC will create high-value partnerships that provide long-term financial stability.
+    </p>    
+    <p>
+        Sponsorship deals fuel growth, bringing in major funding that boosts market value and expands its reach. 
+    </p>
+    <p>
+        As more brands invest, token demand rises, strengthening its long-term potential. 
+        On-chain partnerships open new opportunities beyond traditional sports sponsorships, future-proofing revenue streams. 
+
+    </p>
+    <p>
+        With sponsorship earnings reinvested into the treasury and token buybacks, ICFC ensures long-term stability and sustained growth. Big brands mean big growth.
 </p>
-<p class="small-header">
-    Sponsorship
-</p>
+
 <p class="small-header">
     Digital Collectibles & Trading Cards
+</p>
+
+<p>
+    ICFC’s trading cards and digital collectibles represent a high-growth revenue stream, combining Web3 technology with traditional fan engagement. 
+
+    These collectibles will include:
+Player Trading Cards – Cards with rarity tiers and dynamic stats.
+Limited-Edition Collectibles – Special moments, championship cards, and exclusive designs.
+Marketplace & Secondary Sales – Fans can trade, stake, or sell digital assets.
+
+By leveraging rarity, utility, and community-driven demand, ICFC's collectibles will drive high transaction volumes and long-term revenue generation.
+
+ICFC digital collectibles let fans own a piece of football history, from legendary match moments to exclusive player cards. With affordable entry points, every fan can start collecting, trading and building their portfolio. Like physical trading cards, these digital assets can grow in value over time, with resale royalties adding long-term potential. Exclusive drops and rare editions offer unique, limited-run memorabilia that could become the next big thing in football collecting. More than just collectibles - this is football history in your hands.
+
 </p>
 
 <p class="sub-header">
@@ -176,11 +248,28 @@ Exclusive Content, Exclusive Rewards: Subscriptions and premium content unlock n
 </p>
 
 <p class="small-header">
-    Jeff Bets
+    ICFC Membership
+</p>
+
+<p>
+    CFC’s membership-based revenue model is structured around staking-based access, ensuring that governance is community-driven while also generating revenue through token utility.
+Membership Structure & Staking Requirements
+Monthly Membership: Requires staking 1,000 ICFC for the maximum duration.
+Seasonal Membership (July - August): Requires staking 10,000 ICFC for the maximum duration.
+Lifetime Membership: Requires staking 100,000 ICFC (linked to an Internet Identity neuron).
+
+Membership numbers will change as the ICFC token value & supply shift. This creates a self-regulating system where participation is linked to market demand.
+
+ICFC memberships do more than grant access - they drive real value by locking up tokens, making them rarer and more valuable. Staking isn’t just about holding - it gives fans a voice in club decisions, transfers and strategy. As membership grows, so does the club’s financial strength, creating a self-sustaining football economy. More fans, more influence, more value. ICFC is a club powered by its supporters. 
+
 </p>
 
 <p class="small-header">
-    ICFC Membership
+    Jeff Bets
+</p>
+
+<p>
+    As mentioned in the product ecosystem section, we will use the losing stakes from our betting platform as a burning mechanism to control total supply.
 </p>
 
 
