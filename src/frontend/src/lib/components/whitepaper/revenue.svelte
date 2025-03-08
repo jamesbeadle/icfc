@@ -154,4 +154,14 @@
     <p>
         ICFC digital collectibles let fans own a piece of football history, from legendary match moments to exclusive player cards. With affordable entry points, every fan can start collecting, trading and building their portfolio. Like physical trading cards, these digital assets can grow in value over time, with resale royalties adding long-term potential. Exclusive drops and rare editions offer unique, limited-run memorabilia that could become the next big thing in football collecting. More than just collectibles - this is football history in your hands.
     </p>
+    <p class="sub-header">
+        Merchandise
+    </p>
+    <p>
+        ICFC and the clubs within its sub-DAOs will launch fully integrated online stores, offering a wide range of merchandise including apparel, headwear and & range of accessories. 
+    </p>
+
+    <p>
+        Our product range will be continuously updated to keep up with the latest trends, allowing fans to directly support their clubs while representing their teams with exclusive, high-quality gear. 
+    </p>
 </WhitepaperPage>

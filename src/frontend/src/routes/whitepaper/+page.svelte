@@ -15,11 +15,13 @@
     import DecentralisedAi from '$lib/components/whitepaper/decentralised-ai.svelte';
     import Roadmap from '$lib/components/whitepaper/roadmap.svelte';
     import ContentCreators from '$lib/components/whitepaper/content-creators.svelte';
+    import Revenue from '$lib/components/whitepaper/revenue.svelte';
   
     const sections = [
       { id: 'vision', title: 'Vision', component: Vision },
       { id: 'ownership', title: 'The ICFC DAO', component: Token },
       { id: 'products', title: 'Our Products', component: Products },
+      { id: 'revenue', title: 'Our Products', component: Revenue },
       { id: 'sale', title: 'Decentralisation Sale 2', component: Sale },
       { id: 'membership', title: 'Membership', component: Membership },
       { id: 'club-daos', title: 'Club DAOs', component: ClubDAOs },
