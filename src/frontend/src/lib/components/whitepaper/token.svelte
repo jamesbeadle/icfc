@@ -8,7 +8,7 @@
 </script>
 <WhitepaperPage 
     title="The ICFC DAO" 
-    intro="The ICFC utility token is used throughout our ecosystem within various governance, payment and rewawrd mechanisms.
+    intro="The ICFC utility token is used throughout our ecosystem within various governance, payment and reward mechanisms.
         Each mechanism has been carefully thought out to balance token supply through the online services we offer.">
     
         <WhitepaperSection title="ICFC Ecosystem Tokenisation Mechanisms">
