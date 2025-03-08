@@ -1,4 +1,4 @@
-<div class="flex flex-col space-y-2">
+<div class="flex flex-col space-y-4">
 
     <p class="section-title">
         ICFC: Football Ownership for the Fans
@@ -16,23 +16,37 @@
         Our Key Goals: 
     </p>
 
-    <ul>
+    <ul class="space-y-4">
         <li>
-            <b class="cta-text">- Boost ICP Adoption & Value: </b> Drive large-scale user adoption, increasing ecosystem demand.
-        </li>
-        <li>                
-            <b class="cta-text">- Enhance Fan Engagement: </b> Reward supporters for physically attending matches, strengthening loyalty and participation.
-        </li>
-        <li>
-            <b class="cta-text">- Build a Football Reality Movement: </b> Inspired by the Wrexham model, ICFC will produce content blending real-world football and blockchain technology to reach mainstream audiences. 
+            <div class="flex flex-col">
+                <span class="font-bold text-BrandInfo cta-text">Boost ICP Adoption & Value</span>
+                <span class="mt-1">- Drive large-scale user adoption, increasing ecosystem demand.</span>
+            </div>
         </li>
         <li>
-            <b class="cta-text">- Promote Transparency: </b> On-chain governance eliminates opaque boardroom decisions.
+            <div class="flex flex-col">
+                <span class="font-bold text-BrandInfo cta-text">Enhance Fan Engagement</span>
+                <span class="mt-1">- Reward supporters for physically attending matches, strengthening loyalty and participation.</span>
+            </div>
         </li>
         <li>
-            <b class="cta-text">- Unleash Global Potential: </b> Allowing anyone worldwide to own tokens in a club, expanding the fan base and investment scope.
+            <div class="flex flex-col">
+                <span class="font-bold text-BrandInfo cta-text">Build a Football Reality Movement</span>
+                <span class="mt-1">- Inspired by the Wrexham model, ICFC will produce content blending real-world football and blockchain technology to reach mainstream audiences.</span>
+            </div>
         </li>
-
+        <li>
+            <div class="flex flex-col">
+                <span class="font-bold text-BrandInfo cta-text">Promote Transparency</span>
+                <span class="mt-1">- On-chain governance eliminates opaque boardroom decisions.</span>
+            </div>
+        </li>
+        <li>
+            <div class="flex flex-col">
+                <span class="font-bold text-BrandInfo cta-text">Unleash Global Potential</span>
+                <span class="mt-1">- Allowing anyone worldwide to own tokens in a club, expanding the fan base and investment scope.</span>
+            </div>
+        </li>
     </ul>
 
 </div>

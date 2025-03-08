@@ -14,7 +14,7 @@
 
     let flippedCards = new Set();
 
-    const toggleFlip = (id: string, event: MouseEvent) => {
+    const toggleFlip = (id: string, event: MouseEvent | KeyboardEvent) => {
         event.preventDefault();
         if (flippedCards.has(id)) {
             flippedCards.delete(id);
@@ -108,13 +108,13 @@
 
 <Layout>
     <div class="p-8">
-        <div class="flex items-center justify-between mb-8">
+        <div class="mb-8">
             <h1 class="text-4xl font-bold text-white shadow-lg cta-text">
                 ICFC APPS
             </h1>
         </div>
     
-        <div class="grid grid-cols-1 gap-6 pb-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+        <div class="grid grid-cols-1 gap-6 pb-8 place-items-center mini:grid-cols-2 mini:place-items-start base:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
             {#each apps as app}
                 <AppCard 
                     {app}

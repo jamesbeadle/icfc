@@ -19,11 +19,15 @@ export default {
     screens: {
       xxs: "420px",
       xs: "480px",
+      mini: "580px",
       sm: "640px",
       // => @media (min-width: 640px) { ... }
 
       md: "768px",
       // => @media (min-width: 768px) { ... }
+
+      base: "900px",
+      // => @media (min-width: 960px) { ... }
 
       lg: "1024px",
       // => @media (min-width: 1024px) { ... }
@@ -34,7 +38,10 @@ export default {
       "2xl": "1536px",
       // => @media (min-width: 1536px) { ... }
 
-      "3xl": "1920px",
+      "3xl": "1728px",
+      // => @media (min-width: 1728px) { ... }
+
+      "4xl": "1920px",
       // => @media (min-width: 1920px) { ... }
     },
     fontSize: {
