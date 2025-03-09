@@ -39,7 +39,7 @@
     </WhitepaperSection>
 
     <p>
-        After the sale the DAO will remain in control of the Bitcoin (ckBTC) raised, only withdrawable via a DAO propoasl.
+        After the sale the DAO will remain in control of the Bitcoin (ckBTC) raised, only withdrawable via a DAO proposal.
     </p>
 
     <p class="small-header">
