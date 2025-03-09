@@ -12,14 +12,18 @@
         Each mechanism has been carefully thought out to balance token supply through the online services we offer.">
     
         <WhitepaperSection title="ICFC Ecosystem Tokenisation Mechanisms">
-            <HeaderContentSection title="Proof-Of-Stake Membership" content="The ICFC uses a Proof-Of-Stake membership mechanism to ensure the long term staking of ICFC tokens." />
-            <HeaderContentSection title="Betting Stake Burning" content="To ensure the maximum control over the ICFC token supply we have designed our ecosystem to ensure we can always burn the token supply down to the starting amount, 100M ICFC tokens.
-                To do this we have ensured that our expected highest revenue raising application, Jeff Bets, only utilises the ICFC token and burns losing bet stakes, effectively redistributing the betting profits to the DAO's token holders.
-                As mentioned in the product ecosystem section, we will use the losing stakes from our betting platform (Jeff Bets) as a burning mechanism to control total supply. " />
-            <HeaderContentSection title="Governance Rewards" content="At the core of our ecosystem is a governance backed dataset. This new ownership paradigm ensures a generous amount of ICFC rewards for staked ICFC neuron holders. 
-                These rewards are minted, adding to the total token supply.  " />
-            <HeaderContentSection title="Minting" content="The ICFC DAO provides liquidity to application prizes pools by burning the DAO's biggest potential buying pressure, betting stakes on Jeff Bets.
-                These prize pools give the DAO another tokenomic lever to pull when needed, allowing us to reward members for winning in OpenFPL, OpenWSL and any other future games we create." />
+            <HeaderContentSection title="Proof-Of-Stake Membership" content="The ICFC uses a new Proof-Of-Stake membership mechanism to reward users for their long term commitment to the ICFC. Users claim their membership by linking their profile to a non-dissolving staked neuron, allowing them to receive membership benefits across our ecosystem." />
+            <HeaderContentSection title="The Ultimate Burning Mechanism" content="Our ecosystem is designed to maximise the available tokens for burning, ensuring the DAO can control the token supply. 
+            We have designed our expected highest revenue raising application, Jeff Bets, to only utilise the ICFC token and burn any losing bet stakes.
+            We aim to ensure the token supply is non-inflationary, repeatedly burning down to our starting token supply of 100M ICFC tokens.
+                 " />
+            <HeaderContentSection title="Governance Rewards" 
+                content="ICFC apps use real time data that is verified through our governance data platform, Football God. 
+                This platform ensures we own our own data, removing any requirements to use third party dependencies.
+                Users can then earn ICFC through voting to verify this data. These rewards are minted and added to the total token supply." />
+            <HeaderContentSection title="Minting" content="
+                The ICFC DAO attracts users by providing rewards in our free to play games, provided users have claimed a valid membership.
+                These rewards give the DAO another tokenomic lever to pull, allowing us to reward members for winning in OpenFPL, OpenWSL and any other future games we create." />
         </WhitepaperSection>
     
 

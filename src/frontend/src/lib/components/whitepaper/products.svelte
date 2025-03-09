@@ -9,8 +9,11 @@
 
 <WhitepaperPage 
     title="ICFC Apps: An Ecosystem Powered by Governance"
-    intro="Our ecosystem of applications run 100% on-chain with zero dependencies. This is acheived through owning our underlying dataset, validating it using the DAO's governance system.
-        We have taken great care to create applications that have their own brands, ensuring they can form their own community within our football ecosystem.">
+    intro="
+        Our ecosystem of applications run 100% on-chain with zero dependencies. 
+        This is acheived through owning our underlying dataset, validating it using the DAO's governance system.
+        We have taken great care to create applications that have their own brands, 
+        ensuring they can form their own community within our football ecosystem.">
 
     <button 
         slot="action"
@@ -26,9 +29,11 @@
                 title='Governance Data: Football God'
                 titleColor="FootballGodBackground"
                 content={[
-                    "Our project centers around our governance backed dataset powering our suite of applications, showcasing our committment to ensuring fans own every inch of their football ecosystem. ",
-                    "ICFC maintains this comprehensive world football database utilising our governance data management platform, Football God. This database serves as the backbone of ICFC’s digital ecosystem, providing a governance-backed, continuously updated repository of football intelligence. ",
-                    "Beyond ICFC’s own applications, other ecosystem apps can integrate Football God’s dataset by purchasing API access, ensuring that the governance-backed intelligence collected by the ICFC community becomes a valuable, revenue-generating asset.  This model allows third-party developers, football analysts, fantasy football platforms and sports betting applications to tap into an unparalleled football data resource, reinforcing ICFC’s position at the forefront of decentralised football intelligence.   ",
+                    "Our project centers around our governance backed dataset which powers our suite of applications. ",
+                    "ICFC maintains this comprehensive world football database through our governance data management platform, Football God. This database serves as the backbone of ICFC’s digital ecosystem, providing a continuously updated repository of football information. ",
+                    
+                    "As our dataset becomes the single source of truth for all football data, other projects can integrate Football God’s dataset by purchasing API access to this valuable asset. This revenue generation model allows third-party developers to tap into this football data resource, reinforcing ICFC’s position at the forefront of decentralised football data.   ",
+
                     "We plan to utilise our football dataset to train an AI to extend and backfill all of football data, for all leagues, for all of time. We aim for Football God to know everything about football, hold this data on-chain and power more and more new fan based experiences."]} 
             />
             
