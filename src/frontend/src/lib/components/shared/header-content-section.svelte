@@ -8,5 +8,5 @@ export let content: string;
 
 <div class="flex flex-col text-lg">
     <span class="section-header">{title}</span>
-    <span class="mt-1">{content}</span>
+    <span class="mt-2">{content}</span>
 </div>

@@ -8,6 +8,7 @@
     import Vision from '$lib/components/whitepaper/vision.svelte';
     import Token from '$lib/components/whitepaper/token.svelte';
     import Products from '$lib/components/whitepaper/products.svelte';
+    import Revenue from '$lib/components/whitepaper/revenue.svelte';
     import Sale from '$lib/components/whitepaper/sale.svelte';
     import ClubDAOs from '$lib/components/whitepaper/club-daos.svelte';
     import Notes from '$lib/components/whitepaper/notes.svelte';
@@ -15,7 +16,6 @@
     import DecentralisedAi from '$lib/components/whitepaper/decentralised-ai.svelte';
     import Roadmap from '$lib/components/whitepaper/roadmap.svelte';
     import ContentCreators from '$lib/components/whitepaper/content-creators.svelte';
-    import Revenue from '$lib/components/whitepaper/revenue.svelte';
   
     const sections = [
       { id: 'vision', title: 'Vision', component: Vision },

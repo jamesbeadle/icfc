@@ -80,6 +80,8 @@ export default {
         TransferKingsFont: "#FFFFFF",
         OpenWSLFont: "#FFFFFF",
         JeffBetsFont: "#000000",
+        ModalBackground: "#222327",
+        ModalBorder: "#323232",
       },
       perspective: {
         500: "500px",
