@@ -1,49 +1,130 @@
 <script lang="ts">
-    import { createEventDispatcher } from "svelte";
-  
-    export let isOpen: boolean = false;
-    const dispatch = createEventDispatcher();
-  
-    const closeModal = () => {
-      dispatch("close");
-    };
-  
-    const apps = [
-      { name: "Football God", description: "A fully decentralised football dataset, managed by the fans.", link: "https://footballgod.xyz" },
-      { name: "OpenFPL", description: "Web3 Fantasy Football.", link: "https://openfpl.xyz" },
-      { name: "Transfer Kings", description: "Official ICFC Trading Card Game.", link: "https://transferkings.xyz" },
-      { name: "OpenWSL", description: "Web3 Fantasy Football.", link: "https://openwsl.xyz" },
-      { name: "Jeff Bets", description: "Converastional AI powered fixed odds pattern based betting.", link: "https://jeffbets.com" }
-    ];
-  </script>
-  
-  {#if isOpen}
-    <div class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div class="bg-white rounded-lg shadow-lg max-w-md w-full p-6 transform transition-all duration-300 scale-100">
-        
-        <div class="flex justify-between items-center border-b pb-3">
-          <h2 class="text-xl font-bold text-gray-900">ICFC Apps</h2>
-          <button on:click={closeModal} class="text-gray-500 hover:text-gray-700 transition duration-200">
-            ✖
-          </button>
-        </div>
-  
-        <div class="mt-4 space-y-4">
-          {#each apps as app}
-            <a href={app.link} target="_blank" class="block p-3 border rounded-lg hover:bg-gray-100 transition duration-200">
-              <h3 class="text-lg font-semibold text-gray-800">{app.name}</h3>
-              <p class="text-sm text-gray-600">{app.description}</p>
-            </a>
-          {/each}
-        </div>
-  
-        <div class="mt-4 flex justify-end">
-          <button on:click={closeModal} class="px-4 py-2 bg-BrandBlue text-white rounded-lg hover:bg-BrandYellow transition duration-200">
-            Close
-          </button>
-        </div>
-  
+  import Modal from "./modal.svelte";
+  import FootballGodBackground from "$lib/icons/appIcons/background/FootballGodIcon.svelte";
+  import OpenFplBackground from "$lib/icons/appIcons/background/OpenFplIcon.svelte";
+  import TransferKingsBackground from "$lib/icons/appIcons/background/TransferKingsIcon.svelte";
+  import JeffBetsBackground from "$lib/icons/appIcons/background/JeffBetsIcon.svelte";
+  import FootballGodLogo from "$lib/icons/appIcons/logo/FootballGodLogo.svelte";
+  import OpenFplLogo from "$lib/icons/appIcons/logo/OpenFplLogo.svelte";
+  import TransferKingsLogo from "$lib/icons/appIcons/logo/TransferKingsLogo.svelte";
+  import JeffBetsLogo from "$lib/icons/appIcons/logo/JeffBetsLogo.svelte";
+  import AppCard from "$lib/components/shared/app-card.svelte";
+  import CloseIcon from "$lib/icons/CloseIcon.svelte";
+
+  let { isOpen, onClose, flippedCards = new Set() } = $props<{
+    isOpen: boolean;
+    onClose: () => void;
+    flippedCards?: Set<string>;
+  }>();
+
+  const apps = [
+        {
+            id: "01",
+            name: "Football God",
+            background: FootballGodBackground,
+            logo: FootballGodLogo,
+            color: "FootballGodBackground",
+            textColor: "text-white",
+            description: "A fully decentralized football data platform where fans manage and contribute to an open-source football dataset.",
+            link: "https://footballgod.xyz",
+            backgroundOpacity: "opacity-[0.15]",
+            backgroundSize: "w-[80%] h-[80%]",
+            backgroundPosition: "-bottom-10 -right-20"
+        },
+        {
+            id: "02",
+            name: "OpenFPL",
+            background: OpenFplBackground,
+            logo: OpenFplLogo,
+            color: "OpenFPLBackground",
+            textColor: "text-black",
+            description: "A Web3-powered fantasy football game that leverages blockchain technology for enhanced transparency and ownership.",
+            link: "https://openfpl.xyz",
+            backgroundOpacity: "",
+            backgroundSize: "w-[58%] h-[58%]",
+            backgroundPosition: "-bottom-16 -right-32"
+        },
+        {
+            id: "03",
+            name: "OpenWSL",
+            background: OpenFplBackground,
+            logo: OpenFplLogo,
+            color: "OpenWSLBackground",
+            description: "A Web3-based fantasy football platform tailored for women's football leagues, offering immersive gameplay and digital asset ownership.",
+            textColor: "text-white",
+            link: "https://openwsl.xyz",
+            backgroundOpacity: "",
+            backgroundSize: "w-[58%] h-[58%]",
+            backgroundPosition: "-bottom-16 -right-32"
+        },
+        {
+            id: "04",
+            name: "Jeff Bets",
+            background: JeffBetsBackground,
+            logo: JeffBetsLogo,
+            color: "JeffBetsBackground",
+            textColor: "text-black",
+            description: "An AI-driven sports betting assistant that analyzes patterns and provides insights for fixed-odds betting through a conversational interface.",
+            link: "https://jeffbets.com",
+            backgroundOpacity: "",
+            backgroundSize: "w-[92%] h-[92%]",
+            backgroundPosition: "-bottom-1 -right-5"
+        },
+        {
+            id: "05",
+            name: "Transfer Kings",
+            background: TransferKingsBackground,
+            logo: TransferKingsLogo,
+            color: "TransferKingsBackground",
+            textColor: "text-white",
+            description: "A next-generation trading card platform where users can collect, trade, and own official ICFC digital cards.",
+            link: "https://transferkings.xyz",
+            backgroundOpacity: "",
+            backgroundSize: "w-[84%] h-[84%]",
+            backgroundPosition: "-bottom-10 -right-12"
+        }
+  ];
+
+  const toggleFlip = (id: string, event: MouseEvent | KeyboardEvent) => {
+    event.preventDefault();
+    if (!flippedCards) return;
+    
+    if (flippedCards.has(id)) {
+      flippedCards.delete(id);
+    } else {
+      flippedCards.add(id);
+    }
+  };
+</script>
+
+<Modal showModal={isOpen} {onClose}>
+  <div class="flex flex-col w-full h-full">
+    <div class="top-0 p-6 pb-2 border-b border-gray-700 z-60 bg-ModalBackground">
+      <div class="flex items-center justify-between">
+        <h2 class="text-2xl text-white cta-text">ICFC Apps</h2>
+        <button 
+          onclick={onClose}
+          class="transition-colors duration-300 hover:text-white/40"
+        >
+          <CloseIcon className="w-8 h-8" fill="white" />
+        </button>
       </div>
     </div>
-  {/if}
-  
+
+    <div class="flex-1 overflow-y-auto">
+      <div class="p-6 pt-4">
+        <div class="flex flex-col gap-3 md:flex-row md:overflow-x-auto">
+          {#each apps as app}
+            <AppCard 
+                {app}
+                isFlipped={false}
+                onFlip={() => {}}
+                isModal={true}
+                disableFlip={true}
+            />
+          {/each}
+        </div>
+      </div>
+    </div>
+  </div>
+</Modal>

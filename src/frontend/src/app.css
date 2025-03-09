@@ -111,17 +111,17 @@
 }
 
 .sub-header {
-  @apply text-2xl cta-text text-BrandInfo;
+  @apply text-2xl tracking-wide cta-text text-BrandInfo;
 }
 
 .small-header {
   @apply text-lg cta-text text-BrandGrayShade4;
 }
 
-.section-header{
-  @apply text-BrandGrayShade4 cta-text
+.section-header {
+  @apply tracking-wide text-BrandGrayShade4 cta-text;
 }
 
-.page-intro{
+.page-intro {
   @apply text-xl;
 }
