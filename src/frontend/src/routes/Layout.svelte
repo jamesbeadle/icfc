@@ -31,7 +31,7 @@
   const init = async () => {
     await Promise.all([syncAuthStore()]);
     worker = await initAuthWorker();
-    await Promise.all([syncUser()]);
+    //await Promise.all([syncUser()]);
   };
 
   async function syncUser(){
@@ -128,7 +128,7 @@
           <LandingPage />
         {/if}    
       {/if}
-      <IcfcAppsModal isOpen={showApps} on:close={() => showApps = false} />
+      <IcfcAppsModal isOpen={showApps} onClose={() => showApps = false} />
       <IcfcLinkAccountsModal isOpen={showLinkAccounts} on:close={() => showLinkAccounts = false} />
     </div>
     <Toasts />

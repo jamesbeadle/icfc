@@ -58,9 +58,6 @@
   overflow-wrap: break-word;
 }
 
-.brand-button {
-}
-
 .grid-cols-1.sm\:grid-cols-2.md\:grid-cols-3.lg\:grid-cols-4 {
   display: grid;
   grid-template-columns: repeat(1, minmax(0, 1fr));

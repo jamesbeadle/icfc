@@ -14,7 +14,7 @@
 
 <button
 	on:click={selectTab}
-	class={`px-4 py-2 text-sm font-medium cta-text transition-colors duration-200 border-b-2 ${
+	class={`px-4 py-2 text-sm cta-text transition-colors duration-200 border-b-2 min-w-[100px] ${
         $isActive
             ? 'border-BrandBlue text-BrandBlue'
             : 'border-transparent text-BrandGrayShade3 hover:text-BrandGrayShade5'

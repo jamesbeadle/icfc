@@ -41,17 +41,17 @@
 
         <Tabs defaultValue="vision">
             <TabsList class="flex flex-wrap gap-2">
-            {#each sections as section}
-                <TabsTrigger value={section.id}>{section.title}</TabsTrigger>
-            {/each}
+                {#each sections as section}
+                    <TabsTrigger value={section.id}>{section.title}</TabsTrigger>
+                {/each}
             </TabsList>
 
             {#each sections as section}
-            <TabsContent value={section.id}>
-                <div class="p-4 bg-gray-100 rounded-lg shadow-sm dark:bg-gray-800">
-                <svelte:component this={section.component} />
-                </div>
-            </TabsContent>
+                <TabsContent value={section.id}>
+                    <div class="p-4 bg-gray-100 rounded-lg shadow-sm dark:bg-gray-800">
+                    <svelte:component this={section.component} />
+                    </div>
+                </TabsContent>
             {/each}
         </Tabs>
     </div>
