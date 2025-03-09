@@ -19,7 +19,7 @@
                  " />
             <HeaderContentSection title="Governance Rewards" 
                 content="ICFC apps use real time data that is verified through our governance data platform, Football God. 
-                This platform ensures we own our own data, removing any requirements to use third party dependencies.
+                This platform ensures we own our own data, keeping us free from any third party dependencies.
                 Users can then earn ICFC through voting to verify this data. These rewards are minted and added to the total token supply." />
             <HeaderContentSection title="Minting" content="
                 The ICFC DAO attracts users by providing rewards in our free to play games, provided users have claimed a valid membership.

@@ -14,9 +14,6 @@
     <p>
         ICFC membership is designed to reward long-term commitment to the ecosystem while providing exclusive benefits to supporters. Membership tiers are structured around staking ICFC, ensuring alignment with the growth and sustainability of the community.
     </p>
-    <p>
-        ICFC membership is designed to reward long-term commitment to the ecosystem while providing exclusive benefits to supporters. Membership tiers are structured around staking ICFC, ensuring alignment with the growth and sustainability of the community.
-    </p>
 
     <p>
         ICFC’s membership-based revenue model is structured around staking-based access, ensuring that governance is community-driven while also generating revenue through token utility.

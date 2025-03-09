@@ -1,6 +1,7 @@
 <script>
 
     import HeaderContentSection from "../shared/header-content-section.svelte";
+    import ListSection from "./list-section.svelte";
     import WhitepaperPage from "./whitepaper-page.svelte";
 
 </script>
@@ -102,20 +103,16 @@
         <HeaderContentSection title='Player & Scouting Rewards' content='Players and scouts receive tokens for contributing to club development.' />
     </ul>
 
-    <p class="small-header">
-        Sub-DAO Token Split
-    </p>
-
-    <p>
-        The sub-DAO token split will be as follows: 
-    </p>
     
-    <ul class="space-y-4">
-        <HeaderContentSection title='Historic Supporters' content='25%.' />
-        <HeaderContentSection title='Season Supporters' content='25%.' />
-        <HeaderContentSection title='Club Treasury (For club events and player social media promotion)' content='40%.' />
-        <HeaderContentSection title='ICFC' content='10%.' />
-    </ul>
+    <ListSection
+        title="Sub-DAO Token Split"
+        items={[
+            "Historic Supporters: 25%.",
+            "Season Supporters: 25%.",
+            "Club Treasury (For club events and player social media promotion): 40%.",
+            "ICFC: 10%."
+        ]}
+    />
     
     <p>
         To ensure governance of the DAO is in the hands of supporters, a new 25% of a clubs treasury is minted each season, ensuring control of a club's decision making is organically transferred over to a greater number of fans at an inflationary rate.

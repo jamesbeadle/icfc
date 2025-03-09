@@ -1,6 +1,7 @@
 <script>
 
     import HeaderContentSection from "../shared/header-content-section.svelte";
+    import ListSection from "./list-section.svelte";
     import WhitepaperPage from "./whitepaper-page.svelte";
 
 </script>
@@ -29,35 +30,24 @@
         Waterway Labs will legally own any football clubs acquired and will be responsible for generating profits and reinvesting back into club development.
     </p>
     
-    <p class="sub-header">
-        Token Sale 
-    </p>
-
-    <p>
-        Total Tokens for Sale: 25 million ICFC (formerly FPL).
-    </p>
+    <ListSection
+        title="Token Sale"
+        items={[
+            "Total Tokens for Sale: 25 million ICFC (formerly FPL).",
+            "Swap Currency: ckBTC.",
+            "Minimum amount for swap to be successful: 50 ckBTC.",
+            "Maximum amount to be raised: 100 ckBTC."
+        ]}
+    />
     
-    <p>
-        Swap Currency: ckBTC.
-    </p>
-    
-    <p>
-        Minimum amount for swap to be successful: 50 ckBTC.
-    </p>
-    
-    <p>
-        Maximum amount to be raised: 100 ckBTC.
-    </p>
-    
-    <p>
-        Purpose of Funds:
-    </p>
-
-    <ul class="space-y-4">
-        <HeaderContentSection title='' content="Acquiring real-world football clubs." />
-        <HeaderContentSection title='' content="Developing and refining icfc.app." />
-        <HeaderContentSection title='' content="Seeding liquidity pools for future token trading." />
-    </ul>
+    <ListSection
+        title="Purpose of Funds"
+        items={[
+            "Acquiring real-world football clubs.",
+            "Developing and refining icfc.app.",
+            "Seeding liquidity pools for future token trading."
+        ]}
+    />
 
     <p class="sub-header">
         Token Lockup & Vesting 

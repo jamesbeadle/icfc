@@ -12,7 +12,7 @@ intro="Traditional football clubs are commonly governed by a small group of owne
     <WhitepaperSection title="Our Key Goals:">
         <HeaderContentSection title='Build a Football Reality Movement' content="Inspired by the Wrexham model, ICFC will produce content blending real-world football and blockchain technology to reach mainstream audiences." />
         <HeaderContentSection title='Showcase the Internet Computer' content="We believe media content produced around ICP's advanced governance sytem will introduce users to the blockchain in unique way. Fans will make meaningful decisions in real time that directly influence their club and the related media content being produced." />
-        <HeaderContentSection title='Build a Fairer Ecosystem' content="We aim for the ICFC to be the goto template for decentralising a football club among their fans. ICFC is designed to reward supporters for physically attending club events, strengthening loyalty and participation." />
+        <HeaderContentSection title='Build a Fairer Ecosystem' content="We aim for the ICFC to be the go-to template for decentralising a football club among their fans. ICFC is designed to reward supporters for physically attending club events, strengthening loyalty and participation." />
         <HeaderContentSection title='Unleash Global Potential' content="Allowing clubs to unlock a global fan base by using future tokenised promotions in new and unique ways." />
     </WhitepaperSection>
 

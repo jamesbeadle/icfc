@@ -29,12 +29,9 @@
                 title='Governance Data: Football God'
                 titleColor="FootballGodBackground"
                 content={[
-                    "Our project centers around our governance backed dataset which powers our suite of applications. ",
-                    "ICFC maintains this comprehensive world football database through our governance data management platform, Football God. This database serves as the backbone of ICFC’s digital ecosystem, providing a continuously updated repository of football information. ",
-                    
+                    "Football God is the brain of the ICFC ecosystem, distributing messages to each ICFC application, allowing them to react to data updates in real time. ", 
                     "As our dataset becomes the single source of truth for all football data, other projects can integrate Football God’s dataset by purchasing API access to this valuable asset. This revenue generation model allows third-party developers to tap into this football data resource, reinforcing ICFC’s position at the forefront of decentralised football data.   ",
-
-                    "We plan to utilise our football dataset to train an AI to extend and backfill all of football data, for all leagues, for all of time. We aim for Football God to know everything about football, hold this data on-chain and power more and more new fan based experiences."]} 
+                    "We plan on utilising our football dataset to train various AI models to extend our dataset and backfill football data, for all leagues, for all of time. We aim for Football God to know everything about football, hold this data on-chain and power more and more fan based experiences."]} 
             />
             
             <MultiLineContentSection 
@@ -42,27 +39,28 @@
                 titleColor="OpenFPLBackground"
                 secondTitleColor="OpenWSLBackground"
                 content={[
-                    "Our flagship product is OpenFPL, a unique fantasy football game built to reward players of fantasy football fairly. ",
-                    "OpenFPL is funded through ICFC rewards provided by the ICFC DAO, generating revenue streams from sponsorship income, future private league revenue and merchandise sales.",]} 
+                    "OpenFPL is the ICFC's Premier League fantasy football game, meticulously designed to allow fans to show off in-depth footballing knowledge. ",
+                    "We have designed OpenFPL's reward system to ensure users engage with the platform frequently, spreading out rewards over various timeframes. We have created a range of reward categories each tailored to ensure the appropriate recognition is given to players who top leaderboards or set new records. ",
+                    "OpenFPL aims to generate revenue from private leagues & merchandise sales along with continued sponsorship revenue. OpenFPL rewards are funded by the ICFC DAO treasury with a plan to fund a WSL version of our fantasy football game, branded as OpenWSL.",]} 
             />
              
              <MultiLineContentSection 
                 title='Trading Cards: Transfer Kings'
                 titleColor="TransferKingsBackground"
                 content={[
-                    "We’re introducing official ICFC digital trading cards, bringing the excitement of classic football card collecting into the modern era.",
-                    "These real-time, up-to-date football cards allow fans to build their collections with limited-time drops, rewarding the most engaged players with unique, collectible assets.",]} 
+                    "Transfer Kings is our official ICFC digital trading card game, modernising the excitement of collecting rare football cards through utilising new and exciting technology. ",
+                    "These real-time, up-to-date football cards allow fans to build their collections with unique rarity stats, linked to their form. ",
+                    "Transfer Kings has been designed to reward fans who engage with football in real time, allowing them to put together truly unique collections.",]} 
             />
             
             <MultiLineContentSection 
                 title='Betting: Jeff Bets' 
                 titleColor="JeffBetsBackground"
                 content={[
-                    "At the core of ICFC’s economic stability is a revolutionary burning mechanism designed to offset in-game rewards, powered by our very own fixed-odds betting platform, Jeff Bets (gambling license pending).",
-                    "This isn’t just another betting platform. With Jeff Bets, you don’t need to risk your own money. Win tokens through ICFC’s fantasy football leagues and use them to place bets, creating a sustainable, risk-free model designed to protect fans.",
-                    "Jeff Bets is a burner token, keeping the fun in betting without the financial pitfalls.",
-                    "Jeff isn’t only about numbers, he’s your football conversation partner.",
-                    "Imagine chatting to Jeff about match predictions, discussing team form, debating transfers, or even crafting custom betting rules based on thoughtful discussions. This is betting in its most engaging, interactive form. Not just transactions, but experiences.",
+                    "Jeff Bets is our fully denetralised fixed-odds betting platform (gambling license pending). The odds on Jeff Bets are calculated in real time by the verification of data through the ICFC DAO, allowing users to bet on games in any league. ",
+                    "With Jeff Bets, you don’t need to risk your own money. Win tokens through ICFC’s fantasy football leagues and use them to place bets, creating a sustainable, risk-free model designed to protect fans. ",
+                    "Jeff Bets will be at the core of ICFC’s economic stability, providing a large burning pressure on the tokens that can always be offset by providing more rewards to users in our other game applications. ",
+                    "Jeff Bets will evolve to use conversational AI to create a game-changing new betting medium. We plan to give users access to 'Jeff', an engaging conversational AI experience users can utilse to create better betting strategies. Jeff will allow users to create custom betting rules based that are only triggered if othere events occurred, allowing users to gamble using thoughtful discussion to generate patterns over just selecting large odds. ",
                     "We’ve entered a world where AI-powered systems operate at levels designed to maximise user enjoyment. With Jeff, betting becomes a dynamic, intelligent process. Merging AI, social interaction and cutting-edge technology  - creating a new way to experience sports betting. "]} 
             />
         </WhitepaperSection> 
