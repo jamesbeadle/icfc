@@ -112,11 +112,11 @@
 }
 
 .small-header {
-  @apply text-lg cta-text text-BrandGrayShade4;
+  @apply text-lg cta-text text-white;
 }
 
 .section-header {
-  @apply tracking-wide text-BrandGrayShade4 cta-text;
+  @apply tracking-wide text-white cta-text;
 }
 
 .page-intro {

@@ -1,9 +1,5 @@
 <script lang="ts">
     import Layout from '../Layout.svelte';
-	import Tabs from './../../lib/components/whitepaper/tabs/tabs.svelte';
-    import TabsList from './../../lib/components/whitepaper/tabs/tabs-list.svelte';
-    import TabsTrigger from './../../lib/components/whitepaper/tabs/tabs-trigger.svelte';
-    import TabsContent from './../../lib/components/whitepaper/tabs/tabs-content.svelte';
 
     import Vision from '$lib/components/whitepaper/vision.svelte';
     import Token from '$lib/components/whitepaper/token.svelte';
@@ -22,14 +18,20 @@
       { id: 'ownership', title: 'The ICFC DAO', component: Token },
       { id: 'products', title: 'Our Products', component: Products },
       { id: 'revenue', title: 'Our Products', component: Revenue },
-      { id: 'sale', title: 'Decentralisation Sale 2', component: Sale },
+      { id: 'sale', title: 'Sale #2', component: Sale },
       { id: 'membership', title: 'Membership', component: Membership },
       { id: 'club-daos', title: 'Club DAOs', component: ClubDAOs },
       { id: 'content-creators', title: 'Content Creators', component: ContentCreators },
-      { id: 'deai', title: 'Decentralised AI', component: DecentralisedAi },
+      { id: 'deai', title: 'De-AI', component: DecentralisedAi },
       { id: 'roadmap', title: 'Roadmap', component: Roadmap },
       { id: 'notes', title: 'Notes', component: Notes },
     ];
+  
+    let activeTab = 0;
+    
+    function switchTab(index: number) {
+        activeTab = index;
+    }
 </script>
 
 <Layout>
@@ -38,21 +40,39 @@
         <p class="px-4">
             This whitepaper outlines the vision, token economics, and long-term strategy for icfc.app.
         </p>
-
-        <Tabs defaultValue="vision">
-            <TabsList class="flex flex-wrap gap-2">
-                {#each sections as section}
-                    <TabsTrigger value={section.id}>{section.title}</TabsTrigger>
+        <div class="w-full">
+            <div class="overflow-x-auto whitespace-nowrap no-scrollbar">
+              <div class="inline-flex w-full min-w-max border-b border-BrandGrayShade3">
+                {#each sections as tab, index}
+                  <button
+                    class={`flex-1 min-w-[125px] px-4 py-2 text-sm font-medium text-center 
+                           border-b-2 transition-colors duration-200
+                           ${activeTab === index 
+                             ? 'border-BrandBlue text-BrandBlue' 
+                             : 'border-transparent text-BrandGrayShade4 hover:text-BrandGrayShade5 hover:border-BrandGrayShade2'}`}
+                    on:click={() => switchTab(index)}
+                  >
+                    <span class="block break-words whitespace-normal cta-text">
+                      {tab.title}
+                    </span>
+                  </button>
                 {/each}
-            </TabsList>
-
-            {#each sections as section}
-                <TabsContent value={section.id}>
-                    <div class="p-4 bg-gray-100 rounded-lg shadow-sm dark:bg-gray-800">
-                    <svelte:component this={section.component} />
-                    </div>
-                </TabsContent>
-            {/each}
-        </Tabs>
+              </div>
+            </div>
+          
+            <div class="p-4 rounded-lg mt-4 bg-BrandBlueComp">
+                <svelte:component this={sections[activeTab].component} />
+            </div>
+          </div>
     </div>
 </Layout>
+
+<style>
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none; 
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+</style>

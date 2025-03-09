@@ -21,16 +21,4 @@
     .flex {
         padding-right: 1rem;
     }
-
-    @media (min-width: 640px) {
-        .overflow-x-auto {
-            overflow-x: visible;
-        }
-        .whitespace-nowrap {
-            white-space: normal;
-        }
-        .flex {
-            padding-right: 0;
-        }
-    }
 </style>

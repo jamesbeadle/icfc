@@ -59,6 +59,8 @@ export default {
     extend: {
       colors: {
         BrandBlue: "#1979F2",
+        BrandBlueComp: "#20205F",
+        BrandBlack: "#0A0300",
         BrandRed: "#F2194F",
         BrandGray: "#2F2F2F",
         BrandGrayShade1: "#484848",
