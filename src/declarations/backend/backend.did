@@ -1,12 +1,42 @@
-type Result_1 = 
+type Self = 
+ service {
+   getAppStatus: () -> (Result_2) query;
+   getProfile: () -> (Result_1) query;
+   getSaleCountdown: () ->
+    (record {
+       status: text;
+       stringTime: text;
+       timeRemaining: nat64;
+     });
+   get_goal: () -> (nat);
+   get_goal_progress: () -> (nat);
+   get_principal: () -> (principal);
+   get_sale_participants: () -> (vec SaleParticipant);
+   get_user_balance: () -> (nat);
+   get_user_contribution: () -> (vec SaleParticipant);
+   participate: (nat) -> (Result);
+ };
+type SaleParticipant = 
+ record {
+   amount: nat;
+   icfc_staked: nat;
+   time: nat64;
+   user: principal;
+ };
+type Result_2 = 
  variant {
    err: Error;
    ok: AppStatusDTO;
  };
-type Result = 
+type Result_1 = 
  variant {
    err: Error;
    ok: Profile;
+ };
+type Result = 
+ variant {
+   err: text;
+   ok;
  };
 type Profile = 
  record {
@@ -18,6 +48,7 @@ type Profile =
    displayName: text;
    membershipClaims: vec MembershipClaim;
    membershipType: MembershipType;
+   podcastIds: vec PrincipalId;
    principalId: PrincipalId;
    profilePicture: blob;
    profilePictureExtension: text;
@@ -51,7 +82,4 @@ type AppStatusDTO =
    onHold: bool;
    version: text;
  };
-service : {
-  getAppStatus: () -> (Result_1) query;
-  getProfile: () -> (Result) query;
-}
+service : () -> Self
