@@ -15,11 +15,11 @@ import Buffer "mo:base/Buffer";
 import Timer "mo:base/Timer";
 import Debug "mo:base/Debug";
 import T "icfc_types";
-import BaseCommands "commands/base_commands";
 import ckBTCLedger "canister:ckbtc_ledger";
 import Account "lib/Account";
 import Environment "environment";
 import Utils "utils/utils";
+import DTOs "./dtos/dtos";
 // import icpLedger "canister:icp_ledger";
 
 actor class Self() = this {
@@ -143,7 +143,7 @@ actor class Self() = this {
     };
   };
 
-  public shared query func getAppStatus() : async Result.Result<BaseCommands.AppStatusDTO, T.Error> {
+  public shared query func getAppStatus() : async Result.Result<DTOs.AppStatusDTO, T.Error> {
     return #ok(appStatus);
   };
 
