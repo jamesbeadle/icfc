@@ -79,6 +79,11 @@
 
 </script>
 
+
+<svelte:head>
+  <link rel="preload" href="/Bungee-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
+  <link rel="preload" href="/poppins-regular-webfont.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
+</svelte:head>
 <svelte:window on:storage={syncAuthStore} />
 
 {#await init()}
