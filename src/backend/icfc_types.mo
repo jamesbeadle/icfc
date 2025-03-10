@@ -85,5 +85,6 @@ module ICFCTypes {
     user : Principal;
     amount : Nat;
     icfc_staked: Nat;
+    time : Nat64;
   };
 };
