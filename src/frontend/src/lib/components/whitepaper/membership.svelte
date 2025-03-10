@@ -34,7 +34,7 @@
             items={[
                 "Eligibility to receive in-game ICFC tokens rewards on play for free ICFC platforms like OpenFPL & OpenWSL.",
                 "Enhanced profile recognition on the ICFC website, with an official membership status displayed.",
-                "Enhanced profile recognition in all related linked ecosystem apps profiles (Football God, OpenFPL, OpenWSL, Transfer Kings & Jeff Bets).",
+                "Enhanced profile recognition in all related linked ecosystem app profiles (Football God, OpenFPL, OpenWSL, Transfer Kings & Jeff Bets).",
                 "Free Private Leagues on OpenFPL & OpenWSL.",
                 "Free bets on Jeff Bets.",
                 "Free Transfer King Card Packs.",

@@ -22,7 +22,7 @@
       { id: 'membership', title: 'Membership', component: Membership },
       { id: 'club-daos', title: 'Club DAOs', component: ClubDAOs },
       { id: 'content-creators', title: 'Content Creators', component: ContentCreators },
-      { id: 'deai', title: 'De-AI', component: DecentralisedAi },
+      { id: 'deai', title: 'Artificial Intelligence', component: DecentralisedAi },
       { id: 'roadmap', title: 'Roadmap', component: Roadmap },
       { id: 'notes', title: 'Notes', component: Notes },
     ];
