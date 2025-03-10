@@ -1,15 +1,19 @@
 <script>
-
     import HeaderContentSection from "../shared/header-content-section.svelte";
-    import MultiLineContentSection from "../shared/multi-line-content-section.svelte";
     import WhitepaperPage from "./whitepaper-page.svelte";
     import WhitepaperSection from "./whitepaper-section.svelte";
-
+    import ICFCCoinIcon from "$lib/icons/ICFCCoinIcon.svelte";
+    import LogoIcon from "$lib/icons/LogoIcon.svelte";
 </script>
 <WhitepaperPage 
     title="The ICFC DAO" 
     intro="The ICFC utility token is used throughout our ecosystem within various governance, payment and reward mechanisms.
         Each mechanism has been carefully thought out to balance token supply through the online services we offer.">
+
+        <div class="flex justify-start my-8 space-x-6">
+            <ICFCCoinIcon className="w-24 h-24" />
+            <LogoIcon className="w-24 h-24" />
+        </div>
     
         <WhitepaperSection title="ICFC Ecosystem Tokenisation Mechanisms">
             <HeaderContentSection title="Proof-Of-Stake Membership" content="The ICFC uses a new Proof-Of-Stake membership mechanism to reward users for their long term commitment to the ICFC. Users claim their membership by linking their profile to a non-dissolving staked neuron, allowing them to receive membership benefits across our ecosystem." />
