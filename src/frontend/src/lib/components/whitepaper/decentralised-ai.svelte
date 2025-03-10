@@ -105,36 +105,38 @@
         >
 
         <p>
-            The primary challenge is computational power, as ICP’s current architecture is CPU based computation nodes.
-            mplement off-chain pre-training with on-chain inference to optimize resources, while advocating for GPU-based nodes with DFINITY to future-proof the system, pending resource availability.
+            Decentralised AI (DeAI) is a target we aim to reach incrementally, step by step, rather than claiming it prematurely. The journey involves disparate elements that, when unified, form a compelling vision for the future.
         </p>
 
-        <p>
-            Hallucinations
-        </p>
-        
-        <p>
-            As the Internet Computer blockchain advances it's AI tooling we will utilise new features within our real world use cases.
-        </p>
+        <HeaderContentSection 
+            title="Computational Power and Optimisation"
+            content="A key challenge lies in computational resources. The current architecture relies on CPU-based computation nodes, which presents limitations. To address this, we propose a hybrid approach: off-chain pre-training paired with on-chain inference to optimise resource use. We’re also exploring the potential for GPU-based nodes to future-proof the system, pending resource availability and ecosystem advancements."
+        />
 
-        <p>
-            Collaborate with ecosystem partners to enhance ICP subnets, exploring the potential for GPU-based nodes to boost computational power.
-            Upgrade ICP canisters to support real-time conversational workloads, utilizing the platform’s HTTP-serving capabilities.    
-        </p>
-        
-        <p>
-            Utilise resources from decentralisation sale proceeds, with any excess reinvested into the ICFC treasury for future AI initiatives, subject to funding.
-        </p>
+        <HeaderContentSection 
+            title="Tackling Hallucinations"
+            content="AI hallucinations—where models generate inaccurate or fabricated outputs—are a challenge, especially when datasets are small. Initially, our models may encounter this issue due to limited data size. However, as we grow and feed more data points into our system, our datasets will expand, enabling our models to improve continuously. The more data we integrate, the more effectively we overcome hallucinations, refining the accuracy and reliability of our AI tools."
+        />
 
-        <p>
-            Waterway Labs will leverage in-house expertise to build and refine LLMs, analytical & predictive models to work towards produces truly decentralised AI, runninng 100% on-chain.
-        </p>
-    
-        <p>
-            By ensuring all of our data is completely on-chain, verified by the DAO we have a competitive edge by owning the data and executing in-house AI on-chain. This surpasses projects reliant on centralised data or off-chain processing.
-        </p>
-        
+        <HeaderContentSection 
+            title="Governance and Tokenomics"
+            content="While an AI agent will play an advisory role in creating tokenomic schedules, the DAO retains ultimate authority over their approval and implementation. This ensures that human oversight guides the process, balancing innovation with accountability."
+        />
 
+        <HeaderContentSection 
+            title="Resource Allocation"
+            content="Funds raised through the decentralisation sale will be strategically invested in hiring skilled staff, acquiring additional hardware, and covering processing costs. Funds used will be subject to funding availability and DAO approval. This approach ensures sustainable growth and long-term commitment to our mission."
+        />
+
+        <HeaderContentSection 
+            title="Building On-Chain Expertise"
+            content="Waterway Labs will harness existing in-house expertise to develop and refine large language models (LLMs), analytical tools, and predictive models—all working toward fully decentralised AI running 100% on-chain. By keeping all data verified and stored on-chain under DAO oversight, we gain a competitive edge. This contrasts with projects that rely on centralised data or off-chain processing, positioning us as leaders in data ownership and on-chain AI execution."
+        />
+
+        <HeaderContentSection 
+            title="Enhancing Infrastructure"
+            content="We’ll collaborate with ecosystem partners to strengthen subnets, exploring GPU-based enhancements for greater computational power. Our goal is to upgrade canisters to handle real-time conversational workloads, leveraging the platform’s HTTP-serving capabilities to deliver seamless, practical use cases."
+        />
 
         </WhitepaperSection>
     
