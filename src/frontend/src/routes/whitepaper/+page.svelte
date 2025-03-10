@@ -27,8 +27,19 @@
       { id: 'notes', title: 'Notes', component: Notes },
     ];
   
-    let activeTab = 0;
+    let activeTab = $state(0);
     
+    $effect(() => {
+        const currentTab = activeTab;
+
+        setTimeout(() => {
+            const mainContent = document.querySelector('main');
+            if (mainContent) {
+                mainContent.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }, 100);
+    });
+
     function switchTab(index: number) {
         activeTab = index;
     }
@@ -54,7 +65,7 @@
         </p>
         <div class="w-full">
             <div class="overflow-x-auto whitespace-nowrap no-scrollbar">
-              <div class="inline-flex w-full min-w-max border-b border-BrandGrayShade3">
+              <div class="inline-flex w-full border-b min-w-max border-BrandGrayShade3">
                 {#each sections as tab, index}
                   <button
                     class={`flex-1 min-w-[125px] px-4 py-2 text-sm font-medium text-center 
@@ -62,7 +73,7 @@
                            ${activeTab === index 
                              ? 'border-BrandBlue text-BrandBlue' 
                              : 'border-transparent text-BrandGrayShade4 hover:text-BrandGrayShade5 hover:border-BrandGrayShade2'}`}
-                    on:click={() => switchTab(index)}
+                    onclick={() => switchTab(index)}
                   >
                     <span class="block break-words whitespace-normal cta-text">
                       {tab.title}
@@ -72,14 +83,14 @@
               </div>
             </div>
           
-            <div class="p-4 rounded-lg mt-4 bg-BrandBlueComp">
+            <div class="p-4 mt-4 rounded-lg bg-BrandBlueComp">
                 <svelte:component this={sections[activeTab].component} />
             </div>
 
             <div class="flex flex-col items-center mt-6 space-y-4">
                 <div class="flex space-x-4">
                     <button
-                        on:click={goToPrevious}
+                        onclick={goToPrevious}
                         disabled={activeTab === 0}
                         class="px-4 py-2 rounded-md transition-colors min-w-[200px]
                                {activeTab === 0 
@@ -89,7 +100,7 @@
                         Previous
                     </button>
                     <button
-                        on:click={goToNext}
+                        onclick={goToNext}
                         disabled={activeTab === sections.length - 1}
                         class="px-4 py-2 rounded-md transition-colors min-w-[200px]
                                {activeTab === sections.length - 1 
@@ -100,11 +111,10 @@
                     </button>
                 </div>
 
-                <!-- Pips -->
                 <div class="flex space-x-2">
                     {#each sections as _, index}
                         <button
-                            on:click={() => switchTab(index)}
+                            onclick={() => switchTab(index)}
                             class="w-3 h-3 rounded-full transition-colors
                                    {activeTab === index 
                                      ? 'bg-BrandBlue' 
