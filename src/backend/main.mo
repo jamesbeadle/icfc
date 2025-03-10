@@ -243,36 +243,37 @@ actor class Self() = this {
     return saleParticipants;
   };
 
-  public shared func getSaleCountdown() : async {
-    status : Text;
-    timeRemaining : Nat64;
-    stringTime : Text;
-  } {
+  public shared func getSaleCountdown() : async Result.Result<DTOs.SaleCountDownDTO, Text> {
     let now = Nat64.fromNat(Int.abs(Time.now()));
     if (now < saleStartTime) {
       let timeRemaining = saleStartTime - now;
       let (days, hours, minutes, seconds) = await Utils.convertNanoToTime(timeRemaining);
-      return {
+
+      let result : DTOs.SaleCountDownDTO = {
         status = "upcoming";
         timeRemaining = timeRemaining;
         stringTime = Nat.toText(days) # " days, " # Nat.toText(hours) # " hours, " # Nat.toText(minutes) # " minutes, " # Nat.toText(seconds) # " seconds";
       };
+      return #ok(result);
 
     } else if (now < saleEndTime) {
       let timeRemaining = saleEndTime - now;
       let (days, hours, minutes, seconds) = await Utils.convertNanoToTime(timeRemaining);
-      return {
+
+      let result : DTOs.SaleCountDownDTO = {
         status = "active";
         timeRemaining = timeRemaining;
         stringTime = Nat.toText(days) # " days, " # Nat.toText(hours) # " hours, " # Nat.toText(minutes) # " minutes, " # Nat.toText(seconds) # " seconds";
       };
+      return #ok(result);
 
     } else {
-      return {
+      let result : DTOs.SaleCountDownDTO = {
         status = "ended";
         timeRemaining = 0;
-        stringTime = "0 days, 0 hours, 0 minutes, 0 seconds";
+        stringTime = "Sale has ended";
       };
+      return #ok(result);
     };
 
   };
