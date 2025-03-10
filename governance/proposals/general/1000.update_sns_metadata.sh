@@ -10,7 +10,7 @@ cd $SCRIPT_DIR
 PROPOSAL="(record {
         title = \"Update ICFC SNS Metadata \";
         url = \"https://github.com/jamesbeadle/icfc\";
-        summary = \"Update logo\";
+        summary = \"Update ICFC SNS Metadata \";
         action = opt variant {
             ManageSnsMetadata  = record {
                 url = opt \"https://icfc.app/\";
@@ -21,4 +21,4 @@ PROPOSAL="(record {
         }
  })"
 
-./submit_proposal.sh "$PROPOSAL"
+../../utils/submit_proposal.sh "$PROPOSAL"
