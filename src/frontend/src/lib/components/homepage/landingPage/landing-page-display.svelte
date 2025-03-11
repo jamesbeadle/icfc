@@ -29,7 +29,7 @@
             </button>
             <div class="mt-6 text-xs text-center">
                 <p class="mt-6 text-sm text-center text-white">
-                    Have questions? Read our Whitepaper
+                    Have questions? <a href="/whitepaper">Read our Whitepaper</a>
                 </p>
             </div>
         </div>
