@@ -11,7 +11,13 @@ export const idlFactory = ({ IDL }) => {
     'InvalidData' : IDL.Null,
     'AlreadyExists' : IDL.Null,
   });
-  const Result_2 = IDL.Variant({ 'ok' : AppStatusDTO, 'err' : Error });
+  const Result_4 = IDL.Variant({ 'ok' : AppStatusDTO, 'err' : Error });
+  const SaleGoalDTO = IDL.Record({
+    'minGoal' : IDL.Nat,
+    'currentProgress' : IDL.Nat,
+    'maxGoal' : IDL.Nat,
+  });
+  const Result_3 = IDL.Variant({ 'ok' : SaleGoalDTO, 'err' : IDL.Text });
   const PrincipalId = IDL.Text;
   const MembershipType = IDL.Variant({
     'Lifetime' : IDL.Null,
@@ -36,7 +42,13 @@ export const idlFactory = ({ IDL }) => {
     'termsAgreed' : IDL.Bool,
     'principalId' : PrincipalId,
   });
-  const Result_1 = IDL.Variant({ 'ok' : Profile, 'err' : Error });
+  const Result_2 = IDL.Variant({ 'ok' : Profile, 'err' : Error });
+  const SaleCountDownDTO = IDL.Record({
+    'status' : IDL.Text,
+    'timeRemaining' : IDL.Nat64,
+    'stringTime' : IDL.Text,
+  });
+  const Result_1 = IDL.Variant({ 'ok' : SaleCountDownDTO, 'err' : IDL.Text });
   const SaleParticipant = IDL.Record({
     'time' : IDL.Nat64,
     'user' : IDL.Principal,
@@ -45,22 +57,12 @@ export const idlFactory = ({ IDL }) => {
   });
   const Result = IDL.Variant({ 'ok' : IDL.Null, 'err' : IDL.Text });
   const Self = IDL.Service({
-    'getAppStatus' : IDL.Func([], [Result_2], ['query']),
-    'getProfile' : IDL.Func([], [Result_1], ['query']),
-    'getSaleCountdown' : IDL.Func(
-        [],
-        [
-          IDL.Record({
-            'status' : IDL.Text,
-            'timeRemaining' : IDL.Nat64,
-            'stringTime' : IDL.Text,
-          }),
-        ],
-        [],
-      ),
-    'get_goal' : IDL.Func([], [IDL.Nat], []),
+    'get_app_status' : IDL.Func([], [Result_4], ['query']),
+    'get_goal' : IDL.Func([], [Result_3], []),
     'get_goal_progress' : IDL.Func([], [IDL.Nat], []),
     'get_principal' : IDL.Func([], [IDL.Principal], []),
+    'get_profile' : IDL.Func([], [Result_2], ['query']),
+    'get_sale_countdown' : IDL.Func([], [Result_1], []),
     'get_sale_participants' : IDL.Func([], [IDL.Vec(SaleParticipant)], []),
     'get_user_balance' : IDL.Func([], [IDL.Nat], []),
     'get_user_contribution' : IDL.Func([], [IDL.Vec(SaleParticipant)], []),
