@@ -1,10 +1,14 @@
 <script lang="ts">
-  import { onDestroy, afterUpdate } from "svelte";
+  import { onDestroy } from "svelte";
 
-  export let showModal: boolean;
-  export let onClose: () => void;
+  const { showModal, onClose, children } = $props<{
+    showModal: boolean;
+    onClose: () => void;
+    children: any;
+  }>();
 
-  let modalContainer: HTMLElement | null = null;
+  const isVisible = $derived(showModal);
+  let modalContainer = $state<HTMLElement | null>(null);
 
   const handleKeydown = (e: KeyboardEvent) => {
     if (e.key === 'Escape' && showModal) {
@@ -42,28 +46,37 @@
     }
   });
 
-  afterUpdate(() => {
+  $effect(() => {
     if (showModal) {
       trapFocus(); 
     }
   });
 </script>
 
-{#if showModal}
+{#if isVisible}
 <div
-  class="fixed inset-0 z-40 bg-black bg-opacity-50 flex items-center justify-center overflow-y-auto"
-  on:click={handleBackdropClick}
-  aria-hidden={showModal ? "false" : "true"}
+  class="fixed inset-0 z-40 flex items-center justify-center overflow-y-auto bg-black/50 backdrop-blur-sm perspective"
+  onclick={handleBackdropClick}
+  aria-hidden={isVisible ? "false" : "true"}
 >
-<div
-class="bg-BrandLightGray rounded-lg shadow-lg max-w-lg w-full mx-auto relative overflow-y-auto max-h-[90vh] px-6 py-4"
-role="dialog"
-aria-modal="true"
-tabindex="-1" 
-bind:this={modalContainer}
->
-<slot />
-</div>
-
+  <div
+    class="bg-ModalBackground border border-ModalBorder rounded-lg max-w-auto w-full mx-auto relative overflow-y-auto max-h-[90vh] px-6 py-4 drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)] transform-style-preserve-3d"
+    role="dialog"
+    aria-modal="true"
+    tabindex="-1" 
+    bind:this={modalContainer}
+  >
+    {@render children()}
+  </div>
 </div>
 {/if}
+
+<style>
+  .perspective {
+    perspective: 2000px;
+  }
+  
+  .transform-style-preserve-3d {
+    transform-style: preserve-3d;
+  }
+</style>

@@ -7,6 +7,7 @@ import { Principal } from "@dfinity/principal";
 import { Text } from "@dfinity/candid/lib/cjs/idl";
 import { createAgent } from "@dfinity/utils";
 import type { OptionIdentity } from "../types/identity";
+import type { Profile } from "../../../../declarations/backend/backend.did";
 
 function createUserStore() {
   const { subscribe, set } = writable<any>(null);
@@ -135,9 +136,25 @@ function createUserStore() {
     set(profileData);
   }
 
+  async function getProfile(principalId: string): Promise<Profile | null> {
+    const identityActor: any = await ActorFactory.createIdentityActor(
+      authStore,
+      process.env.BACKEND_CANISTER_ID ?? "",
+    );
+
+    let getProfileResponse = await identityActor.getProfile();
+    let error = isError(getProfileResponse);
+    if (error) {
+      console.error("Error fetching user profile");
+      return null;
+    }
+    return getProfileResponse.ok;
+  }
+
   return {
     subscribe,
     sync,
+    getProfile,
     agreeTerms,
     updateUsername,
     updateProfilePicture,

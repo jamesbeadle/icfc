@@ -20,20 +20,7 @@
 
     <link crossorigin="anonymous" href="/manifest.webmanifest" rel="manifest" />
     <link rel="preload" href="/background.jpg" as="image" />
-    <link
-      rel="preload"
-      href="/poppins-regular-webfont.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
-    <link
-      rel="preload"
-      href="/Bungee-Regular.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
+    <link rel="preload" href="/star.png" as="image" />
 
     <link
       rel="icon"
@@ -72,12 +59,26 @@
     />
 
     <meta content="#1979F2" name="theme-color" />
+    <link
+      rel="preload"
+      href="/Bungee-Regular.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="preload"
+      href="/poppins-regular-webfont.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin="anonymous"
+    />
     
-		<link href="/_app/immutable/assets/index.DdhCgOdt.css" rel="stylesheet">
-		<link rel="modulepreload" href="/_app/immutable/entry/start.DAI9oPHB.js">
-		<link rel="modulepreload" href="/_app/immutable/chunks/RYon585b.js">
-		<link rel="modulepreload" href="/_app/immutable/chunks/C4MD5laf.js">
-		<link rel="modulepreload" href="/_app/immutable/entry/app.D_aFYFXF.js">
+		<link href="/_app/immutable/assets/index.DlJHX6jt.css" rel="stylesheet">
+		<link rel="modulepreload" href="/_app/immutable/entry/start.D29Wzyaj.js">
+		<link rel="modulepreload" href="/_app/immutable/chunks/1c-caMgG.js">
+		<link rel="modulepreload" href="/_app/immutable/chunks/BwpS460j.js">
+		<link rel="modulepreload" href="/_app/immutable/entry/app.fUmAfl-Z.js">
 
     <style>
       html,
@@ -104,7 +105,7 @@
       }
       body {
         font-family: "Poppins", sans-serif !important;
-        color: white !important;
+        color: white;
         background-color: #1a1a1d;
         height: 100vh;
         margin: 0;
@@ -231,15 +232,15 @@
     <div style="display: contents">
 			<script>
 				{
-					__sveltekit_c2lcuu = {
+					__sveltekit_dqqgbc = {
 						base: ""
 					};
 
 					const element = document.currentScript.parentElement;
 
 					Promise.all([
-						import("/_app/immutable/entry/start.DAI9oPHB.js"),
-						import("/_app/immutable/entry/app.D_aFYFXF.js")
+						import("/_app/immutable/entry/start.D29Wzyaj.js"),
+						import("/_app/immutable/entry/app.fUmAfl-Z.js")
 					]).then(([kit, app]) => {
 						kit.start(app, element);
 					});

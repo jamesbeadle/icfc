@@ -1,18 +1,6 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-body {
-  @apply bg-fgbg text-BrandGrayShade5;
-  font-family: "Poppins", sans-serif;
-}
-
-.page-wrapper {
-  @apply p-6 md:p-8;
-}
 
 /* global.css */
 :root {
@@ -29,46 +17,108 @@ body {
 }
 
 .brand-button {
-  @apply bg-BrandBlue hover:bg-BrandInfo text-white font-semibold py-3 px-8 rounded cta-text;
+  @apply px-4 py-2 font-medium text-white transition-colors duration-300 rounded-lg bg-BrandGray hover:bg-BrandInfo cta-text;
 }
 
 .bg-frontend-update {
-  @apply bg-black text-white;
+  @apply text-white bg-black;
 }
 
-.jbbg {
-  @apply bg-jbbg;
+.brand-card {
+  @apply p-4 rounded;
 }
 
-.fgbg {
-  @apply bg-fgbg text-white;
+.bg-footballgod-card {
+  @apply bg-FootballGodBackground text-FootballGodFont brand-card;
 }
 
-.ofplbg {
-  @apply bg-ofplbg;
+.bg-openfpl-card {
+  @apply bg-OpenFPLBackground text-OpenFPLFont brand-card;
 }
 
-.owslbg {
-  @apply bg-owslbg text-white;
+.bg-transferkings-card {
+  @apply bg-TransferKingsBackground text-TransferKingsFont brand-card;
 }
 
-.tkbg {
-  @apply bg-tkbg text-white;
+.bg-openwsl-card {
+  @apply bg-OpenWSLBackground text-OpenWSLFont brand-card;
 }
 
-.page-wrapper {
-  @apply w-full mt-16;
+.bg-jeffbets-card {
+  @apply bg-JeffBetsBackground text-JeffBetsFont brand-card;
 }
 
-.neon-hover:hover {
-  @apply text-BrandBlue;
-  filter: drop-shadow(0 0 10px rgba(25, 121, 242, 0.7));
-  transition: filter 0.3s ease;
-}
-.neon-hover:hover {
-  filter: drop-shadow(0 0 20px rgba(25, 121, 242, 1));
+.svg-background {
+  @apply absolute inset-0 z-0 w-full h-full;
 }
 
-footer {
-  margin-top: auto;
+.text-wrap {
+  word-break: break-all;
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+
+.grid-cols-1.sm\:grid-cols-2.md\:grid-cols-3.lg\:grid-cols-4 {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+@media (min-width: 640px) {
+  .grid-cols-1.sm\:grid-cols-2.md\:grid-cols-3.lg\:grid-cols-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 768px) {
+  .grid-cols-1.sm\:grid-cols-2.md\:grid-cols-3.lg\:grid-cols-4 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1024px) {
+  .grid-cols-1.sm\:grid-cols-2.md\:grid-cols-3.lg\:grid-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.hover\:shadow-2xl:hover {
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.transition-shadow {
+  transition: box-shadow 0.3s ease;
+}
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.horizontal-divider {
+  min-height: 2px;
+  @apply self-stretch flex-shrink-0 h-px my-4 bg-gray-400;
+}
+
+.main-title {
+  @apply px-4 text-4xl cta-text;
+}
+
+.section-title {
+  @apply text-3xl cta-text text-BrandSuccess;
+}
+
+.sub-header {
+  @apply text-2xl tracking-wide cta-text text-BrandInfo;
+}
+
+.small-header {
+  @apply text-lg cta-text text-white;
+}
+
+.section-header {
+  @apply tracking-wide text-white cta-text;
+}
+
+.page-intro {
+  @apply text-xl;
 }

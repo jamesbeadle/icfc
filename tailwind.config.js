@@ -1,15 +1,33 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ["./src/**/*.{html,js,svelte,ts}"],
+  safelist: [
+    "hover:text-OpenWSLBackground",
+    "hover:text-OpenFPLBackground",
+    "hover:text-JeffBetsBackground",
+    "hover:text-FootballGodBackground",
+    "hover:text-TransferKingsBackground",
+    "hover:text-BrandGrayShade6",
+    "bg-OpenWSLBackground",
+    "bg-OpenFPLBackground",
+    "bg-JeffBetsBackground",
+    "bg-FootballGodBackground",
+    "bg-TransferKingsBackground",
+    "bg-BrandGrayShade6",
+  ],
   theme: {
     screens: {
       xxs: "420px",
       xs: "480px",
+      mini: "580px",
       sm: "640px",
       // => @media (min-width: 640px) { ... }
 
       md: "768px",
       // => @media (min-width: 768px) { ... }
+
+      base: "900px",
+      // => @media (min-width: 960px) { ... }
 
       lg: "1024px",
       // => @media (min-width: 1024px) { ... }
@@ -20,7 +38,10 @@ export default {
       "2xl": "1536px",
       // => @media (min-width: 1536px) { ... }
 
-      "3xl": "1920px",
+      "3xl": "1728px",
+      // => @media (min-width: 1728px) { ... }
+
+      "4xl": "1920px",
       // => @media (min-width: 1920px) { ... }
     },
     fontSize: {
@@ -38,6 +59,8 @@ export default {
     extend: {
       colors: {
         BrandBlue: "#1979F2",
+        BrandBlueComp: "#20205F",
+        BrandBlack: "#0A0300",
         BrandRed: "#F2194F",
         BrandGray: "#2F2F2F",
         BrandGrayShade1: "#484848",
@@ -49,11 +72,22 @@ export default {
         BrandSuccess: "#66E094",
         BrandError: "#FF403C",
         BrandInfo: "#3CA1FF",
-        fgbg: "#242529",
-        ofplbg: "#2CE3A6",
-        owslbg: "#F156D2",
-        tkbg: "#1D54D3",
-        jbbg: "#D7FE49",
+        FootballGodBackground: "#7F56F1",
+        OpenFPLBackground: "#2CE3A6",
+        TransferKingsBackground: "#2D64E3",
+        OpenWSLBackground: "#F156D2",
+        JeffBetsBackground: "#D7FE49",
+        FootballGodFont: "#FFFFFF",
+        OpenFPLFont: "#000000",
+        TransferKingsFont: "#FFFFFF",
+        OpenWSLFont: "#FFFFFF",
+        JeffBetsFont: "#000000",
+        ModalBackground: "#222327",
+        ModalBorder: "#323232",
+      },
+      perspective: {
+        500: "500px",
+        1000: "1000px",
       },
     },
   },
