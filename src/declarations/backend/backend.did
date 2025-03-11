@@ -1,16 +1,15 @@
 type TimerId = nat;
 type Self = 
  service {
-   get_app_status: () -> (Result_5) query;
-   get_goal: () -> (Result_4);
-   get_goal_progress: () -> (nat);
-   get_membership: (MembershipType) -> (Result_3);
+   claim_membership: (MembershipType) -> (Result_5);
+   get_app_status: () -> (Result_4) query;
+   get_goal: () -> (Result_3) query;
    get_principal: () -> (principal);
    get_profile: () -> (Result_2) query;
    get_sale_countdown: () -> (Result_1);
    get_sale_participants: () -> (vec SaleParticipant);
-   get_user_balance: () -> (nat);
-   get_user_contribution: () -> (vec SaleParticipant);
+   get_user_ckBTC_balance: () -> (nat);
+   get_user_sale_contribution: () -> (vec SaleParticipant);
    participate: (nat) -> (Result);
  };
 type SaleParticipant = 
@@ -34,18 +33,18 @@ type SaleCountDownDTO =
  };
 type Result_5 = 
  variant {
-   err: Error;
-   ok: AppStatusDTO;
+   err: text;
+   ok: MembershipClaim;
  };
 type Result_4 = 
  variant {
-   err: text;
-   ok: SaleGoalDTO;
+   err: Error;
+   ok: AppStatusDTO;
  };
 type Result_3 = 
  variant {
    err: text;
-   ok: MembershipClaim;
+   ok: SaleGoalDTO;
  };
 type Result_2 = 
  variant {

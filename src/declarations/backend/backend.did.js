@@ -1,23 +1,4 @@
 export const idlFactory = ({ IDL }) => {
-  const AppStatusDTO = IDL.Record({
-    'version' : IDL.Text,
-    'onHold' : IDL.Bool,
-  });
-  const Error = IDL.Variant({
-    'DecodeError' : IDL.Null,
-    'NotAllowed' : IDL.Null,
-    'NotFound' : IDL.Null,
-    'NotAuthorized' : IDL.Null,
-    'InvalidData' : IDL.Null,
-    'AlreadyExists' : IDL.Null,
-  });
-  const Result_5 = IDL.Variant({ 'ok' : AppStatusDTO, 'err' : Error });
-  const SaleGoalDTO = IDL.Record({
-    'minGoal' : IDL.Nat,
-    'currentProgress' : IDL.Nat,
-    'maxGoal' : IDL.Nat,
-  });
-  const Result_4 = IDL.Variant({ 'ok' : SaleGoalDTO, 'err' : IDL.Text });
   const MembershipType = IDL.Variant({
     'NotClaimed' : IDL.Null,
     'Lifetime' : IDL.Null,
@@ -30,7 +11,26 @@ export const idlFactory = ({ IDL }) => {
     'claimedOn' : IDL.Int,
     'membershipType' : MembershipType,
   });
-  const Result_3 = IDL.Variant({ 'ok' : MembershipClaim, 'err' : IDL.Text });
+  const Result_5 = IDL.Variant({ 'ok' : MembershipClaim, 'err' : IDL.Text });
+  const AppStatusDTO = IDL.Record({
+    'version' : IDL.Text,
+    'onHold' : IDL.Bool,
+  });
+  const Error = IDL.Variant({
+    'DecodeError' : IDL.Null,
+    'NotAllowed' : IDL.Null,
+    'NotFound' : IDL.Null,
+    'NotAuthorized' : IDL.Null,
+    'InvalidData' : IDL.Null,
+    'AlreadyExists' : IDL.Null,
+  });
+  const Result_4 = IDL.Variant({ 'ok' : AppStatusDTO, 'err' : Error });
+  const SaleGoalDTO = IDL.Record({
+    'minGoal' : IDL.Nat,
+    'currentProgress' : IDL.Nat,
+    'maxGoal' : IDL.Nat,
+  });
+  const Result_3 = IDL.Variant({ 'ok' : SaleGoalDTO, 'err' : IDL.Text });
   const TimerId = IDL.Nat;
   const PrincipalId = IDL.Text;
   const Profile = IDL.Record({
@@ -62,16 +62,15 @@ export const idlFactory = ({ IDL }) => {
   });
   const Result = IDL.Variant({ 'ok' : IDL.Null, 'err' : IDL.Text });
   const Self = IDL.Service({
-    'get_app_status' : IDL.Func([], [Result_5], ['query']),
-    'get_goal' : IDL.Func([], [Result_4], []),
-    'get_goal_progress' : IDL.Func([], [IDL.Nat], []),
-    'get_membership' : IDL.Func([MembershipType], [Result_3], []),
+    'claim_membership' : IDL.Func([MembershipType], [Result_5], []),
+    'get_app_status' : IDL.Func([], [Result_4], ['query']),
+    'get_goal' : IDL.Func([], [Result_3], ['query']),
     'get_principal' : IDL.Func([], [IDL.Principal], []),
     'get_profile' : IDL.Func([], [Result_2], ['query']),
     'get_sale_countdown' : IDL.Func([], [Result_1], []),
     'get_sale_participants' : IDL.Func([], [IDL.Vec(SaleParticipant)], []),
-    'get_user_balance' : IDL.Func([], [IDL.Nat], []),
-    'get_user_contribution' : IDL.Func([], [IDL.Vec(SaleParticipant)], []),
+    'get_user_ckBTC_balance' : IDL.Func([], [IDL.Nat], []),
+    'get_user_sale_contribution' : IDL.Func([], [IDL.Vec(SaleParticipant)], []),
     'participate' : IDL.Func([IDL.Nat], [Result], []),
   });
   return Self;

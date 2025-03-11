@@ -4,7 +4,6 @@ import Array "mo:base/Array";
 import Principal "mo:base/Principal";
 import Nat "mo:base/Nat";
 import Time "mo:base/Time";
-import Error "mo:base/Error";
 import Option "mo:base/Option";
 import Text "mo:base/Text";
 import Nat64 "mo:base/Nat64";
@@ -13,7 +12,6 @@ import Blob "mo:base/Blob";
 import Nat8 "mo:base/Nat8";
 import Buffer "mo:base/Buffer";
 import Timer "mo:base/Timer";
-import Debug "mo:base/Debug";
 import T "icfc_types";
 import ckBTCLedger "canister:ckbtc_ledger";
 import Account "lib/Account";
@@ -39,12 +37,26 @@ actor class Self() = this {
   private type Subaccount = Blob;
   private var icfcExchange : Nat = 400; //400 ckSatoshis per ICFC
 
-  public shared ({ caller }) func get_goal_progress() : async Nat {
-    assert not Principal.isAnonymous(caller);
-
-    return ckBTCRaised;
+  private var appStatus : Base.AppStatus = {
+    onHold = false;
+    version = "0.0.1";
   };
 
+  private func caller_allowed(caller : Principal) : Bool {
+    let foundCaller = Array.find<Base.PrincipalId>(
+      Environment.ADMIN_PRINCIPALS,
+      func(canisterId : Base.CanisterId) : Bool {
+        Principal.toText(caller) == canisterId;
+      },
+    );
+    return Option.isSome(foundCaller);
+  };
+
+  public shared query func get_app_status() : async Result.Result<DTOs.AppStatusDTO, T.Error> {
+    return #ok(appStatus);
+  };
+
+  // SNS Sale
   private func return_participants_ckBTC() : async Result.Result<Nat, Text> {
     let participants = saleParticipants;
     saleParticipants := [];
@@ -76,7 +88,7 @@ actor class Self() = this {
   };
 
   private func end_sale() : async () {
-    let saleProgress = await get_goal_progress();
+    let saleProgress = ckBTCRaised;
     let decimal = await ckBTCLedger.icrc1_decimals();
 
     let totalRaised = saleProgress / Nat.pow(10, Nat8.toNat(decimal));
@@ -109,46 +121,6 @@ actor class Self() = this {
     );
   };
 
-  private var appStatus : Base.AppStatus = {
-    onHold = false;
-    version = "0.0.1";
-  };
-
-  private func caller_allowed(caller : Principal) : Bool {
-    let foundCaller = Array.find<Base.PrincipalId>(
-      Environment.ADMIN_PRINCIPALS,
-      func(canisterId : Base.CanisterId) : Bool {
-        Principal.toText(caller) == canisterId;
-      },
-    );
-    return Option.isSome(foundCaller);
-  };
-
-  public shared query ({ caller }) func get_profile() : async Result.Result<T.Profile, T.Error> {
-    assert not Principal.isAnonymous(caller);
-    let principalId = Principal.toText(caller);
-
-    let foundProfile = Array.find(
-      profiles,
-      func(profile : T.Profile) : Bool {
-        profile.principalId == principalId;
-      },
-    );
-    switch (foundProfile) {
-      case (?profile) {
-        return #ok(profile);
-      };
-      case (null) {
-        return #err(#NotFound);
-      };
-    };
-  };
-
-  public shared query func get_app_status() : async Result.Result<DTOs.AppStatusDTO, T.Error> {
-    return #ok(appStatus);
-  };
-
-  // amount is in ckSatoshi
   public shared ({ caller }) func participate(amount : Nat) : async Result.Result<(), Text> {
     assert not Principal.isAnonymous(caller);
 
@@ -209,26 +181,16 @@ actor class Self() = this {
     };
   };
 
-  public shared ({ caller }) func get_principal() : async Principal {
-    return caller;
-  };
-
-  public shared ({ caller }) func get_goal() : async Result.Result<DTOs.SaleGoalDTO, Text> {
-    assert not Principal.isAnonymous(caller);
-    let current_balance = await ckBTCLedger.icrc1_balance_of({
-      owner = Principal.fromActor(this);
-      subaccount = null;
-    });
-
+  public query func get_goal() : async Result.Result<DTOs.SaleGoalDTO, Text> {
     let result : DTOs.SaleGoalDTO = {
       minGoal = min_goal;
       maxGoal = max_goal;
-      currentProgress = current_balance;
+      currentProgress = ckBTCRaised;
     };
     return #ok(result);
   };
 
-  public shared ({ caller }) func get_user_balance() : async Nat {
+  public shared ({ caller }) func get_user_ckBTC_balance() : async Nat {
     assert not Principal.isAnonymous(caller);
     await ckBTCLedger.icrc1_balance_of({
       owner = Principal.fromActor(this);
@@ -236,7 +198,7 @@ actor class Self() = this {
     });
   };
 
-  public shared ({ caller }) func get_user_contribution() : async [T.SaleParticipant] {
+  public shared ({ caller }) func get_user_sale_contribution() : async [T.SaleParticipant] {
     assert not Principal.isAnonymous(caller);
 
     let foundParticipants = Array.filter(
@@ -288,8 +250,31 @@ actor class Self() = this {
     };
 
   };
+  public shared query ({ caller }) func get_profile() : async Result.Result<T.Profile, T.Error> {
+    assert not Principal.isAnonymous(caller);
+    let principalId = Principal.toText(caller);
 
-  private func charge_membership_fee(user : Principal, membership : T.MembershipType) : async Result.Result<(T.MembershipClaim), Text> {
+    let foundProfile = Array.find(
+      profiles,
+      func(profile : T.Profile) : Bool {
+        profile.principalId == principalId;
+      },
+    );
+    switch (foundProfile) {
+      case (?profile) {
+        return #ok(profile);
+      };
+      case (null) {
+        return #err(#NotFound);
+      };
+    };
+  };
+
+  public shared ({ caller }) func get_principal() : async Principal {
+    return caller;
+  };
+
+  private func renew_membership(user : Principal, membership : T.MembershipType) : async Result.Result<(T.MembershipClaim), Text> {
     let fee = switch membership {
       case (#Monthly) { Environment.ICFC_MONTHLY_MEMBERSHIP_FEE };
       case (#Annual) { Environment.ICFC_ANNUAL_MEMBERSHIP_FEE };
@@ -297,8 +282,8 @@ actor class Self() = this {
       case (_) { return #err("Invalid membership type") };
     };
 
-    // TODO: Check ICFC balance and charge fee
-    let paymentSuccess = true;
+    // TODO: Check ICFC stacked by user
+    let eligibleUser = true;
 
     let userProfile = Array.find(
       profiles,
@@ -309,7 +294,7 @@ actor class Self() = this {
 
     let now = Time.now();
 
-    let claim : T.MembershipClaim = if (paymentSuccess) {
+    let claim : T.MembershipClaim = if (eligibleUser) {
       {
         membershipType = membership;
         claimedOn = now;
@@ -344,7 +329,7 @@ actor class Self() = this {
         let updatedProfile = {
           profile with
           membershipClaims = Buffer.toArray(membershipBuffer);
-          membershipType = if (paymentSuccess) membership else #Expired;
+          membershipType = if (eligibleUser) membership else #Expired;
           membershipTimerId = null;
         };
 
@@ -363,7 +348,7 @@ actor class Self() = this {
               let timerId = Timer.setTimer<system>(
                 #seconds(Int.abs(delay)),
                 func() : async () {
-                  let _ = await charge_membership_fee(user, membership);
+                  let _ = await renew_membership(user, membership);
                 },
               );
 
@@ -400,9 +385,9 @@ actor class Self() = this {
     };
   };
 
-  public shared ({ caller }) func get_membership(membership : T.MembershipType) : async Result.Result<T.MembershipClaim, Text> {
+  public shared ({ caller }) func claim_membership(membership : T.MembershipType) : async Result.Result<T.MembershipClaim, Text> {
     assert not Principal.isAnonymous(caller);
-    let claim_result = await charge_membership_fee(caller, membership);
+    let claim_result = await renew_membership(caller, membership);
 
     return claim_result;
   };

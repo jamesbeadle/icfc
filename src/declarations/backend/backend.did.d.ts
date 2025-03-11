@@ -40,12 +40,12 @@ export type Result_1 = { 'ok' : SaleCountDownDTO } |
   { 'err' : string };
 export type Result_2 = { 'ok' : Profile } |
   { 'err' : Error };
-export type Result_3 = { 'ok' : MembershipClaim } |
+export type Result_3 = { 'ok' : SaleGoalDTO } |
   { 'err' : string };
-export type Result_4 = { 'ok' : SaleGoalDTO } |
-  { 'err' : string };
-export type Result_5 = { 'ok' : AppStatusDTO } |
+export type Result_4 = { 'ok' : AppStatusDTO } |
   { 'err' : Error };
+export type Result_5 = { 'ok' : MembershipClaim } |
+  { 'err' : string };
 export interface SaleCountDownDTO {
   'status' : string,
   'timeRemaining' : bigint,
@@ -63,16 +63,15 @@ export interface SaleParticipant {
   'icfc_staked' : bigint,
 }
 export interface Self {
-  'get_app_status' : ActorMethod<[], Result_5>,
-  'get_goal' : ActorMethod<[], Result_4>,
-  'get_goal_progress' : ActorMethod<[], bigint>,
-  'get_membership' : ActorMethod<[MembershipType], Result_3>,
+  'claim_membership' : ActorMethod<[MembershipType], Result_5>,
+  'get_app_status' : ActorMethod<[], Result_4>,
+  'get_goal' : ActorMethod<[], Result_3>,
   'get_principal' : ActorMethod<[], Principal>,
   'get_profile' : ActorMethod<[], Result_2>,
   'get_sale_countdown' : ActorMethod<[], Result_1>,
   'get_sale_participants' : ActorMethod<[], Array<SaleParticipant>>,
-  'get_user_balance' : ActorMethod<[], bigint>,
-  'get_user_contribution' : ActorMethod<[], Array<SaleParticipant>>,
+  'get_user_ckBTC_balance' : ActorMethod<[], bigint>,
+  'get_user_sale_contribution' : ActorMethod<[], Array<SaleParticipant>>,
   'participate' : ActorMethod<[bigint], Result>,
 }
 export type TimerId = bigint;
