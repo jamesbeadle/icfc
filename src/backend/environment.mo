@@ -23,5 +23,8 @@ module Environment {
   public let CKBTC_MIN_GOAL = 50;
   public let CKBTC_MAX_GOAL = 100;
   public let SALE_START : Nat64 = 1743465600000000000;
-  public let SALE_END : Nat64 =  1746057600000000000;
+  public let SALE_END : Nat64 = 1746057600000000000;
+  public let ICFC_MONTHLY_MEMBERSHIP_FEE = 5;
+  public let ICFC_ANNUAL_MEMBERSHIP_FEE = 50;
+  public let ICFC_LIFETIME_MEMBERSHIP_FEE = 500;
 };

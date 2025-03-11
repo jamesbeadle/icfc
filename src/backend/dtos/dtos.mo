@@ -15,4 +15,8 @@ module DTOs {
         maxGoal : Nat;
         currentProgress : Nat;
     };
+
+    public type ChargeMembershipDTO = {
+
+    };
 };

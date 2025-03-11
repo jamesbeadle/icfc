@@ -1,6 +1,7 @@
 import Base "mo:waterway-mops/BaseTypes";
 import Principal "mo:base/Principal";
 import Blob "mo:base/Blob";
+import Timer "mo:base/Timer";
 import ckBTCLedger "canister:ckbtc_ledger";
 
 module ICFCTypes {
@@ -19,7 +20,8 @@ module ICFCTypes {
     profilePictureExtension : Text;
     termsAgreed : Bool;
     appPrincipalIds : [(Text, Base.PrincipalId)];
-    podcastIds: [Base.PrincipalId];
+    podcastIds : [Base.PrincipalId];
+    membershipTimerId : ?Timer.TimerId;
   };
 
   public type Podcast = {
@@ -38,6 +40,8 @@ module ICFCTypes {
     #Monthly;
     #Annual;
     #Lifetime;
+    #Expired;
+    #NotClaimed;
   };
 
   public type MembershipClaim = {
@@ -84,7 +88,7 @@ module ICFCTypes {
   public type SaleParticipant = {
     user : Principal;
     amount : Nat;
-    icfc_staked: Nat;
+    icfc_staked : Nat;
     time : Nat64;
   };
 };

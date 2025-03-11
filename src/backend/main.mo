@@ -289,5 +289,123 @@ actor class Self() = this {
 
   };
 
+  private func charge_membership_fee(user : Principal, membership : T.MembershipType) : async Result.Result<(T.MembershipClaim), Text> {
+    let fee = switch membership {
+      case (#Monthly) { Environment.ICFC_MONTHLY_MEMBERSHIP_FEE };
+      case (#Annual) { Environment.ICFC_ANNUAL_MEMBERSHIP_FEE };
+      case (#Lifetime) { Environment.ICFC_LIFETIME_MEMBERSHIP_FEE };
+      case (_) { return #err("Invalid membership type") };
+    };
+
+    // TODO: Check ICFC balance and charge fee
+    let paymentSuccess = true;
+
+    let userProfile = Array.find(
+      profiles,
+      func(profile : T.Profile) : Bool {
+        profile.principalId == Principal.toText(user);
+      },
+    );
+
+    let now = Time.now();
+
+    let claim : T.MembershipClaim = if (paymentSuccess) {
+      {
+        membershipType = membership;
+        claimedOn = now;
+        expiresOn = switch membership {
+          case (#Monthly) {
+            ?(now + 30 * 24 * 60 * 60);
+          };
+          case (#Annual) {
+            ?(now + 365 * 24 * 60 * 60);
+          };
+          case (#Lifetime) { null };
+          case (_) { null };
+        };
+      };
+    } else {
+      {
+        membershipType = #Expired;
+        claimedOn = now;
+        expiresOn = null;
+      };
+    };
+
+    switch (userProfile) {
+      case (?profile) {
+        switch (profile.membershipTimerId) {
+          case (?id) { Timer.cancelTimer(id) };
+          case (null) {};
+        };
+
+        let membershipBuffer = Buffer.fromArray<T.MembershipClaim>(profile.membershipClaims);
+        membershipBuffer.add(claim);
+        let updatedProfile = {
+          profile with
+          membershipClaims = Buffer.toArray(membershipBuffer);
+          membershipType = if (paymentSuccess) membership else #Expired;
+          membershipTimerId = null;
+        };
+
+        let updatedProfiles = Array.map<T.Profile, T.Profile>(
+          profiles,
+          func(p : T.Profile) : T.Profile {
+            if (p.principalId == Principal.toText(user)) updatedProfile else p;
+          },
+        );
+        profiles := updatedProfiles;
+
+        switch (claim.expiresOn) {
+          case (?exp) {
+            if (exp > now) {
+              let delay = (exp - now) / 1_000_000_000;
+              let timerId = Timer.setTimer<system>(
+                #seconds(Int.abs(delay)),
+                func() : async () {
+                  let _ = await charge_membership_fee(user, membership);
+                },
+              );
+
+              let updatedUserProfile = Array.find<T.Profile>(
+                profiles,
+                func(p) { p.principalId == Principal.toText(user) },
+              );
+              switch (updatedUserProfile) {
+                case (?up) {
+                  let updatedProfiles = Array.map<T.Profile, T.Profile>(
+                    profiles,
+                    func(p : T.Profile) : T.Profile {
+                      if (p.principalId == Principal.toText(user)) {
+                        { up with membershipTimerId = ?timerId };
+                      } else {
+                        p;
+                      };
+                    },
+                  );
+                  profiles := updatedProfiles;
+                };
+                case (null) {};
+              };
+            };
+          };
+          case (null) { /* No timer for lifetime or expired memberships */ };
+        };
+
+        #ok(claim);
+      };
+      case (null) {
+        #err("User profile not found");
+      };
+    };
+  };
+
+  public shared ({ caller }) func get_membership(membership : T.MembershipType) : async Result.Result<T.MembershipClaim, Text> {
+    assert not Principal.isAnonymous(caller);
+    let claim_result = await charge_membership_fee(caller, membership);
+
+    return claim_result;
+  };
+
   // public shared ({caller}) func create_podcast_group()
 };
