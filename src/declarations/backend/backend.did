@@ -1,65 +1,12 @@
-type TimerId = nat;
-type Self = 
- service {
-   claim_membership: (MembershipType) -> (Result_5);
-   get_app_status: () -> (Result_4) query;
-   get_goal: () -> (Result_3) query;
-   get_principal: () -> (principal);
-   get_profile: () -> (Result_2) query;
-   get_sale_countdown: () -> (Result_1);
-   get_sale_participants: () -> (vec SaleParticipant);
-   get_user_ckBTC_balance: () -> (nat);
-   get_user_sale_contribution: () -> (vec SaleParticipant);
-   participate: (nat) -> (Result);
- };
-type SaleParticipant = 
- record {
-   amount: nat;
-   icfc_staked: nat;
-   time: nat64;
-   user: principal;
- };
-type SaleGoalDTO = 
- record {
-   currentProgress: nat;
-   maxGoal: nat;
-   minGoal: nat;
- };
-type SaleCountDownDTO = 
- record {
-   status: text;
-   stringTime: text;
-   timeRemaining: nat64;
- };
-type Result_5 = 
- variant {
-   err: text;
-   ok: MembershipClaim;
- };
-type Result_4 = 
+type Result_1 = 
  variant {
    err: Error;
    ok: AppStatusDTO;
  };
-type Result_3 = 
- variant {
-   err: text;
-   ok: SaleGoalDTO;
- };
-type Result_2 = 
+type Result = 
  variant {
    err: Error;
    ok: Profile;
- };
-type Result_1 = 
- variant {
-   err: text;
-   ok: SaleCountDownDTO;
- };
-type Result = 
- variant {
-   err: text;
-   ok;
  };
 type Profile = 
  record {
@@ -70,9 +17,7 @@ type Profile =
    createdOn: int;
    displayName: text;
    membershipClaims: vec MembershipClaim;
-   membershipTimerId: opt TimerId;
    membershipType: MembershipType;
-   podcastIds: vec PrincipalId;
    principalId: PrincipalId;
    profilePicture: blob;
    profilePictureExtension: text;
@@ -83,10 +28,8 @@ type PrincipalId = text;
 type MembershipType = 
  variant {
    Annual;
-   Expired;
    Lifetime;
    Monthly;
-   NotClaimed;
  };
 type MembershipClaim = 
  record {
@@ -108,4 +51,7 @@ type AppStatusDTO =
    onHold: bool;
    version: text;
  };
-service : () -> Self
+service : {
+  getAppStatus: () -> (Result_1) query;
+  getProfile: () -> (Result) query;
+}
