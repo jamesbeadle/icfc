@@ -56,7 +56,7 @@ actor class Self() = this {
     return #ok(appStatus);
   };
 
-  // SNS Sale
+  // SNS Sale ckBTC Functions
   private func return_participants_ckBTC() : async Result.Result<Nat, Text> {
     let participants = saleParticipants;
     saleParticipants := [];

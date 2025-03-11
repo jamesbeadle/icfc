@@ -8,6 +8,7 @@ module ICFCTypes {
 
   public type ClubId = Nat16;
   public type PlayerId = Nat16;
+  public type PodcastChannelId = Nat;
 
   public type Profile = {
     principalId : Base.PrincipalId;
@@ -24,16 +25,15 @@ module ICFCTypes {
     membershipTimerId : ?Timer.TimerId;
   };
 
-  public type Podcast = {
-    id : Base.PrincipalId;
+  public type PodcastChannel = {
+    id : PodcastChannelId;
     name : Text;
-    description : Text;
+    createdBy : Base.PrincipalId;
     createdOn : Int;
-    creator : Base.PrincipalId;
-    members : [Base.PrincipalId];
-    subscriptionFee : Nat;
-    totalRevenue : Nat;
-    isGraduated : Bool;
+    channelImage : ?Blob;
+    channelImageExtension : Text;
+    channelBanner : ?Blob;
+    channelBannerExtension : Text;
   };
 
   public type MembershipType = {
@@ -57,6 +57,15 @@ module ICFCTypes {
     #NotAllowed;
     #DecodeError;
     #InvalidData;
+    #CanisterFull;
+    #OutOfRange;
+    #TooLong;
+    #TooShort;
+    #NotEnoughFunds;
+    #PaymentError;
+    #InvalidProfilePicture;
+    #InvalidGolfTeamPicture;
+    #CreateGameError;
   };
 
   public type Club = {
