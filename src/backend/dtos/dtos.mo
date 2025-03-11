@@ -9,4 +9,10 @@ module DTOs {
         timeRemaining : Nat64;
         stringTime : Text;
     };
+
+    public type SaleGoalDTO = {
+        minGoal : Nat;
+        maxGoal : Nat;
+        currentProgress : Nat;
+    };
 };

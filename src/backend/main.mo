@@ -31,7 +31,8 @@ actor class Self() = this {
 
   private stable var saleParticipants : [T.SaleParticipant] = [];
 
-  private stable var goal : Nat = Environment.CKBTC_GOAL * Nat.pow(10, Nat8.toNat(8));
+  private stable var min_goal : Nat = Environment.CKBTC_MIN_GOAL * Nat.pow(10, Nat8.toNat(8));
+  private stable var max_goal : Nat = Environment.CKBTC_MAX_GOAL * Nat.pow(10, Nat8.toNat(8));
   private stable var isSaleActive : Bool = (Nat64.fromNat(Int.abs(Time.now())) >= saleStartTime and Nat64.fromNat(Int.abs(Time.now())) < saleEndTime);
   private stable var ckBTCRaised : Nat = 0;
 
@@ -44,7 +45,7 @@ actor class Self() = this {
     return ckBTCRaised;
   };
 
-  private func returnParticipantsckBTC() : async Result.Result<Nat, Text> {
+  private func return_participants_ckBTC() : async Result.Result<Nat, Text> {
     let participants = saleParticipants;
     saleParticipants := [];
     let fee = await ckBTCLedger.icrc1_fee();
@@ -74,7 +75,7 @@ actor class Self() = this {
     return #ok(total);
   };
 
-  private func endSale() : async () {
+  private func end_sale() : async () {
     let saleProgress = await get_goal_progress();
     let decimal = await ckBTCLedger.icrc1_decimals();
 
@@ -82,7 +83,7 @@ actor class Self() = this {
 
     if (totalRaised < 50) {
       // min goal not reached
-      let _ = await returnParticipantsckBTC();
+      let _ = await return_participants_ckBTC();
       return;
     };
   };
@@ -102,7 +103,7 @@ actor class Self() = this {
     ignore Timer.setTimer<system>(
       #nanoseconds(Nat64.toNat(duration)),
       func() : async () {
-        await endSale();
+        await end_sale();
         isSaleActive := false;
       },
     );
@@ -113,7 +114,7 @@ actor class Self() = this {
     version = "0.0.1";
   };
 
-  private func callerAllowed(caller : Principal) : Bool {
+  private func caller_allowed(caller : Principal) : Bool {
     let foundCaller = Array.find<Base.PrincipalId>(
       Environment.ADMIN_PRINCIPALS,
       func(canisterId : Base.CanisterId) : Bool {
@@ -123,7 +124,7 @@ actor class Self() = this {
     return Option.isSome(foundCaller);
   };
 
-  public shared query ({ caller }) func getProfile() : async Result.Result<T.Profile, T.Error> {
+  public shared query ({ caller }) func get_profile() : async Result.Result<T.Profile, T.Error> {
     assert not Principal.isAnonymous(caller);
     let principalId = Principal.toText(caller);
 
@@ -143,7 +144,7 @@ actor class Self() = this {
     };
   };
 
-  public shared query func getAppStatus() : async Result.Result<DTOs.AppStatusDTO, T.Error> {
+  public shared query func get_app_status() : async Result.Result<DTOs.AppStatusDTO, T.Error> {
     return #ok(appStatus);
   };
 
@@ -161,11 +162,11 @@ actor class Self() = this {
       subaccount = null;
     });
 
-    if (current_balance >= goal) {
+    if (current_balance >= max_goal) {
       return #err("Goal already reached");
     };
 
-    if (current_balance + amount > goal) {
+    if (current_balance + amount > max_goal) {
       return #err("Contribution would exceed the goal");
     };
 
@@ -212,9 +213,19 @@ actor class Self() = this {
     return caller;
   };
 
-  public shared ({ caller }) func get_goal() : async Nat {
+  public shared ({ caller }) func get_goal() : async Result.Result<DTOs.SaleGoalDTO, Text> {
     assert not Principal.isAnonymous(caller);
-    return goal;
+    let current_balance = await ckBTCLedger.icrc1_balance_of({
+      owner = Principal.fromActor(this);
+      subaccount = null;
+    });
+
+    let result : DTOs.SaleGoalDTO = {
+      minGoal = min_goal;
+      maxGoal = max_goal;
+      currentProgress = current_balance;
+    };
+    return #ok(result);
   };
 
   public shared ({ caller }) func get_user_balance() : async Nat {
@@ -239,11 +250,11 @@ actor class Self() = this {
   };
 
   public shared ({ caller }) func get_sale_participants() : async [T.SaleParticipant] {
-    assert callerAllowed(caller);
+    assert caller_allowed(caller);
     return saleParticipants;
   };
 
-  public shared func getSaleCountdown() : async Result.Result<DTOs.SaleCountDownDTO, Text> {
+  public shared func get_sale_countdown() : async Result.Result<DTOs.SaleCountDownDTO, Text> {
     let now = Nat64.fromNat(Int.abs(Time.now()));
     if (now < saleStartTime) {
       let timeRemaining = saleStartTime - now;
