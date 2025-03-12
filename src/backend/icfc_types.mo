@@ -17,7 +17,7 @@ module ICFCTypes {
     membershipType : MembershipType;
     membershipClaims : [MembershipClaim];
     createdOn : Int;
-    profilePicture : Blob;
+    profilePicture : ?Blob;
     profilePictureExtension : Text;
     termsAgreed : Bool;
     appPrincipalIds : [(Text, Base.PrincipalId)];
