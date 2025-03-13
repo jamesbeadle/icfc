@@ -17,10 +17,16 @@ type UpdateDisplayName =
 type Self = 
  service {
    createProfile: (CreateProfile) -> (Result);
+   getProfile: () -> (Result_2);
    get_app_status: () -> (Result_1) query;
    updateDisplayName: (UpdateDisplayName) -> (Result);
    updateProfilePicture: (UpdateProfilePicture) -> (Result);
    updateUsername: (UpdateUserName) -> (Result);
+ };
+type Result_2 = 
+ variant {
+   err: Error;
+   ok: Profile;
  };
 type Result_1 = 
  variant {
@@ -31,6 +37,13 @@ type Result =
  variant {
    err: Error;
    ok;
+ };
+type Profile = 
+ record {
+   principalId: PrincipalId;
+   profilePicture: opt blob;
+   profilePictureExtension: text;
+   username: text;
  };
 type PrincipalId = text;
 type Error = 

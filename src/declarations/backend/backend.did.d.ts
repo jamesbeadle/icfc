@@ -28,10 +28,18 @@ export type Error =
   | { PaymentError: null }
   | { CanisterFull: null };
 export type PrincipalId = string;
+export interface Profile {
+  username: string;
+  profilePictureExtension: string;
+  profilePicture: [] | [Uint8Array | number[]];
+  principalId: PrincipalId;
+}
 export type Result = { ok: null } | { err: Error };
 export type Result_1 = { ok: AppStatusDTO } | { err: Error };
+export type Result_2 = { ok: Profile } | { err: Error };
 export interface Self {
   createProfile: ActorMethod<[CreateProfile], Result>;
+  getProfile: ActorMethod<[], Result_2>;
   get_app_status: ActorMethod<[], Result_1>;
   updateDisplayName: ActorMethod<[UpdateDisplayName], Result>;
   updateProfilePicture: ActorMethod<[UpdateProfilePicture], Result>;

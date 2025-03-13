@@ -20,6 +20,7 @@ import DTOs "./dtos/dtos";
 import ProfileManager "managers/profile_manager";
 import ProfileCommands "commands/profile_commands";
 import PodcastManager "managers/podcast_manager";
+import ProfileQueries "queries/profile_queries";
 // import icpLedger "canister:icp_ledger";
 //import ckBTCLedger "canister:ckbtc_ledger";
 
@@ -60,6 +61,12 @@ actor class Self() = this {
 
   public shared query func get_app_status() : async Result.Result<DTOs.AppStatusDTO, T.Error> {
     return #ok(appStatus);
+  };
+
+  public shared ({caller}) func getProfile() : async Result.Result<ProfileQueries.Profile, T.Error> {
+    assert not Principal.isAnonymous(caller);
+    let dto : ProfileQueries.GetProfile = { principalId = Principal.toText(caller) };
+    return await profileManager.getProfile(dto);
   };
 
   // SNS Sale ckBTC Functions

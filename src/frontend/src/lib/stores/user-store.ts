@@ -2,11 +2,6 @@ import { authStore } from "./auth-store";
 import { ActorFactory } from "../utils/ActorFactory";
 import { isError } from "../utils/helpers";
 import { writable } from "svelte/store";
-import { IcrcLedgerCanister } from "@dfinity/ledger-icrc";
-import { Principal } from "@dfinity/principal";
-import { Text } from "@dfinity/candid/lib/cjs/idl";
-import { createAgent } from "@dfinity/utils";
-import type { OptionIdentity } from "../types/identity";
 import type { Profile } from "../../../../declarations/backend/backend.did";
 
 function createUserStore() {
