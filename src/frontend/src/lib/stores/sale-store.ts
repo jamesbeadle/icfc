@@ -1,6 +1,9 @@
 import { writable } from "svelte/store";
 import { SaleService } from "../services/sale-service";
-import type { SaleGoalDTO, SaleCountDownDTO } from "../../../../declarations/backend/backend.did";
+import type {
+  SaleGoalDTO,
+  SaleCountDownDTO,
+} from "../../../../declarations/backend/backend.did";
 
 function createSaleStore() {
   const { subscribe } = writable<{
@@ -10,13 +13,13 @@ function createSaleStore() {
   }>({
     goal: null,
     countdown: null,
-    userBalance: null
+    userBalance: null,
   });
 
   function convertToCkBTC(value: bigint): bigint {
     return value / BigInt(10 ** 8);
   }
-  
+
   async function getGoal() {
     const goal = await new SaleService().getGoal();
     goal.currentProgress = convertToCkBTC(BigInt(goal.currentProgress));
@@ -37,8 +40,6 @@ function createSaleStore() {
     let satoshiAmount = amount * BigInt(10 ** 8);
     return new SaleService().particpate(satoshiAmount);
   }
-  
-  
 
   return {
     subscribe,
