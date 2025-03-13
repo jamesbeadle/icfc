@@ -18,14 +18,20 @@ import Account "lib/Account";
 import Environment "environment";
 import Utils "utils/utils";
 import DTOs "./dtos/dtos";
+import ProfileManager "managers/profile_manager";
+import ProfileCommands "commands/profile_commands";
+import PodcastManager "managers/podcast_manager";
 // import icpLedger "canister:icp_ledger";
 
 actor class Self() = this {
+
+  private let profileManager = ProfileManager.ProfileManager();
+  private let podcastChannelManager = PodcastManager.PodcastManager();
+
+  // private let podcast
+
   private var saleStartTime : Nat64 = Environment.SALE_START;
   private var saleEndTime : Nat64 = Environment.SALE_END;
-
-  private stable var profiles : [T.Profile] = [];
-  private stable var podcasts : [T.Podcast] = [];
 
   private stable var saleParticipants : [T.SaleParticipant] = [];
 
@@ -250,147 +256,190 @@ actor class Self() = this {
     };
 
   };
-  public shared query ({ caller }) func get_profile() : async Result.Result<T.Profile, T.Error> {
+
+  // User Profile Commands
+  public shared ({ caller }) func createProfile(dto : ProfileCommands.CreateProfile) : async Result.Result<(), T.Error> {
     assert not Principal.isAnonymous(caller);
     let principalId = Principal.toText(caller);
-
-    let foundProfile = Array.find(
-      profiles,
-      func(profile : T.Profile) : Bool {
-        profile.principalId == principalId;
-      },
-    );
-    switch (foundProfile) {
-      case (?profile) {
-        return #ok(profile);
-      };
-      case (null) {
-        return #err(#NotFound);
-      };
-    };
+    return await profileManager.createProfile(principalId, dto);
   };
 
-  public shared ({ caller }) func get_principal() : async Principal {
-    return caller;
-  };
-
-  private func renew_membership(user : Principal, membership : T.MembershipType) : async Result.Result<(T.MembershipClaim), Text> {
-    let fee = switch membership {
-      case (#Monthly) { Environment.ICFC_MONTHLY_MEMBERSHIP_FEE };
-      case (#Annual) { Environment.ICFC_ANNUAL_MEMBERSHIP_FEE };
-      case (#Lifetime) { Environment.ICFC_LIFETIME_MEMBERSHIP_FEE };
-      case (_) { return #err("Invalid membership type") };
-    };
-
-    // TODO: Check ICFC stacked by user
-    let eligibleUser = true;
-
-    let userProfile = Array.find(
-      profiles,
-      func(profile : T.Profile) : Bool {
-        profile.principalId == Principal.toText(user);
-      },
-    );
-
-    let now = Time.now();
-
-    let claim : T.MembershipClaim = if (eligibleUser) {
-      {
-        membershipType = membership;
-        claimedOn = now;
-        expiresOn = switch membership {
-          case (#Monthly) {
-            ?(now + 30 * 24 * 60 * 60);
-          };
-          case (#Annual) {
-            ?(now + 365 * 24 * 60 * 60);
-          };
-          case (#Lifetime) { null };
-          case (_) { null };
-        };
-      };
-    } else {
-      {
-        membershipType = #Expired;
-        claimedOn = now;
-        expiresOn = null;
-      };
-    };
-
-    switch (userProfile) {
-      case (?profile) {
-        switch (profile.membershipTimerId) {
-          case (?id) { Timer.cancelTimer(id) };
-          case (null) {};
-        };
-
-        let membershipBuffer = Buffer.fromArray<T.MembershipClaim>(profile.membershipClaims);
-        membershipBuffer.add(claim);
-        let updatedProfile = {
-          profile with
-          membershipClaims = Buffer.toArray(membershipBuffer);
-          membershipType = if (eligibleUser) membership else #Expired;
-          membershipTimerId = null;
-        };
-
-        let updatedProfiles = Array.map<T.Profile, T.Profile>(
-          profiles,
-          func(p : T.Profile) : T.Profile {
-            if (p.principalId == Principal.toText(user)) updatedProfile else p;
-          },
-        );
-        profiles := updatedProfiles;
-
-        switch (claim.expiresOn) {
-          case (?exp) {
-            if (exp > now) {
-              let delay = (exp - now) / 1_000_000_000;
-              let timerId = Timer.setTimer<system>(
-                #seconds(Int.abs(delay)),
-                func() : async () {
-                  let _ = await renew_membership(user, membership);
-                },
-              );
-
-              let updatedUserProfile = Array.find<T.Profile>(
-                profiles,
-                func(p) { p.principalId == Principal.toText(user) },
-              );
-              switch (updatedUserProfile) {
-                case (?up) {
-                  let updatedProfiles = Array.map<T.Profile, T.Profile>(
-                    profiles,
-                    func(p : T.Profile) : T.Profile {
-                      if (p.principalId == Principal.toText(user)) {
-                        { up with membershipTimerId = ?timerId };
-                      } else {
-                        p;
-                      };
-                    },
-                  );
-                  profiles := updatedProfiles;
-                };
-                case (null) {};
-              };
-            };
-          };
-          case (null) { /* No timer for lifetime or expired memberships */ };
-        };
-
-        #ok(claim);
-      };
-      case (null) {
-        #err("User profile not found");
-      };
-    };
-  };
-
-  public shared ({ caller }) func claim_membership(membership : T.MembershipType) : async Result.Result<T.MembershipClaim, Text> {
+  public shared ({ caller }) func updateUsername(dto : ProfileCommands.UpdateUserName) : async Result.Result<(), T.Error> {
     assert not Principal.isAnonymous(caller);
-    let claim_result = await renew_membership(caller, membership);
-
-    return claim_result;
+    assert dto.principalId == Principal.toText(caller);
+    return await profileManager.updateUsername(dto);
   };
+
+  public shared ({ caller }) func updateDisplayName(dto : ProfileCommands.UpdateDisplayName) : async Result.Result<(), T.Error> {
+    assert not Principal.isAnonymous(caller);
+    assert dto.principalId == Principal.toText(caller);
+    return await profileManager.updateDisplayName(dto);
+  };
+
+  public shared ({ caller }) func updateProfilePicture(dto : ProfileCommands.UpdateProfilePicture) : async Result.Result<(), T.Error> {
+    assert not Principal.isAnonymous(caller);
+    assert dto.principalId == Principal.toText(caller);
+    return await profileManager.updateProfilePicture(dto);
+  };
+
+  // Stable Storage & System Functions:
+  private stable var stable_profile_canister_index : [(Base.PrincipalId, Base.CanisterId)] = [];
+  private stable var stable_active_profile_canister_id : Base.CanisterId = "";
+  private stable var stable_usernames : [(Base.PrincipalId, Text)] = [];
+  private stable var stable_unique_profile_canister_ids : [Base.CanisterId] = [];
+  private stable var stable_total_profile : Nat = 0;
+
+  private stable var stable_podcast_channel_canister_index : [(T.PodcastChannelId, Base.CanisterId)] = [];
+  private stable var stable_active_podcast_channel_canister_id : Base.CanisterId = "";
+  private stable var stable_podcast_channel_names : [(T.PodcastChannelId, Text)] = [];
+  private stable var stable_unique_podcast_channel_canister_ids : [Base.CanisterId] = [];
+  private stable var stable_total_podcast_channels : Nat = 0;
+  private stable var stable_next_podcast_channel_id : Nat = 0;
+
+  //System Backup and Upgrade Functions:
+
+  system func preupgrade() {
+
+    backupProfileData();
+    backupPodcastChannelData();
+  };
+
+  private func backupProfileData() {
+
+    stable_profile_canister_index := profileManager.getStableCanisterIndex();
+    stable_active_profile_canister_id := profileManager.getStableActiveCanisterId();
+    stable_usernames := profileManager.getStableUsernames();
+    stable_unique_profile_canister_ids := profileManager.getStableUniqueCanisterIds();
+    stable_total_profile := profileManager.getStableTotalProfiles();
+  };
+
+  private func backupPodcastChannelData() {
+    stable_podcast_channel_canister_index := podcastChannelManager.getStableCanisterIndex();
+    stable_active_podcast_channel_canister_id := podcastChannelManager.getStableActiveCanisterId();
+    stable_podcast_channel_names := podcastChannelManager.getStablePodcastChannelNames();
+    stable_unique_podcast_channel_canister_ids := podcastChannelManager.getStableUniqueCanisterIds();
+    stable_total_podcast_channels := podcastChannelManager.getStableTotalPodcastChannels();
+    stable_next_podcast_channel_id := podcastChannelManager.getStableNextPodcastChannelId();
+
+  };
+
+  // private func renew_membership(user : Principal, membership : T.MembershipType) : async Result.Result<(T.MembershipClaim), Text> {
+  //   let fee = switch membership {
+  //     case (#Monthly) { Environment.ICFC_MONTHLY_MEMBERSHIP_FEE };
+  //     case (#Annual) { Environment.ICFC_ANNUAL_MEMBERSHIP_FEE };
+  //     case (#Lifetime) { Environment.ICFC_LIFETIME_MEMBERSHIP_FEE };
+  //     case (_) { return #err("Invalid membership type") };
+  //   };
+
+  //   // TODO: Check ICFC stacked by user
+  //   let eligibleUser = true;
+
+  //   let userProfile = Array.find(
+  //     profiles,
+  //     func(profile : T.Profile) : Bool {
+  //       profile.principalId == Principal.toText(user);
+  //     },
+  //   );
+
+  //   let now = Time.now();
+
+  //   let claim : T.MembershipClaim = if (eligibleUser) {
+  //     {
+  //       membershipType = membership;
+  //       claimedOn = now;
+  //       expiresOn = switch membership {
+  //         case (#Monthly) {
+  //           ?(now + 30 * 24 * 60 * 60);
+  //         };
+  //         case (#Annual) {
+  //           ?(now + 365 * 24 * 60 * 60);
+  //         };
+  //         case (#Lifetime) { null };
+  //         case (_) { null };
+  //       };
+  //     };
+  //   } else {
+  //     {
+  //       membershipType = #Expired;
+  //       claimedOn = now;
+  //       expiresOn = null;
+  //     };
+  //   };
+
+  //   switch (userProfile) {
+  //     case (?profile) {
+  //       switch (profile.membershipTimerId) {
+  //         case (?id) { Timer.cancelTimer(id) };
+  //         case (null) {};
+  //       };
+
+  //       let membershipBuffer = Buffer.fromArray<T.MembershipClaim>(profile.membershipClaims);
+  //       membershipBuffer.add(claim);
+  //       let updatedProfile = {
+  //         profile with
+  //         membershipClaims = Buffer.toArray(membershipBuffer);
+  //         membershipType = if (eligibleUser) membership else #Expired;
+  //         membershipTimerId = null;
+  //       };
+
+  //       let updatedProfiles = Array.map<T.Profile, T.Profile>(
+  //         profiles,
+  //         func(p : T.Profile) : T.Profile {
+  //           if (p.principalId == Principal.toText(user)) updatedProfile else p;
+  //         },
+  //       );
+  //       profiles := updatedProfiles;
+
+  //       switch (claim.expiresOn) {
+  //         case (?exp) {
+  //           if (exp > now) {
+  //             let delay = (exp - now) / 1_000_000_000;
+  //             let timerId = Timer.setTimer<system>(
+  //               #seconds(Int.abs(delay)),
+  //               func() : async () {
+  //                 let _ = await renew_membership(user, membership);
+  //               },
+  //             );
+
+  //             let updatedUserProfile = Array.find<T.Profile>(
+  //               profiles,
+  //               func(p) { p.principalId == Principal.toText(user) },
+  //             );
+  //             switch (updatedUserProfile) {
+  //               case (?up) {
+  //                 let updatedProfiles = Array.map<T.Profile, T.Profile>(
+  //                   profiles,
+  //                   func(p : T.Profile) : T.Profile {
+  //                     if (p.principalId == Principal.toText(user)) {
+  //                       { up with membershipTimerId = ?timerId };
+  //                     } else {
+  //                       p;
+  //                     };
+  //                   },
+  //                 );
+  //                 profiles := updatedProfiles;
+  //               };
+  //               case (null) {};
+  //             };
+  //           };
+  //         };
+  //         case (null) { /* No timer for lifetime or expired memberships */ };
+  //       };
+
+  //       #ok(claim);
+  //     };
+  //     case (null) {
+  //       #err("User profile not found");
+  //     };
+  //   };
+  // };
+
+  // public shared ({ caller }) func claim_membership(membership : T.MembershipType) : async Result.Result<T.MembershipClaim, Text> {
+  //   assert not Principal.isAnonymous(caller);
+  //   let claim_result = await renew_membership(caller, membership);
+
+  //   return claim_result;
+  // };
 
   // public shared ({caller}) func create_podcast_group()
 };

@@ -4,13 +4,17 @@ import Base "mo:waterway-mops/BaseTypes";
 module PodcastChannelQueries {
 
     public type GetPodcastChannels = {
-        limit : Nat;
-        offset : Nat;
+        principalId : Base.PrincipalId;
+        page : Nat;
         searchTerm : Text;
+
     };
 
     public type PodcastChannels = {
-
+        entries : [PodcastChannel];
+        page : Nat;
+        total : Nat;
+        pageSize : Nat;
     };
 
     public type GetPodcastChannel = {
@@ -22,20 +26,20 @@ module PodcastChannelQueries {
         channelId : T.PodcastChannelId;
     };
 
-    public type GetGolfChannelVideos = {
+    public type GetPodcastChannelVideos = {
         channelId : T.PodcastChannelId;
         page : Nat;
     };
 
-    public type GolfChannelVideos = {
+    public type PodcastChannelVideos = {
         channelId : T.PodcastChannelId;
     };
 
-    public type GetGolfChannelVideo = {
+    public type GetPodcastChannelVideo = {
         channelId : T.PodcastChannelId;
     };
 
-    public type GolfChannelVideo = {
+    public type PodcastChannelVideo = {
         channelId : T.PodcastChannelId;
     };
 

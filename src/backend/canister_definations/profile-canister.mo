@@ -136,7 +136,47 @@ actor class _ProfileCanister() {
                             podcastIds = foundProfile.podcastIds;
                             membershipTimerId = foundProfile.membershipTimerId;
                         };
-                        saveProfile(foundGroupIndex, foundProfile);
+                        saveProfile(foundGroupIndex, updatedProfile);
+                    };
+                    case (null) {
+                        return #err(#NotFound);
+                    };
+                };
+            };
+        };
+    };
+    public shared ({ caller }) func updateDisplayname(dto : ProfileCommands.UpdateDisplayName) : async Result.Result<(), T.Error> {
+        assert not Principal.isAnonymous(caller);
+        let backendPrincipalId = Principal.toText(caller);
+        assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
+
+        var groupIndex : ?Nat8 = null;
+        for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
+            if (profileGroupIndex.0 == dto.principalId) {
+                groupIndex := ?profileGroupIndex.1;
+            };
+        };
+        switch (groupIndex) {
+            case (null) { return #err(#NotFound) };
+            case (?foundGroupIndex) {
+                let profile = findProfile(foundGroupIndex, dto.principalId);
+                switch (profile) {
+                    case (?foundProfile) {
+                        let updatedProfile : T.Profile = {
+                            principalId = foundProfile.principalId;
+                            username = foundProfile.username;
+                            displayName = dto.displayName;
+                            membershipType = foundProfile.membershipType;
+                            membershipClaims = foundProfile.membershipClaims;
+                            createdOn = foundProfile.createdOn;
+                            profilePicture = foundProfile.profilePicture;
+                            profilePictureExtension = foundProfile.profilePictureExtension;
+                            termsAgreed = foundProfile.termsAgreed;
+                            appPrincipalIds = foundProfile.appPrincipalIds;
+                            podcastIds = foundProfile.podcastIds;
+                            membershipTimerId = foundProfile.membershipTimerId;
+                        };
+                        saveProfile(foundGroupIndex, updatedProfile);
                     };
                     case (null) {
                         return #err(#NotFound);
@@ -177,7 +217,7 @@ actor class _ProfileCanister() {
                             podcastIds = foundProfile.podcastIds;
                             membershipTimerId = foundProfile.membershipTimerId;
                         };
-                        saveProfile(foundGroupIndex, foundProfile);
+                        saveProfile(foundGroupIndex, updatedProfile);
                     };
                     case (null) {
                         return #err(#NotFound);

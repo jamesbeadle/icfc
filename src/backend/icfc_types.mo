@@ -64,7 +64,6 @@ module ICFCTypes {
     #NotEnoughFunds;
     #PaymentError;
     #InvalidProfilePicture;
-    #InvalidGolfTeamPicture;
     #CreateGameError;
   };
 

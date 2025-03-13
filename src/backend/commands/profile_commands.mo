@@ -1,6 +1,6 @@
 import Base "mo:waterway-mops/BaseTypes";
 
-module GolferCommands {
+module ProfileCommands {
 
     public type CreateProfile = {
         username : Text;
@@ -14,6 +14,10 @@ module GolferCommands {
         username : Text;
     };
 
+    public type UpdateDisplayName = {
+        principalId : Base.PrincipalId;
+        displayName : Text;
+    };
 
     public type UpdateProfilePicture = {
         principalId : Base.PrincipalId;
