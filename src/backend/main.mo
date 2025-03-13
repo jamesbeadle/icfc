@@ -13,7 +13,6 @@ import Nat8 "mo:base/Nat8";
 import Buffer "mo:base/Buffer";
 import Timer "mo:base/Timer";
 import T "icfc_types";
-import ckBTCLedger "canister:ckbtc_ledger";
 import Account "lib/Account";
 import Environment "environment";
 import Utils "utils/utils";
@@ -22,6 +21,7 @@ import ProfileManager "managers/profile_manager";
 import ProfileCommands "commands/profile_commands";
 import PodcastManager "managers/podcast_manager";
 // import icpLedger "canister:icp_ledger";
+//import ckBTCLedger "canister:ckbtc_ledger";
 
 actor class Self() = this {
 
@@ -63,6 +63,7 @@ actor class Self() = this {
   };
 
   // SNS Sale ckBTC Functions
+  /*
   private func return_participants_ckBTC() : async Result.Result<Nat, Text> {
     let participants = saleParticipants;
     saleParticipants := [];
@@ -256,6 +257,7 @@ actor class Self() = this {
     };
 
   };
+  */
 
   // User Profile Commands
   public shared ({ caller }) func createProfile(dto : ProfileCommands.CreateProfile) : async Result.Result<(), T.Error> {

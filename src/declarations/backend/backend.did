@@ -1,3 +1,27 @@
+type UpdateUserName = 
+ record {
+   principalId: PrincipalId;
+   username: text;
+ };
+type UpdateProfilePicture = 
+ record {
+   principalId: PrincipalId;
+   profilePicture: opt blob;
+   profilePictureExtension: text;
+ };
+type UpdateDisplayName = 
+ record {
+   displayName: text;
+   principalId: PrincipalId;
+ };
+type Self = 
+ service {
+   createProfile: (CreateProfile) -> (Result);
+   get_app_status: () -> (Result_1) query;
+   updateDisplayName: (UpdateDisplayName) -> (Result);
+   updateProfilePicture: (UpdateProfilePicture) -> (Result);
+   updateUsername: (UpdateUserName) -> (Result);
+ };
 type Result_1 = 
  variant {
    err: Error;
@@ -6,52 +30,36 @@ type Result_1 =
 type Result = 
  variant {
    err: Error;
-   ok: Profile;
- };
-type Profile = 
- record {
-   appPrincipalIds: vec record {
-                          text;
-                          PrincipalId;
-                        };
-   createdOn: int;
-   displayName: text;
-   membershipClaims: vec MembershipClaim;
-   membershipType: MembershipType;
-   principalId: PrincipalId;
-   profilePicture: blob;
-   profilePictureExtension: text;
-   termsAgreed: bool;
-   username: text;
+   ok;
  };
 type PrincipalId = text;
-type MembershipType = 
- variant {
-   Annual;
-   Lifetime;
-   Monthly;
- };
-type MembershipClaim = 
- record {
-   claimedOn: int;
-   expiresOn: opt int;
-   membershipType: MembershipType;
- };
 type Error = 
  variant {
    AlreadyExists;
+   CanisterFull;
+   CreateGameError;
    DecodeError;
    InvalidData;
+   InvalidProfilePicture;
    NotAllowed;
    NotAuthorized;
+   NotEnoughFunds;
    NotFound;
+   OutOfRange;
+   PaymentError;
+   TooLong;
+   TooShort;
+ };
+type CreateProfile = 
+ record {
+   displayName: text;
+   profilePicture: opt blob;
+   profilePictureExtension: opt text;
+   username: text;
  };
 type AppStatusDTO = 
  record {
    onHold: bool;
    version: text;
  };
-service : {
-  getAppStatus: () -> (Result_1) query;
-  getProfile: () -> (Result) query;
-}
+service : () -> Self

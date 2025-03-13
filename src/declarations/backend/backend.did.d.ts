@@ -6,40 +6,50 @@ export interface AppStatusDTO {
   version: string;
   onHold: boolean;
 }
+export interface CreateProfile {
+  username: string;
+  displayName: string;
+  profilePictureExtension: [] | [string];
+  profilePicture: [] | [Uint8Array | number[]];
+}
 export type Error =
+  | { InvalidProfilePicture: null }
   | { DecodeError: null }
+  | { TooLong: null }
   | { NotAllowed: null }
+  | { NotEnoughFunds: null }
+  | { TooShort: null }
   | { NotFound: null }
   | { NotAuthorized: null }
   | { InvalidData: null }
-  | { AlreadyExists: null };
-export interface MembershipClaim {
-  expiresOn: [] | [bigint];
-  claimedOn: bigint;
-  membershipType: MembershipType;
-}
-export type MembershipType =
-  | { Lifetime: null }
-  | { Monthly: null }
-  | { Annual: null };
+  | { AlreadyExists: null }
+  | { CreateGameError: null }
+  | { OutOfRange: null }
+  | { PaymentError: null }
+  | { CanisterFull: null };
 export type PrincipalId = string;
-export interface Profile {
-  username: string;
+export type Result = { ok: null } | { err: Error };
+export type Result_1 = { ok: AppStatusDTO } | { err: Error };
+export interface Self {
+  createProfile: ActorMethod<[CreateProfile], Result>;
+  get_app_status: ActorMethod<[], Result_1>;
+  updateDisplayName: ActorMethod<[UpdateDisplayName], Result>;
+  updateProfilePicture: ActorMethod<[UpdateProfilePicture], Result>;
+  updateUsername: ActorMethod<[UpdateUserName], Result>;
+}
+export interface UpdateDisplayName {
   displayName: string;
-  createdOn: bigint;
-  profilePictureExtension: string;
-  membershipClaims: Array<MembershipClaim>;
-  appPrincipalIds: Array<[string, PrincipalId]>;
-  profilePicture: Uint8Array | number[];
-  membershipType: MembershipType;
-  termsAgreed: boolean;
   principalId: PrincipalId;
 }
-export type Result = { ok: Profile } | { err: Error };
-export type Result_1 = { ok: AppStatusDTO } | { err: Error };
-export interface _SERVICE {
-  getAppStatus: ActorMethod<[], Result_1>;
-  getProfile: ActorMethod<[], Result>;
+export interface UpdateProfilePicture {
+  profilePictureExtension: string;
+  profilePicture: [] | [Uint8Array | number[]];
+  principalId: PrincipalId;
 }
+export interface UpdateUserName {
+  username: string;
+  principalId: PrincipalId;
+}
+export interface _SERVICE extends Self {}
 export declare const idlFactory: IDL.InterfaceFactory;
 export declare const init: (args: { IDL: typeof IDL }) => IDL.Type[];
