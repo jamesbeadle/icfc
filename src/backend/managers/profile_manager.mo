@@ -1,0 +1,301 @@
+import Base "mo:waterway-mops/BaseTypes";
+import Text "mo:base/Text";
+import T "../icfc_types";
+import TrieMap "mo:base/TrieMap";
+import List "mo:base/List";
+import Result "mo:base/Result";
+import Array "mo:base/Array";
+import Blob "mo:base/Blob";
+import Principal "mo:base/Principal";
+import Buffer "mo:base/Buffer";
+import ProfileQueries "../queries/profile_queries";
+import ProfileCommands "../commands/profile_commands";
+import Utils "../utils/utils";
+import Management "../utils/management";
+import ProfileCanister "../canister_definations/profile-canister";
+import Environment "../environment";
+import Cycles "mo:base/ExperimentalCycles";
+import Iter "mo:base/Iter";
+
+module {
+    public class ProfileManager() {
+        private var profileCanisterIndex : TrieMap.TrieMap<Base.PrincipalId, Base.CanisterId> = TrieMap.TrieMap<Base.PrincipalId, Base.CanisterId>(Text.equal, Text.hash);
+        private var activeCanisterId : Base.CanisterId = "";
+        private var usernames : TrieMap.TrieMap<Base.PrincipalId, Text> = TrieMap.TrieMap<Base.PrincipalId, Text>(Text.equal, Text.hash);
+        private var uniqueProfileCanisterIds : List.List<Base.CanisterId> = List.nil();
+        private var totalProfiles : Nat = 0;
+
+        //Getters
+
+        public func getProfilePicture(principalId : Base.PrincipalId) : async ?Blob {
+            let existingProfileCanisterId = profileCanisterIndex.get(principalId);
+            switch (existingProfileCanisterId) {
+                case (?foundCanisterId) {
+
+                    let profile_canister = actor (foundCanisterId) : actor {
+                        getProfilePicture : (principalId : Base.PrincipalId) -> async ?Blob;
+                    };
+
+                    let profile = await profile_canister.getProfilePicture(principalId);
+                    return profile;
+                };
+                case (null) {
+                    return null;
+                };
+            };
+        };
+
+        public func isUsernameAvailable(dto : ProfileQueries.IsUsernameAvailable) : ProfileQueries.UsernameAvailable {
+            return not isUsernameTaken(dto.username, dto.principalId);
+        };
+
+        public func getProfile(dto : ProfileQueries.GetProfile) : async Result.Result<ProfileQueries.Profile, T.Error> {
+            let existingProfileCanisterId = profileCanisterIndex.get(dto.principalId);
+            switch (existingProfileCanisterId) {
+                case (?foundCanisterId) {
+
+                    let profile_canister = actor (foundCanisterId) : actor {
+                        getProfile : (dto : ProfileQueries.GetProfile) -> async Result.Result<ProfileQueries.Profile, T.Error>;
+                    };
+
+                    let profile = await profile_canister.getProfile(dto);
+                    return profile;
+                };
+                case (null) {
+                    return #err(#NotFound);
+                };
+            };
+        };
+
+        // Update Functions
+        public func createProfile(principalId : Base.PrincipalId, dto : ProfileCommands.CreateProfile) : async Result.Result<(), T.Error> {
+
+            if (Text.size(dto.username) < 5 or Text.size(dto.username) > 20) {
+                return #err(#TooLong);
+            };
+
+            let invalidUsername = isUsernameTaken(dto.username, principalId);
+            if (invalidUsername) {
+                return #err(#AlreadyExists);
+            };
+
+            let existingProfileCanisterId = profileCanisterIndex.get(principalId);
+            switch (existingProfileCanisterId) {
+                case (?_) {
+                    return #err(#AlreadyExists);
+                };
+                case (null) {
+                    if (activeCanisterId == "") {
+                        await createNewCanister();
+                    };
+
+                    var profile_canister = actor (activeCanisterId) : actor {
+                        isCanisterFull : () -> async Bool;
+                        createProfile : (principalId : Base.PrincipalId, dto : ProfileCommands.CreateProfile) -> async Result.Result<(), T.Error>;
+                    };
+
+                    let isCanisterFull = await profile_canister.isCanisterFull();
+
+                    if (isCanisterFull) {
+                        await createNewCanister();
+                        profile_canister := actor (activeCanisterId) : actor {
+                            isCanisterFull : () -> async Bool;
+                            createProfile : (principalId : Base.PrincipalId, dto : ProfileCommands.CreateProfile) -> async Result.Result<(), T.Error>;
+                        };
+                    };
+
+                    profileCanisterIndex.put((principalId, activeCanisterId));
+                    usernames.put(principalId, activeCanisterId);
+                    return await profile_canister.createProfile(principalId, dto);
+                };
+            };
+        };
+
+        public func updateUsername(dto : ProfileCommands.UpdateUserName) : async Result.Result<(), T.Error> {
+
+            if (Text.size(dto.username) < 5 or Text.size(dto.username) > 20) {
+                return #err(#TooLong);
+            };
+
+            let invalidUsername = isUsernameTaken(dto.username, dto.principalId);
+            if (invalidUsername) {
+                return #err(#AlreadyExists);
+            };
+
+            let existingProfileCanisterId = profileCanisterIndex.get(dto.principalId);
+            switch (existingProfileCanisterId) {
+                case (?foundCanisterId) {
+                    let profile_canister = actor (foundCanisterId) : actor {
+                        updateUsername : (dto : ProfileCommands.UpdateUserName) -> async Result.Result<(), T.Error>;
+                    };
+                    usernames.put(dto.principalId, activeCanisterId);
+                    return await profile_canister.updateUsername(dto);
+                };
+                case (null) {
+                    return #err(#NotFound);
+                };
+            };
+        };
+
+        public func updateDisplayName(dto : ProfileCommands.UpdateDisplayName) : async Result.Result<(), T.Error> {
+
+            if (Text.size(dto.displayName) < 1 or Text.size(dto.displayName) > 20) {
+                return #err(#TooLong);
+            };
+
+            let existingProfileCanisterId = profileCanisterIndex.get(dto.principalId);
+            switch (existingProfileCanisterId) {
+                case (?foundCanisterId) {
+                    let profile_canister = actor (foundCanisterId) : actor {
+                        updateDisplayname : (dto : ProfileCommands.UpdateDisplayName) -> async Result.Result<(), T.Error>;
+                    };
+                    return await profile_canister.updateDisplayname(dto);
+                };
+                case (null) {
+                    return #err(#NotFound);
+                };
+            };
+        };
+
+        public func updateProfilePicture(dto : ProfileCommands.UpdateProfilePicture) : async Result.Result<(), T.Error> {
+            let validProfilePicture = isProfilePictureValid(dto.profilePicture);
+            if (not validProfilePicture) {
+                return #err(#InvalidProfilePicture);
+            };
+
+            let existingProfileCanisterId = profileCanisterIndex.get(dto.principalId);
+            switch (existingProfileCanisterId) {
+                case (?foundCanisterId) {
+                    let profile_canister = actor (foundCanisterId) : actor {
+                        updateProfilePicture : (dto : ProfileCommands.UpdateProfilePicture) -> async Result.Result<(), T.Error>;
+                    };
+                    return await profile_canister.updateProfilePicture(dto);
+                };
+                case (null) {
+                    if (activeCanisterId == "") {
+                        await createNewCanister();
+                    };
+
+                    var profile_canister = actor (activeCanisterId) : actor {
+                        isCanisterFull : () -> async Bool;
+                        updateProfilePicture : (dto : ProfileCommands.UpdateProfilePicture) -> async Result.Result<(), T.Error>;
+                    };
+
+                    let isCanisterFull = await profile_canister.isCanisterFull();
+                    if (isCanisterFull) {
+                        await createNewCanister();
+
+                        profile_canister := actor (activeCanisterId) : actor {
+                            updateProfilePicture : (dto : ProfileCommands.UpdateProfilePicture) -> async Result.Result<(), T.Error>;
+                            isCanisterFull : () -> async Bool;
+                        };
+                    };
+
+                    return await profile_canister.updateProfilePicture(dto);
+                };
+            };
+
+            return #err(#NotFound);
+        };
+
+        // private functions
+        private func isUsernameTaken(username : Text, principalId : Base.PrincipalId) : Bool {
+            for (profileUsername in usernames.entries()) {
+
+                let lowerCaseUsername = Utils.toLowercase(username);
+                let existingUsername = Utils.toLowercase(profileUsername.1);
+
+                if (lowerCaseUsername == existingUsername and profileUsername.0 != principalId) {
+                    return true;
+                };
+            };
+
+            return false;
+        };
+
+        private func isProfilePictureValid(profilePicture : ?Blob) : Bool {
+            switch (profilePicture) {
+                case (?foundProfilePicture) {
+                    let sizeInKB = Array.size(Blob.toArray(foundProfilePicture)) / 1024;
+                    return (sizeInKB > 0 or sizeInKB <= 500);
+                };
+                case (null) { return true };
+            };
+        };
+        private func createNewCanister() : async () {
+            Cycles.add<system>(10_000_000_000_000);
+            let canister = await ProfileCanister._ProfileCanister();
+            let IC : Management.Management = actor (Environment.Default);
+            let principal = ?Principal.fromText(Environment.BACKEND_CANISTER_ID);
+            let _ = await Utils.updateCanister_(canister, principal, IC);
+            let canister_principal = Principal.fromActor(canister);
+            let canisterId = Principal.toText(canister_principal);
+
+            if (canisterId == "") {
+                return;
+            };
+            let uniqueCanisterIdBuffer = Buffer.fromArray<Base.CanisterId>(List.toArray(uniqueProfileCanisterIds));
+            uniqueCanisterIdBuffer.add(canisterId);
+            uniqueProfileCanisterIds := List.fromArray(Buffer.toArray(uniqueCanisterIdBuffer));
+            activeCanisterId := canisterId;
+            return;
+        };
+
+        // stable storage getters and setters
+        public func getStableCanisterIndex() : [(Base.PrincipalId, Base.CanisterId)] {
+            return Iter.toArray(profileCanisterIndex.entries());
+        };
+
+        public func setStableCanisterIndex(stable_profile_canister_index : [(Base.PrincipalId, Base.CanisterId)]) {
+            let canisterIds : TrieMap.TrieMap<Base.PrincipalId, Base.CanisterId> = TrieMap.TrieMap<Base.PrincipalId, Base.CanisterId>(Text.equal, Text.hash);
+
+            for (canisterId in Iter.fromArray(stable_profile_canister_index)) {
+                canisterIds.put(canisterId);
+            };
+            profileCanisterIndex := canisterIds;
+        };
+
+        public func getStableActiveCanisterId() : Base.CanisterId {
+            return activeCanisterId;
+        };
+
+        public func setStableActiveCanisterId(stable_active_canister_id : Base.CanisterId) {
+            activeCanisterId := stable_active_canister_id;
+        };
+
+        public func getStableUsernames() : [(Base.PrincipalId, Text)] {
+            return Iter.toArray(usernames.entries());
+        };
+
+        public func setStableUsernames(stable_usernames : [(Base.PrincipalId, Text)]) : () {
+            let usernames_map : TrieMap.TrieMap<Base.PrincipalId, Base.CanisterId> = TrieMap.TrieMap<Base.PrincipalId, Base.CanisterId>(Text.equal, Text.hash);
+
+            for (username in Iter.fromArray(stable_usernames)) {
+                usernames_map.put(username);
+            };
+            usernames := usernames_map;
+        };
+
+        public func getStableUniqueCanisterIds() : [Base.CanisterId] {
+            return List.toArray(uniqueProfileCanisterIds);
+        };
+
+        public func setStableUniqueCanisterIds(stable_unique_canister_ids : [Base.CanisterId]) : () {
+            let canisterIdBuffer = Buffer.fromArray<Base.CanisterId>([]);
+
+            for (canisterId in Iter.fromArray(stable_unique_canister_ids)) {
+                canisterIdBuffer.add(canisterId);
+            };
+            uniqueProfileCanisterIds := List.fromArray(Buffer.toArray(canisterIdBuffer));
+        };
+
+        public func getStableTotalProfiles() : Nat {
+            return totalProfiles;
+        };
+
+        public func setStableTotalProfiles(stable_total_profiles : Nat) : () {
+            totalProfiles := stable_total_profiles;
+        };
+    };
+
+};
