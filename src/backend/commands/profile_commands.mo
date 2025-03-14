@@ -1,4 +1,5 @@
 import Base "mo:waterway-mops/BaseTypes";
+import T "../icfc_types";
 
 module ProfileCommands {
 
@@ -28,5 +29,11 @@ module ProfileCommands {
     public type DeleteProfile = {
         principalId : Base.PrincipalId;
         confirm : Bool;
+    };
+
+
+    public type UpdateMembership = {
+        principalId : Base.PrincipalId;
+        membershipType : T.MembershipType;
     };
 };

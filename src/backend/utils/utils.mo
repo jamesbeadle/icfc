@@ -13,9 +13,12 @@ import Management "management";
 import Cycles "mo:base/ExperimentalCycles";
 import Int "mo:base/Int";
 import Char "mo:base/Char";
+import T "../icfc_types"
 
 module Utils {
-    public let getHour = func() : Nat { return 1_000_000_000 * 60 * 60 };
+    public let getHour = func() : Nat {
+        return 1_000_000_000 * 60 * 60;
+    };
 
     public let eqNat8 = func(a : Nat8, b : Nat8) : Bool {
         a == b;
@@ -358,6 +361,19 @@ module Utils {
         let seconds = Nat64.toNat(totalSeconds % secondsPerMinute);
 
         (days, hours, minutes, seconds);
+    };
+
+    public func getMembershipExpirationDate(membershipType : T.MembershipType) : Int {
+        let now = Time.now();
+        switch (membershipType) {
+            case (#Monthly) { now + (30 * 24 * 60 * 60 * 1_000_000_000) };
+            case (#Annual) { now + (365 * 24 * 60 * 60 * 1_000_000_000) }; 
+            case (#Lifetime) {
+                now + (100 * 365 * 24 * 60 * 60 * 1_000_000_000);
+            }; 
+            case (#NotClaimed) { now };
+            case (#Expired) { now };
+        };
     };
 
 };
