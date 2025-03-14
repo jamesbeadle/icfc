@@ -57,6 +57,14 @@ actor class _ProfileCanister() {
                             username = foundProfile.username;
                             profilePicture = foundProfile.profilePicture;
                             profilePictureExtension = foundProfile.profilePictureExtension;
+                            displayName = foundProfile.displayName;
+                            termsAgreed = foundProfile.termsAgreed;
+                            appPrincipalIds = foundProfile.appPrincipalIds;
+                            podcastIds = foundProfile.podcastIds;
+                            membershipType = foundProfile.membershipType;
+                            membershipClaims = foundProfile.membershipClaims;
+                            createdOn = foundProfile.createdOn;
+                            membershipTimerId = foundProfile.membershipTimerId;
                         };
                         return #ok(dto);
                     };
@@ -259,7 +267,7 @@ actor class _ProfileCanister() {
                             username = foundProfile.username;
                             displayName = foundProfile.displayName;
                             membershipType = dto.membershipType;
-                            membershipClaims = updatedMembershipClaims; 
+                            membershipClaims = updatedMembershipClaims;
                             createdOn = foundProfile.createdOn;
                             profilePicture = foundProfile.profilePicture;
                             profilePictureExtension = foundProfile.profilePictureExtension;
@@ -270,7 +278,7 @@ actor class _ProfileCanister() {
                         };
 
                         saveProfile(foundGroupIndex, updatedProfile);
-                      
+
                     };
                     case (null) {
                         return #err(#NotFound);

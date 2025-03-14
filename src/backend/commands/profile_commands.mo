@@ -36,4 +36,9 @@ module ProfileCommands {
         principalId : Base.PrincipalId;
         membershipType : T.MembershipType;
     };
+
+
+    public type ClaimMembership = {
+        principalId : Base.PrincipalId;
+    };
 };

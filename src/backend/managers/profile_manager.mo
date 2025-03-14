@@ -16,6 +16,10 @@ import ProfileCanister "../canister_definations/profile-canister";
 import Environment "../environment";
 import Cycles "mo:base/ExperimentalCycles";
 import Iter "mo:base/Iter";
+import Time "mo:base/Time";
+import Nat64 "mo:base/Nat64";
+import SNSManager "sns_manager";
+import SNSGovernance "../sns-wrappers/governance";
 
 module {
     public class ProfileManager() {
@@ -112,27 +116,111 @@ module {
         };
 
         public func updateUsername(dto : ProfileCommands.UpdateUserName) : async Result.Result<(), T.Error> {
-
             if (Text.size(dto.username) < 5 or Text.size(dto.username) > 20) {
                 return #err(#TooLong);
             };
 
-            let invalidUsername = isUsernameTaken(dto.username, dto.principalId);
-            if (invalidUsername) {
-                return #err(#AlreadyExists);
-            };
+            let lowerCaseNewUsername = Utils.toLowercase(dto.username);
+            var currentOwner : ?Base.PrincipalId = findUsernamePrincipalId(lowerCaseNewUsername);
 
-            let existingProfileCanisterId = profileCanisterIndex.get(dto.principalId);
-            switch (existingProfileCanisterId) {
-                case (?foundCanisterId) {
-                    let profile_canister = actor (foundCanisterId) : actor {
-                        updateUsername : (dto : ProfileCommands.UpdateUserName) -> async Result.Result<(), T.Error>;
+            switch (currentOwner) {
+                case (?existingOwner) {
+                    if (existingOwner == dto.principalId) {
+                        return #ok;
                     };
-                    usernames.put(dto.principalId, activeCanisterId);
-                    return await profile_canister.updateUsername(dto);
+
+                    var getCurrentOwnerProfileQuery : ProfileQueries.GetProfile = {
+                        principalId = existingOwner;
+                    };
+                    let currentOwnerProfile = await getProfile(getCurrentOwnerProfileQuery);
+
+                    var getRequesterProfileQuery : ProfileQueries.GetProfile = {
+                        principalId = dto.principalId;
+                    };
+                    let requesterProfile = await getProfile(getRequesterProfileQuery);
+
+                    switch (currentOwnerProfile, requesterProfile) {
+                        case (#ok(currentProfile), #ok(requester)) {
+                            let currentHasValidMembership = hasValidMembership(currentProfile);
+                            let requesterHasValidMembership = hasValidMembership(requester);
+
+                            if (not currentHasValidMembership and requesterHasValidMembership) {
+                                let newRandomUsername = generateUniqueUsername(existingOwner);
+
+                                // Update the current owner's username
+                                let currentCanisterId = profileCanisterIndex.get(existingOwner);
+                                switch (currentCanisterId) {
+                                    case (?foundCanisterId) {
+                                        let profile_canister = actor (foundCanisterId) : actor {
+                                            updateUsername : (dto : ProfileCommands.UpdateUserName) -> async Result.Result<(), T.Error>;
+                                        };
+
+                                        let updateOldUser = await profile_canister.updateUsername({
+                                            principalId = existingOwner;
+                                            username = newRandomUsername;
+                                        });
+
+                                        if (updateOldUser != #ok) {
+                                            return #err(#UpdateFailed);
+                                        };
+
+                                        usernames.put(existingOwner, newRandomUsername);
+                                    };
+                                    case (null) {
+                                        return #err(#NotFound);
+                                    };
+                                };
+
+                                // Allow the requester to claim the username
+                                let requesterCanisterId = profileCanisterIndex.get(dto.principalId);
+                                switch (requesterCanisterId) {
+                                    case (?foundCanisterId) {
+                                        let profile_canister = actor (foundCanisterId) : actor {
+                                            updateUsername : (dto : ProfileCommands.UpdateUserName) -> async Result.Result<(), T.Error>;
+                                        };
+
+                                        let updateNewUser = await profile_canister.updateUsername(dto);
+                                        if (updateNewUser == #ok) {
+                                            usernames.put(dto.principalId, dto.username);
+                                            return #ok;
+                                        } else {
+                                            return #err(#UpdateFailed);
+                                        };
+                                    };
+                                    case (null) {
+                                        return #err(#NotFound);
+                                    };
+                                };
+                            } else {
+                                return #err(#AlreadyClaimed);
+                            };
+                        };
+                        case (_, _) {
+                            return #err(#NotFound);
+                        };
+                    };
                 };
                 case (null) {
-                    return #err(#NotFound);
+                    // Username is not taken, proceed with update
+                    let existingProfileCanisterId = profileCanisterIndex.get(dto.principalId);
+                    switch (existingProfileCanisterId) {
+                        case (?foundCanisterId) {
+                            let profile_canister = actor (foundCanisterId) : actor {
+                                updateUsername : (dto : ProfileCommands.UpdateUserName) -> async Result.Result<(), T.Error>;
+                            };
+
+                            let updateResult = await profile_canister.updateUsername(dto);
+                            if (updateResult == #ok) {
+                                usernames.put(dto.principalId, dto.username);
+                                return #ok;
+                            } else {
+                                return #err(#UpdateFailed);
+                            };
+                        };
+                        case (null) {
+                            return #err(#NotFound);
+                        };
+                    };
                 };
             };
         };
@@ -198,6 +286,50 @@ module {
             return #err(#NotFound);
         };
 
+        public func claimMembership(dto : ProfileCommands.ClaimMembership) : async Result.Result<(), T.Error> {
+            let existingProfileCanisterId = profileCanisterIndex.get(dto.principalId);
+            switch (existingProfileCanisterId) {
+                case (?_) {
+                    let snsManager = SNSManager.SNSManager();
+                    let userNeurons : [SNSGovernance.Neuron] = await snsManager.getUsersNeurons(Principal.fromText(dto.principalId));
+
+                    let eligibleMembershipType : ?T.MembershipType = Utils.getMembershipType(userNeurons);
+
+                    switch (eligibleMembershipType) {
+                        case (?membershipType) {
+                            let updateMembershipCommand : ProfileCommands.UpdateMembership = {
+                                principalId = dto.principalId;
+                                membershipType = membershipType;
+                            };
+                            return await updateMembership(updateMembershipCommand);
+                        };
+                        case (null) {
+                            return #err(#NotAllowed);
+                        };
+                    };
+                };
+                case (null) {
+                    return #err(#NotFound);
+                };
+
+            };
+        };
+
+        public func updateMembership(dto : ProfileCommands.UpdateMembership) : async Result.Result<(), T.Error> {
+            let existingProfileCanisterId = profileCanisterIndex.get(dto.principalId);
+            switch (existingProfileCanisterId) {
+                case (?foundCanisterId) {
+                    let profile_canister = actor (foundCanisterId) : actor {
+                        updateMembership : (dto : ProfileCommands.UpdateMembership) -> async Result.Result<(), T.Error>;
+                    };
+                    return await profile_canister.updateMembership(dto);
+                };
+                case (null) {
+                    return #err(#NotFound);
+                };
+            };
+        };
+
         // private functions
         private func isUsernameTaken(username : Text, principalId : Base.PrincipalId) : Bool {
             for (profileUsername in usernames.entries()) {
@@ -211,6 +343,63 @@ module {
             };
 
             return false;
+        };
+
+        private func findUsernamePrincipalId(username : Text) : ?Base.PrincipalId {
+            for (profileUsername in usernames.entries()) {
+                let lowerCaseUsername = Utils.toLowercase(username);
+                let existingUsername = Utils.toLowercase(profileUsername.1);
+
+                if (lowerCaseUsername == existingUsername) {
+                    return ?profileUsername.0;
+                };
+            };
+            return null;
+        };
+
+        private func hasValidMembership(profile : T.Profile) : Bool {
+            let membership = profile.membershipType;
+            switch (membership) {
+                case (#Lifetime) { return true };
+                case (#Seasonal) {
+                    let currentTimestamp = Time.now();
+                    let membershipClaim = List.last(List.fromArray(profile.membershipClaims));
+                    switch (membershipClaim) {
+                        case (?claim) {
+                            let expiresOn = claim.expiresOn;
+                            switch (expiresOn) {
+                                case (?exp) { return exp > currentTimestamp };
+                                case (null) { return true };
+                            };
+                        };
+                        case (null) { return false };
+                    };
+                };
+                case (#Monthly) {
+                    let currentTimestamp = Time.now();
+                    let membershipClaim = List.last(List.fromArray(profile.membershipClaims));
+                    switch (membershipClaim) {
+                        case (?claim) {
+                            let expiresOn = claim.expiresOn;
+                            switch (expiresOn) {
+                                case (?exp) { return exp > currentTimestamp };
+                                case (null) { return true };
+                            };
+                        };
+                        case (null) { return false };
+                    };
+                };
+                case (#Expired) { return false };
+                case (#NotClaimed) { return false };
+            };
+        };
+        private func generateUniqueUsername(principalId : Base.PrincipalId) : Text {
+            let randomSuffix = Text.toArray(principalId);
+            var truncatedSuffix = "";
+            for (i in Iter.range(0, 5)) {
+                truncatedSuffix := truncatedSuffix # Text.fromChar(randomSuffix[i]);
+            };
+            return "user_" # truncatedSuffix;
         };
 
         private func isProfilePictureValid(profilePicture : ?Blob) : Bool {
