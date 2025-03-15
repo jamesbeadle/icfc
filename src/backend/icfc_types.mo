@@ -16,13 +16,13 @@ module ICFCTypes {
     displayName : Text;
     membershipType : MembershipType;
     membershipClaims : [MembershipClaim];
+    membershipExpiryTime : Int;
     createdOn : Int;
     profilePicture : ?Blob;
     profilePictureExtension : Text;
     termsAgreed : Bool;
     appPrincipalIds : [(Text, Base.PrincipalId)];
     podcastIds : [Base.PrincipalId];
-    membershipTimerId : ?Timer.TimerId;
   };
 
   public type PodcastChannel = {

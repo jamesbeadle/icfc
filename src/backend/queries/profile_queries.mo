@@ -19,7 +19,7 @@ module ProfileQueries {
         termsAgreed : Bool;
         appPrincipalIds : [(Text, Base.PrincipalId)];
         podcastIds : [Base.PrincipalId];
-        membershipTimerId : ?Timer.TimerId;
+        membershipExpiryTime : Int;
     };
 
     public type ListProfiles = {

@@ -10,24 +10,138 @@ import Nat64 "mo:base/Nat64";
 import Int "mo:base/Int";
 import Blob "mo:base/Blob";
 import Nat8 "mo:base/Nat8";
-import Buffer "mo:base/Buffer";
 import Timer "mo:base/Timer";
 import T "icfc_types";
-import Account "lib/Account";
 import Environment "environment";
-import Utils "utils/utils";
 import DTOs "./dtos/dtos";
 import ProfileManager "managers/profile_manager";
 import ProfileCommands "commands/profile_commands";
 import PodcastManager "managers/podcast_manager";
 import ProfileQueries "queries/profile_queries";
-// import icpLedger "canister:icp_ledger";
-//import ckBTCLedger "canister:ckbtc_ledger";
 
 actor class Self() = this {
 
   private let profileManager = ProfileManager.ProfileManager();
   private let podcastChannelManager = PodcastManager.PodcastManager();
+
+  private var appStatus : Base.AppStatus = {
+    onHold = false;
+    version = "0.0.1";
+  };
+
+  public shared query func get_app_status() : async Result.Result<DTOs.AppStatusDTO, T.Error> {
+    return #ok(appStatus);
+  };
+
+  //Profile Queries
+
+  public shared ({caller}) func getProfile() : async Result.Result<ProfileQueries.Profile, T.Error> {
+    assert not Principal.isAnonymous(caller);
+    let dto : ProfileQueries.GetProfile = { principalId = Principal.toText(caller) };
+    return await profileManager.getProfile(dto);
+  };
+
+  //Profile Commands
+  public shared ({ caller }) func createProfile(dto : ProfileCommands.CreateProfile) : async Result.Result<(), T.Error> {
+    assert not Principal.isAnonymous(caller);
+    let principalId = Principal.toText(caller);
+    return await profileManager.createProfile(principalId, dto);
+  };
+
+  public shared ({caller}) func claimMembership() : async Result.Result<(), T.Error> {
+    assert not Principal.isAnonymous(caller);
+    let dto : ProfileCommands.ClaimMembership = { principalId = Principal.toText(caller) };
+    return await profileManager.claimMembership(dto);
+  };
+
+  public shared ({ caller }) func updateUsername(dto : ProfileCommands.UpdateUserName) : async Result.Result<(), T.Error> {
+    assert not Principal.isAnonymous(caller);
+    assert dto.principalId == Principal.toText(caller);
+    return await profileManager.updateUsername(dto);
+  };
+
+  public shared ({ caller }) func updateDisplayName(dto : ProfileCommands.UpdateDisplayName) : async Result.Result<(), T.Error> {
+    assert not Principal.isAnonymous(caller);
+    assert dto.principalId == Principal.toText(caller);
+    return await profileManager.updateDisplayName(dto);
+  };
+
+  public shared ({ caller }) func updateProfilePicture(dto : ProfileCommands.UpdateProfilePicture) : async Result.Result<(), T.Error> {
+    assert not Principal.isAnonymous(caller);
+    assert dto.principalId == Principal.toText(caller);
+    return await profileManager.updateProfilePicture(dto);
+  };
+
+  // Stable Storage & System Functions:
+  private stable var stable_profile_canister_index : [(Base.PrincipalId, Base.CanisterId)] = [];
+  private stable var stable_active_profile_canister_id : Base.CanisterId = "";
+  private stable var stable_usernames : [(Base.PrincipalId, Text)] = [];
+  private stable var stable_unique_profile_canister_ids : [Base.CanisterId] = [];
+  private stable var stable_total_profile : Nat = 0;
+
+  private stable var stable_podcast_channel_canister_index : [(T.PodcastChannelId, Base.CanisterId)] = [];
+  private stable var stable_active_podcast_channel_canister_id : Base.CanisterId = "";
+  private stable var stable_podcast_channel_names : [(T.PodcastChannelId, Text)] = [];
+  private stable var stable_unique_podcast_channel_canister_ids : [Base.CanisterId] = [];
+  private stable var stable_total_podcast_channels : Nat = 0;
+  private stable var stable_next_podcast_channel_id : Nat = 0;
+
+  //System Backup and Upgrade Functions:
+
+  system func preupgrade() {
+    backupProfileData();
+    backupPodcastChannelData();
+  };
+
+  system func postupgrade() {
+    setProfileData();
+    setPodcastChannelData();
+   ignore Timer.setTimer<system>(#nanoseconds(Int.abs(1)), postUpgradeCallback); 
+  };
+
+
+  private func postUpgradeCallback() : async (){
+    await profileManager.createMembershipExpiredTimers();
+  };
+
+  private func backupProfileData() {
+    stable_profile_canister_index := profileManager.getStableCanisterIndex();
+    stable_active_profile_canister_id := profileManager.getStableActiveCanisterId();
+    stable_usernames := profileManager.getStableUsernames();
+    stable_unique_profile_canister_ids := profileManager.getStableUniqueCanisterIds();
+    stable_total_profile := profileManager.getStableTotalProfiles();
+  };
+
+  private func backupPodcastChannelData() {
+    stable_podcast_channel_canister_index := podcastChannelManager.getStableCanisterIndex();
+    stable_active_podcast_channel_canister_id := podcastChannelManager.getStableActiveCanisterId();
+    stable_podcast_channel_names := podcastChannelManager.getStablePodcastChannelNames();
+    stable_unique_podcast_channel_canister_ids := podcastChannelManager.getStableUniqueCanisterIds();
+    stable_total_podcast_channels := podcastChannelManager.getStableTotalPodcastChannels();
+    stable_next_podcast_channel_id := podcastChannelManager.getStableNextPodcastChannelId();
+
+  };
+
+  private func setProfileData() {
+    profileManager.setStableCanisterIndex(stable_profile_canister_index);
+    profileManager.setStableActiveCanisterId(stable_active_profile_canister_id);
+    profileManager.setStableUsernames(stable_usernames);
+    profileManager.setStableUniqueCanisterIds(stable_unique_profile_canister_ids);
+    profileManager.setStableTotalProfiles(stable_total_profile);
+  };
+
+  private func setPodcastChannelData(){
+    podcastChannelManager.setStableCanisterIndex(stable_podcast_channel_canister_index);
+    podcastChannelManager.setStableActiveCanisterId(stable_active_podcast_channel_canister_id);
+    podcastChannelManager.setStablePodcastChannelNames(stable_podcast_channel_names);
+    podcastChannelManager.setStableUniqueCanisterIds(stable_unique_podcast_channel_canister_ids);
+    podcastChannelManager.setStableTotalPodcastChannels(stable_total_podcast_channels);
+    podcastChannelManager.setStableNextPodcastChannelId(stable_next_podcast_channel_id);
+  };
+
+  /* Below is code related to a second sale */
+
+
 
   // private let podcast
 
@@ -44,10 +158,7 @@ actor class Self() = this {
   private type Subaccount = Blob;
   private var icfcExchange : Nat = 400; //400 ckSatoshis per ICFC
 
-  private var appStatus : Base.AppStatus = {
-    onHold = false;
-    version = "0.0.1";
-  };
+
 
   private func caller_allowed(caller : Principal) : Bool {
     let foundCaller = Array.find<Base.PrincipalId>(
@@ -57,16 +168,6 @@ actor class Self() = this {
       },
     );
     return Option.isSome(foundCaller);
-  };
-
-  public shared query func get_app_status() : async Result.Result<DTOs.AppStatusDTO, T.Error> {
-    return #ok(appStatus);
-  };
-
-  public shared ({caller}) func getProfile() : async Result.Result<ProfileQueries.Profile, T.Error> {
-    assert not Principal.isAnonymous(caller);
-    let dto : ProfileQueries.GetProfile = { principalId = Principal.toText(caller) };
-    return await profileManager.getProfile(dto);
   };
 
   // SNS Sale ckBTC Functions
@@ -265,78 +366,6 @@ actor class Self() = this {
 
   };
   */
-
-  // User Profile Commands
-  public shared ({ caller }) func createProfile(dto : ProfileCommands.CreateProfile) : async Result.Result<(), T.Error> {
-    assert not Principal.isAnonymous(caller);
-    let principalId = Principal.toText(caller);
-    return await profileManager.createProfile(principalId, dto);
-  };
-
-  public shared ({caller}) func claimMembership() : async Result.Result<(), T.Error> {
-    assert not Principal.isAnonymous(caller);
-    let dto : ProfileCommands.ClaimMembership = { principalId = Principal.toText(caller) };
-    return await profileManager.claimMembership(dto);
-  };
-
-  public shared ({ caller }) func updateUsername(dto : ProfileCommands.UpdateUserName) : async Result.Result<(), T.Error> {
-    assert not Principal.isAnonymous(caller);
-    assert dto.principalId == Principal.toText(caller);
-    return await profileManager.updateUsername(dto);
-  };
-
-  public shared ({ caller }) func updateDisplayName(dto : ProfileCommands.UpdateDisplayName) : async Result.Result<(), T.Error> {
-    assert not Principal.isAnonymous(caller);
-    assert dto.principalId == Principal.toText(caller);
-    return await profileManager.updateDisplayName(dto);
-  };
-
-  public shared ({ caller }) func updateProfilePicture(dto : ProfileCommands.UpdateProfilePicture) : async Result.Result<(), T.Error> {
-    assert not Principal.isAnonymous(caller);
-    assert dto.principalId == Principal.toText(caller);
-    return await profileManager.updateProfilePicture(dto);
-  };
-
-  // Stable Storage & System Functions:
-  private stable var stable_profile_canister_index : [(Base.PrincipalId, Base.CanisterId)] = [];
-  private stable var stable_active_profile_canister_id : Base.CanisterId = "";
-  private stable var stable_usernames : [(Base.PrincipalId, Text)] = [];
-  private stable var stable_unique_profile_canister_ids : [Base.CanisterId] = [];
-  private stable var stable_total_profile : Nat = 0;
-
-  private stable var stable_podcast_channel_canister_index : [(T.PodcastChannelId, Base.CanisterId)] = [];
-  private stable var stable_active_podcast_channel_canister_id : Base.CanisterId = "";
-  private stable var stable_podcast_channel_names : [(T.PodcastChannelId, Text)] = [];
-  private stable var stable_unique_podcast_channel_canister_ids : [Base.CanisterId] = [];
-  private stable var stable_total_podcast_channels : Nat = 0;
-  private stable var stable_next_podcast_channel_id : Nat = 0;
-
-  //System Backup and Upgrade Functions:
-
-  system func preupgrade() {
-
-    backupProfileData();
-    backupPodcastChannelData();
-  };
-
-  private func backupProfileData() {
-
-    stable_profile_canister_index := profileManager.getStableCanisterIndex();
-    stable_active_profile_canister_id := profileManager.getStableActiveCanisterId();
-    stable_usernames := profileManager.getStableUsernames();
-    stable_unique_profile_canister_ids := profileManager.getStableUniqueCanisterIds();
-    stable_total_profile := profileManager.getStableTotalProfiles();
-  };
-
-  private func backupPodcastChannelData() {
-    stable_podcast_channel_canister_index := podcastChannelManager.getStableCanisterIndex();
-    stable_active_podcast_channel_canister_id := podcastChannelManager.getStableActiveCanisterId();
-    stable_podcast_channel_names := podcastChannelManager.getStablePodcastChannelNames();
-    stable_unique_podcast_channel_canister_ids := podcastChannelManager.getStableUniqueCanisterIds();
-    stable_total_podcast_channels := podcastChannelManager.getStableTotalPodcastChannels();
-    stable_next_podcast_channel_id := podcastChannelManager.getStableNextPodcastChannelId();
-
-  };
 
   // private func renew_membership(user : Principal, membership : T.MembershipType) : async Result.Result<(T.MembershipClaim), Text> {
   //   let fee = switch membership {

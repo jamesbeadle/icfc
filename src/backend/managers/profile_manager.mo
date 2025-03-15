@@ -17,7 +17,6 @@ import Environment "../environment";
 import Cycles "mo:base/ExperimentalCycles";
 import Iter "mo:base/Iter";
 import Time "mo:base/Time";
-import Nat64 "mo:base/Nat64";
 import SNSManager "sns_manager";
 import SNSGovernance "../sns-wrappers/governance";
 
@@ -330,6 +329,19 @@ module {
             };
         };
 
+        //Timer update functions
+
+        public func createMembershipExpiredTimers() : async () {
+            for(canisterId in Iter.fromList(uniqueProfileCanisterIds)){
+                
+                let profile_canister = actor (canisterId) : actor {
+                    createMembershipExpiredTimers : () -> async ();
+                };
+
+                await profile_canister.createMembershipExpiredTimers();
+            }
+        };
+
         // private functions
         private func isUsernameTaken(username : Text, principalId : Base.PrincipalId) : Bool {
             for (profileUsername in usernames.entries()) {
@@ -393,6 +405,7 @@ module {
                 case (#NotClaimed) { return false };
             };
         };
+
         private func generateUniqueUsername(principalId : Base.PrincipalId) : Text {
             let randomSuffix = Text.toArray(principalId);
             var truncatedSuffix = "";
@@ -411,6 +424,7 @@ module {
                 case (null) { return true };
             };
         };
+
         private func createNewCanister() : async () {
             Cycles.add<system>(10_000_000_000_000);
             let canister = await ProfileCanister._ProfileCanister();
