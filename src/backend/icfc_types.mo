@@ -38,7 +38,7 @@ module ICFCTypes {
 
   public type MembershipType = {
     #Monthly;
-    #Annual;
+    #Seasonal;
     #Lifetime;
     #Expired;
     #NotClaimed;
@@ -65,6 +65,9 @@ module ICFCTypes {
     #PaymentError;
     #InvalidProfilePicture;
     #CreateGameError;
+    #UpdateFailed;
+    #AlreadyClaimed;
+    #InEligible;
   };
 
   public type Club = {

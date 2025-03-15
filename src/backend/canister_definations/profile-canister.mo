@@ -10,6 +10,7 @@ import T "../icfc_types";
 import ProfileQueries "../queries/profile_queries";
 import Environment "../environment";
 import ProfileCommands "../commands/profile_commands";
+import Utils "../utils/utils";
 
 actor class _ProfileCanister() {
     private stable var stable_profile_group_indexes : [(Base.PrincipalId, Nat8)] = [];
@@ -56,6 +57,14 @@ actor class _ProfileCanister() {
                             username = foundProfile.username;
                             profilePicture = foundProfile.profilePicture;
                             profilePictureExtension = foundProfile.profilePictureExtension;
+                            displayName = foundProfile.displayName;
+                            termsAgreed = foundProfile.termsAgreed;
+                            appPrincipalIds = foundProfile.appPrincipalIds;
+                            podcastIds = foundProfile.podcastIds;
+                            membershipType = foundProfile.membershipType;
+                            membershipClaims = foundProfile.membershipClaims;
+                            createdOn = foundProfile.createdOn;
+                            membershipTimerId = foundProfile.membershipTimerId;
                         };
                         return #ok(dto);
                     };
@@ -218,6 +227,58 @@ actor class _ProfileCanister() {
                             membershipTimerId = foundProfile.membershipTimerId;
                         };
                         saveProfile(foundGroupIndex, updatedProfile);
+                    };
+                    case (null) {
+                        return #err(#NotFound);
+                    };
+                };
+            };
+        };
+    };
+
+    public shared ({ caller }) func updateMembership(dto : ProfileCommands.UpdateMembership) : async Result.Result<(), T.Error> {
+        assert not Principal.isAnonymous(caller);
+        let backendPrincipalId = Principal.toText(caller);
+        assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
+
+        var groupIndex : ?Nat8 = null;
+        for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
+            if (profileGroupIndex.0 == dto.principalId) {
+                groupIndex := ?profileGroupIndex.1;
+            };
+        };
+
+        switch (groupIndex) {
+            case (null) { return #err(#NotFound) };
+            case (?foundGroupIndex) {
+                let profile = findProfile(foundGroupIndex, dto.principalId);
+                switch (profile) {
+                    case (?foundProfile) {
+                        let membershipClaimsBuffer = Buffer.fromArray<T.MembershipClaim>(foundProfile.membershipClaims);
+                        membershipClaimsBuffer.add({
+                            membershipType = dto.membershipType;
+                            claimedOn = Time.now();
+                            expiresOn = ?Utils.getMembershipExpirationDate(dto.membershipType);
+                        });
+                        let updatedMembershipClaims = Buffer.toArray(membershipClaimsBuffer);
+
+                        let updatedProfile : T.Profile = {
+                            principalId = foundProfile.principalId;
+                            username = foundProfile.username;
+                            displayName = foundProfile.displayName;
+                            membershipType = dto.membershipType;
+                            membershipClaims = updatedMembershipClaims;
+                            createdOn = foundProfile.createdOn;
+                            profilePicture = foundProfile.profilePicture;
+                            profilePictureExtension = foundProfile.profilePictureExtension;
+                            termsAgreed = foundProfile.termsAgreed;
+                            appPrincipalIds = foundProfile.appPrincipalIds;
+                            podcastIds = foundProfile.podcastIds;
+                            membershipTimerId = foundProfile.membershipTimerId;
+                        };
+
+                        saveProfile(foundGroupIndex, updatedProfile);
+
                     };
                     case (null) {
                         return #err(#NotFound);
