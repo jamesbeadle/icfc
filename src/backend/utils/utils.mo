@@ -384,9 +384,9 @@ module Utils {
     };
 
     public func getMembershipType(neurons : [SNSGovernance.Neuron]) : ?T.MembershipType {
-        let oneK_ICFC_e8s:Nat64 = 1_000 * 100_000_000;
-        let tenK_ICFC_e8s:Nat64 = 10_000 * 100_000_000;
-        let hundredK_ICFC_e8s:Nat64 = 100_000 * 100_000_000;
+        let oneK_ICFC_e8s : Nat64 = 1_000 * 100_000_000;
+        let tenK_ICFC_e8s : Nat64 = 10_000 * 100_000_000;
+        let hundredK_ICFC_e8s : Nat64 = 100_000 * 100_000_000;
 
         var total_staked : Nat64 = 0;
 
@@ -396,7 +396,7 @@ module Utils {
                 case (?dissolve_state) {
                     switch (dissolve_state) {
                         case (#DissolveDelaySeconds(dissolve_delay)) {
-                            if(convertSecondsToYears(Int64.toInt(Int64.fromNat64(dissolve_delay))) > 2.0) {
+                            if (convertSecondsToYears(Int64.toInt(Int64.fromNat64(dissolve_delay))) > 2.0) {
                                 total_staked += neuron.cached_neuron_stake_e8s;
                             };
                         };
@@ -412,11 +412,11 @@ module Utils {
             };
         };
 
-        if (total_staked >= hundredK_ICFC_e8s) {
+        if (total_staked + 5 >= hundredK_ICFC_e8s) {
             return ?#Lifetime;
-        } else if (total_staked >= tenK_ICFC_e8s) {
+        } else if (total_staked + 5 >= tenK_ICFC_e8s) {
             return ?#Seasonal;
-        } else if (total_staked >= oneK_ICFC_e8s) {
+        } else if (total_staked + 5 >= oneK_ICFC_e8s) {
             return ?#Monthly;
         } else {
             return null;
