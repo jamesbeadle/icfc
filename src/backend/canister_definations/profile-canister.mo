@@ -78,6 +78,38 @@ actor class _ProfileCanister() {
         };
     };
 
+    public shared ({ caller }) func getICFCMembership(dto : ProfileCommands.GetICFCMembership) : async Result.Result<ProfileQueries.ICFCMembershipDTO, T.Error> {
+        assert not Principal.isAnonymous(caller);
+        let backendPrincipalId = Principal.toText(caller);
+        assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
+
+        var groupIndex : ?Nat8 = null;
+        for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
+            if (profileGroupIndex.0 == dto.principalId) {
+                groupIndex := ?profileGroupIndex.1;
+            };
+        };
+        switch (groupIndex) {
+            case (null) { return #err(#NotFound) };
+            case (?foundGroupIndex) {
+                let profile = findProfile(foundGroupIndex, dto.principalId);
+                switch (profile) {
+                    case (?foundProfile) {
+                        let dto : ProfileQueries.ICFCMembershipDTO = {
+                            membershipType = foundProfile.membershipType;
+                            membershipClaims = foundProfile.membershipClaims;
+                            membershipExpiryTime = foundProfile.membershipExpiryTime;
+                        };
+                        return #ok(dto);
+                    };
+                    case (null) {
+                        return #err(#NotFound);
+                    };
+                };
+            };
+        };
+    };
+
     public shared ({ caller }) func createProfile(profilePrincipalId : Base.PrincipalId, dto : ProfileCommands.CreateProfile) : async Result.Result<(), T.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
@@ -185,6 +217,126 @@ actor class _ProfileCanister() {
                             profilePictureExtension = foundProfile.profilePictureExtension;
                             termsAgreed = foundProfile.termsAgreed;
                             appPrincipalIds = foundProfile.appPrincipalIds;
+                            podcastIds = foundProfile.podcastIds;
+                            membershipExpiryTime = foundProfile.membershipExpiryTime;
+                        };
+                        saveProfile(foundGroupIndex, updatedProfile);
+                    };
+                    case (null) {
+                        return #err(#NotFound);
+                    };
+                };
+            };
+        };
+    };
+
+    public shared ({ caller }) func updateAppPrincipalIds(dto : ProfileCommands.AddSubApp) : async Result.Result<(), T.Error> {
+        assert not Principal.isAnonymous(caller);
+        let backendPrincipalId = Principal.toText(caller);
+        assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
+
+        var groupIndex : ?Nat8 = null;
+        for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
+            if (profileGroupIndex.0 == dto.subAppUserPrincipalId) {
+                groupIndex := ?profileGroupIndex.1;
+            };
+        };
+        switch (groupIndex) {
+            case (null) { return #err(#NotFound) };
+            case (?foundGroupIndex) {
+                let profile = findProfile(foundGroupIndex, dto.subAppUserPrincipalId);
+                switch (profile) {
+                    case (?foundProfile) {
+
+                        var appPrincipalIdsBuffer = Buffer.fromArray<(T.SubApp, Base.PrincipalId)>(foundProfile.appPrincipalIds);
+
+                        let subAppAlreadyLinked = Array.find<(T.SubApp, Base.PrincipalId)>(
+                            foundProfile.appPrincipalIds,
+                            func(appPrincipalId : (T.SubApp, Base.PrincipalId)) {
+                                appPrincipalId.0 == dto.subApp;
+                            },
+                        );
+
+                        // add new subapp if not already linked
+                        if (subAppAlreadyLinked == null) {
+                            appPrincipalIdsBuffer.add((dto.subApp, dto.subAppUserPrincipalId));
+                        } else {
+                            // update subapp if already linked
+                            let updatedAppPrincipalIds = Array.map<(T.SubApp, Base.PrincipalId), (T.SubApp, Base.PrincipalId)>(
+                                foundProfile.appPrincipalIds,
+                                func(appPrincipalId : (T.SubApp, Base.PrincipalId)) {
+                                    if (appPrincipalId.0 == dto.subApp) {
+                                        (appPrincipalId.0, dto.subAppUserPrincipalId);
+                                    } else {
+                                        appPrincipalId;
+                                    };
+                                },
+                            );
+
+                            appPrincipalIdsBuffer := Buffer.fromArray<(T.SubApp, Base.PrincipalId)>(updatedAppPrincipalIds);
+
+                        };
+
+                        let updatedProfile : T.Profile = {
+                            principalId = foundProfile.principalId;
+                            username = foundProfile.username;
+                            displayName = foundProfile.displayName;
+                            membershipType = foundProfile.membershipType;
+                            membershipClaims = foundProfile.membershipClaims;
+                            createdOn = foundProfile.createdOn;
+                            profilePicture = foundProfile.profilePicture;
+                            profilePictureExtension = foundProfile.profilePictureExtension;
+                            termsAgreed = foundProfile.termsAgreed;
+                            appPrincipalIds = Buffer.toArray(appPrincipalIdsBuffer);
+                            podcastIds = foundProfile.podcastIds;
+                            membershipExpiryTime = foundProfile.membershipExpiryTime;
+                        };
+                        saveProfile(foundGroupIndex, updatedProfile);
+                    };
+                    case (null) {
+                        return #err(#NotFound);
+                    };
+                };
+            };
+        };
+    };
+
+    public shared ({ caller }) func removeSubApp(dto : ProfileCommands.RemoveSubApp) : async Result.Result<(), T.Error> {
+        assert not Principal.isAnonymous(caller);
+        let backendPrincipalId = Principal.toText(caller);
+        assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
+
+        var groupIndex : ?Nat8 = null;
+        for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
+            if (profileGroupIndex.0 == dto.userPrincipalId) {
+                groupIndex := ?profileGroupIndex.1;
+            };
+        };
+
+        switch (groupIndex) {
+            case (null) { return #err(#NotFound) };
+            case (?foundGroupIndex) {
+                let profile = findProfile(foundGroupIndex, dto.userPrincipalId);
+                switch (profile) {
+                    case (?foundProfile) {
+                        let updatedAppPrincipalIds = Array.filter<(T.SubApp, Base.PrincipalId)>(
+                            foundProfile.appPrincipalIds,
+                            func(appPrincipalId : (T.SubApp, Base.PrincipalId)) {
+                                appPrincipalId.0 != dto.subApp;
+                            },
+                        );
+
+                        let updatedProfile : T.Profile = {
+                            principalId = foundProfile.principalId;
+                            username = foundProfile.username;
+                            displayName = foundProfile.displayName;
+                            membershipType = foundProfile.membershipType;
+                            membershipClaims = foundProfile.membershipClaims;
+                            createdOn = foundProfile.createdOn;
+                            profilePicture = foundProfile.profilePicture;
+                            profilePictureExtension = foundProfile.profilePictureExtension;
+                            termsAgreed = foundProfile.termsAgreed;
+                            appPrincipalIds = updatedAppPrincipalIds;
                             podcastIds = foundProfile.podcastIds;
                             membershipExpiryTime = foundProfile.membershipExpiryTime;
                         };

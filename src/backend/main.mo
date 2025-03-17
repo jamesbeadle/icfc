@@ -91,6 +91,21 @@ actor class Self() = this {
     return await profileManager.claimMembership(dto);
   };
 
+  public shared ({ caller }) func addSubApp(dto : ProfileCommands.AddSubApp) : async Result.Result<(), T.Error> {
+    assert not Principal.isAnonymous(caller);
+    return await profileManager.addSubApp(Principal.toText(caller), dto);
+  };
+
+  public shared ({ caller }) func removeSubApp(subApp : T.SubApp) : async Result.Result<(), T.Error> {
+    assert not Principal.isAnonymous(caller);
+    return await profileManager.removeSubApp(Principal.toText(caller), subApp);
+  };
+
+  public shared ({ caller }) func verifySubApp(dto : ProfileCommands.VerifySubApp) : async Result.Result<(), T.Error> {
+    assert not Principal.isAnonymous(caller);
+    return await profileManager.verifySubApp(Principal.toText(caller), dto);
+  };
+
   public shared ({ caller }) func updateUsername(dto : ProfileCommands.UpdateUserName) : async Result.Result<(), T.Error> {
     assert not Principal.isAnonymous(caller);
     assert dto.principalId == Principal.toText(caller);
@@ -101,6 +116,11 @@ actor class Self() = this {
     assert not Principal.isAnonymous(caller);
     assert dto.principalId == Principal.toText(caller);
     return await profileManager.updateDisplayName(dto);
+  };
+
+  public shared ({ caller }) func getICFCMembership(dto : ProfileCommands.GetICFCMembership) : async Result.Result<ProfileQueries.ICFCMembershipDTO, T.Error> {
+    assert not Principal.isAnonymous(caller);
+    return await profileManager.getICFCMembership(Principal.toText(caller), dto);
   };
 
   public shared ({ caller }) func updateProfilePicture(dto : ProfileCommands.UpdateProfilePicture) : async Result.Result<(), T.Error> {
@@ -122,6 +142,8 @@ actor class Self() = this {
   private stable var stable_unique_podcast_channel_canister_ids : [Base.CanisterId] = [];
   private stable var stable_total_podcast_channels : Nat = 0;
   private stable var stable_next_podcast_channel_id : Nat = 0;
+
+  private stable var stable_pending_users_sub_app_verifications : [(Base.PrincipalId, [(T.SubApp, Base.PrincipalId)])] = [];
 
   //System Backup and Upgrade Functions:
 
@@ -146,6 +168,7 @@ actor class Self() = this {
     stable_usernames := profileManager.getStableUsernames();
     stable_unique_profile_canister_ids := profileManager.getStableUniqueCanisterIds();
     stable_total_profile := profileManager.getStableTotalProfiles();
+    stable_pending_users_sub_app_verifications := profileManager.getStablePendingUsersSubAppVerifications();
   };
 
   private func backupPodcastChannelData() {
@@ -164,6 +187,7 @@ actor class Self() = this {
     profileManager.setStableUsernames(stable_usernames);
     profileManager.setStableUniqueCanisterIds(stable_unique_profile_canister_ids);
     profileManager.setStableTotalProfiles(stable_total_profile);
+    profileManager.setStablePendingUsersSubAppVerifications(stable_pending_users_sub_app_verifications);
   };
 
   private func setPodcastChannelData() {
