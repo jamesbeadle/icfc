@@ -69,7 +69,7 @@ actor class Self() = this {
     return await profileManager.createProfile(principalId, dto);
   };
 
-  public shared ({ caller }) func claimMembership() : async Result.Result<(), T.Error> {
+  public shared ({ caller }) func claimMembership() : async Result.Result<(T.MembershipClaim), T.Error> {
     assert not Principal.isAnonymous(caller);
     let dto : ProfileCommands.ClaimMembership = {
       principalId = Principal.toText(caller);
