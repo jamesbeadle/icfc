@@ -18,11 +18,14 @@ import ProfileManager "managers/profile_manager";
 import ProfileCommands "commands/profile_commands";
 import PodcastManager "managers/podcast_manager";
 import ProfileQueries "queries/profile_queries";
+import SNSManager "managers/sns_manager";
+import SNSGovernance "./sns-wrappers/governance";
 
 actor class Self() = this {
 
   private let profileManager = ProfileManager.ProfileManager();
   private let podcastChannelManager = PodcastManager.PodcastManager();
+  private let snsManager = SNSManager.SNSManager();
 
   private var appStatus : Base.AppStatus = {
     onHold = false;
@@ -35,10 +38,28 @@ actor class Self() = this {
 
   //Profile Queries
 
-  public shared ({caller}) func getProfile() : async Result.Result<ProfileQueries.Profile, T.Error> {
+  public shared ({ caller }) func getProfile() : async Result.Result<ProfileQueries.Profile, T.Error> {
     assert not Principal.isAnonymous(caller);
-    let dto : ProfileQueries.GetProfile = { principalId = Principal.toText(caller) };
+    let dto : ProfileQueries.GetProfile = {
+      principalId = Principal.toText(caller);
+    };
     return await profileManager.getProfile(dto);
+  };
+
+  public shared ({ caller }) func getUserNeurons() : async Result.Result<[SNSGovernance.Neuron], T.Error> {
+    assert not Principal.isAnonymous(caller);
+
+    let dto : ProfileQueries.GetProfile = {
+      principalId = Principal.toText(caller);
+    };
+    let profile = await profileManager.getProfile(dto);
+    switch (profile) {
+      case (#err(e)) return #err(e);
+      case (#ok(_)) {};
+    };
+
+    let neurons = await snsManager.getUsersNeurons(caller);
+    return #ok(neurons);
   };
 
   //Profile Commands
@@ -48,9 +69,11 @@ actor class Self() = this {
     return await profileManager.createProfile(principalId, dto);
   };
 
-  public shared ({caller}) func claimMembership() : async Result.Result<(), T.Error> {
+  public shared ({ caller }) func claimMembership() : async Result.Result<(), T.Error> {
     assert not Principal.isAnonymous(caller);
-    let dto : ProfileCommands.ClaimMembership = { principalId = Principal.toText(caller) };
+    let dto : ProfileCommands.ClaimMembership = {
+      principalId = Principal.toText(caller);
+    };
     return await profileManager.claimMembership(dto);
   };
 
@@ -96,11 +119,10 @@ actor class Self() = this {
   system func postupgrade() {
     setProfileData();
     setPodcastChannelData();
-   ignore Timer.setTimer<system>(#nanoseconds(Int.abs(1)), postUpgradeCallback); 
+    ignore Timer.setTimer<system>(#nanoseconds(Int.abs(1)), postUpgradeCallback);
   };
 
-
-  private func postUpgradeCallback() : async (){
+  private func postUpgradeCallback() : async () {
     await profileManager.createMembershipExpiredTimers();
   };
 
@@ -130,7 +152,7 @@ actor class Self() = this {
     profileManager.setStableTotalProfiles(stable_total_profile);
   };
 
-  private func setPodcastChannelData(){
+  private func setPodcastChannelData() {
     podcastChannelManager.setStableCanisterIndex(stable_podcast_channel_canister_index);
     podcastChannelManager.setStableActiveCanisterId(stable_active_podcast_channel_canister_id);
     podcastChannelManager.setStablePodcastChannelNames(stable_podcast_channel_names);
@@ -140,8 +162,6 @@ actor class Self() = this {
   };
 
   /* Below is code related to a second sale */
-
-
 
   // private let podcast
 
@@ -157,8 +177,6 @@ actor class Self() = this {
 
   private type Subaccount = Blob;
   private var icfcExchange : Nat = 400; //400 ckSatoshis per ICFC
-
-
 
   private func caller_allowed(caller : Principal) : Bool {
     let foundCaller = Array.find<Base.PrincipalId>(
@@ -476,13 +494,6 @@ actor class Self() = this {
   //       #err("User profile not found");
   //     };
   //   };
-  // };
-
-  // public shared ({ caller }) func claim_membership(membership : T.MembershipType) : async Result.Result<T.MembershipClaim, Text> {
-  //   assert not Principal.isAnonymous(caller);
-  //   let claim_result = await renew_membership(caller, membership);
-
-  //   return claim_result;
   // };
 
   // public shared ({caller}) func create_podcast_group()
