@@ -1,5 +1,4 @@
 import Base "mo:waterway-mops/BaseTypes";
-import Timer "mo:base/Timer";
 import T "../icfc_types";
 
 module ProfileQueries {
@@ -7,7 +6,7 @@ module ProfileQueries {
         principalId : Base.PrincipalId;
     };
 
-    public type Profile = {
+    public type ProfileDTO = {
         principalId : Base.PrincipalId;
         username : Text;
         displayName : Text;

@@ -52,13 +52,13 @@ module {
             return not isUsernameTaken(dto.username, dto.principalId);
         };
 
-        public func getProfile(dto : ProfileQueries.GetProfile) : async Result.Result<ProfileQueries.Profile, T.Error> {
+        public func getProfile(dto : ProfileQueries.GetProfile) : async Result.Result<ProfileQueries.ProfileDTO, T.Error> {
             let existingProfileCanisterId = profileCanisterIndex.get(dto.principalId);
             switch (existingProfileCanisterId) {
                 case (?foundCanisterId) {
 
                     let profile_canister = actor (foundCanisterId) : actor {
-                        getProfile : (dto : ProfileQueries.GetProfile) -> async Result.Result<ProfileQueries.Profile, T.Error>;
+                        getProfile : (dto : ProfileQueries.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, T.Error>;
                     };
 
                     let profile = await profile_canister.getProfile(dto);
@@ -285,7 +285,7 @@ module {
             return #err(#NotFound);
         };
 
-        public func claimMembership(dto : ProfileCommands.ClaimMembership) : async Result.Result<(), T.Error> {
+        public func claimMembership(dto : ProfileCommands.ClaimMembership) : async Result.Result<(T.MembershipClaim), T.Error> {
             let existingProfileCanisterId = profileCanisterIndex.get(dto.principalId);
             switch (existingProfileCanisterId) {
                 case (?_) {
@@ -314,14 +314,15 @@ module {
             };
         };
 
-        public func updateMembership(dto : ProfileCommands.UpdateMembership) : async Result.Result<(), T.Error> {
+        public func updateMembership(dto : ProfileCommands.UpdateMembership) : async Result.Result<(T.MembershipClaim), T.Error> {
             let existingProfileCanisterId = profileCanisterIndex.get(dto.principalId);
             switch (existingProfileCanisterId) {
                 case (?foundCanisterId) {
                     let profile_canister = actor (foundCanisterId) : actor {
-                        updateMembership : (dto : ProfileCommands.UpdateMembership) -> async Result.Result<(), T.Error>;
+                        updateMembership : (dto : ProfileCommands.UpdateMembership) -> async Result.Result<(T.MembershipClaim), T.Error>;
                     };
-                    return await profile_canister.updateMembership(dto);
+                    let res = await profile_canister.updateMembership(dto);
+                    return res;
                 };
                 case (null) {
                     return #err(#NotFound);
@@ -332,14 +333,14 @@ module {
         //Timer update functions
 
         public func createMembershipExpiredTimers() : async () {
-            for(canisterId in Iter.fromList(uniqueProfileCanisterIds)){
-                
+            for (canisterId in Iter.fromList(uniqueProfileCanisterIds)) {
+
                 let profile_canister = actor (canisterId) : actor {
                     createMembershipExpiredTimers : () -> async ();
                 };
 
                 await profile_canister.createMembershipExpiredTimers();
-            }
+            };
         };
 
         // private functions

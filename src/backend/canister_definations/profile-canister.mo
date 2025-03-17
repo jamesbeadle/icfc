@@ -37,7 +37,7 @@ actor class _ProfileCanister() {
 
     //Public endpoints
 
-    public shared ({ caller }) func getProfile(dto : ProfileQueries.GetProfile) : async Result.Result<ProfileQueries.Profile, T.Error> {
+    public shared ({ caller }) func getProfile(dto : ProfileQueries.GetProfile) : async Result.Result<ProfileQueries.ProfileDTO, T.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
         assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
@@ -54,7 +54,7 @@ actor class _ProfileCanister() {
                 let profile = findProfile(foundGroupIndex, dto.principalId);
                 switch (profile) {
                     case (?foundProfile) {
-                        let dto : ProfileQueries.Profile = {
+                        let dto : ProfileQueries.ProfileDTO = {
                             principalId = foundProfile.principalId;
                             username = foundProfile.username;
                             profilePicture = foundProfile.profilePicture;
@@ -239,7 +239,7 @@ actor class _ProfileCanister() {
         };
     };
 
-    public shared ({ caller }) func updateMembership(dto : ProfileCommands.UpdateMembership) : async Result.Result<(), T.Error> {
+    public shared ({ caller }) func updateMembership(dto : ProfileCommands.UpdateMembership) : async Result.Result<(T.MembershipClaim), T.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
         assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
@@ -288,7 +288,11 @@ actor class _ProfileCanister() {
                             };
                         };
 
-                        saveProfile(foundGroupIndex, updatedProfile);
+                        let res = saveProfile(foundGroupIndex, updatedProfile);
+                        switch (res) {
+                            case (#err(error)) { return #err(error) };
+                            case (#ok) { return #ok(newClaim) };
+                        };
 
                     };
                     case (null) {
@@ -485,6 +489,14 @@ actor class _ProfileCanister() {
 
     private func expireMembership(principalId : Base.PrincipalId) {
         //expire the membership
+
+        var groupIndex : ?Nat8 = null;
+        for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
+            if (profileGroupIndex.0 == principalId) {
+                groupIndex := ?profileGroupIndex.1;
+            };
+        };
+
     };
 
     private func findProfile(profileGroupIndex : Nat8, profilePrincipalId : Base.PrincipalId) : ?T.Profile {
