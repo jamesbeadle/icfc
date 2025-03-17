@@ -42,9 +42,10 @@ module ICFCTypes {
     #Lifetime;
     #Expired;
     #NotClaimed;
+    #NotEligible;
   };
 
-  public type SubApp={
+  public type SubApp = {
     #OpenFPL;
     #OpenWSL;
     #JeffBets;

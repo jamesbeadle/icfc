@@ -419,7 +419,7 @@ module Utils {
         } else if (total_staked + 5 >= oneK_ICFC_e8s) {
             return ?#Monthly;
         } else {
-            return null;
+            return ?#NotEligible;
         };
     };
 
