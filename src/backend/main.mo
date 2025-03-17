@@ -38,7 +38,7 @@ actor class Self() = this {
 
   //Profile Queries
 
-  public shared ({ caller }) func getProfile() : async Result.Result<ProfileQueries.Profile, T.Error> {
+  public shared ({ caller }) func getProfile() : async Result.Result<ProfileQueries.ProfileDTO, T.Error> {
     assert not Principal.isAnonymous(caller);
     let dto : ProfileQueries.GetProfile = {
       principalId = Principal.toText(caller);

@@ -37,7 +37,7 @@ actor class _ProfileCanister() {
 
     //Public endpoints
 
-    public shared ({ caller }) func getProfile(dto : ProfileQueries.GetProfile) : async Result.Result<ProfileQueries.Profile, T.Error> {
+    public shared ({ caller }) func getProfile(dto : ProfileQueries.GetProfile) : async Result.Result<ProfileQueries.ProfileDTO, T.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
         assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
@@ -54,7 +54,7 @@ actor class _ProfileCanister() {
                 let profile = findProfile(foundGroupIndex, dto.principalId);
                 switch (profile) {
                     case (?foundProfile) {
-                        let dto : ProfileQueries.Profile = {
+                        let dto : ProfileQueries.ProfileDTO = {
                             principalId = foundProfile.principalId;
                             username = foundProfile.username;
                             profilePicture = foundProfile.profilePicture;

@@ -52,13 +52,13 @@ module {
             return not isUsernameTaken(dto.username, dto.principalId);
         };
 
-        public func getProfile(dto : ProfileQueries.GetProfile) : async Result.Result<ProfileQueries.Profile, T.Error> {
+        public func getProfile(dto : ProfileQueries.GetProfile) : async Result.Result<ProfileQueries.ProfileDTO, T.Error> {
             let existingProfileCanisterId = profileCanisterIndex.get(dto.principalId);
             switch (existingProfileCanisterId) {
                 case (?foundCanisterId) {
 
                     let profile_canister = actor (foundCanisterId) : actor {
-                        getProfile : (dto : ProfileQueries.GetProfile) -> async Result.Result<ProfileQueries.Profile, T.Error>;
+                        getProfile : (dto : ProfileQueries.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, T.Error>;
                     };
 
                     let profile = await profile_canister.getProfile(dto);
