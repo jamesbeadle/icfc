@@ -440,7 +440,7 @@ module {
                 Environment.JEFF_BETS_BACKEND_CANISTER_ID,
                 Environment.TRANSFERKINGS_CANISTER_ID,
             ];
-            for (principal in allowed.values()) {
+            for (principal in allowed.vals()) {
                 if (principal == caller) {
                     return true;
                 };
