@@ -46,7 +46,7 @@ actor class Self() = this {
     return await profileManager.getProfile(dto);
   };
 
-  public shared ({ caller }) func getUserNeurons() : async Result.Result<ProfileQueries.UserNeurons, T.Error> {
+  public shared ({ caller }) func getUserNeurons() : async Result.Result<ProfileQueries.UserNeuronsDTO, T.Error> {
     assert not Principal.isAnonymous(caller);
 
     let dto : ProfileQueries.GetProfile = {
@@ -61,7 +61,7 @@ actor class Self() = this {
     let neurons = await snsManager.getUsersNeurons(caller);
     let userEligibility = Utils.getMembershipType(neurons);
 
-    let result : ProfileQueries.UserNeurons = {
+    let result : ProfileQueries.UserNeuronsDTO = {
       userNeurons = neurons;
       userMembershipEligibility = switch (userEligibility) {
         case (?membership) {

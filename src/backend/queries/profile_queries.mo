@@ -45,7 +45,7 @@ module ProfileQueries {
         principalId : Base.PrincipalId;
     };
 
-    public type UserNeurons = {
+    public type UserNeuronsDTO = {
         userNeurons : [SNSGovernance.Neuron];
         userMembershipEligibility : T.MembershipType;
     };
