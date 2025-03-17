@@ -303,7 +303,7 @@ module {
                             return await updateMembership(updateMembershipCommand);
                         };
                         case (null) {
-                            return #err(#NotAllowed);
+                            return #err(#InEligible);
                         };
                     };
                 };

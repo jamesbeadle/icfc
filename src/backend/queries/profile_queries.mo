@@ -17,7 +17,7 @@ module ProfileQueries {
         profilePicture : ?Blob;
         profilePictureExtension : Text;
         termsAgreed : Bool;
-        appPrincipalIds : [(Text, Base.PrincipalId)];
+        appPrincipalIds : [(T.SubApp, Base.PrincipalId)];
         podcastIds : [Base.PrincipalId];
         membershipExpiryTime : Int;
     };

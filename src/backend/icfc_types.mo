@@ -21,7 +21,7 @@ module ICFCTypes {
     profilePicture : ?Blob;
     profilePictureExtension : Text;
     termsAgreed : Bool;
-    appPrincipalIds : [(Text, Base.PrincipalId)];
+    appPrincipalIds : [(SubApp, Base.PrincipalId)];
     podcastIds : [Base.PrincipalId];
   };
 
@@ -42,6 +42,14 @@ module ICFCTypes {
     #Lifetime;
     #Expired;
     #NotClaimed;
+  };
+
+  public type SubApp={
+    #OpenFPL;
+    #OpenWSL;
+    #JeffBets;
+    #TransferKings;
+    #FootballGod;
   };
 
   public type MembershipClaim = {
