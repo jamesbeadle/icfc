@@ -497,6 +497,37 @@ actor class _ProfileCanister() {
             };
         };
 
+        switch (groupIndex) {
+            case (null) { return };
+            case (?foundGroupIndex) {
+                let profile = findProfile(foundGroupIndex, principalId);
+                switch (profile) {
+                    case (?foundProfile) {
+
+                        let updatedProfile : T.Profile = {
+                            principalId = foundProfile.principalId;
+                            username = foundProfile.username;
+                            displayName = foundProfile.displayName;
+                            membershipType = #Expired;
+                            membershipClaims = foundProfile.membershipClaims;
+                            createdOn = foundProfile.createdOn;
+                            profilePicture = foundProfile.profilePicture;
+                            profilePictureExtension = foundProfile.profilePictureExtension;
+                            termsAgreed = foundProfile.termsAgreed;
+                            appPrincipalIds = foundProfile.appPrincipalIds;
+                            podcastIds = foundProfile.podcastIds;
+                            membershipExpiryTime = 0;
+                        };
+
+                        let _ = saveProfile(foundGroupIndex, updatedProfile);
+                    };
+                    case (null) {
+                        return;
+                    };
+                };
+            };
+        };
+
     };
 
     private func findProfile(profileGroupIndex : Nat8, profilePrincipalId : Base.PrincipalId) : ?T.Profile {
