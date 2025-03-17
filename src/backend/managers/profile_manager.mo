@@ -452,33 +452,33 @@ module {
             switch (dto.subApp) {
                 case (#OpenFPL) {
                     let openFPLCanister = actor (Environment.OPENFPL_BACKEND_CANISTER_ID) : actor {
-                        notifyAppLink : (principalId : Base.PrincipalId) -> async Result.Result<(), T.Error>;
+                        notifyAppLink : (dto : ProfileCommands.NotifyAppofLink) -> async Result.Result<(), T.Error>;
                     };
-                    return await openFPLCanister.notifyAppLink(dto.subAppUserPrincipalId);
+                    return await openFPLCanister.notifyAppLink(dto);
                 };
                 case (#OpenWSL) {
                     let openWSLCanister = actor (Environment.OPENWSL_BACKEND_CANISTER_ID) : actor {
-                        notifyAppLink : (principalId : Base.PrincipalId) -> async Result.Result<(), T.Error>;
+                        notifyAppLink : (dto : ProfileCommands.NotifyAppofLink) -> async Result.Result<(), T.Error>;
                     };
-                    return await openWSLCanister.notifyAppLink(dto.subAppUserPrincipalId);
+                    return await openWSLCanister.notifyAppLink(dto);
                 };
                 case (#JeffBets) {
                     let jeffBetsCanister = actor (Environment.JEFF_BETS_BACKEND_CANISTER_ID) : actor {
-                        notifyAppLink : (principalId : Base.PrincipalId) -> async Result.Result<(), T.Error>;
+                        notifyAppLink : (dto : ProfileCommands.NotifyAppofLink) -> async Result.Result<(), T.Error>;
                     };
-                    return await jeffBetsCanister.notifyAppLink(dto.subAppUserPrincipalId);
+                    return await jeffBetsCanister.notifyAppLink(dto);
                 };
                 case (#TransferKings) {
                     let transferKingsCanister = actor (Environment.TRANSFERKINGS_CANISTER_ID) : actor {
-                        notifyAppLink : (principalId : Base.PrincipalId) -> async Result.Result<(), T.Error>;
+                        notifyAppLink : (dto : ProfileCommands.NotifyAppofLink) -> async Result.Result<(), T.Error>;
                     };
-                    return await transferKingsCanister.notifyAppLink(dto.subAppUserPrincipalId);
+                    return await transferKingsCanister.notifyAppLink(dto);
                 };
                 case (#FootballGod) {
                     let footballGodCanister = actor (Environment.FOOTBALL_GOD_BACKEND_CANISTER_ID) : actor {
-                        notifyAppLink : (principalId : Base.PrincipalId) -> async Result.Result<(), T.Error>;
+                        notifyAppLink : (dto : ProfileCommands.NotifyAppofLink) -> async Result.Result<(), T.Error>;
                     };
-                    return await footballGodCanister.notifyAppLink(dto.subAppUserPrincipalId);
+                    return await footballGodCanister.notifyAppLink(dto);
                 };
             };
 
