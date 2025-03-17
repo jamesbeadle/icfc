@@ -143,8 +143,6 @@ actor class Self() = this {
   private stable var stable_total_podcast_channels : Nat = 0;
   private stable var stable_next_podcast_channel_id : Nat = 0;
 
-  private stable var stable_pending_users_sub_app_verifications : [(Base.PrincipalId, [(T.SubApp, Base.PrincipalId)])] = [];
-
   //System Backup and Upgrade Functions:
 
   system func preupgrade() {
@@ -168,7 +166,6 @@ actor class Self() = this {
     stable_usernames := profileManager.getStableUsernames();
     stable_unique_profile_canister_ids := profileManager.getStableUniqueCanisterIds();
     stable_total_profile := profileManager.getStableTotalProfiles();
-    stable_pending_users_sub_app_verifications := profileManager.getStablePendingUsersSubAppVerifications();
   };
 
   private func backupPodcastChannelData() {
@@ -187,7 +184,6 @@ actor class Self() = this {
     profileManager.setStableUsernames(stable_usernames);
     profileManager.setStableUniqueCanisterIds(stable_unique_profile_canister_ids);
     profileManager.setStableTotalProfiles(stable_total_profile);
-    profileManager.setStablePendingUsersSubAppVerifications(stable_pending_users_sub_app_verifications);
   };
 
   private func setPodcastChannelData() {

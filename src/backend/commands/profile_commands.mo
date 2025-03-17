@@ -48,7 +48,7 @@ module ProfileCommands {
 
     public type GetICFCMembership = {
         principalId : Base.PrincipalId;
-        
+
     };
 
     public type RemoveSubApp = {
@@ -56,6 +56,12 @@ module ProfileCommands {
         userPrincipalId : Base.PrincipalId;
     };
     public type VerifySubApp = {
+        subAppUserPrincipalId : Base.PrincipalId;
+        subApp : T.SubApp;
+        icfcPrincipalId : Base.PrincipalId;
+    };
+
+    public type NotifyAppofLink = {
         subAppUserPrincipalId : Base.PrincipalId;
         subApp : T.SubApp;
         icfcPrincipalId : Base.PrincipalId;

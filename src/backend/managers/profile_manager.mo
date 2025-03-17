@@ -27,7 +27,6 @@ module {
         private var usernames : TrieMap.TrieMap<Base.PrincipalId, Text> = TrieMap.TrieMap<Base.PrincipalId, Text>(Text.equal, Text.hash);
         private var uniqueProfileCanisterIds : List.List<Base.CanisterId> = List.nil();
         private var totalProfiles : Nat = 0;
-        private var pendingSubAppVerifications : TrieMap.TrieMap<Base.PrincipalId, TrieMap.TrieMap<T.SubApp, Base.PrincipalId>> = TrieMap.TrieMap<Base.PrincipalId, TrieMap.TrieMap<T.SubApp, Base.PrincipalId>>(Text.equal, Text.hash);
 
         //Getters
 
@@ -49,7 +48,7 @@ module {
             };
         };
 
-        public func getICFCMembership(caller: Base.PrincipalId, dto: ProfileCommands.GetICFCMembership) : async Result.Result<ProfileQueries.ICFCMembershipDTO, T.Error> {
+        public func getICFCMembership(caller : Base.PrincipalId, dto : ProfileCommands.GetICFCMembership) : async Result.Result<ProfileQueries.ICFCMembershipDTO, T.Error> {
             if (not callerAllowed(caller)) {
                 return #err(#NotAllowed);
             };
@@ -139,32 +138,13 @@ module {
             let existingProfileCanisterId = profileCanisterIndex.get(principalId);
             switch (existingProfileCanisterId) {
                 case (?_) {
-                    let pendingSubAppVerificationMap = pendingSubAppVerifications.get(principalId);
-
-                    switch (pendingSubAppVerificationMap) {
-                        case (?subAppMap) {
-                            let existingSubApp = subAppMap.get(subAppRecord.subApp);
-                            switch (existingSubApp) {
-                                case (?_) {
-                                    // update
-                                    subAppMap.put(subAppRecord.subApp, subAppRecord.subAppUserPrincipalId);
-                                    return #ok;
-                                };
-                                case (null) {
-                                    // add new
-                                    subAppMap.put(subAppRecord.subApp, subAppRecord.subAppUserPrincipalId);
-                                    return #ok;
-                                };
-                            };
-                        };
-                        case (null) {
-                            let newSubAppMap : TrieMap.TrieMap<T.SubApp, Base.PrincipalId> = TrieMap.TrieMap<T.SubApp, Base.PrincipalId>(func(x : T.SubApp, y : T.SubApp) { x == y }, func(x : T.SubApp) : Nat32 { Text.hash(debug_show (x)) });
-                            newSubAppMap.put(subAppRecord.subApp, subAppRecord.subAppUserPrincipalId);
-                            pendingSubAppVerifications.put(principalId, newSubAppMap);
-                            return #ok;
-                        };
+                    let dto : ProfileCommands.NotifyAppofLink = {
+                        icfcPrincipalId = principalId;
+                        subApp = subAppRecord.subApp;
+                        subAppUserPrincipalId = subAppRecord.subAppUserPrincipalId;
                     };
-                    return #ok;
+                    let res = await notifyAppsofLink(dto);
+                    return res;
                 };
                 case (null) {
                     return #err(#NotFound);
@@ -172,7 +152,7 @@ module {
             };
         };
 
-        public func removeSubApp(principalId : Base.PrincipalId, subApp: T.SubApp) : async Result.Result<(), T.Error> {
+        public func removeSubApp(principalId : Base.PrincipalId, subApp : T.SubApp) : async Result.Result<(), T.Error> {
             let existingProfileCanisterId = profileCanisterIndex.get(principalId);
             switch (existingProfileCanisterId) {
                 case (?foundCanisterId) {
@@ -197,53 +177,24 @@ module {
                 return #err(#NotAllowed);
             };
 
-            let existingSubAppMap = pendingSubAppVerifications.get(verifySubAppRecord.icfcPrincipalId);
-
-            switch (existingSubAppMap) {
-                case (?subAppMap) {
-                    let existingSubApp = subAppMap.get(verifySubAppRecord.subApp);
-                    switch (existingSubApp) {
-                        case (?_) {
-
-                            let existingProfileCanisterId = profileCanisterIndex.get(verifySubAppRecord.icfcPrincipalId);
-                            switch (existingProfileCanisterId) {
-                                case (?foundCanisterId) {
-                                    let profile_canister = actor (foundCanisterId) : actor {
-                                        updateAppPrincipalIds : (dto : ProfileCommands.AddSubApp) -> async Result.Result<(), T.Error>;
-                                    };
-                                    let res = await profile_canister.updateAppPrincipalIds({
-                                        subApp = verifySubAppRecord.subApp;
-                                        subAppUserPrincipalId = verifySubAppRecord.subAppUserPrincipalId;
-                                    });
-
-                                    switch (res) {
-                                        case (#ok(_)) {
-                                            let _ = subAppMap.remove(verifySubAppRecord.subApp);
-                                            pendingSubAppVerifications.put(verifySubAppRecord.icfcPrincipalId, subAppMap);
-                                            return #ok;
-                                        };
-                                        case (#err(err)) {
-                                            return #err(err);
-                                        };
-                                    };
-                                    return #err(#NotFound);
-                                };
-                                case (null) {
-                                    return #err(#NotFound);
-                                };
-                            };
-
-                            return #ok;
-                        };
-                        case (null) {
-                            return #err(#NotFound);
-                        };
+            let existingProfileCanisterId = profileCanisterIndex.get(verifySubAppRecord.icfcPrincipalId);
+            switch (existingProfileCanisterId) {
+                case (?foundCanisterId) {
+                    let profile_canister = actor (foundCanisterId) : actor {
+                        updateAppPrincipalIds : (dto : ProfileCommands.AddSubApp) -> async Result.Result<(), T.Error>;
                     };
+                    let res = await profile_canister.updateAppPrincipalIds({
+                        subApp = verifySubAppRecord.subApp;
+                        subAppUserPrincipalId = verifySubAppRecord.subAppUserPrincipalId;
+                    });
+
+                    return res;
                 };
                 case (null) {
                     return #err(#NotFound);
                 };
             };
+
         };
 
         public func updateUsername(dto : ProfileCommands.UpdateUserName) : async Result.Result<(), T.Error> {
@@ -497,6 +448,42 @@ module {
             return false;
         };
 
+        private func notifyAppsofLink(dto : ProfileCommands.NotifyAppofLink) : async Result.Result<(), T.Error> {
+            switch (dto.subApp) {
+                case (#OpenFPL) {
+                    let openFPLCanister = actor (Environment.OPENFPL_BACKEND_CANISTER_ID) : actor {
+                        notifyAppLink : (principalId : Base.PrincipalId) -> async Result.Result<(), T.Error>;
+                    };
+                    return await openFPLCanister.notifyAppLink(dto.subAppUserPrincipalId);
+                };
+                case (#OpenWSL) {
+                    let openWSLCanister = actor (Environment.OPENWSL_BACKEND_CANISTER_ID) : actor {
+                        notifyAppLink : (principalId : Base.PrincipalId) -> async Result.Result<(), T.Error>;
+                    };
+                    return await openWSLCanister.notifyAppLink(dto.subAppUserPrincipalId);
+                };
+                case (#JeffBets) {
+                    let jeffBetsCanister = actor (Environment.JEFF_BETS_BACKEND_CANISTER_ID) : actor {
+                        notifyAppLink : (principalId : Base.PrincipalId) -> async Result.Result<(), T.Error>;
+                    };
+                    return await jeffBetsCanister.notifyAppLink(dto.subAppUserPrincipalId);
+                };
+                case (#TransferKings) {
+                    let transferKingsCanister = actor (Environment.TRANSFERKINGS_CANISTER_ID) : actor {
+                        notifyAppLink : (principalId : Base.PrincipalId) -> async Result.Result<(), T.Error>;
+                    };
+                    return await transferKingsCanister.notifyAppLink(dto.subAppUserPrincipalId);
+                };
+                case (#FootballGod) {
+                    let footballGodCanister = actor (Environment.FOOTBALL_GOD_BACKEND_CANISTER_ID) : actor {
+                        notifyAppLink : (principalId : Base.PrincipalId) -> async Result.Result<(), T.Error>;
+                    };
+                    return await footballGodCanister.notifyAppLink(dto.subAppUserPrincipalId);
+                };
+            };
+
+        };
+
         private func isUsernameTaken(username : Text, principalId : Base.PrincipalId) : Bool {
             for (profileUsername in usernames.entries()) {
 
@@ -611,31 +598,6 @@ module {
                 canisterIds.put(canisterId);
             };
             profileCanisterIndex := canisterIds;
-        };
-
-        public func getStablePendingUsersSubAppVerifications() : [(Base.PrincipalId, [(T.SubApp, Base.PrincipalId)])] {
-            let result = Buffer.Buffer<(Base.PrincipalId, [(T.SubApp, Base.PrincipalId)])>(0);
-            for ((principalId, subAppMap) in pendingSubAppVerifications.entries()) {
-                let subAppEntries = Iter.toArray(subAppMap.entries());
-                result.add((principalId, subAppEntries));
-            };
-            return Buffer.toArray(result);
-        };
-
-        public func setStablePendingUsersSubAppVerifications(stable_pending_users_sub_app_verifications : [(Base.PrincipalId, [(T.SubApp, Base.PrincipalId)])]) {
-            let newPendingUsersSubAppVerifications : TrieMap.TrieMap<Base.PrincipalId, TrieMap.TrieMap<T.SubApp, Base.PrincipalId>> = TrieMap.TrieMap<Base.PrincipalId, TrieMap.TrieMap<T.SubApp, Base.PrincipalId>>(Text.equal, Text.hash);
-
-            for ((principalId, subAppArray) in stable_pending_users_sub_app_verifications.values()) {
-                let userSubAppMap : TrieMap.TrieMap<T.SubApp, Base.PrincipalId> = TrieMap.TrieMap<T.SubApp, Base.PrincipalId>(func(x : T.SubApp, y : T.SubApp) { x == y }, func(x : T.SubApp) : Nat32 { Text.hash(debug_show (x)) });
-
-                for ((subApp, principal) in subAppArray.values()) {
-                    userSubAppMap.put(subApp, principal);
-                };
-
-                newPendingUsersSubAppVerifications.put(principalId, userSubAppMap);
-            };
-
-            pendingSubAppVerifications := newPendingUsersSubAppVerifications;
         };
 
         public func getStableActiveCanisterId() : Base.CanisterId {
