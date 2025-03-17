@@ -19,7 +19,7 @@ import ProfileCommands "commands/profile_commands";
 import PodcastManager "managers/podcast_manager";
 import ProfileQueries "queries/profile_queries";
 import SNSManager "managers/sns_manager";
-import SNSGovernance "./sns-wrappers/governance";
+import Utils "utils/utils";
 
 actor class Self() = this {
 
@@ -46,7 +46,7 @@ actor class Self() = this {
     return await profileManager.getProfile(dto);
   };
 
-  public shared ({ caller }) func getUserNeurons() : async Result.Result<[SNSGovernance.Neuron], T.Error> {
+  public shared ({ caller }) func getUserNeurons() : async Result.Result<ProfileQueries.UserNeurons, T.Error> {
     assert not Principal.isAnonymous(caller);
 
     let dto : ProfileQueries.GetProfile = {
@@ -59,7 +59,21 @@ actor class Self() = this {
     };
 
     let neurons = await snsManager.getUsersNeurons(caller);
-    return #ok(neurons);
+    let userEligibility = Utils.getMembershipType(neurons);
+
+    let result : ProfileQueries.UserNeurons = {
+      userNeurons = neurons;
+      userMembershipEligibility = switch (userEligibility) {
+        case (?membership) {
+          membership;
+        };
+        case (null) {
+          #NotEligible;
+        };
+      };
+    };
+    return #ok(result);
+
   };
 
   //Profile Commands

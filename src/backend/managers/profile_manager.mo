@@ -295,7 +295,12 @@ module {
                     let eligibleMembershipType : ?T.MembershipType = Utils.getMembershipType(userNeurons);
 
                     switch (eligibleMembershipType) {
+
                         case (?membershipType) {
+                            if (membershipType == #NotEligible) {
+                                return #err(#InEligible);
+                            };
+
                             let updateMembershipCommand : ProfileCommands.UpdateMembership = {
                                 principalId = dto.principalId;
                                 membershipType = membershipType;

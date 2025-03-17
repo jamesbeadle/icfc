@@ -1,5 +1,6 @@
 import Base "mo:waterway-mops/BaseTypes";
 import T "../icfc_types";
+import SNSGovernance "../sns-wrappers/governance";
 
 module ProfileQueries {
     public type GetProfile = {
@@ -42,6 +43,11 @@ module ProfileQueries {
     public type IsUsernameAvailable = {
         username : Text;
         principalId : Base.PrincipalId;
+    };
+
+    public type UserNeurons = {
+        userNeurons : [SNSGovernance.Neuron];
+        userMembershipEligibility : T.MembershipType;
     };
 
     public type UsernameAvailable = Bool;
