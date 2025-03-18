@@ -28,7 +28,7 @@ export class UserService {
     }
   }
 
-  async getProfile(): Promise<ProfileDTO> {
+  async getProfile(): Promise<ProfileDTO | undefined> {
     try {
       const identityActor = await ActorFactory.createIdentityActor(
         authStore,
@@ -36,14 +36,8 @@ export class UserService {
       );
 
       const result: any = await identityActor.getProfile();
-      if (isError(result)) throw new Error("Failed to get profile");
+      if (isError(result)) throw new Error("Failed to get profile.");
       return result.ok;
-    } catch (error) {
-      toasts.addToast({
-        message: "Failed to get profile",
-        type: "error",
-      });
-      throw error;
-    }
+    } catch (error) {}
   }
 }

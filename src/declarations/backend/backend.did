@@ -40,10 +40,10 @@ type Self =
    claimMembership: () -> (Result_5);
    createProfile: (CreateProfile) -> (Result);
    getActiveProfileCanisterIds: () -> (vec text);
-   getICFCMembership: (GetICFCMembership) -> (Result_4);
-   getProfile: () -> (Result_3);
-   getUserNeurons: () -> (Result_2);
-   get_app_status: () -> (Result_1) query;
+   getAppStatus: () -> (Result_4) query;
+   getICFCMembership: (GetICFCMembership) -> (Result_3);
+   getProfile: () -> (Result_2);
+   getUserNeurons: () -> (Result_1);
    removeSubApp: (SubApp) -> (Result);
    updateDisplayName: (UpdateDisplayName) -> (Result);
    updateProfilePicture: (UpdateProfilePicture) -> (Result);
@@ -58,22 +58,22 @@ type Result_5 =
 type Result_4 = 
  variant {
    err: Error;
-   ok: ICFCMembershipDTO;
+   ok: AppStatusDTO;
  };
 type Result_3 = 
  variant {
    err: Error;
-   ok: ProfileDTO;
+   ok: ICFCMembershipDTO;
  };
 type Result_2 = 
  variant {
    err: Error;
-   ok: UserNeuronsDTO;
+   ok: ProfileDTO;
  };
 type Result_1 = 
  variant {
    err: Error;
-   ok: AppStatusDTO;
+   ok: UserNeuronsDTO;
  };
 type Result = 
  variant {

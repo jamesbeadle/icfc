@@ -51,13 +51,18 @@ export const idlFactory = ({ IDL }) => {
     profilePictureExtension: IDL.Opt(IDL.Text),
     profilePicture: IDL.Opt(IDL.Vec(IDL.Nat8)),
   });
+  const AppStatusDTO = IDL.Record({
+    version: IDL.Text,
+    onHold: IDL.Bool,
+  });
+  const Result_4 = IDL.Variant({ ok: AppStatusDTO, err: Error });
   const GetICFCMembership = IDL.Record({ principalId: PrincipalId });
   const ICFCMembershipDTO = IDL.Record({
     membershipClaims: IDL.Vec(MembershipClaim),
     membershipType: MembershipType,
     membershipExpiryTime: IDL.Int,
   });
-  const Result_4 = IDL.Variant({ ok: ICFCMembershipDTO, err: Error });
+  const Result_3 = IDL.Variant({ ok: ICFCMembershipDTO, err: Error });
   const ProfileDTO = IDL.Record({
     username: IDL.Text,
     displayName: IDL.Text,
@@ -72,7 +77,7 @@ export const idlFactory = ({ IDL }) => {
     membershipExpiryTime: IDL.Int,
     principalId: PrincipalId,
   });
-  const Result_3 = IDL.Variant({ ok: ProfileDTO, err: Error });
+  const Result_2 = IDL.Variant({ ok: ProfileDTO, err: Error });
   const NeuronId = IDL.Record({ id: IDL.Vec(IDL.Nat8) });
   const NeuronPermission = IDL.Record({
     principal: IDL.Opt(IDL.Principal),
@@ -115,12 +120,7 @@ export const idlFactory = ({ IDL }) => {
     userMembershipEligibility: MembershipType,
     userNeurons: IDL.Vec(Neuron),
   });
-  const Result_2 = IDL.Variant({ ok: UserNeuronsDTO, err: Error });
-  const AppStatusDTO = IDL.Record({
-    version: IDL.Text,
-    onHold: IDL.Bool,
-  });
-  const Result_1 = IDL.Variant({ ok: AppStatusDTO, err: Error });
+  const Result_1 = IDL.Variant({ ok: UserNeuronsDTO, err: Error });
   const UpdateDisplayName = IDL.Record({
     displayName: IDL.Text,
     principalId: PrincipalId,
@@ -144,10 +144,10 @@ export const idlFactory = ({ IDL }) => {
     claimMembership: IDL.Func([], [Result_5], []),
     createProfile: IDL.Func([CreateProfile], [Result], []),
     getActiveProfileCanisterIds: IDL.Func([], [IDL.Vec(IDL.Text)], []),
-    getICFCMembership: IDL.Func([GetICFCMembership], [Result_4], []),
-    getProfile: IDL.Func([], [Result_3], []),
-    getUserNeurons: IDL.Func([], [Result_2], []),
-    get_app_status: IDL.Func([], [Result_1], ["query"]),
+    getAppStatus: IDL.Func([], [Result_4], ["query"]),
+    getICFCMembership: IDL.Func([GetICFCMembership], [Result_3], []),
+    getProfile: IDL.Func([], [Result_2], []),
+    getUserNeurons: IDL.Func([], [Result_1], []),
     removeSubApp: IDL.Func([SubApp], [Result], []),
     updateDisplayName: IDL.Func([UpdateDisplayName], [Result], []),
     updateProfilePicture: IDL.Func([UpdateProfilePicture], [Result], []),

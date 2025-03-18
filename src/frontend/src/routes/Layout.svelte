@@ -24,7 +24,7 @@
   let isLoggedIn = false;
   let showApps = false;
   let showLinkAccounts = false;
-  let user: ProfileDTO | null = null;
+  let user: ProfileDTO | undefined = undefined;
   let isMenuOpen = false;
 
 

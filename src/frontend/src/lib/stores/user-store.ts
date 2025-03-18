@@ -135,7 +135,7 @@ function createUserStore() {
     set(profileData);
   }
 
-  async function getProfile(): Promise<ProfileDTO | null> {
+  async function getProfile(): Promise<ProfileDTO | undefined> {
     return new UserService().getProfile();
   }
 

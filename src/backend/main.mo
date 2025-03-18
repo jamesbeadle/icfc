@@ -32,7 +32,7 @@ actor class Self() = this {
     version = "0.0.1";
   };
 
-  public shared query func get_app_status() : async Result.Result<DTOs.AppStatusDTO, T.Error> {
+  public shared query func getAppStatus() : async Result.Result<DTOs.AppStatusDTO, T.Error> {
     return #ok(appStatus);
   };
 

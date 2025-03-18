@@ -110,20 +110,20 @@ export interface ProfileDTO {
   principalId: PrincipalId;
 }
 export type Result = { ok: null } | { err: Error };
-export type Result_1 = { ok: AppStatusDTO } | { err: Error };
-export type Result_2 = { ok: UserNeuronsDTO } | { err: Error };
-export type Result_3 = { ok: ProfileDTO } | { err: Error };
-export type Result_4 = { ok: ICFCMembershipDTO } | { err: Error };
+export type Result_1 = { ok: UserNeuronsDTO } | { err: Error };
+export type Result_2 = { ok: ProfileDTO } | { err: Error };
+export type Result_3 = { ok: ICFCMembershipDTO } | { err: Error };
+export type Result_4 = { ok: AppStatusDTO } | { err: Error };
 export type Result_5 = { ok: MembershipClaim } | { err: Error };
 export interface Self {
   addSubApp: ActorMethod<[AddSubApp], Result>;
   claimMembership: ActorMethod<[], Result_5>;
   createProfile: ActorMethod<[CreateProfile], Result>;
   getActiveProfileCanisterIds: ActorMethod<[], Array<string>>;
-  getICFCMembership: ActorMethod<[GetICFCMembership], Result_4>;
-  getProfile: ActorMethod<[], Result_3>;
-  getUserNeurons: ActorMethod<[], Result_2>;
-  get_app_status: ActorMethod<[], Result_1>;
+  getAppStatus: ActorMethod<[], Result_4>;
+  getICFCMembership: ActorMethod<[GetICFCMembership], Result_3>;
+  getProfile: ActorMethod<[], Result_2>;
+  getUserNeurons: ActorMethod<[], Result_1>;
   removeSubApp: ActorMethod<[SubApp], Result>;
   updateDisplayName: ActorMethod<[UpdateDisplayName], Result>;
   updateProfilePicture: ActorMethod<[UpdateProfilePicture], Result>;
