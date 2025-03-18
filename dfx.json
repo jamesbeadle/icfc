@@ -10,12 +10,6 @@
         }
       }
     },
-    "old_backend": {
-      "main": "src/old_backend/main.mo",
-      "type": "motoko",
-      "optimize": "cycles",
-      "dependencies": []
-    },
     "backend": {
       "main": "src/backend/main.mo",
       "type": "motoko",

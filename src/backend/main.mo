@@ -160,7 +160,7 @@ actor class Self() = this {
   };
 
   private func postUpgradeCallback() : async () {
-    await updateProfileCanisterWasms();
+    //await updateProfileCanisterWasms();
     await profileManager.createMembershipExpiredTimers();
   };
 
