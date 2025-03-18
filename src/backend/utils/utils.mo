@@ -245,9 +245,9 @@ module Utils {
                         canister_id = cid.canister_id;
                         settings = {
                             controllers = ?[controller];
-                            compute_allocation = null;
+                            compute_allocation = ?1;
                             memory_allocation = null;
-                            freezing_threshold = ?31_540_000;
+                            freezing_threshold = ?2_592_000;
                             reserved_cycles_limit = null;
                         };
                         sender_canister_version = null;

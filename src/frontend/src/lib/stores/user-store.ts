@@ -3,7 +3,10 @@ import { ActorFactory } from "../utils/ActorFactory";
 import { isError } from "../utils/helpers";
 import { writable } from "svelte/store";
 import { UserService } from "../services/user-service";
-import type { ProfileDTO, CreateProfile } from "../../../../declarations/backend/backend.did";
+import type {
+  ProfileDTO,
+  CreateProfile,
+} from "../../../../declarations/backend/backend.did";
 
 function createUserStore() {
   const { subscribe, set } = writable<any>(null);

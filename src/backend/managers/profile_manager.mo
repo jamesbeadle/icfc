@@ -568,22 +568,27 @@ module {
         };
 
         private func createNewCanister() : async () {
-            Cycles.add<system>(10_000_000_000_000);
+
+            Cycles.add<system>(50_000_000_000_000);
             let canister = await ProfileCanister._ProfileCanister();
-            let IC : Management.Management = actor (Environment.Default);
-            let principal = ?Principal.fromText(Environment.BACKEND_CANISTER_ID);
-            let _ = await Utils.updateCanister_(canister, principal, IC);
             let canister_principal = Principal.fromActor(canister);
             let canisterId = Principal.toText(canister_principal);
+            storeCanisterId(canisterId);
+            activeCanisterId := canisterId;
 
             if (canisterId == "") {
                 return;
             };
+
+            let IC : Management.Management = actor (Environment.Default);
+            let principal = ?Principal.fromText(Environment.BACKEND_CANISTER_ID);
+            let _ = await Utils.updateCanister_(canister, principal, IC);
+        };
+
+        private func storeCanisterId(canisterId: Text){
             let uniqueCanisterIdBuffer = Buffer.fromArray<Base.CanisterId>(List.toArray(uniqueProfileCanisterIds));
             uniqueCanisterIdBuffer.add(canisterId);
             uniqueProfileCanisterIds := List.fromArray(Buffer.toArray(uniqueCanisterIdBuffer));
-            activeCanisterId := canisterId;
-            return;
         };
 
         // stable storage getters and setters

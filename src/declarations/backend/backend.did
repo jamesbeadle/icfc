@@ -1,3 +1,14 @@
+type VerifySubApp = 
+ record {
+   icfcPrincipalId: PrincipalId;
+   subApp: SubApp;
+   subAppUserPrincipalId: PrincipalId;
+ };
+type UserNeuronsDTO = 
+ record {
+   userMembershipEligibility: MembershipType;
+   userNeurons: vec Neuron;
+ };
 type UpdateUserName = 
  record {
    principalId: PrincipalId;
@@ -14,19 +25,50 @@ type UpdateDisplayName =
    displayName: text;
    principalId: PrincipalId;
  };
+type Subaccount = record {subaccount: blob;};
+type SubApp = 
+ variant {
+   FootballGod;
+   JeffBets;
+   OpenFPL;
+   OpenWSL;
+   TransferKings;
+ };
 type Self = 
  service {
+   addSubApp: (AddSubApp) -> (Result);
+   claimMembership: () -> (Result_5);
    createProfile: (CreateProfile) -> (Result);
-   getProfile: () -> (Result_2);
+   getActiveProfileCanisterIds: () -> (vec text);
+   getICFCMembership: (GetICFCMembership) -> (Result_4);
+   getProfile: () -> (Result_3);
+   getUserNeurons: () -> (Result_2);
    get_app_status: () -> (Result_1) query;
+   removeSubApp: (SubApp) -> (Result);
    updateDisplayName: (UpdateDisplayName) -> (Result);
    updateProfilePicture: (UpdateProfilePicture) -> (Result);
    updateUsername: (UpdateUserName) -> (Result);
+   verifySubApp: (VerifySubApp) -> (Result);
+ };
+type Result_5 = 
+ variant {
+   err: Error;
+   ok: MembershipClaim;
+ };
+type Result_4 = 
+ variant {
+   err: Error;
+   ok: ICFCMembershipDTO;
+ };
+type Result_3 = 
+ variant {
+   err: Error;
+   ok: ProfileDTO;
  };
 type Result_2 = 
  variant {
    err: Error;
-   ok: Profile;
+   ok: UserNeuronsDTO;
  };
 type Result_1 = 
  variant {
@@ -38,20 +80,83 @@ type Result =
    err: Error;
    ok;
  };
-type Profile = 
+type ProfileDTO = 
  record {
+   appPrincipalIds: vec record {
+                          SubApp;
+                          PrincipalId;
+                        };
+   createdOn: int;
+   displayName: text;
+   membershipClaims: vec MembershipClaim;
+   membershipExpiryTime: int;
+   membershipType: MembershipType;
+   podcastIds: vec PrincipalId;
    principalId: PrincipalId;
    profilePicture: opt blob;
    profilePictureExtension: text;
+   termsAgreed: bool;
    username: text;
  };
 type PrincipalId = text;
+type NeuronPermission = 
+ record {
+   permission_type: vec int32;
+   "principal": opt principal;
+ };
+type NeuronId = record {id: blob;};
+type Neuron = 
+ record {
+   aging_since_timestamp_seconds: nat64;
+   auto_stake_maturity: opt bool;
+   cached_neuron_stake_e8s: nat64;
+   created_timestamp_seconds: nat64;
+   disburse_maturity_in_progress: vec DisburseMaturityInProgress;
+   dissolve_state: opt DissolveState;
+   followees: vec record {
+                    nat64;
+                    Followees;
+                  };
+   id: opt NeuronId;
+   maturity_e8s_equivalent: nat64;
+   neuron_fees_e8s: nat64;
+   permissions: vec NeuronPermission;
+   source_nns_neuron_id: opt nat64;
+   staked_maturity_e8s_equivalent: opt nat64;
+   vesting_period_seconds: opt nat64;
+   voting_power_percentage_multiplier: nat64;
+ };
+type MembershipType = 
+ variant {
+   Expired;
+   Lifetime;
+   Monthly;
+   NotClaimed;
+   NotEligible;
+   Seasonal;
+ };
+type MembershipClaim = 
+ record {
+   claimedOn: int;
+   expiresOn: opt int;
+   membershipType: MembershipType;
+ };
+type ICFCMembershipDTO = 
+ record {
+   membershipClaims: vec MembershipClaim;
+   membershipExpiryTime: int;
+   membershipType: MembershipType;
+ };
+type GetICFCMembership = record {principalId: PrincipalId;};
+type Followees = record {followees: vec NeuronId;};
 type Error = 
  variant {
+   AlreadyClaimed;
    AlreadyExists;
    CanisterFull;
    CreateGameError;
    DecodeError;
+   InEligible;
    InvalidData;
    InvalidProfilePicture;
    NotAllowed;
@@ -62,6 +167,19 @@ type Error =
    PaymentError;
    TooLong;
    TooShort;
+   UpdateFailed;
+ };
+type DissolveState = 
+ variant {
+   DissolveDelaySeconds: nat64;
+   WhenDissolvedTimestampSeconds: nat64;
+ };
+type DisburseMaturityInProgress = 
+ record {
+   account_to_disburse_to: opt Account;
+   amount_e8s: nat64;
+   finalize_disbursement_timestamp_seconds: opt nat64;
+   timestamp_of_disbursement_seconds: nat64;
  };
 type CreateProfile = 
  record {
@@ -74,5 +192,15 @@ type AppStatusDTO =
  record {
    onHold: bool;
    version: text;
+ };
+type AddSubApp = 
+ record {
+   subApp: SubApp;
+   subAppUserPrincipalId: PrincipalId;
+ };
+type Account = 
+ record {
+   owner: opt principal;
+   subaccount: opt Subaccount;
  };
 service : () -> Self

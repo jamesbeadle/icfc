@@ -195,6 +195,13 @@ actor class Self() = this {
     podcastChannelManager.setStableNextPodcastChannelId(stable_next_podcast_channel_id);
   };
 
+  //Test functions
+
+  public shared ({ caller }) func getActiveProfileCanisterIds() : async [Text] {
+    return profileManager.getStableUniqueCanisterIds();
+  };
+
+
   /* Below is code related to a second sale */
 
   // private let podcast
