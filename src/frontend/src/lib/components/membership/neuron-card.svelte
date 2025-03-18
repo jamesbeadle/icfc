@@ -4,22 +4,19 @@
     import LogoIcon from '$lib/icons/LogoIcon.svelte';
     import InfoIcon from '$lib/icons/InfoIcon.svelte';
     import CloseIcon from '$lib/icons/CloseIcon.svelte';
-    import BulletPointIcon from '$lib/icons/BulletPointIcon.svelte';
     
-    export let tier: {
-        name: string;
-        stakingRequirement: string;
-        stakingPeriod: string;
-        freeBets: number;
-        freeBetsFrequency: string;
-        benefits: string[];
+    export let neuron: {
+        id: string;
+        stakedAmount: string;
+        lockPeriod: string;
+        status: 'active' | 'dissolving';
     };
 
     const backgroundProperties = {
         opacity: "opacity-[0.10]",
-        size: "w-[100%] h-[100%]",
-        frontPosition: "-bottom-1 -right-36",
-        backPosition: "-bottom-1 -left-36"
+        size: "w-[130%] h-[130%]",
+        frontPosition: "-bottom-1 -right-24",
+        backPosition: "-bottom-1 -left-[12.5rem]"
     };
 
     let isFlipped = false;
@@ -32,7 +29,7 @@
 <Card 
     {isFlipped} 
     onFlip={handleFlip} 
-    id={tier.name}
+    id={neuron.id}
     frontClasses="bg-BrandBlueComp text-white overflow-hidden"
     backClasses="bg-BrandBlueComp text-white overflow-hidden"
 >
@@ -40,7 +37,7 @@
         <div class="flex items-center justify-between">
             <ICFCCoinIcon className="w-12 h-12" />
             <button
-                on:click|stopPropagation={() => handleFlip(tier.name)}
+                on:click|stopPropagation={() => handleFlip(neuron.id)}
                 class="z-30 flex items-center justify-center transition-transform duration-300 hover:scale-110"
             >
                 <InfoIcon className="w-7 h-7" fill="currentColor" />
@@ -52,9 +49,11 @@
         </div>
 
         <div class="relative z-10 mt-auto">
-            <h2 class="text-3xl font-[1000] cta-text">{tier.name}</h2>
-            <p class="text-2xl font-semibold">{tier.stakingRequirement}</p>
-            <p class="text-base text-BrandGrayShade4">Staked for {tier.stakingPeriod}</p>
+            <div class="flex items-center gap-2">
+                <p class="mb-1 text-lg opacity-75 xxs:text-xl cta-text">Neuron</p>
+                <span class="text-sm text-BrandGrayShade4">#{neuron.id}</span>
+            </div>
+            <h3 class="text-2xl font-[1000] xxs:text-4xl mini:text-2xl md:text-3xl lg:text-4xl">{neuron.stakedAmount} ICFC</h3>
         </div>
     </div>
 
@@ -62,7 +61,7 @@
         <div class="flex items-center justify-between mb-4">
             <ICFCCoinIcon className="w-12 h-12" />
             <button
-                on:click|stopPropagation={() => handleFlip(tier.name)}
+                on:click|stopPropagation={() => handleFlip(neuron.id)}
                 class="z-30 flex items-center justify-center transition-transform duration-300 hover:scale-110"
             >
                 <CloseIcon className="w-7 h-7" fill="currentColor" />
@@ -75,18 +74,26 @@
 
         <div class="relative flex-1 overflow-y-auto">
             <div class="py-4">
-                <p class="pl-1 my-2 text-base mini:text-lg md:text-base cta-text">{tier.stakingRequirement}</p>
-                <h3 class="mb-3 text-2xl font-[1000] xxs:text-3xl mini:text-4xl md:text-2xl 2xl:text-4xl">{tier.name}</h3>
+                
+                <p class="pl-1 my-2 text-base md:text-lg cta-text">#{neuron.id}</p>
+                <h3 class="mb-3 text-2xl font-[1000] xxs:text-3xl mini:text-2xl md:text-2xl 2xl:text-4xl">Neuron Details</h3>
+                
                 <div class="w-full h-[1px] mini:h-[2px] bg-current mb-4"></div>
 
-                <ul class="space-y-4 mini:space-y-6 md:space-y-4 lg:space-y-6">
-                    {#each tier.benefits as benefit}
-                        <li class="flex items-start gap-3">
-                            <BulletPointIcon className="w-4 h-4 mt-[0.4rem] flex-shrink-0" color="#E8E8E8" />
-                            <span class="text-base leading-normal break-words whitespace-normal mini:text-lg md:text-base 2xl:text-xl">{benefit}</span>
-                        </li>
-                    {/each}
-                </ul>
+                <div class="space-y-4">
+                    <div>
+                        <p class="text-BrandGrayShade4">Staked Amount</p>
+                        <p class="text-xl font-semibold">{neuron.stakedAmount} ICFC</p>
+                    </div>
+                    <div>
+                        <p class="text-BrandGrayShade4">Status</p>
+                        <p class="text-xl font-semibold capitalize">{neuron.status}</p>
+                    </div>
+                    <div>
+                        <p class="text-BrandGrayShade4">Lock Period</p>
+                        <p class="text-xl font-semibold">{neuron.lockPeriod}</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

@@ -2,7 +2,8 @@ import { authStore } from "./auth-store";
 import { ActorFactory } from "../utils/ActorFactory";
 import { isError } from "../utils/helpers";
 import { writable } from "svelte/store";
-import type { Profile } from "../../../../declarations/backend/backend.did";
+import { UserService } from "../services/user-service";
+import type { ProfileDTO, CreateProfile } from "../../../../declarations/backend/backend.did";
 
 function createUserStore() {
   const { subscribe, set } = writable<any>(null);
@@ -131,19 +132,12 @@ function createUserStore() {
     set(profileData);
   }
 
-  async function getProfile(principalId: string): Promise<Profile | null> {
-    const identityActor: any = await ActorFactory.createIdentityActor(
-      authStore,
-      process.env.BACKEND_CANISTER_ID ?? "",
-    );
+  async function getProfile(): Promise<ProfileDTO | null> {
+    return new UserService().getProfile();
+  }
 
-    let getProfileResponse = await identityActor.getProfile();
-    let error = isError(getProfileResponse);
-    if (error) {
-      console.error("Error fetching user profile");
-      return null;
-    }
-    return getProfileResponse.ok;
+  async function createProfile(dto: CreateProfile): Promise<any> {
+    return new UserService().createProfile(dto);
   }
 
   return {
@@ -155,6 +149,7 @@ function createUserStore() {
     updateProfilePicture,
     isUsernameAvailable,
     cacheProfile,
+    createProfile,
   };
 }
 

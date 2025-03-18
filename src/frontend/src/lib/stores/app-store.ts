@@ -37,9 +37,23 @@ function createAppStore() {
     window.location.replace(`${window.location.pathname}?v=${status.version}`);
   }
 
+  async function copyTextAndShowToast(text: string) {
+    try {
+      await navigator.clipboard.writeText(text);
+      toasts.addToast({
+        type: "success",
+        message: "Copied to clipboard.",
+        duration: 2000,
+      });
+    } catch (err) {
+      console.error("Failed to copy:", err);
+    }
+  }
+
   return {
     checkServerVersion,
     updateFrontend,
+    copyTextAndShowToast,
   };
 }
 

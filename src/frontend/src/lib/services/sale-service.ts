@@ -21,7 +21,7 @@ export class SaleService {
     try {
       const identityActor = await ActorFactory.createIdentityActor(
         authStore,
-        process.env.CANISTER_ID_BACKEND ?? "",
+        process.env.BACKEND_CANISTER_ID ?? "",
       );
       const result = await identityActor.get_goal();
       if (isError(result)) {
@@ -38,7 +38,7 @@ export class SaleService {
     try {
       const identityActor = await ActorFactory.createIdentityActor(
         authStore,
-        process.env.CANISTER_ID_BACKEND ?? "",
+        process.env.BACKEND_CANISTER_ID ?? "",
       );
       const result = await identityActor.get_sale_countdown();
       if (isError(result)) {

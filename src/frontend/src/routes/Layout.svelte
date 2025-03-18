@@ -8,7 +8,7 @@
   import { appStore } from "$lib/stores/app-store";
   import { initAuthWorker } from "$lib/services/worker.auth.services";
   import { authStore, type AuthSignInParams, type AuthStoreData } from "$lib/stores/auth-store";
-  import type { Profile } from "../../../declarations/backend/backend.did";
+  import type { ProfileDTO } from "../../../declarations/backend/backend.did";
   
   import "../app.css";
   import IcfcAppsModal from "$lib/components/shared/icfc-apps-modal.svelte";
@@ -18,13 +18,14 @@
   import LandingPage from "$lib/components/homepage/landingPage/landing-page.svelte";
   import IcfcLinkAccountsModal from "$lib/components/shared/icfc-link-accounts-modal.svelte";
   import Sidebar from "$lib/components/shared/sidebar.svelte";
+  import PortalHost from 'svelte-portal'
     
   let worker: { syncAuthIdle: (auth: AuthStoreData) => void } | undefined;
   let isLoading = true;
   let isLoggedIn = false;
   let showApps = false;
   let showLinkAccounts = false;
-  let user: Profile | null = null;
+  let user: ProfileDTO | null = null;
   let isMenuOpen = false;
 
 
@@ -37,7 +38,7 @@
   async function syncUser(){
     let principalId = $authStore.identity?.getPrincipal().toString();
     if(principalId){
-      user = await userStore.getProfile(principalId);
+      user = await userStore.getProfile();
     }
   }
 
@@ -132,4 +133,5 @@
       <IcfcLinkAccountsModal isOpen={showLinkAccounts} on:close={() => showLinkAccounts = false} />
     </div>
     <Toasts />
+    <PortalHost />
 {/await}
