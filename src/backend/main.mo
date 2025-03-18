@@ -212,13 +212,6 @@ actor class Self() = this {
     };
   };
 
-  //Test functions
-
-  public shared ({ caller }) func getActiveProfileCanisterIds() : async [Text] {
-    return profileManager.getStableUniqueCanisterIds();
-  };
-
-
   /* Below is code related to a second sale */
 
   // private let podcast

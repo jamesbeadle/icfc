@@ -39,7 +39,6 @@ type Self =
    addSubApp: (AddSubApp) -> (Result);
    claimMembership: () -> (Result_5);
    createProfile: (CreateProfile) -> (Result);
-   getActiveProfileCanisterIds: () -> (vec text);
    getAppStatus: () -> (Result_4) query;
    getICFCMembership: (GetICFCMembership) -> (Result_3);
    getProfile: () -> (Result_2);

@@ -119,7 +119,6 @@ export interface Self {
   addSubApp: ActorMethod<[AddSubApp], Result>;
   claimMembership: ActorMethod<[], Result_5>;
   createProfile: ActorMethod<[CreateProfile], Result>;
-  getActiveProfileCanisterIds: ActorMethod<[], Array<string>>;
   getAppStatus: ActorMethod<[], Result_4>;
   getICFCMembership: ActorMethod<[GetICFCMembership], Result_3>;
   getProfile: ActorMethod<[], Result_2>;

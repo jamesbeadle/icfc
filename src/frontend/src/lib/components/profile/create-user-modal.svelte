@@ -32,17 +32,7 @@
   
     $: isSubmitDisabled = !username || !displayName;
   
-    async function handleLogout() {
-      await onLogout();
-      toasts.addToast({
-        type: "info",
-        message: "Logged out successfully",
-        duration: 2000,
-      });
-      goto("/");
-    }
-  
-    /* async function checkUsername() {
+    async function checkUsername() {
       if (username.length < 5) {
         usernameError = "Username must be at least 5 characters";
         usernameAvailable = false;
@@ -60,15 +50,15 @@
       } finally {
         isCheckingUsername = false;
       }
-    } */
-  
-/*     function handleUsernameInput() {
+    } 
+    
+    function handleUsernameInput() {
       clearTimeout(usernameTimeout);
       usernameAvailable = false;
       if (username.length >= 5) {
         usernameTimeout = setTimeout(checkUsername, 500);
       }
-    } */
+    } 
   
     async function createProfile() {
       isLoading = true;
@@ -153,12 +143,6 @@
                 </div>
 
                 <div class="flex justify-between">
-                    <button 
-                    class="px-6 py-2 text-white rounded-md hover:bg-BrandRed/80 bg-BrandRed"
-                    on:click={handleLogout}
-                    >
-                    Logout
-                    </button>
                     <button 
                     class="px-6 py-2 text-white rounded-md hover:bg-BrandPurple/80 bg-BrandPurple disabled:bg-gray-500"
                     on:click={createProfile}
