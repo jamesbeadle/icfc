@@ -3,9 +3,9 @@
     import { busy } from "$lib/stores/busy-store";
     import { userStore } from "$lib/stores/user-store";
     import { membershipStore } from "$lib/stores/membership-store";
-    import type { ProfileDTO,ICFCMembershipDTO } from "../../../../../declarations/backend/backend.did";
+    import type { ProfileDTO, MembershipType } from "../../../../../declarations/backend/backend.did";
 
-    export let userMembershipEligibility: ICFCMembershipDTO;
+    export let userMembershipEligibility: MembershipType;
 
     let canClaimMembership = false;
     let profile: ProfileDTO;

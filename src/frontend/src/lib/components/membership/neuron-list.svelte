@@ -3,7 +3,7 @@
     import { formatSecondsUnixDateToReadable } from "$lib/utils/helpers";
     import { membershipStore } from "$lib/stores/membership-store";
     import { busy } from "$lib/stores/busy-store";
-    import type { Neuron, ICFCMembershipType } from "../../../../../declarations/backend/backend.did";
+    import type { Neuron, MembershipType, UserNeuronsDTO } from "../../../../../declarations/backend/backend.did";
 
     import NeuronCard from './neuron-card.svelte';
     import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
@@ -12,7 +12,8 @@
     export let isLoading: boolean = false;
     export let neurons: Neuron[] = [];
     
-    let userMembershipEligibility: ICFCMembershipType = { NotEligibe: null };
+    let userMembershipEligibility: MembershipType = { NotEligible: null };
+    let userNeurons: UserNeuronsDTO | undefined;
 
     onMount(async () => {
         try {
@@ -29,9 +30,11 @@
     async function getNeurons() {
         try {
             busy.start();
-            const userNeurons = await membershipStore.getUserNeurons();
-            neurons = userNeurons.neurons.sort(sortByHighestNeuron);
-            userMembershipEligibility = userNeurons.membershipEligibility;
+            userNeurons = await membershipStore.getUserNeurons();
+            if (userNeurons) {
+                neurons = userNeurons.userNeurons.sort(sortByHighestNeuron);
+                userMembershipEligibility = userNeurons.userMembershipEligibility;
+            }
         } catch (error) {
             console.error(error);
         } finally {
@@ -45,7 +48,7 @@
 
     function formatNeuronForCard(neuron: Neuron) {
         const id = neuron.id
-            ? Array.from(neuron.id.id)
+            ? Array.from(neuron.id)
                 .map((b: unknown) => (b as number).toString(16).padStart(2, '0'))
                 .join('')
             : 'unknown';
@@ -58,7 +61,7 @@
         
         if ('DissolveDelaySeconds' in dissolveState) {
             status = 'active';
-            lockPeriod = convertBigIntSeconds(dissolveState.DissolveDelaySeconds);
+            //lockPeriod = convertBigIntSeconds(dissolveState.DissolveDelaySeconds);
         } else {
             status = 'dissolving';
         }
@@ -69,7 +72,7 @@
     }
 
     function convertBigIntSeconds(value: bigint): string {
-        const secondsInYear = 31536000n; // 365 days
+        const secondsInYear = 31536000n;
         const secondsInDay = 86400n;
 
         const years = value / secondsInYear;
@@ -78,61 +81,6 @@
 
         return `${years} years ${days} days`;
     }
-
-    const mockNeurons: Neuron[] = [
-        {
-            aging_since_timestamp_seconds: BigInt(0),
-            cached_neuron_stake_e8s: BigInt(150000 * 100000000), // 150k ICFC
-            created_timestamp_seconds: BigInt(Date.now()),
-            disburse_maturity_in_progress: [],
-            dissolve_state: { DissolveDelaySeconds: BigInt(31536000 * 4) }, // 4 years
-            followees: [],
-            id: { id: new Uint8Array([1, 2, 3, 4]) },
-            maturity_e8s_equivalent: BigInt(0),
-            neuron_fees_e8s: BigInt(0),
-            permissions: [],
-            voting_power_percentage_multiplier: BigInt(0)
-        },
-        {
-            aging_since_timestamp_seconds: BigInt(0),
-            cached_neuron_stake_e8s: BigInt(20000 * 100000000), // 20k ICFC
-            created_timestamp_seconds: BigInt(Date.now()),
-            disburse_maturity_in_progress: [],
-            dissolve_state: { DissolveDelaySeconds: BigInt(31536000 * 2) }, // 2 years
-            followees: [],
-            id: { id: new Uint8Array([5, 6, 7, 8]) },
-            maturity_e8s_equivalent: BigInt(0),
-            neuron_fees_e8s: BigInt(0),
-            permissions: [],
-            voting_power_percentage_multiplier: BigInt(0)
-        },
-        {
-            aging_since_timestamp_seconds: BigInt(0),
-            cached_neuron_stake_e8s: BigInt(5000 * 100000000), // 5k ICFC
-            created_timestamp_seconds: BigInt(Date.now()),
-            disburse_maturity_in_progress: [],
-            dissolve_state: { DissolveDelaySeconds: BigInt(31536000) }, // 1 year
-            followees: [],
-            id: { id: new Uint8Array([9, 10, 11, 12]) },
-            maturity_e8s_equivalent: BigInt(0),
-            neuron_fees_e8s: BigInt(0),
-            permissions: [],
-            voting_power_percentage_multiplier: BigInt(0)
-        },
-        {
-            aging_since_timestamp_seconds: BigInt(0),
-            cached_neuron_stake_e8s: BigInt(500 * 100000000), // 500 ICFC
-            created_timestamp_seconds: BigInt(Date.now()),
-            disburse_maturity_in_progress: [],
-            dissolve_state: { DissolveDelaySeconds: BigInt(15768000) }, // 6 months
-            followees: [],
-            id: { id: new Uint8Array([13, 14, 15, 16]) },
-            maturity_e8s_equivalent: BigInt(0),
-            neuron_fees_e8s: BigInt(0),
-            permissions: [],
-            voting_power_percentage_multiplier: BigInt(0)
-        }
-    ];
 
     function sortByHighestNeuron(a: Neuron, b: Neuron): number {
         return Number(b.cached_neuron_stake_e8s) - Number(a.cached_neuron_stake_e8s);
@@ -163,4 +111,4 @@
             {/each}
         </div>
     {/if}
-</div> 
+</div>
