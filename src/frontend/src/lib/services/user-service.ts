@@ -2,7 +2,7 @@ import { ActorFactory } from "$lib/utils/ActorFactory";
 import { isError } from "$lib/utils/helpers";
 import { authStore } from "$lib/stores/auth-store";
 import { toasts } from "$lib/stores/toasts-store";
-import type { Profile, CreateProfile } from "../../../../declarations/backend/backend.did";
+import type { ProfileDTO, CreateProfile } from "../../../../declarations/backend/backend.did";
 
 //TODO: CHANGE TO PROFILEDTO when backend is updated
 export class UserService {
@@ -25,7 +25,7 @@ export class UserService {
         }
     }
 
-    async getProfile(): Promise<Profile> {
+    async getProfile(): Promise<ProfileDTO> {
         try {
             const identityActor = await ActorFactory.createIdentityActor(
                 authStore,

@@ -3,15 +3,15 @@
     import { busy } from "$lib/stores/busy-store";
     import { userStore } from "$lib/stores/user-store";
     import { membershipStore } from "$lib/stores/membership-store";
-    import type { Profile, MembershipType } from "../../../../../declarations/backend/backend.did";
+    import type { ProfileDTO,ICFCMembershipDTO } from "../../../../../declarations/backend/backend.did";
 
-    export let userMembershipEligibility: MembershipType;
+    export let userMembershipEligibility: ICFCMembershipDTO;
 
     let canClaimMembership = false;
-    let profile: Profile;
+    let profile: ProfileDTO;
     let unsubscribe: () => void;
 
-    /* onMount(() => {
+    onMount(() => {
         unsubscribe = userStore.subscribe((state) => {
             profile = state.profile;
             canClaimMembership = 'NotClaimed' in (profile?.membershipType ?? {}) && !('NotEligible' in userMembershipEligibility);
@@ -20,27 +20,7 @@
         return () => {
             if (unsubscribe) unsubscribe();
         };
-    }); */
-
-    // Mock profile for testing
-    profile = {
-        principalId: "2vxsx-fae",
-        username: "test",
-        displayName: "Test User",
-        profilePicture: [],
-        profilePictureExtension: "",
-        createdOn: BigInt(0),
-        termsAgreed: true,
-        membershipType: { NotClaimed: null },
-        membershipClaims: [],
-        membershipExpiryTime: BigInt(0),
-        appPrincipalIds: [],
-        podcastIds: []
-    };
-
-    $: {
-        canClaimMembership = 'NotClaimed' in (profile?.membershipType ?? {}) && !('NotEligible' in userMembershipEligibility);
-    }
+    });
 
     async function handleClaimMembership() {
         try {

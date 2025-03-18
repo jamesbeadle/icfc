@@ -3,10 +3,7 @@
     import { formatSecondsUnixDateToReadable } from "$lib/utils/helpers";
     import { membershipStore } from "$lib/stores/membership-store";
     import { busy } from "$lib/stores/busy-store";
-    //TODO: Remove this once the types are updated
-    import type { Neuron } from "$lib/types/neuron";
-    import type { MembershipType } from "../../../../../declarations/backend/backend.did";
-    //import type { Neuron, MembershipType } from "../../../../../declarations/backend/backend.did";
+    import type { Neuron, ICFCMembershipType } from "../../../../../declarations/backend/backend.did";
 
     import NeuronCard from './neuron-card.svelte';
     import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
@@ -15,7 +12,7 @@
     export let isLoading: boolean = false;
     export let neurons: Neuron[] = [];
     
-    let userMembershipEligibility: MembershipType = { NotEligibe: null };
+    let userMembershipEligibility: ICFCMembershipType = { NotEligibe: null };
 
     onMount(async () => {
         try {
@@ -32,14 +29,11 @@
     async function getNeurons() {
         try {
             busy.start();
-            //const userNeurons = await membershipStore.getUserNeurons();
-            //neurons = userNeurons.neurons.sort(sortByHighestNeuron);
-            //userMembershipEligibility = userNeurons.membershipEligibility;
-            const userNeurons = mockNeurons;
-            neurons = userNeurons.sort(sortByHighestNeuron);
+            const userNeurons = await membershipStore.getUserNeurons();
+            neurons = userNeurons.neurons.sort(sortByHighestNeuron);
+            userMembershipEligibility = userNeurons.membershipEligibility;
         } catch (error) {
             console.error(error);
-            neurons = mockNeurons;
         } finally {
             busy.stop();
         }
@@ -52,7 +46,7 @@
     function formatNeuronForCard(neuron: Neuron) {
         const id = neuron.id
             ? Array.from(neuron.id.id)
-                .map((b: number) => b.toString(16).padStart(2, '0'))
+                .map((b: unknown) => (b as number).toString(16).padStart(2, '0'))
                 .join('')
             : 'unknown';
         
