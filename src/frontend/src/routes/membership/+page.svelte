@@ -41,7 +41,7 @@
                 <h1 class="text-3xl lg:text-4xl cta-text">ICFC Membership</h1>
                 <div class="flex flex-col gap-4 md:flex-row">
                     <button 
-                        class="p-3 text-base font-bold text-white transition-all duration-300 rounded-lg bg-BrandBlue hover:bg-opacity-90"
+                        class="p-3 brand-info-button"
                         on:click={openHowToAddICFCModal}
                     >
                         How to Add ICFC

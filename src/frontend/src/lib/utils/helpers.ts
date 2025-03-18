@@ -93,6 +93,30 @@ export function formatUnixToDateInputValue(unixNano: number) {
   return `${year}-${month}-${day}`;
 }
 
+export function formatUnixNanoToDuration(unixSeconds: bigint): string {
+  const secondsTotal = Number(unixSeconds);
+
+  const daysTotal = secondsTotal / (24 * 60 * 60);
+  const years = Math.round(daysTotal / 365.25);
+  const remainingDays = Math.floor(daysTotal - years * 365.25);
+
+  const parts: string[] = [];
+
+  if (years > 0) {
+    parts.push(`${years} Year${years === 1 ? "" : "s"}`);
+  }
+
+  if (remainingDays > 0) {
+    parts.push(`${remainingDays} Day${remainingDays === 1 ? "" : "s"}`);
+  }
+
+  if (parts.length === 0) {
+    return "Less than a day";
+  }
+
+  return parts.join(", ");
+}
+
 export function convertDateInputToUnixNano(dateString: string): bigint {
   const dateParts = dateString.split("-");
   if (dateParts.length !== 3) {

@@ -51,7 +51,7 @@
                 <p class="mb-1 text-lg opacity-75 xxs:text-xl cta-text">Neuron</p>
                 <button on:click={() => copyToClipboard(neuron.id)} class="text-sm text-BrandGrayShade4">#{neuron.displayId}</button>
             </div>
-            <h3 class="text-2xl font-[1000] xxs:text-4xl mini:text-2xl md:text-3xl lg:text-4xl">{neuron.stakedAmount} ICFC</h3>
+            <h3 class="text-base mini:text-lg md:text-xl lg:text-2xl">{neuron.stakedAmount} ICFC</h3>
         </div>
     </div>
 
@@ -74,7 +74,7 @@
             <div class="py-4">
                 
                 <p class="pl-1 my-2 text-base md:text-lg cta-text">#{neuron.displayId}</p>
-                <h3 class="mb-3 text-2xl font-[1000] xxs:text-3xl mini:text-2xl md:text-2xl 2xl:text-4xl">Neuron Details</h3>
+                <h3 class="mb-3 brand-title">Neuron Details</h3>
                 
                 <div class="w-full h-[1px] mini:h-[2px] bg-current mb-4"></div>
 

@@ -15,6 +15,7 @@
             freeBetsFrequency: 'per month',
             benefits: [
                 'Basic profile display features',
+                'Entry into ICFC online games',
                 'Entry to merchandise prize draws',
                 'Entry to ticket prize draws',
                 '1 free bet per month on Jeff Bets'

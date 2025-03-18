@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { formatSecondsUnixDateToReadable } from "$lib/utils/helpers";
+    import { formatSecondsUnixDateToReadable, formatUnixNanoToDuration } from "$lib/utils/helpers";
     import { membershipStore } from "$lib/stores/membership-store";
     import { busy } from "$lib/stores/busy-store";
     import type { Neuron, MembershipType, UserNeuronsDTO } from "../../../../../declarations/backend/backend.did";
@@ -49,37 +49,39 @@
 
     function formatNeuronForCard(neuron: Neuron) : NeuronSummary {
 
+        let emptySummary: NeuronSummary = {
+            id: '',
+            stakedAmount: '',
+            lockPeriod: '',
+            status: 'locked',
+            age: '',
+            displayId: ''
+        };
+
         const neuronId = neuron.id[0];  
         if(!neuronId) { 
-            return {
-                id: '',
-                stakedAmount: '',
-                lockPeriod: '',
-                status: 'active',
-                age: '',
-                displayId: ''
-            }; 
+            return emptySummary;
         }
 
-        //let id = neuronId.id[0].toString();
         let id = Principal.fromUint8Array(new Uint8Array(neuronId.id)).toHex();
         const displayId = `${id.slice(0, 4)}...${id.slice(-5)}`;
 
-
-        
         const stakedAmount = formatICFC(Number(neuron.cached_neuron_stake_e8s) / 100000000);
         
-        const dissolveState = neuron.dissolve_state ?? { DissolveDelaySeconds: BigInt(0) };
-        let status: 'active' | 'dissolving' = 'active';
+        let status: 'locked' | 'dissolving' = 'locked';
+        let state = neuron.dissolve_state?.[0]; 
         let lockPeriod = '';
         
-        if ('DissolveDelaySeconds' in dissolveState) {
-            status = 'active';
-            //lockPeriod = convertBigIntSeconds(dissolveState.DissolveDelaySeconds);
-        } else {
-            status = 'dissolving';
+        if (state) {
+            if ('DissolveDelaySeconds' in state) {
+                status = 'locked';
+                lockPeriod = formatUnixNanoToDuration(state.DissolveDelaySeconds);
+            } else if ('WhenDissolvedTimestampSeconds' in state) {
+                status = 'dissolving';
+                lockPeriod = formatUnixNanoToDuration(state.WhenDissolvedTimestampSeconds - BigInt(Date.now()));
+            }
         }
-
+        
         const age = formatSecondsUnixDateToReadable(Number(neuron.created_timestamp_seconds));
 
         return { id, stakedAmount, lockPeriod, age, status, displayId };
@@ -109,7 +111,7 @@
 {:else}
     <div class="flex flex-col space-y-6">
         <div class="flex flex-col gap-4 mini:flex-row mini:justify-between mini:gap-0 mini:px-4">
-            <h1 class="text-2xl lg:text-3xl cta-text">User's Neurons</h1>
+            <h1 class="text-2xl lg:text-3xl cta-text">Your Neurons</h1>
             <ClaimMembershipButton {userMembershipEligibility} />
         </div>
         {#if neurons.length === 0}
@@ -120,7 +122,7 @@
                 </p>
             </div>
         {:else}
-            <div class="grid gap-6 lg:px-4 mini:grid-cols-2 base:grid-cols-3 xl:grid-cols-4">
+            <div class="grid gap-6 base:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
                 {#each neurons as neuron}
                     <NeuronCard neuron={formatNeuronForCard(neuron)} {copyToClipboard} />
                 {/each}

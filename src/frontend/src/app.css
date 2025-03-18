@@ -17,7 +17,11 @@
 }
 
 .brand-button {
-  @apply px-4 py-2 font-medium text-white transition-colors duration-300 rounded-lg bg-BrandGray hover:bg-BrandInfo cta-text;
+  @apply p-3 text-lg text-center text-white rounded-lg mini:w-auto cta-text bg-BrandBlueComp hover:bg-BrandInfo;
+}
+
+.brand-info-button {
+  @apply text-base font-bold text-white transition-all duration-300 rounded-lg bg-BrandBlue hover:bg-opacity-90;
 }
 
 .bg-frontend-update {
@@ -121,4 +125,8 @@
 
 .page-intro {
   @apply text-xl;
+}
+
+.brand-title {
+  @apply text-base xxs:text-base mini:text-base md:text-lg 2xl:text-xl;
 }

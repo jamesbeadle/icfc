@@ -15,6 +15,8 @@
         unsubscribe = userStore.subscribe((state) => {
             if(!state){ return }
             profile = state.profile;
+            console.log("profile")
+            console.log(profile)
             canClaimMembership = 'NotClaimed' in (profile?.membershipType ?? {}) && !('NotEligible' in userMembershipEligibility);
         });
 
@@ -38,29 +40,33 @@
     }
 </script>
 
-<div class="flex flex-col items-center w-full gap-2 mini:w-auto">
-    {#if 'NotClaimed' in (profile?.membershipType ?? {})}
-        <button 
-            class="w-full p-3 text-base font-bold text-white transition-all duration-300 rounded-lg mini:w-auto bg-BrandBlue hover:bg-opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
-            on:click={handleClaimMembership}
-            disabled={'NotEligible' in userMembershipEligibility}
-        >
-            Claim Membership
-        </button>
-        <p class="text-sm text-center {'NotEligible' in userMembershipEligibility ? 'text-BrandError' : 'text-BrandSuccess'}">
-            {#if 'NotEligible' in userMembershipEligibility}
-                Not Eligible for Membership
-            {:else if 'Monthly' in userMembershipEligibility}
-                Eligible for Monthly Membership
-            {:else if 'Seasonal' in userMembershipEligibility}
-                Eligible for Seasonal Membership
-            {:else if 'Lifetime' in userMembershipEligibility}
-                Eligible for Lifetime Membership
-            {/if}
-        </p>
-    {:else}
-        <p class="w-full p-3 text-lg text-center text-white rounded-lg mini:w-auto cta-text bg-BrandBlueComp">
-            Membership Active
-        </p>
-    {/if}
-</div> 
+{#if profile}
+    
+    <div class="flex flex-col items-center w-full gap-2 mini:w-auto">
+        {#if 'NotClaimed' in (profile?.membershipType ?? {})}
+            <button 
+                class="w-full p-3 text-base font-bold text-white transition-all duration-300 rounded-lg mini:w-auto bg-BrandBlue hover:bg-opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                on:click={handleClaimMembership}
+                disabled={'NotEligible' in userMembershipEligibility}
+            >
+                Claim Membership
+            </button>
+            <p class="text-sm text-center {'NotEligible' in userMembershipEligibility ? 'text-BrandError' : 'text-BrandSuccess'}">
+                {#if 'NotEligible' in userMembershipEligibility}
+                    Not Eligible for Membership
+                {:else if 'Monthly' in userMembershipEligibility}
+                    Eligible for Monthly Membership
+                {:else if 'Seasonal' in userMembershipEligibility}
+                    Eligible for Seasonal Membership
+                {:else if 'Lifetime' in userMembershipEligibility}
+                    Eligible for Lifetime Membership
+                {/if}
+            </p>
+        {:else}
+            <p class="w-full p-3 text-lg text-center text-white rounded-lg mini:w-auto cta-text bg-BrandBlueComp">
+                Membership Active
+            </p>
+        {/if}
+    </div> 
+
+{/if}
