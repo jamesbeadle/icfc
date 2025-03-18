@@ -14,7 +14,6 @@ import Cycles "mo:base/ExperimentalCycles";
 import Int "mo:base/Int";
 import Char "mo:base/Char";
 import T "../icfc_types";
-import SNSManager "../managers/sns_manager";
 import SNSGovernance "../sns-wrappers/governance";
 
 module Utils {
@@ -375,6 +374,7 @@ module Utils {
             };
             case (#NotClaimed) { now };
             case (#Expired) { now };
+            case (#NotEligible) { now };
         };
     };
 

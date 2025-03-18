@@ -50,6 +50,12 @@ module ProfileQueries {
         userMembershipEligibility : T.MembershipType;
     };
 
+    public type ICFCMembershipDTO = {
+        membershipType : T.MembershipType;
+        membershipClaims : [T.MembershipClaim];
+        membershipExpiryTime : Int;
+    };
+
     public type UsernameAvailable = Bool;
 
 };

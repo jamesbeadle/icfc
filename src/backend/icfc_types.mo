@@ -1,7 +1,6 @@
 import Base "mo:waterway-mops/BaseTypes";
 import Principal "mo:base/Principal";
 import Blob "mo:base/Blob";
-import Timer "mo:base/Timer";
 //import ckBTCLedger "canister:ckbtc_ledger";
 
 module ICFCTypes {
