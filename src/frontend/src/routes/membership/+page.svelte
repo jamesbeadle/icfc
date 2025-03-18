@@ -8,8 +8,7 @@
     let showMembershipDetailsModal = false;
     let showHowToStakeICFCModal = false;
     let showHowToAddICFCModal = false;
-    let isLoading = true;
-
+    
     function openMembershipDetailsModal() {
         showMembershipDetailsModal = true;
     }
@@ -70,17 +69,23 @@
     </div>
 </Layout>
 
-<MembershipDetailsModal 
-    showModal={showMembershipDetailsModal}
-    onClose={closeMembershipDetailsModal}
-/>
+{#if showMembershipDetailsModal}
+    <MembershipDetailsModal 
+        showModal={showMembershipDetailsModal}
+        onClose={closeMembershipDetailsModal}
+    />
+{/if}
 
-<HowToModalStakeICFC
-    showModal={showHowToStakeICFCModal}
-    onClose={closeHowToStakeICFCModal}
-/>
+{#if showHowToStakeICFCModal}
+    <HowToModalStakeICFC
+        showModal={showHowToStakeICFCModal}
+        onClose={closeHowToStakeICFCModal}
+    />
+{/if}
 
-<HowToModalAddICFC
-    showModal={showHowToAddICFCModal}
-    onClose={closeHowToAddICFCModal}
-/>
+{#if showHowToAddICFCModal}
+    <HowToModalAddICFC
+        showModal={showHowToAddICFCModal}
+        onClose={closeHowToAddICFCModal}
+    />
+{/if}

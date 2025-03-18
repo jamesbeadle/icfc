@@ -4,13 +4,11 @@
     import LogoIcon from '$lib/icons/LogoIcon.svelte';
     import InfoIcon from '$lib/icons/InfoIcon.svelte';
     import CloseIcon from '$lib/icons/CloseIcon.svelte';
+    import type { NeuronSummary } from '$lib/types/neuron-types';
     
-    export let neuron: {
-        id: string;
-        stakedAmount: string;
-        lockPeriod: string;
-        status: 'active' | 'dissolving';
-    };
+    export let neuron: NeuronSummary;
+
+    export let copyToClipboard: (id: string) => void;
 
     const backgroundProperties = {
         opacity: "opacity-[0.10]",
@@ -51,7 +49,7 @@
         <div class="relative z-10 mt-auto">
             <div class="flex items-center gap-2">
                 <p class="mb-1 text-lg opacity-75 xxs:text-xl cta-text">Neuron</p>
-                <span class="text-sm text-BrandGrayShade4">#{neuron.id}</span>
+                <button on:click={() => copyToClipboard(neuron.id)} class="text-sm text-BrandGrayShade4">#{neuron.displayId}</button>
             </div>
             <h3 class="text-2xl font-[1000] xxs:text-4xl mini:text-2xl md:text-3xl lg:text-4xl">{neuron.stakedAmount} ICFC</h3>
         </div>
@@ -75,7 +73,7 @@
         <div class="relative flex-1 overflow-y-auto">
             <div class="py-4">
                 
-                <p class="pl-1 my-2 text-base md:text-lg cta-text">#{neuron.id}</p>
+                <p class="pl-1 my-2 text-base md:text-lg cta-text">#{neuron.displayId}</p>
                 <h3 class="mb-3 text-2xl font-[1000] xxs:text-3xl mini:text-2xl md:text-2xl 2xl:text-4xl">Neuron Details</h3>
                 
                 <div class="w-full h-[1px] mini:h-[2px] bg-current mb-4"></div>

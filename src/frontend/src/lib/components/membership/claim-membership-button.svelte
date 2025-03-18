@@ -13,6 +13,7 @@
 
     onMount(() => {
         unsubscribe = userStore.subscribe((state) => {
+            if(!state){ return }
             profile = state.profile;
             canClaimMembership = 'NotClaimed' in (profile?.membershipType ?? {}) && !('NotEligible' in userMembershipEligibility);
         });

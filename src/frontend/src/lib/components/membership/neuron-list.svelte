@@ -8,18 +8,19 @@
     import NeuronCard from './neuron-card.svelte';
     import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
     import ClaimMembershipButton from './claim-membership-button.svelte';
+    import type { NeuronSummary } from "$lib/types/neuron-types";
+    import { Principal } from "@dfinity/principal";
+    import { toasts } from "$lib/stores/toasts-store";
 
-    export let isLoading: boolean = false;
-    export let neurons: Neuron[] = [];
+    let isLoading: boolean = true;
+    let neurons: Neuron[] = [];
     
     let userMembershipEligibility: MembershipType = { NotEligible: null };
     let userNeurons: UserNeuronsDTO | undefined;
 
     onMount(async () => {
         try {
-            console.log("loading neurons")
             await getNeurons();
-            console.log("neurons loaded")
         } catch (error) {
             console.error("Error fetching funding data:", error);
         } finally {
@@ -31,7 +32,6 @@
         try {
             busy.start();
             userNeurons = await membershipStore.getUserNeurons();
-            console.log(userNeurons)
             if (userNeurons) {
                 neurons = userNeurons.userNeurons.sort(sortByHighestNeuron);
                 userMembershipEligibility = userNeurons.userMembershipEligibility;
@@ -47,12 +47,25 @@
         return Math.round(amount).toLocaleString();
     }
 
-    function formatNeuronForCard(neuron: Neuron) {
-        const id = neuron.id
-            ? Array.from(neuron.id)
-                .map((b: unknown) => (b as number).toString(16).padStart(2, '0'))
-                .join('')
-            : 'unknown';
+    function formatNeuronForCard(neuron: Neuron) : NeuronSummary {
+
+        const neuronId = neuron.id[0];  
+        if(!neuronId) { 
+            return {
+                id: '',
+                stakedAmount: '',
+                lockPeriod: '',
+                status: 'active',
+                age: '',
+                displayId: ''
+            }; 
+        }
+
+        //let id = neuronId.id[0].toString();
+        let id = Principal.fromUint8Array(new Uint8Array(neuronId.id)).toHex();
+        const displayId = `${id.slice(0, 4)}...${id.slice(-5)}`;
+
+
         
         const stakedAmount = formatICFC(Number(neuron.cached_neuron_stake_e8s) / 100000000);
         
@@ -69,19 +82,21 @@
 
         const age = formatSecondsUnixDateToReadable(Number(neuron.created_timestamp_seconds));
 
-        return { id, stakedAmount, lockPeriod, age, status };
+        return { id, stakedAmount, lockPeriod, age, status, displayId };
+    }
+    
+    function copyToClipboard(fullId: string) {
+        navigator.clipboard.writeText(fullId).then(() => {
+            toasts.addToast({
+                message: 'Copied to clipboard',
+                type: 'success',
+                duration: 3000
+            });
+        }).catch(err => {
+            console.error('Failed to copy: ', err);
+        });
     }
 
-    function convertBigIntSeconds(value: bigint): string {
-        const secondsInYear = 31536000n;
-        const secondsInDay = 86400n;
-
-        const years = value / secondsInYear;
-        const remainingSeconds = value % secondsInYear;
-        const days = remainingSeconds / secondsInDay;
-
-        return `${years} years ${days} days`;
-    }
 
     function sortByHighestNeuron(a: Neuron, b: Neuron): number {
         return Number(b.cached_neuron_stake_e8s) - Number(a.cached_neuron_stake_e8s);
@@ -89,27 +104,27 @@
 
 </script>
 
-<div class="flex flex-col space-y-6">
-    <div class="flex flex-col gap-4 mini:flex-row mini:justify-between mini:gap-0 mini:px-4">
-        <h1 class="text-2xl lg:text-3xl cta-text">User's Neurons</h1>
-        <ClaimMembershipButton {userMembershipEligibility} />
+{#if isLoading}
+    <LocalSpinner />
+{:else}
+    <div class="flex flex-col space-y-6">
+        <div class="flex flex-col gap-4 mini:flex-row mini:justify-between mini:gap-0 mini:px-4">
+            <h1 class="text-2xl lg:text-3xl cta-text">User's Neurons</h1>
+            <ClaimMembershipButton {userMembershipEligibility} />
+        </div>
+        {#if neurons.length === 0}
+            <div class="flex flex-col items-center justify-center w-full p-8 text-center rounded-lg bg-BrandBlueComp/10">
+                <p class="text-xl text-white">No Neurons Found</p>
+                <p class="mt-2 text-sm text-BrandGrayShade4">
+                    Stake ICFC tokens to create neurons and unlock membership benefits
+                </p>
+            </div>
+        {:else}
+            <div class="grid gap-6 lg:px-4 mini:grid-cols-2 base:grid-cols-3 xl:grid-cols-4">
+                {#each neurons as neuron}
+                    <NeuronCard neuron={formatNeuronForCard(neuron)} {copyToClipboard} />
+                {/each}
+            </div>
+        {/if}
     </div>
-    {#if isLoading}
-        <div class="flex items-center justify-center w-full h-48">
-            <LocalSpinner />
-        </div>
-    {:else if neurons.length === 0}
-        <div class="flex flex-col items-center justify-center w-full p-8 text-center rounded-lg bg-BrandBlueComp/10">
-            <p class="text-xl text-white">No Neurons Found</p>
-            <p class="mt-2 text-sm text-BrandGrayShade4">
-                Stake ICFC tokens to create neurons and unlock membership benefits
-            </p>
-        </div>
-    {:else}
-        <div class="grid gap-6 lg:px-4 mini:grid-cols-2 base:grid-cols-3 xl:grid-cols-4">
-            {#each neurons as neuron}
-                <NeuronCard neuron={formatNeuronForCard(neuron)} />
-            {/each}
-        </div>
-    {/if}
-</div>
+{/if}

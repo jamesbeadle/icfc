@@ -69,7 +69,6 @@
           profilePictureExtension: [],
           username: username,
         };
-        console.log(dto);
         await userStore.createProfile(dto);
         onSignUpComplete();
         closeModal();
