@@ -37,7 +37,7 @@ actor class _ProfileCanister() {
 
     //Public endpoints
 
-    public shared ({ caller }) func getProfile(dto : ProfileQueries.GetProfile) : async Result.Result<ProfileQueries.Profile, T.Error> {
+    public shared ({ caller }) func getProfile(dto : ProfileQueries.GetProfile) : async Result.Result<ProfileQueries.ProfileDTO, T.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
         assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
@@ -54,7 +54,7 @@ actor class _ProfileCanister() {
                 let profile = findProfile(foundGroupIndex, dto.principalId);
                 switch (profile) {
                     case (?foundProfile) {
-                        let dto : ProfileQueries.Profile = {
+                        let dto : ProfileQueries.ProfileDTO = {
                             principalId = foundProfile.principalId;
                             username = foundProfile.username;
                             profilePicture = foundProfile.profilePicture;
@@ -66,6 +66,38 @@ actor class _ProfileCanister() {
                             membershipType = foundProfile.membershipType;
                             membershipClaims = foundProfile.membershipClaims;
                             createdOn = foundProfile.createdOn;
+                            membershipExpiryTime = foundProfile.membershipExpiryTime;
+                        };
+                        return #ok(dto);
+                    };
+                    case (null) {
+                        return #err(#NotFound);
+                    };
+                };
+            };
+        };
+    };
+
+    public shared ({ caller }) func getICFCMembership(dto : ProfileCommands.GetICFCMembership) : async Result.Result<ProfileQueries.ICFCMembershipDTO, T.Error> {
+        assert not Principal.isAnonymous(caller);
+        let backendPrincipalId = Principal.toText(caller);
+        assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
+
+        var groupIndex : ?Nat8 = null;
+        for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
+            if (profileGroupIndex.0 == dto.principalId) {
+                groupIndex := ?profileGroupIndex.1;
+            };
+        };
+        switch (groupIndex) {
+            case (null) { return #err(#NotFound) };
+            case (?foundGroupIndex) {
+                let profile = findProfile(foundGroupIndex, dto.principalId);
+                switch (profile) {
+                    case (?foundProfile) {
+                        let dto : ProfileQueries.ICFCMembershipDTO = {
+                            membershipType = foundProfile.membershipType;
+                            membershipClaims = foundProfile.membershipClaims;
                             membershipExpiryTime = foundProfile.membershipExpiryTime;
                         };
                         return #ok(dto);
@@ -198,6 +230,126 @@ actor class _ProfileCanister() {
         };
     };
 
+    public shared ({ caller }) func updateAppPrincipalIds(dto : ProfileCommands.AddSubApp) : async Result.Result<(), T.Error> {
+        assert not Principal.isAnonymous(caller);
+        let backendPrincipalId = Principal.toText(caller);
+        assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
+
+        var groupIndex : ?Nat8 = null;
+        for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
+            if (profileGroupIndex.0 == dto.subAppUserPrincipalId) {
+                groupIndex := ?profileGroupIndex.1;
+            };
+        };
+        switch (groupIndex) {
+            case (null) { return #err(#NotFound) };
+            case (?foundGroupIndex) {
+                let profile = findProfile(foundGroupIndex, dto.subAppUserPrincipalId);
+                switch (profile) {
+                    case (?foundProfile) {
+
+                        var appPrincipalIdsBuffer = Buffer.fromArray<(T.SubApp, Base.PrincipalId)>(foundProfile.appPrincipalIds);
+
+                        let subAppAlreadyLinked = Array.find<(T.SubApp, Base.PrincipalId)>(
+                            foundProfile.appPrincipalIds,
+                            func(appPrincipalId : (T.SubApp, Base.PrincipalId)) {
+                                appPrincipalId.0 == dto.subApp;
+                            },
+                        );
+
+                        // add new subapp if not already linked
+                        if (subAppAlreadyLinked == null) {
+                            appPrincipalIdsBuffer.add((dto.subApp, dto.subAppUserPrincipalId));
+                        } else {
+                            // update subapp if already linked
+                            let updatedAppPrincipalIds = Array.map<(T.SubApp, Base.PrincipalId), (T.SubApp, Base.PrincipalId)>(
+                                foundProfile.appPrincipalIds,
+                                func(appPrincipalId : (T.SubApp, Base.PrincipalId)) {
+                                    if (appPrincipalId.0 == dto.subApp) {
+                                        (appPrincipalId.0, dto.subAppUserPrincipalId);
+                                    } else {
+                                        appPrincipalId;
+                                    };
+                                },
+                            );
+
+                            appPrincipalIdsBuffer := Buffer.fromArray<(T.SubApp, Base.PrincipalId)>(updatedAppPrincipalIds);
+
+                        };
+
+                        let updatedProfile : T.Profile = {
+                            principalId = foundProfile.principalId;
+                            username = foundProfile.username;
+                            displayName = foundProfile.displayName;
+                            membershipType = foundProfile.membershipType;
+                            membershipClaims = foundProfile.membershipClaims;
+                            createdOn = foundProfile.createdOn;
+                            profilePicture = foundProfile.profilePicture;
+                            profilePictureExtension = foundProfile.profilePictureExtension;
+                            termsAgreed = foundProfile.termsAgreed;
+                            appPrincipalIds = Buffer.toArray(appPrincipalIdsBuffer);
+                            podcastIds = foundProfile.podcastIds;
+                            membershipExpiryTime = foundProfile.membershipExpiryTime;
+                        };
+                        saveProfile(foundGroupIndex, updatedProfile);
+                    };
+                    case (null) {
+                        return #err(#NotFound);
+                    };
+                };
+            };
+        };
+    };
+
+    public shared ({ caller }) func removeSubApp(dto : ProfileCommands.RemoveSubApp) : async Result.Result<(), T.Error> {
+        assert not Principal.isAnonymous(caller);
+        let backendPrincipalId = Principal.toText(caller);
+        assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
+
+        var groupIndex : ?Nat8 = null;
+        for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
+            if (profileGroupIndex.0 == dto.userPrincipalId) {
+                groupIndex := ?profileGroupIndex.1;
+            };
+        };
+
+        switch (groupIndex) {
+            case (null) { return #err(#NotFound) };
+            case (?foundGroupIndex) {
+                let profile = findProfile(foundGroupIndex, dto.userPrincipalId);
+                switch (profile) {
+                    case (?foundProfile) {
+                        let updatedAppPrincipalIds = Array.filter<(T.SubApp, Base.PrincipalId)>(
+                            foundProfile.appPrincipalIds,
+                            func(appPrincipalId : (T.SubApp, Base.PrincipalId)) {
+                                appPrincipalId.0 != dto.subApp;
+                            },
+                        );
+
+                        let updatedProfile : T.Profile = {
+                            principalId = foundProfile.principalId;
+                            username = foundProfile.username;
+                            displayName = foundProfile.displayName;
+                            membershipType = foundProfile.membershipType;
+                            membershipClaims = foundProfile.membershipClaims;
+                            createdOn = foundProfile.createdOn;
+                            profilePicture = foundProfile.profilePicture;
+                            profilePictureExtension = foundProfile.profilePictureExtension;
+                            termsAgreed = foundProfile.termsAgreed;
+                            appPrincipalIds = updatedAppPrincipalIds;
+                            podcastIds = foundProfile.podcastIds;
+                            membershipExpiryTime = foundProfile.membershipExpiryTime;
+                        };
+                        saveProfile(foundGroupIndex, updatedProfile);
+                    };
+                    case (null) {
+                        return #err(#NotFound);
+                    };
+                };
+            };
+        };
+    };
+
     public shared ({ caller }) func updateProfilePicture(dto : ProfileCommands.UpdateProfilePicture) : async Result.Result<(), T.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
@@ -239,7 +391,7 @@ actor class _ProfileCanister() {
         };
     };
 
-    public shared ({ caller }) func updateMembership(dto : ProfileCommands.UpdateMembership) : async Result.Result<(), T.Error> {
+    public shared ({ caller }) func updateMembership(dto : ProfileCommands.UpdateMembership) : async Result.Result<(T.MembershipClaim), T.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
         assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
@@ -258,11 +410,12 @@ actor class _ProfileCanister() {
                 switch (profile) {
                     case (?foundProfile) {
                         let membershipClaimsBuffer = Buffer.fromArray<T.MembershipClaim>(foundProfile.membershipClaims);
-                        membershipClaimsBuffer.add({
+                        let newClaim : T.MembershipClaim = {
                             membershipType = dto.membershipType;
                             claimedOn = Time.now();
                             expiresOn = ?Utils.getMembershipExpirationDate(dto.membershipType);
-                        });
+                        };
+                        membershipClaimsBuffer.add(newClaim);
                         let updatedMembershipClaims = Buffer.toArray(membershipClaimsBuffer);
 
                         let updatedProfile : T.Profile = {
@@ -277,10 +430,21 @@ actor class _ProfileCanister() {
                             termsAgreed = foundProfile.termsAgreed;
                             appPrincipalIds = foundProfile.appPrincipalIds;
                             podcastIds = foundProfile.podcastIds;
-                            membershipExpiryTime = foundProfile.membershipExpiryTime;
+                            membershipExpiryTime = switch (newClaim.expiresOn) {
+                                case (?expiryTime) {
+                                    expiryTime;
+                                };
+                                case (null) {
+                                    0;
+                                };
+                            };
                         };
 
-                        saveProfile(foundGroupIndex, updatedProfile);
+                        let res = saveProfile(foundGroupIndex, updatedProfile);
+                        switch (res) {
+                            case (#err(error)) { return #err(error) };
+                            case (#ok) { return #ok(newClaim) };
+                        };
 
                     };
                     case (null) {
@@ -290,7 +454,6 @@ actor class _ProfileCanister() {
             };
         };
     };
-    
 
     public shared ({ caller }) func isCanisterFull() : async Bool {
         assert not Principal.isAnonymous(caller);
@@ -303,181 +466,220 @@ actor class _ProfileCanister() {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
         assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
-        
+
         for (index in Iter.range(0, 11)) {
-          switch (index) {
-            case 0 {
-                for(profile in Iter.fromArray(profileGroup1)){
-                    let durationUntilExpiry = #nanoseconds(Int.abs(((profile.membershipExpiryTime) - Time.now())));
-                    ignore Timer.setTimer<system>(durationUntilExpiry, membershipExpired); 
-                }
+            switch (index) {
+                case 0 {
+                    for (profile in Iter.fromArray(profileGroup1)) {
+                        let durationUntilExpiry = #nanoseconds(Int.abs(((profile.membershipExpiryTime) - Time.now())));
+                        ignore Timer.setTimer<system>(durationUntilExpiry, membershipExpired);
+                    };
+                };
+                case 1 {
+                    for (profile in Iter.fromArray(profileGroup2)) {
+                        let durationUntilExpiry = #nanoseconds(Int.abs(((profile.membershipExpiryTime) - Time.now())));
+                        ignore Timer.setTimer<system>(durationUntilExpiry, membershipExpired);
+                    };
+                };
+                case 2 {
+                    for (profile in Iter.fromArray(profileGroup3)) {
+                        let durationUntilExpiry = #nanoseconds(Int.abs(((profile.membershipExpiryTime) - Time.now())));
+                        ignore Timer.setTimer<system>(durationUntilExpiry, membershipExpired);
+                    };
+                };
+                case 3 {
+                    for (profile in Iter.fromArray(profileGroup4)) {
+                        let durationUntilExpiry = #nanoseconds(Int.abs(((profile.membershipExpiryTime) - Time.now())));
+                        ignore Timer.setTimer<system>(durationUntilExpiry, membershipExpired);
+                    };
+                };
+                case 4 {
+                    for (profile in Iter.fromArray(profileGroup5)) {
+                        let durationUntilExpiry = #nanoseconds(Int.abs(((profile.membershipExpiryTime) - Time.now())));
+                        ignore Timer.setTimer<system>(durationUntilExpiry, membershipExpired);
+                    };
+                };
+                case 5 {
+                    for (profile in Iter.fromArray(profileGroup6)) {
+                        let durationUntilExpiry = #nanoseconds(Int.abs(((profile.membershipExpiryTime) - Time.now())));
+                        ignore Timer.setTimer<system>(durationUntilExpiry, membershipExpired);
+                    };
+                };
+                case 6 {
+                    for (profile in Iter.fromArray(profileGroup7)) {
+                        let durationUntilExpiry = #nanoseconds(Int.abs(((profile.membershipExpiryTime) - Time.now())));
+                        ignore Timer.setTimer<system>(durationUntilExpiry, membershipExpired);
+                    };
+                };
+                case 7 {
+                    for (profile in Iter.fromArray(profileGroup8)) {
+                        let durationUntilExpiry = #nanoseconds(Int.abs(((profile.membershipExpiryTime) - Time.now())));
+                        ignore Timer.setTimer<system>(durationUntilExpiry, membershipExpired);
+                    };
+                };
+                case 8 {
+                    for (profile in Iter.fromArray(profileGroup9)) {
+                        let durationUntilExpiry = #nanoseconds(Int.abs(((profile.membershipExpiryTime) - Time.now())));
+                        ignore Timer.setTimer<system>(durationUntilExpiry, membershipExpired);
+                    };
+                };
+                case 9 {
+                    for (profile in Iter.fromArray(profileGroup10)) {
+                        let durationUntilExpiry = #nanoseconds(Int.abs(((profile.membershipExpiryTime) - Time.now())));
+                        ignore Timer.setTimer<system>(durationUntilExpiry, membershipExpired);
+                    };
+                };
+                case 10 {
+                    for (profile in Iter.fromArray(profileGroup11)) {
+                        let durationUntilExpiry = #nanoseconds(Int.abs(((profile.membershipExpiryTime) - Time.now())));
+                        ignore Timer.setTimer<system>(durationUntilExpiry, membershipExpired);
+                    };
+                };
+                case 11 {
+                    for (profile in Iter.fromArray(profileGroup12)) {
+                        let durationUntilExpiry = #nanoseconds(Int.abs(((profile.membershipExpiryTime) - Time.now())));
+                        ignore Timer.setTimer<system>(durationUntilExpiry, membershipExpired);
+                    };
+                };
+                case _ {};
             };
-            case 1 {
-                for(profile in Iter.fromArray(profileGroup2)){
-                    let durationUntilExpiry = #nanoseconds(Int.abs(((profile.membershipExpiryTime) - Time.now())));
-                    ignore Timer.setTimer<system>(durationUntilExpiry, membershipExpired); 
-                }
-            };
-            case 2 {
-                for(profile in Iter.fromArray(profileGroup3)){
-                    let durationUntilExpiry = #nanoseconds(Int.abs(((profile.membershipExpiryTime) - Time.now())));
-                    ignore Timer.setTimer<system>(durationUntilExpiry, membershipExpired); 
-                }
-            };
-            case 3 {
-                for(profile in Iter.fromArray(profileGroup4)){
-                    let durationUntilExpiry = #nanoseconds(Int.abs(((profile.membershipExpiryTime) - Time.now())));
-                    ignore Timer.setTimer<system>(durationUntilExpiry, membershipExpired); 
-                }
-            };
-            case 4 {
-                for(profile in Iter.fromArray(profileGroup5)){
-                    let durationUntilExpiry = #nanoseconds(Int.abs(((profile.membershipExpiryTime) - Time.now())));
-                    ignore Timer.setTimer<system>(durationUntilExpiry, membershipExpired); 
-                }
-            };
-            case 5 {
-                for(profile in Iter.fromArray(profileGroup6)){
-                    let durationUntilExpiry = #nanoseconds(Int.abs(((profile.membershipExpiryTime) - Time.now())));
-                    ignore Timer.setTimer<system>(durationUntilExpiry, membershipExpired); 
-                }
-            };
-            case 6 {
-                for(profile in Iter.fromArray(profileGroup7)){
-                    let durationUntilExpiry = #nanoseconds(Int.abs(((profile.membershipExpiryTime) - Time.now())));
-                    ignore Timer.setTimer<system>(durationUntilExpiry, membershipExpired); 
-                }
-            };
-            case 7 {
-                for(profile in Iter.fromArray(profileGroup8)){
-                    let durationUntilExpiry = #nanoseconds(Int.abs(((profile.membershipExpiryTime) - Time.now())));
-                    ignore Timer.setTimer<system>(durationUntilExpiry, membershipExpired); 
-                }
-            };
-            case 8 {
-                for(profile in Iter.fromArray(profileGroup9)){
-                    let durationUntilExpiry = #nanoseconds(Int.abs(((profile.membershipExpiryTime) - Time.now())));
-                    ignore Timer.setTimer<system>(durationUntilExpiry, membershipExpired); 
-                }
-            };
-            case 9 {
-                for(profile in Iter.fromArray(profileGroup10)){
-                    let durationUntilExpiry = #nanoseconds(Int.abs(((profile.membershipExpiryTime) - Time.now())));
-                    ignore Timer.setTimer<system>(durationUntilExpiry, membershipExpired); 
-                }
-            };
-            case 10 {
-                for(profile in Iter.fromArray(profileGroup11)){
-                    let durationUntilExpiry = #nanoseconds(Int.abs(((profile.membershipExpiryTime) - Time.now())));
-                    ignore Timer.setTimer<system>(durationUntilExpiry, membershipExpired); 
-                }
-            };
-            case 11 {
-                for(profile in Iter.fromArray(profileGroup12)){
-                    let durationUntilExpiry = #nanoseconds(Int.abs(((profile.membershipExpiryTime) - Time.now())));
-                    ignore Timer.setTimer<system>(durationUntilExpiry, membershipExpired); 
-                }
-            };
-            case _ {};
-          };
         };
     };
 
     private func membershipExpired() : async () {
-        
+
         for (index in Iter.range(0, 11)) {
-          switch (index) {
-            case 0 {
-                for(profile in Iter.fromArray(profileGroup1)){
-                    if(profile.membershipExpiryTime < Time.now()){
-                        expireMembership(profile.principalId);
-                    }
-                }
+            switch (index) {
+                case 0 {
+                    for (profile in Iter.fromArray(profileGroup1)) {
+                        if (profile.membershipExpiryTime < Time.now()) {
+                            expireMembership(profile.principalId);
+                        };
+                    };
+                };
+                case 1 {
+                    for (profile in Iter.fromArray(profileGroup2)) {
+                        if (profile.membershipExpiryTime < Time.now()) {
+                            expireMembership(profile.principalId);
+                        };
+                    };
+                };
+                case 2 {
+                    for (profile in Iter.fromArray(profileGroup3)) {
+                        if (profile.membershipExpiryTime < Time.now()) {
+                            expireMembership(profile.principalId);
+                        };
+                    };
+                };
+                case 3 {
+                    for (profile in Iter.fromArray(profileGroup4)) {
+                        if (profile.membershipExpiryTime < Time.now()) {
+                            expireMembership(profile.principalId);
+                        };
+                    };
+                };
+                case 4 {
+                    for (profile in Iter.fromArray(profileGroup5)) {
+                        if (profile.membershipExpiryTime < Time.now()) {
+                            expireMembership(profile.principalId);
+                        };
+                    };
+                };
+                case 5 {
+                    for (profile in Iter.fromArray(profileGroup6)) {
+                        if (profile.membershipExpiryTime < Time.now()) {
+                            expireMembership(profile.principalId);
+                        };
+                    };
+                };
+                case 6 {
+                    for (profile in Iter.fromArray(profileGroup7)) {
+                        if (profile.membershipExpiryTime < Time.now()) {
+                            expireMembership(profile.principalId);
+                        };
+                    };
+                };
+                case 7 {
+                    for (profile in Iter.fromArray(profileGroup8)) {
+                        if (profile.membershipExpiryTime < Time.now()) {
+                            expireMembership(profile.principalId);
+                        };
+                    };
+                };
+                case 8 {
+                    for (profile in Iter.fromArray(profileGroup9)) {
+                        if (profile.membershipExpiryTime < Time.now()) {
+                            expireMembership(profile.principalId);
+                        };
+                    };
+                };
+                case 9 {
+                    for (profile in Iter.fromArray(profileGroup10)) {
+                        if (profile.membershipExpiryTime < Time.now()) {
+                            expireMembership(profile.principalId);
+                        };
+                    };
+                };
+                case 10 {
+                    for (profile in Iter.fromArray(profileGroup11)) {
+                        if (profile.membershipExpiryTime < Time.now()) {
+                            expireMembership(profile.principalId);
+                        };
+                    };
+                };
+                case 11 {
+                    for (profile in Iter.fromArray(profileGroup12)) {
+                        if (profile.membershipExpiryTime < Time.now()) {
+                            expireMembership(profile.principalId);
+                        };
+                    };
+                };
+                case _ {};
             };
-            case 1 {
-                for(profile in Iter.fromArray(profileGroup2)){
-                    if(profile.membershipExpiryTime < Time.now()){
-                        expireMembership(profile.principalId);
-                    }
-                }
-            };
-            case 2 {
-                for(profile in Iter.fromArray(profileGroup3)){
-                    if(profile.membershipExpiryTime < Time.now()){
-                        expireMembership(profile.principalId);
-                    }
-                }
-            };
-            case 3 {
-                for(profile in Iter.fromArray(profileGroup4)){
-                    if(profile.membershipExpiryTime < Time.now()){
-                        expireMembership(profile.principalId);
-                    }
-                }
-            };
-            case 4 {
-                for(profile in Iter.fromArray(profileGroup5)){
-                    if(profile.membershipExpiryTime < Time.now()){
-                        expireMembership(profile.principalId);
-                    }
-                }
-            };
-            case 5 {
-                for(profile in Iter.fromArray(profileGroup6)){
-                    if(profile.membershipExpiryTime < Time.now()){
-                        expireMembership(profile.principalId);
-                    }
-                }
-            };
-            case 6 {
-                for(profile in Iter.fromArray(profileGroup7)){
-                    if(profile.membershipExpiryTime < Time.now()){
-                        expireMembership(profile.principalId);
-                    }
-                }
-            };
-            case 7 {
-                for(profile in Iter.fromArray(profileGroup8)){
-                    if(profile.membershipExpiryTime < Time.now()){
-                        expireMembership(profile.principalId);
-                    }
-                }
-            };
-            case 8 {
-                for(profile in Iter.fromArray(profileGroup9)){
-                    if(profile.membershipExpiryTime < Time.now()){
-                        expireMembership(profile.principalId);
-                    }
-                }
-            };
-            case 9 {
-                for(profile in Iter.fromArray(profileGroup10)){
-                    if(profile.membershipExpiryTime < Time.now()){
-                        expireMembership(profile.principalId);
-                    }
-                }
-            };
-            case 10 {
-                for(profile in Iter.fromArray(profileGroup11)){
-                    if(profile.membershipExpiryTime < Time.now()){
-                        expireMembership(profile.principalId);
-                    }
-                }
-            };
-            case 11 {
-                for(profile in Iter.fromArray(profileGroup12)){
-                    if(profile.membershipExpiryTime < Time.now()){
-                        expireMembership(profile.principalId);
-                    }
-                }
-            };
-            case _ {};
-          };
         };
     };
 
-    private func expireMembership(principalId: Base.PrincipalId){
+    private func expireMembership(principalId : Base.PrincipalId) {
         //expire the membership
+
+        var groupIndex : ?Nat8 = null;
+        for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
+            if (profileGroupIndex.0 == principalId) {
+                groupIndex := ?profileGroupIndex.1;
+            };
+        };
+
+        switch (groupIndex) {
+            case (null) { return };
+            case (?foundGroupIndex) {
+                let profile = findProfile(foundGroupIndex, principalId);
+                switch (profile) {
+                    case (?foundProfile) {
+
+                        let updatedProfile : T.Profile = {
+                            principalId = foundProfile.principalId;
+                            username = foundProfile.username;
+                            displayName = foundProfile.displayName;
+                            membershipType = #Expired;
+                            membershipClaims = foundProfile.membershipClaims;
+                            createdOn = foundProfile.createdOn;
+                            profilePicture = foundProfile.profilePicture;
+                            profilePictureExtension = foundProfile.profilePictureExtension;
+                            termsAgreed = foundProfile.termsAgreed;
+                            appPrincipalIds = foundProfile.appPrincipalIds;
+                            podcastIds = foundProfile.podcastIds;
+                            membershipExpiryTime = 0;
+                        };
+
+                        let _ = saveProfile(foundGroupIndex, updatedProfile);
+                    };
+                    case (null) {
+                        return;
+                    };
+                };
+            };
+        };
+
     };
 
     private func findProfile(profileGroupIndex : Nat8, profilePrincipalId : Base.PrincipalId) : ?T.Profile {

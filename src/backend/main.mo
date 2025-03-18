@@ -18,11 +18,14 @@ import ProfileManager "managers/profile_manager";
 import ProfileCommands "commands/profile_commands";
 import PodcastManager "managers/podcast_manager";
 import ProfileQueries "queries/profile_queries";
+import SNSManager "managers/sns_manager";
+import Utils "utils/utils";
 
 actor class Self() = this {
 
   private let profileManager = ProfileManager.ProfileManager();
   private let podcastChannelManager = PodcastManager.PodcastManager();
+  private let snsManager = SNSManager.SNSManager();
 
   private var appStatus : Base.AppStatus = {
     onHold = false;
@@ -35,10 +38,42 @@ actor class Self() = this {
 
   //Profile Queries
 
-  public shared ({caller}) func getProfile() : async Result.Result<ProfileQueries.Profile, T.Error> {
+  public shared ({ caller }) func getProfile() : async Result.Result<ProfileQueries.ProfileDTO, T.Error> {
     assert not Principal.isAnonymous(caller);
-    let dto : ProfileQueries.GetProfile = { principalId = Principal.toText(caller) };
+    let dto : ProfileQueries.GetProfile = {
+      principalId = Principal.toText(caller);
+    };
     return await profileManager.getProfile(dto);
+  };
+
+  public shared ({ caller }) func getUserNeurons() : async Result.Result<ProfileQueries.UserNeuronsDTO, T.Error> {
+    assert not Principal.isAnonymous(caller);
+
+    let dto : ProfileQueries.GetProfile = {
+      principalId = Principal.toText(caller);
+    };
+    let profile = await profileManager.getProfile(dto);
+    switch (profile) {
+      case (#err(e)) return #err(e);
+      case (#ok(_)) {};
+    };
+
+    let neurons = await snsManager.getUsersNeurons(caller);
+    let userEligibility = Utils.getMembershipType(neurons);
+
+    let result : ProfileQueries.UserNeuronsDTO = {
+      userNeurons = neurons;
+      userMembershipEligibility = switch (userEligibility) {
+        case (?membership) {
+          membership;
+        };
+        case (null) {
+          #NotEligible;
+        };
+      };
+    };
+    return #ok(result);
+
   };
 
   //Profile Commands
@@ -48,10 +83,27 @@ actor class Self() = this {
     return await profileManager.createProfile(principalId, dto);
   };
 
-  public shared ({caller}) func claimMembership() : async Result.Result<(), T.Error> {
+  public shared ({ caller }) func claimMembership() : async Result.Result<(T.MembershipClaim), T.Error> {
     assert not Principal.isAnonymous(caller);
-    let dto : ProfileCommands.ClaimMembership = { principalId = Principal.toText(caller) };
+    let dto : ProfileCommands.ClaimMembership = {
+      principalId = Principal.toText(caller);
+    };
     return await profileManager.claimMembership(dto);
+  };
+
+  public shared ({ caller }) func addSubApp(dto : ProfileCommands.AddSubApp) : async Result.Result<(), T.Error> {
+    assert not Principal.isAnonymous(caller);
+    return await profileManager.addSubApp(Principal.toText(caller), dto);
+  };
+
+  public shared ({ caller }) func removeSubApp(subApp : T.SubApp) : async Result.Result<(), T.Error> {
+    assert not Principal.isAnonymous(caller);
+    return await profileManager.removeSubApp(Principal.toText(caller), subApp);
+  };
+
+  public shared ({ caller }) func verifySubApp(dto : ProfileCommands.VerifySubApp) : async Result.Result<(), T.Error> {
+    assert not Principal.isAnonymous(caller);
+    return await profileManager.verifySubApp(Principal.toText(caller), dto);
   };
 
   public shared ({ caller }) func updateUsername(dto : ProfileCommands.UpdateUserName) : async Result.Result<(), T.Error> {
@@ -64,6 +116,11 @@ actor class Self() = this {
     assert not Principal.isAnonymous(caller);
     assert dto.principalId == Principal.toText(caller);
     return await profileManager.updateDisplayName(dto);
+  };
+
+  public shared ({ caller }) func getICFCMembership(dto : ProfileCommands.GetICFCMembership) : async Result.Result<ProfileQueries.ICFCMembershipDTO, T.Error> {
+    assert not Principal.isAnonymous(caller);
+    return await profileManager.getICFCMembership(Principal.toText(caller), dto);
   };
 
   public shared ({ caller }) func updateProfilePicture(dto : ProfileCommands.UpdateProfilePicture) : async Result.Result<(), T.Error> {
@@ -96,11 +153,10 @@ actor class Self() = this {
   system func postupgrade() {
     setProfileData();
     setPodcastChannelData();
-   ignore Timer.setTimer<system>(#nanoseconds(Int.abs(1)), postUpgradeCallback); 
+    ignore Timer.setTimer<system>(#nanoseconds(Int.abs(1)), postUpgradeCallback);
   };
 
-
-  private func postUpgradeCallback() : async (){
+  private func postUpgradeCallback() : async () {
     await profileManager.createMembershipExpiredTimers();
   };
 
@@ -130,7 +186,7 @@ actor class Self() = this {
     profileManager.setStableTotalProfiles(stable_total_profile);
   };
 
-  private func setPodcastChannelData(){
+  private func setPodcastChannelData() {
     podcastChannelManager.setStableCanisterIndex(stable_podcast_channel_canister_index);
     podcastChannelManager.setStableActiveCanisterId(stable_active_podcast_channel_canister_id);
     podcastChannelManager.setStablePodcastChannelNames(stable_podcast_channel_names);
@@ -140,8 +196,6 @@ actor class Self() = this {
   };
 
   /* Below is code related to a second sale */
-
-
 
   // private let podcast
 
@@ -157,8 +211,6 @@ actor class Self() = this {
 
   private type Subaccount = Blob;
   private var icfcExchange : Nat = 400; //400 ckSatoshis per ICFC
-
-
 
   private func caller_allowed(caller : Principal) : Bool {
     let foundCaller = Array.find<Base.PrincipalId>(
@@ -476,13 +528,6 @@ actor class Self() = this {
   //       #err("User profile not found");
   //     };
   //   };
-  // };
-
-  // public shared ({ caller }) func claim_membership(membership : T.MembershipType) : async Result.Result<T.MembershipClaim, Text> {
-  //   assert not Principal.isAnonymous(caller);
-  //   let claim_result = await renew_membership(caller, membership);
-
-  //   return claim_result;
   // };
 
   // public shared ({caller}) func create_podcast_group()

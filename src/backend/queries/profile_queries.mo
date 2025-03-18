@@ -1,13 +1,13 @@
 import Base "mo:waterway-mops/BaseTypes";
-import Timer "mo:base/Timer";
 import T "../icfc_types";
+import SNSGovernance "../sns-wrappers/governance";
 
 module ProfileQueries {
     public type GetProfile = {
         principalId : Base.PrincipalId;
     };
 
-    public type Profile = {
+    public type ProfileDTO = {
         principalId : Base.PrincipalId;
         username : Text;
         displayName : Text;
@@ -17,7 +17,7 @@ module ProfileQueries {
         profilePicture : ?Blob;
         profilePictureExtension : Text;
         termsAgreed : Bool;
-        appPrincipalIds : [(Text, Base.PrincipalId)];
+        appPrincipalIds : [(T.SubApp, Base.PrincipalId)];
         podcastIds : [Base.PrincipalId];
         membershipExpiryTime : Int;
     };
@@ -43,6 +43,17 @@ module ProfileQueries {
     public type IsUsernameAvailable = {
         username : Text;
         principalId : Base.PrincipalId;
+    };
+
+    public type UserNeuronsDTO = {
+        userNeurons : [SNSGovernance.Neuron];
+        userMembershipEligibility : T.MembershipType;
+    };
+
+    public type ICFCMembershipDTO = {
+        membershipType : T.MembershipType;
+        membershipClaims : [T.MembershipClaim];
+        membershipExpiryTime : Int;
     };
 
     public type UsernameAvailable = Bool;
