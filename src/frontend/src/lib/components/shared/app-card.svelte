@@ -111,19 +111,4 @@
     .rotate-y-180 {
         transform: rotateY(180deg);
     }
-    
-    @keyframes custom-pulse {
-        0%, 100% {
-            opacity: 1;
-            transform: scale(1);
-        }
-        50% {
-            opacity: 0.5;
-            transform: scale(1.1);
-        }
-    }
-    
-    .group:hover .custom-pulse {
-        animation: custom-pulse 1s ease-in-out infinite;
-    }
 </style> 

@@ -11,11 +11,10 @@
   import AppCard from "$lib/components/shared/app-card.svelte";
   import CloseIcon from "$lib/icons/CloseIcon.svelte";
 
-  let { isOpen, onClose, flippedCards = new Set() } = $props<{
-    isOpen: boolean;
-    onClose: () => void;
-    flippedCards?: Set<string>;
-  }>();
+  export let isOpen: boolean;
+  export let onClose: () => void;
+  export let flippedCards: Set<string> = new Set();
+  export let onAppClick: (app: { name: string; id: string }) => void = () => {};
 
   const apps = [
         {
@@ -95,6 +94,10 @@
       flippedCards.add(id);
     }
   };
+
+  function handleCardClick(app: { name: string; id: string }) {
+    onAppClick(app);
+  }
 </script>
 
 {#if isOpen}
@@ -104,7 +107,7 @@
         <div class="flex items-center justify-between">
           <h2 class="text-2xl text-white cta-text">ICFC Apps</h2>
           <button 
-            onclick={onClose}
+            on:click={onClose}
             class="p-2 transition-colors duration-300 rounded-lg hover:bg-white/10"
           >
             <CloseIcon className="w-8 h-8" fill="white" />
@@ -116,6 +119,7 @@
         <div class="p-6 pt-4">
           <div class="flex flex-col gap-3 md:flex-row md:overflow-x-auto">
             {#each apps as app}
+            <button on:click={() => handleCardClick(app)} class="cursor-pointer">
               <AppCard 
                   {app}
                   isFlipped={false}
@@ -123,6 +127,7 @@
                   isModal={true}
                   disableFlip={true}
               />
+            </button>
             {/each}
           </div>
         </div>

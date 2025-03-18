@@ -11,7 +11,6 @@
   import type { ProfileDTO } from "../../../declarations/backend/backend.did";
   
   import "../app.css";
-  import IcfcAppsModal from "$lib/components/shared/icfc-apps-modal.svelte";
   import Toasts from "$lib/components/toasts/toasts.svelte";
   import LogoIcon from "$lib/icons/LogoIcon.svelte";
   import FullScreenSpinner from "$lib/components/shared/full-screen-spinner.svelte";
@@ -129,7 +128,6 @@
           <LandingPage />
         {/if}    
       {/if}
-      <IcfcAppsModal isOpen={showApps} onClose={() => showApps = false} />
       <IcfcLinkAccountsModal isOpen={showLinkAccounts} on:close={() => showLinkAccounts = false} />
     </div>
     <Toasts />
