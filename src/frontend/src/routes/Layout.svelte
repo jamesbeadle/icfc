@@ -8,7 +8,7 @@
   import { appStore } from "$lib/stores/app-store";
   import { initAuthWorker } from "$lib/services/worker.auth.services";
   import { authStore, type AuthSignInParams, type AuthStoreData } from "$lib/stores/auth-store";
-  import type { Profile } from "../../../declarations/backend/backend.did";
+  import type { ProfileDTO } from "../../../declarations/backend/backend.did";
   
   import "../app.css";
   import IcfcAppsModal from "$lib/components/shared/icfc-apps-modal.svelte";
@@ -25,7 +25,7 @@
   let isLoggedIn = false;
   let showApps = false;
   let showLinkAccounts = false;
-  let user: Profile | null = null;
+  let user: ProfileDTO | null = null;
   let isMenuOpen = false;
 
 
