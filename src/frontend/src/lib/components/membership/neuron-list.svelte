@@ -17,13 +17,13 @@
 
     onMount(async () => {
         try {
-            busy.start();
+            console.log("loading neurons")
             await getNeurons();
+            console.log("neurons loaded")
         } catch (error) {
             console.error("Error fetching funding data:", error);
         } finally {
             isLoading = false;
-            busy.stop();
         }
     });
 
@@ -31,6 +31,7 @@
         try {
             busy.start();
             userNeurons = await membershipStore.getUserNeurons();
+            console.log(userNeurons)
             if (userNeurons) {
                 neurons = userNeurons.userNeurons.sort(sortByHighestNeuron);
                 userMembershipEligibility = userNeurons.userMembershipEligibility;

@@ -6,7 +6,7 @@ import Buffer "mo:base/Buffer";
 module {
     public class SNSManager() {
         public func getUsersNeurons(userPrincipalId : Principal) : async [SNSGovernance.Neuron] {
-            var allNeurons = await listNeurons();
+            var allNeurons = await listNeurons(userPrincipalId);
             let userNeurons = Buffer.Buffer<SNSGovernance.Neuron>(0);
             for (neuron in allNeurons.vals()) {
 
@@ -28,13 +28,13 @@ module {
             };
             return Buffer.toArray(userNeurons);
         };
-        private func listNeurons() : async [SNSGovernance.Neuron] {
+        private func listNeurons(userPrincipalId : Principal) : async [SNSGovernance.Neuron] {
             var governance = actor (Environment.SNS_GOVERNANCE_CANISTER_ID) : actor {
                 list_neurons : shared query SNSGovernance.ListNeurons -> async SNSGovernance.ListNeuronsResponse;
             };
 
             let command : SNSGovernance.ListNeurons = {
-                of_principal = null;
+                of_principal = ?userPrincipalId;
                 limit = 100000;
                 start_page_at = null;
             };
