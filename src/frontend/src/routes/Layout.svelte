@@ -7,7 +7,7 @@
   import { userStore } from "$lib/stores/user-store";
   import { appStore } from "$lib/stores/app-store";
   import { initAuthWorker } from "$lib/services/worker.auth.services";
-  import { authStore, type AuthSignInParams, type AuthStoreData } from "$lib/stores/auth-store";
+  import { authStore, type AuthStoreData } from "$lib/stores/auth-store";
   import type { ProfileDTO } from "../../../declarations/backend/backend.did";
   
   import "../app.css";
@@ -18,11 +18,10 @@
   import IcfcLinkAccountsModal from "$lib/components/shared/icfc-link-accounts-modal.svelte";
   import Sidebar from "$lib/components/shared/sidebar.svelte";
   import PortalHost from 'svelte-portal'
+    import { authSignedInStore } from "$lib/derived/auth.derived";
     
   let worker: { syncAuthIdle: (auth: AuthStoreData) => void } | undefined;
   let isLoading = true;
-  let isLoggedIn = false;
-  let showApps = false;
   let showLinkAccounts = false;
   let user: ProfileDTO | undefined = undefined;
   let isMenuOpen = false;
@@ -45,7 +44,6 @@
     if (!browser) return;
     try {
       await authStore.sync();
-      isLoggedIn = $authStore.identity !== null && $authStore.identity !== undefined;
     } catch (err: unknown) {
       console.error(err);
     }
@@ -90,7 +88,7 @@
       {#if isLoading}
         <FullScreenSpinner />
       {:else}
-        {#if isLoggedIn || isWhitepaper || isSale}
+        {#if $authSignedInStore || isWhitepaper || isSale}
           <div class="relative flex flex-col w-full min-h-screen">
             <header class="fixed top-0 left-0 right-0 z-30 flex items-center justify-between h-16 px-4 text-white bg-gray-900 shadow-md">
               <a href="/" class="flex items-center">
