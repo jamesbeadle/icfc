@@ -111,73 +111,75 @@
         }
     });
 </script>
-  
-<Modal {showModal} onClose={handleClose}>
-    <div class="w-full max-w-2xl mx-auto">
-        <div class="p-8 space-y-6">
-            <div class="flex items-center justify-between pb-4 border-b border-gray-700">
-                <h3 class="text-xl text-white cta-text">Donate Tokens</h3>
-                <button 
-                    onclick={onClose}
-                    class="transition-colors duration-300 hover:text-white/40"
-                >
-                    <CloseIcon className="w-8 h-8" fill="white" />
-                </button>
-            </div>
 
-            <div class="p-8 rounded-lg bg-white/5">
-                <div class="flex flex-col px-2 space-y-6">
-                    <div class="flex items-center justify-between gap-8">
-                        <span class="text-gray-300">Your Balance:</span>
-                        <span class="text-white cta-text">{Number(userBalance).toFixed(4)} ckBTC</span>
-                    </div>
-                    <div class="flex items-center justify-between gap-8 pt-4 border-t border-gray-700">
-                        <span class="text-gray-300">Maximum Donation Allowed:</span>
-                        <span class="text-white cta-text">{Number(maxDonationAmount).toFixed(4)} ckBTC</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="space-y-2">
-                <label for="donation" class="block text-sm text-gray-300">
-                    Amount to Donate
-                </label>
-                <input
-                    id="donation"
-                    type="number"
-                    bind:value={donationAmount}
-                    class="w-full px-4 py-3 text-white border border-gray-700 rounded-lg bg-white/5 focus:outline-none focus:border-BrandBlue"
-                    max={Number(maxDonationAmount)}
-                    placeholder="Enter donation amount"
-                />
-            </div>
-
-            <div class="flex gap-4 pt-4">
-                <button
-                    onclick={handleClose}
-                    class="flex-1 px-4 py-3 text-white transition-colors duration-200 border border-gray-700 rounded-lg hover:bg-white/5"
-                >
-                    Cancel
-                </button>
-                <button
-                    onclick={showConfirmation}
-                    class="flex-1 px-4 py-3 text-white transition-colors duration-200 rounded-lg bg-BrandBlue hover:bg-BrandBlue/90"
-                >
-                    Donate
-                </button>
-            </div>
-
-            {#if showConfirm}
-                <div class="flex items-center">
-                    <button
-                        class="w-full px-4 py-3 text-white transition-colors duration-200 rounded-lg bg-BrandBlue hover:bg-BrandBlue/90"
-                        onclick={handleSubmit}
+{#if showModal}
+    <Modal onClose={handleClose}>
+        <div class="w-full max-w-2xl mx-auto">
+            <div class="p-8 space-y-6">
+                <div class="flex items-center justify-between pb-4 border-b border-gray-700">
+                    <h3 class="text-xl text-white cta-text">Donate Tokens</h3>
+                    <button 
+                        onclick={onClose}
+                        class="p-2 transition-colors duration-300 rounded-lg hover:bg-white/10"
                     >
-                        Confirm Donation
+                        <CloseIcon className="w-8 h-8" fill="white" />
                     </button>
                 </div>
-            {/if}
+
+                <div class="p-8 rounded-lg bg-white/5">
+                    <div class="flex flex-col px-2 space-y-6">
+                        <div class="flex items-center justify-between gap-8">
+                            <span class="text-gray-300">Your Balance:</span>
+                            <span class="text-white cta-text">{Number(userBalance).toFixed(4)} ckBTC</span>
+                        </div>
+                        <div class="flex items-center justify-between gap-8 pt-4 border-t border-gray-700">
+                            <span class="text-gray-300">Maximum Donation Allowed:</span>
+                            <span class="text-white cta-text">{Number(maxDonationAmount).toFixed(4)} ckBTC</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <label for="donation" class="block text-sm text-gray-300">
+                        Amount to Donate
+                    </label>
+                    <input
+                        id="donation"
+                        type="number"
+                        bind:value={donationAmount}
+                        class="w-full px-4 py-3 text-white border border-gray-700 rounded-lg bg-white/5 focus:outline-none focus:border-BrandBlue"
+                        max={Number(maxDonationAmount)}
+                        placeholder="Enter donation amount"
+                    />
+                </div>
+
+                <div class="flex gap-4 pt-4">
+                    <button
+                        onclick={handleClose}
+                        class="flex-1 px-4 py-3 text-white transition-colors duration-200 border border-gray-700 rounded-lg hover:bg-white/5"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        onclick={showConfirmation}
+                        class="flex-1 px-4 py-3 text-white transition-colors duration-200 rounded-lg bg-BrandBlue hover:bg-BrandBlue/90"
+                    >
+                        Donate
+                    </button>
+                </div>
+
+                {#if showConfirm}
+                    <div class="flex items-center">
+                        <button
+                            class="w-full px-4 py-3 text-white transition-colors duration-200 rounded-lg bg-BrandBlue hover:bg-BrandBlue/90"
+                            onclick={handleSubmit}
+                        >
+                            Confirm Donation
+                        </button>
+                    </div>
+                {/if}
+            </div>
         </div>
-    </div>
-</Modal>
+    </Modal>
+{/if}
   

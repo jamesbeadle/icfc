@@ -1,98 +1,68 @@
 <script lang="ts">
-  import { onDestroy } from "svelte";
-  import { fade, scale } from "svelte/transition";
-
-  const { showModal, onClose, children } = $props<{
-    showModal: boolean;
+  import Portal from 'svelte-portal';
+	import type { Snippet } from 'svelte';
+	import { quintOut } from 'svelte/easing';
+	import { fade, scale } from 'svelte/transition';
+  import { isBusy } from '$lib/stores/busy-store';
+  import { handleKeyPress } from '$lib/utils/keyboard.utils';
+  import { onMount, onDestroy } from 'svelte';
+  
+  interface Props {
     onClose: () => void;
-    children: any;
-  }>();
+		children: Snippet;
+	}
 
-  const isVisible = $derived(showModal);
-  let modalContainer = $state<HTMLElement | null>(null);
-  let isDragging = false;
+  let { children, onClose}: Props = $props();
 
-  const handleKeydown = (e: KeyboardEvent) => {
-    if (e.key === 'Escape' && showModal) {
-      onClose();
-    }
-  };
+  let visible = $state(true);
 
-  const handleBackdropClick = (e: MouseEvent) => {
-    if (modalContainer && !modalContainer.contains(e.target as Node) && !isDragging) {
-      onClose();
-    }
-  };
-
-  const handleMouseDown = () => {
-    isDragging = false;
-  };
-
-  const handleMouseMove = () => {
-    isDragging = true;
-  };
-
-  const handleMouseUp = () => {
-    setTimeout(() => {
-      isDragging = false;
-    }, 0);
-  };
-
-  const trapFocus = () => {
-    if (modalContainer && showModal) {
-      const focusableElements = modalContainer.querySelectorAll<HTMLElement>(
-        'a, button, input, textarea, select, details, [tabindex]:not([tabindex="-1"])'
-      );
-
-      if (focusableElements.length > 0) {
-        focusableElements[0].focus();
-      } else {
-        modalContainer.focus();
-      }
-    }
-  };
-
-  if (typeof window !== "undefined") {
-    window.addEventListener("keydown", handleKeydown);
+  const close = () => {
+    if ($isBusy) return;
+    visible = false;
+    onClose(); 
   }
 
-  onDestroy(() => {
-    if (typeof window !== "undefined") {
-      window.removeEventListener("keydown", handleKeydown);
-      document.body.style.overflow = 'auto';
-    }
+  const onCloseHandler = ($event: MouseEvent | TouchEvent) => {
+    $event.stopPropagation();
+    close();
+  };
+
+  onMount(() => {
+    document.body.style.overflow = 'hidden';
   });
 
-  $effect(() => {
-    if (showModal) {
-      trapFocus(); 
-    }
+  onDestroy(() => {
+    document.body.style.overflow = '';
   });
+
 </script>
 
-{#if isVisible}
-  <div
-    class="fixed inset-0 z-40 flex items-center justify-center overflow-y-auto bg-black/50 backdrop-blur-sm perspective"
-    onclick={handleBackdropClick}
-    onmousedown={handleMouseDown}
-    onmousemove={handleMouseMove}
-    onmouseup={handleMouseUp}
-    in:fade={{ duration: 200 }}
-    out:fade={{ duration: 200 }}
-    aria-hidden={isVisible ? "false" : "true"}
-  >
+{#if visible}
+  <Portal>
     <div
-      bind:this={modalContainer}
-      class="bg-ModalBackground border border-ModalBorder rounded-lg mx-auto relative overflow-y-auto max-h-[90vh] px-6 py-4 drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)] transform-style-preserve-3d"
+      class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/50 backdrop-blur-sm perspective"
+      out:fade
       role="dialog"
-      aria-modal="true"
-      tabindex="-1"
-      in:scale={{ duration: 200 }}
-      out:scale={{ duration: 200 }}
+      aria-labelledby="modalTitle"
+      aria-describedby="modalContent"
     >
-      {@render children()}
+      <div
+        class="absolute inset-0 bg-black bg-opacity-50 cursor-pointer"
+        onclick={onCloseHandler}
+        onkeypress={($event) => handleKeyPress({ $event, callback: close })}
+        role="button"
+        tabindex="-1"
+      ></div>
+      <div 
+        transition:scale={{ delay: 25, duration: 150, easing: quintOut }} 
+        class="relative w-auto p-6 shadow-xl"
+      >
+        <div class="bg-ModalBackground border border-ModalBorder rounded-lg max-w-auto w-auto mx-auto relative overflow-y-auto max-h-[90vh] px-6 py-4 drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)] transform-style-preserve-3d">
+          {@render children()}
+        </div>
+      </div>
     </div>
-  </div>
+  </Portal>
 {/if}
 
 <style>

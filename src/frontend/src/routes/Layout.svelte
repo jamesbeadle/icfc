@@ -18,6 +18,7 @@
   import LandingPage from "$lib/components/homepage/landingPage/landing-page.svelte";
   import IcfcLinkAccountsModal from "$lib/components/shared/icfc-link-accounts-modal.svelte";
   import Sidebar from "$lib/components/shared/sidebar.svelte";
+  import PortalHost from 'svelte-portal'
     
   let worker: { syncAuthIdle: (auth: AuthStoreData) => void } | undefined;
   let isLoading = true;
@@ -37,7 +38,7 @@
   async function syncUser(){
     let principalId = $authStore.identity?.getPrincipal().toString();
     if(principalId){
-      user = await userStore.getProfile(principalId);
+      user = await userStore.getProfile();
     }
   }
 
@@ -132,4 +133,5 @@
       <IcfcLinkAccountsModal isOpen={showLinkAccounts} on:close={() => showLinkAccounts = false} />
     </div>
     <Toasts />
+    <PortalHost />
 {/await}
