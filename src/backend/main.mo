@@ -11,6 +11,7 @@ import Int "mo:base/Int";
 import Blob "mo:base/Blob";
 import Nat8 "mo:base/Nat8";
 import Timer "mo:base/Timer";
+import Iter "mo:base/Iter";
 import T "icfc_types";
 import Environment "environment";
 import DTOs "./dtos/dtos";
@@ -20,6 +21,8 @@ import PodcastManager "managers/podcast_manager";
 import ProfileQueries "queries/profile_queries";
 import SNSManager "managers/sns_manager";
 import Utils "utils/utils";
+import Management "utils/management";
+import ProfileCanister "canister_definations/profile-canister";
 
 actor class Self() = this {
 
@@ -157,6 +160,7 @@ actor class Self() = this {
   };
 
   private func postUpgradeCallback() : async () {
+    await updateProfileCanisterWasms();
     await profileManager.createMembershipExpiredTimers();
   };
 
@@ -193,6 +197,19 @@ actor class Self() = this {
     podcastChannelManager.setStableUniqueCanisterIds(stable_unique_podcast_channel_canister_ids);
     podcastChannelManager.setStableTotalPodcastChannels(stable_total_podcast_channels);
     podcastChannelManager.setStableNextPodcastChannelId(stable_next_podcast_channel_id);
+  };
+
+
+
+  private func updateProfileCanisterWasms() : async () {
+    let profileCanisterIds = profileManager.getStableUniqueCanisterIds();
+    let IC : Management.Management = actor (Environment.Default);
+    for (canisterId in Iter.fromArray(profileCanisterIds)) {
+      await IC.stop_canister({ canister_id = Principal.fromText(canisterId) });
+      let oldCanister = actor (canisterId) : actor {};
+      let _ = await (system ProfileCanister._ProfileCanister)(#upgrade oldCanister)();
+      await IC.start_canister({ canister_id = Principal.fromText(canisterId) });
+    };
   };
 
   //Test functions

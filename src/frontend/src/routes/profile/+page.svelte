@@ -24,21 +24,7 @@
                 unsubscribe = userStore.subscribe(value => {
                     profile = value;
                     if (profile === null || profile === undefined) {
-                        //showCreateUserModal = true;
-                        profile = {
-                            principalId: "2vxsx-fae",
-                            username: "test",
-                            displayName: "Test User",
-                            profilePicture: [],
-                            profilePictureExtension: "",
-                            createdOn: BigInt(0),
-                            termsAgreed: true,
-                            membershipType: { NotClaimed: null },
-                            membershipClaims: [],
-                            membershipExpiryTime: BigInt(0),
-                            appPrincipalIds: [],
-                            podcastIds: []
-                        };
+                        showCreateUserModal = true;
                     }
                 });
             } catch (error) {
@@ -74,12 +60,16 @@
     </div>
 </Layout>
 
-<CreateUserModal 
-    visible={showCreateUserModal}
-    onSignUpComplete={() => showCreateUserModal = false}
-/>
+{#if showCreateUserModal}
+    <CreateUserModal 
+        visible={showCreateUserModal}
+        onSignUpComplete={() => showCreateUserModal = false}
+    />
+{/if}
 
-<LinkICFCAppsModal
-    isOpen={showLinkICFCAppsModal}
-    onClose={closeLinkICFCAppsModal}
-/>
+{#if showLinkICFCAppsModal}
+    <LinkICFCAppsModal
+        isOpen={showLinkICFCAppsModal}
+        onClose={closeLinkICFCAppsModal}
+    />
+{/if}
