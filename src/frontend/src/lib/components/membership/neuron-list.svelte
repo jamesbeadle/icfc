@@ -3,24 +3,29 @@
     import { formatSecondsUnixDateToReadable, formatUnixNanoToDuration } from "$lib/utils/helpers";
     import { membershipStore } from "$lib/stores/membership-store";
     import { busy } from "$lib/stores/busy-store";
-    import type { Neuron, MembershipType, UserNeuronsDTO } from "../../../../../declarations/backend/backend.did";
+    import type { MembershipType, Neuron, UserNeuronsDTO } from "../../../../../declarations/backend/backend.did";
 
     import NeuronCard from './neuron-card.svelte';
     import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
-    import ClaimMembershipButton from './claim-membership-button.svelte';
     import type { NeuronSummary } from "$lib/types/neuron-types";
     import { Principal } from "@dfinity/principal";
     import { toasts } from "$lib/stores/toasts-store";
+    import ClaimMembershipModal from "./claim-membership-modal.svelte";
+    import HowToClaimModal from "./how-to-claim-modal.svelte";
 
     let isLoading: boolean = true;
     let neurons: Neuron[] = [];
+    let showHowToClaimModal = false;
+    let showClaimMembershipModal = false;
     
-    let userMembershipEligibility: MembershipType = { NotEligible: null };
     let userNeurons: UserNeuronsDTO | undefined;
+    let userMembershipEligibility: MembershipType = { NotEligible: null };
+    let totalStakedICFC: number = 0;
 
     onMount(async () => {
         try {
             await getNeurons();
+            totalStakedICFC = calculateTotalStakedICFC(neurons);
         } catch (error) {
             console.error("Error fetching funding data:", error);
         } finally {
@@ -104,15 +109,40 @@
         return Number(b.cached_neuron_stake_e8s) - Number(a.cached_neuron_stake_e8s);
     }
 
+    function calculateTotalStakedICFC(neurons: Neuron[]): number {
+        if (!neurons || neurons.length === 0) return 0;
+        const totalE8s = neurons.reduce((sum, neuron) => sum + Number(neuron.cached_neuron_stake_e8s), 0);
+        return totalE8s / 100000000;
+    }
+
+
+
 </script>
 
 {#if isLoading}
     <LocalSpinner />
 {:else}
     <div class="flex flex-col space-y-6">
-        <div class="flex flex-col gap-4 mini:flex-row mini:justify-between mini:gap-0 mini:px-4">
+        <div class="flex flex-col gap-4 mini:flex-row mini:justify-between mini:gap-0">
             <h1 class="text-2xl lg:text-3xl cta-text">Your Neurons</h1>
-            <ClaimMembershipButton {userMembershipEligibility} />
+
+            <div class="flex flex-col items-center w-full gap-2 mini:w-auto">
+                {#if neurons.length === 0}
+                    <button 
+                        class="w-full brand-button"
+                        on:click={() => showHowToClaimModal = true}
+                    >
+                        How To Claim Membership
+                    </button>
+                {:else}
+                    <button 
+                        class="w-full brand-button"
+                        on:click={() => showClaimMembershipModal = true}
+                    >
+                        Claim Membership
+                    </button>
+                {/if}
+            </div>
         </div>
         {#if neurons.length === 0}
             <div class="flex flex-col items-center justify-center w-full p-8 text-center rounded-lg bg-BrandBlueComp/10">
@@ -129,4 +159,16 @@
             </div>
         {/if}
     </div>
+{/if}
+
+{#if showClaimMembershipModal}
+    <ClaimMembershipModal 
+        {userMembershipEligibility} 
+        totalStakedICFC={Math.round(totalStakedICFC)} 
+        onClose={() => showClaimMembershipModal = false} 
+    />
+{/if}
+
+{#if showHowToClaimModal}
+    <HowToClaimModal onClose={() => showHowToClaimModal = false }  />
 {/if}

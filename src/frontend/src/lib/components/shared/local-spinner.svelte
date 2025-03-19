@@ -7,14 +7,16 @@
     position: relative;
     width: 100%;
     height: 50px;
+    margin-top: 25px;
+    margin-bottom: 25px;
   }
 
   .widget-spinner {
     border: 5px solid rgba(255, 255, 255, 0.3);
     border-top: 5px solid white;
     border-radius: 50%;
-    width: 25px;
-    height: 25px;
+    width: 50px;
+    height: 50px;
     position: absolute;
     top: 50%;
     left: 50%;

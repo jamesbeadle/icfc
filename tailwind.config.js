@@ -72,6 +72,7 @@ export default {
         BrandSuccess: "#66E094",
         BrandError: "#FF403C",
         BrandInfo: "#3CA1FF",
+        BrandPurple: "#734550",
         FootballGodBackground: "#7F56F1",
         OpenFPLBackground: "#2CE3A6",
         TransferKingsBackground: "#2D64E3",

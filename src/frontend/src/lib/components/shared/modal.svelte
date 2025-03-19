@@ -1,19 +1,18 @@
 <script lang="ts">
   import Portal from 'svelte-portal';
-	import type { Snippet } from 'svelte';
-	import { quintOut } from 'svelte/easing';
-	import { fade, scale } from 'svelte/transition';
+  import type { Snippet } from 'svelte';
+  import { quintOut } from 'svelte/easing';
+  import { fade, scale } from 'svelte/transition';
   import { isBusy } from '$lib/stores/busy-store';
   import { handleKeyPress } from '$lib/utils/keyboard.utils';
   import { onMount, onDestroy } from 'svelte';
   
   interface Props {
     onClose: () => void;
-		children: Snippet;
-	}
+    children: Snippet;
+  }
 
-  let { children, onClose}: Props = $props();
-
+  let { children, onClose }: Props = $props();
   let visible = $state(true);
 
   const close = () => {
@@ -34,7 +33,6 @@
   onDestroy(() => {
     document.body.style.overflow = '';
   });
-
 </script>
 
 {#if visible}
@@ -55,10 +53,14 @@
       ></div>
       <div 
         transition:scale={{ delay: 25, duration: 150, easing: quintOut }} 
-        class="relative w-auto p-6 shadow-xl"
+        class="relative w-[90%] md:w-[60%] mx-auto p-6 shadow-xl"
       >
-        <div class="bg-ModalBackground border border-ModalBorder rounded-lg max-w-auto w-auto mx-auto relative overflow-y-auto max-h-[90vh] px-6 py-4 drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)] transform-style-preserve-3d">
-          {@render children()}
+        <div 
+          class="bg-ModalBackground border border-ModalBorder rounded-lg min-w-[600px] relative overflow-y-auto max-h-[90vh] px-8 py-6 drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)] transform-style-preserve-3d"
+        >
+          <div class="min-h-[300px] flex flex-col justify-center">
+            {@render children()}
+          </div>
         </div>
       </div>
     </div>

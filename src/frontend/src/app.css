@@ -17,11 +17,19 @@
 }
 
 .brand-button {
-  @apply p-3 text-lg text-center text-white rounded-lg mini:w-auto cta-text bg-BrandBlueComp hover:bg-BrandInfo;
+  @apply p-3 text-lg text-center text-white rounded-lg cta-text bg-BrandBlueComp hover:bg-BrandInfo;
+}
+
+.brand-button-disabled {
+  @apply p-3 text-lg text-center text-black rounded-lg cta-text bg-BrandGrayShade4;
 }
 
 .brand-info-button {
-  @apply text-base font-bold text-white transition-all duration-300 rounded-lg bg-BrandBlue hover:bg-opacity-90;
+  @apply p-3 text-base text-center text-white rounded-lg cta-text bg-BrandInfo hover:bg-BrandBlue;
+}
+
+.brand-button-purple {
+  @apply p-3 text-base text-center text-white rounded-lg cta-text bg-BrandPurple hover:bg-BrandBlueComp;
 }
 
 .bg-frontend-update {
@@ -129,4 +137,8 @@
 
 .brand-title {
   @apply text-base xxs:text-base mini:text-base md:text-lg 2xl:text-xl;
+}
+
+.brand-sub-title {
+  @apply text-base text-BrandGrayShade4;
 }
