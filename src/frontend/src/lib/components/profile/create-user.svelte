@@ -4,21 +4,9 @@
     import { goto } from "$app/navigation";
     import type { CreateProfile } from "../../../../../declarations/backend/backend.did";
     
-    import Modal from "$lib/components/shared/modal.svelte";
     import LocalSpinner from "../shared/local-spinner.svelte";
     import CloseIcon from "$lib/icons/CloseIcon.svelte";
-    
-    export let visible: boolean;
-    export let onSignUpComplete: () => void = () => {};
-    export let onLogout: () => void = () => {};
-    
-    function handleAttemptClose() {
-      toasts.addToast({
-        type: "error",
-        message: "You must set a valid username to continue",
-        duration: 3000,
-      });
-    }
+    import Layout from "../../../routes/Layout.svelte";
   
     let isLoading = false;
     let username = "";
@@ -70,8 +58,6 @@
           username: username,
         };
         await userStore.createProfile(dto);
-        onSignUpComplete();
-        closeModal();
         goto("/profile");
       } catch (error) {
         console.error("Error creating profile:", error);
@@ -79,15 +65,11 @@
         isLoading = false;
       }
     }
-  
-    function closeModal() {
-      visible = false;
-    }
   </script>
 
-{#if visible}
-    <Modal onClose={handleAttemptClose}>
-        {#if isLoading}
+
+<Layout>
+  {#if isLoading}
             <LocalSpinner />
             <p class="pb-4 mb-4 text-center">Creating new profile...</p>
         {:else}
@@ -95,12 +77,6 @@
                 <div class="p-2 border-b border-white/10">
                     <div class="flex items-center justify-between">
                         <h3 class="text-2xl text-white cta-text">Create Profile</h3>
-                        <button 
-                            on:click={handleAttemptClose}
-                            class="p-2 transition-colors duration-300 rounded-lg hover:bg-white/10"
-                        >
-                            <CloseIcon className="w-6 h-6" fill="white" />
-                        </button>
                     </div>
                 </div>
                 <div class="my-4">
@@ -152,5 +128,4 @@
                 </div>
             </div>
         {/if}
-    </Modal>
-{/if}
+</Layout>

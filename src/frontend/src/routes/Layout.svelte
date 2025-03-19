@@ -18,52 +18,53 @@
   import IcfcLinkAccountsModal from "$lib/components/shared/icfc-link-accounts-modal.svelte";
   import Sidebar from "$lib/components/shared/sidebar.svelte";
   import PortalHost from 'svelte-portal'
-    import { authSignedInStore } from "$lib/derived/auth.derived";
+  import { authSignedInStore } from "$lib/derived/auth.derived";
+  import { toasts } from "$lib/stores/toasts-store";
+  import CreateUser from "$lib/components/profile/create-user.svelte";
+    import { writable } from "svelte/store";
     
   let worker: { syncAuthIdle: (auth: AuthStoreData) => void } | undefined;
-  let isLoading = true;
+  let isLoading = writable(true);
   let showLinkAccounts = false;
-  let user: ProfileDTO | undefined = undefined;
   let isMenuOpen = false;
-
+  let hasProfile = false;
 
   const init = async () => {
     await Promise.all([syncAuthStore()]);
     worker = await initAuthWorker();
-    await Promise.all([syncUser()]);
   };
 
-  async function syncUser(){
-    let principalId = $authStore.identity?.getPrincipal().toString();
-    if(principalId){
-      user = await userStore.getProfile();
-    }
-  }
+  const syncAuthStore = async () => {
+    if (!browser) { return; }
 
-  async function syncAuthStore() {
-    if (!browser) return;
     try {
       await authStore.sync();
-    } catch (err: unknown) {
-      console.error(err);
-    }
-  }
 
-  
-  onMount(async () => {
-    try{
-      await appStore.checkServerVersion();
-    } catch {
-      console.error("error syncing version");
-    } finally {
-      isLoading = false;
+      let profile = await userStore.getProfile();
+      hasProfile = profile == undefined;
+      $isLoading = false;
+      
+    } catch (err: unknown) {
+      toasts.addToast( { message: "Unexpected issue while syncing the status of your authentication.",
+      type: "error" });
     }
+  };
+
+  onMount(async () => {
+    worker = await initAuthWorker();
   });
 
   $: worker, $authStore, (() => worker?.syncAuthIdle($authStore))();
 
   $: (() => {
-    if (!browser || $authStore === undefined) return;
+    if (!browser) {
+      return;
+    }
+
+    if ($authStore === undefined) {
+      return;
+    }
+
     const spinner = document.querySelector("body > #app-spinner");
     spinner?.remove();
   })();
@@ -85,35 +86,35 @@
   </div>
 {:then _}
     <div class="flex w-full h-screen">
-      {#if isLoading}
+      {#if $isLoading}
         <FullScreenSpinner />
       {:else}
-        {#if $authSignedInStore || isWhitepaper || isSale}
-          <div class="relative flex flex-col w-full min-h-screen">
-            <header class="fixed top-0 left-0 right-0 z-30 flex items-center justify-between h-16 px-4 text-white bg-gray-900 shadow-md">
-              <a href="/" class="flex items-center">
-                <LogoIcon className='w-8' />
-              </a>
+        {#if hasProfile || isWhitepaper || isSale}
+            <div class="relative flex flex-col w-full min-h-screen">
+              <header class="fixed top-0 left-0 right-0 z-30 flex items-center justify-between h-16 px-4 text-white bg-gray-900 shadow-md">
+                <a href="/" class="flex items-center">
+                  <LogoIcon className='w-8' />
+                </a>
 
-              <div class="flex items-center gap-4">
-                <button
-                  on:click={toggleMenu}
-                  class="fixed z-50 p-2 text-white transition-colors bg-blue-600 rounded-md top-4 right-4 hover:bg-blue-700"
-                  aria-label="Toggle menu"
-                >
-                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                  </svg>
-                </button>
-              </div>
-            </header>
+                <div class="flex items-center gap-4">
+                  <button
+                    on:click={toggleMenu}
+                    class="fixed z-50 p-2 text-white transition-colors bg-blue-600 rounded-md top-4 right-4 hover:bg-blue-700"
+                    aria-label="Toggle menu"
+                  >
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                  </button>
+                </div>
+              </header>
 
-            <main class="flex-1 w-full mt-16 overflow-x-hidden">
-              <slot></slot>
-            </main>
-          </div>
+              <main class="flex-1 w-full mt-16 overflow-x-hidden">
+                <slot></slot>
+              </main>
+            </div>
 
-          <Sidebar {isMenuOpen} {toggleMenu} />
+            <Sidebar {isMenuOpen} {toggleMenu} />
             {#if isMenuOpen}
               <button 
                 class="fixed inset-0 z-30 pointer-events-none bg-black/40 sm:bg-black/20 sm:pointer-events-auto"
@@ -122,11 +123,15 @@
                 aria-label="Close menu overlay"
               ></button>
             {/if}
+            <IcfcLinkAccountsModal isOpen={showLinkAccounts} on:close={() => showLinkAccounts = false} />  
         {:else}
-          <LandingPage />
+          {#if $authSignedInStore}
+            <CreateUser />
+          {:else}  
+            <LandingPage />
+          {/if}
         {/if}    
       {/if}
-      <IcfcLinkAccountsModal isOpen={showLinkAccounts} on:close={() => showLinkAccounts = false} />
     </div>
     <Toasts />
     <PortalHost />

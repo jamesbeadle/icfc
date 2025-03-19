@@ -66,6 +66,7 @@
             if (success) {
                 await loadProfile();
                 toasts.addToast({ type: "success", message: "Successfully claimed membership." });
+                submittingClaim = false;
             }
         } catch (error) {
             console.error("Error claiming membership:", error);
