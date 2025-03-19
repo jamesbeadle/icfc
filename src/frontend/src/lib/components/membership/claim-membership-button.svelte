@@ -8,21 +8,17 @@
     export let userMembershipEligibility: MembershipType;
 
     let canClaimMembership = false;
-    let profile: ProfileDTO;
-    let unsubscribe: () => void;
+    let profile: ProfileDTO | undefined = undefined;
 
-    onMount(() => {
-        unsubscribe = userStore.subscribe((state) => {
-            if(!state){ return }
-            profile = state.profile;
-            console.log("profile")
+    onMount(async () => {
+        try{
+            profile = await userStore.getProfile();
             console.log(profile)
-            canClaimMembership = 'NotClaimed' in (profile?.membershipType ?? {}) && !('NotEligible' in userMembershipEligibility);
-        });
+        } catch {
 
-        return () => {
-            if (unsubscribe) unsubscribe();
-        };
+        } finally {
+
+        }
     });
 
     async function handleClaimMembership() {
@@ -60,6 +56,8 @@
                     Eligible for Seasonal Membership
                 {:else if 'Lifetime' in userMembershipEligibility}
                     Eligible for Lifetime Membership
+                {:else if 'Founding' in userMembershipEligibility}
+                    Eligible for Founding Membership
                 {/if}
             </p>
         {:else}

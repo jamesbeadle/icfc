@@ -462,10 +462,7 @@ actor class _ProfileCanister() {
         return (totalProfiles >= MAX_PROFILES_PER_CANISTER);
     };
 
-    public shared ({ caller }) func createMembershipExpiredTimers() : async () {
-        assert not Principal.isAnonymous(caller);
-        let backendPrincipalId = Principal.toText(caller);
-        assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
+    private func createMembershipExpiredTimers() : async () { //TODO
 
         for (index in Iter.range(0, 11)) {
             switch (index) {
@@ -1068,5 +1065,12 @@ actor class _ProfileCanister() {
                 return 0;
             };
         };
+    };
+
+
+    system func preupgrade() {
+    };
+
+    system func postupgrade() {
     };
 };

@@ -372,6 +372,9 @@ module Utils {
             case (#Lifetime) {
                 now + (100 * 365 * 24 * 60 * 60 * 1_000_000_000);
             };
+            case (#Founding) {
+                now + (1000 * 365 * 24 * 60 * 60 * 1_000_000_000);
+            };
             case (#NotClaimed) { now };
             case (#Expired) { now };
             case (#NotEligible) { now };
@@ -384,9 +387,11 @@ module Utils {
     };
 
     public func getMembershipType(neurons : [SNSGovernance.Neuron]) : ?T.MembershipType {
-        let oneK_ICFC_e8s : Nat64 = 1_000 * 100_000_000;
-        let tenK_ICFC_e8s : Nat64 = 10_000 * 100_000_000;
-        let hundredK_ICFC_e8s : Nat64 = 100_000 * 100_000_000;
+        let icfc_e8s : Nat64 = 100_000_000;
+        let oneK_ICFC_e8s : Nat64 = 1_000 * icfc_e8s;
+        let tenK_ICFC_e8s : Nat64 = 10_000 * icfc_e8s;
+        let hundredK_ICFC_e8s : Nat64 = 100_000 * icfc_e8s;
+        let million_ICFC_e8s : Nat64 = 1_000_000 * icfc_e8s;
 
         var total_staked : Nat64 = 0;
 
@@ -412,7 +417,9 @@ module Utils {
             };
         };
 
-        if (total_staked + 5 >= hundredK_ICFC_e8s) {
+        if (total_staked + 5 >= million_ICFC_e8s) {
+            return ?#Founding;
+        } else if (total_staked + 5 >= hundredK_ICFC_e8s) {
             return ?#Lifetime;
         } else if (total_staked + 5 >= tenK_ICFC_e8s) {
             return ?#Seasonal;

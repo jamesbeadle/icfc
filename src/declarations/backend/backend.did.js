@@ -32,6 +32,7 @@ export const idlFactory = ({ IDL }) => {
   });
   const Result = IDL.Variant({ ok: IDL.Null, err: Error });
   const MembershipType = IDL.Variant({
+    Founding: IDL.Null,
     NotClaimed: IDL.Null,
     Seasonal: IDL.Null,
     Lifetime: IDL.Null,

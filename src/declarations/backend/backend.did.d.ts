@@ -64,6 +64,7 @@ export interface MembershipClaim {
   membershipType: MembershipType;
 }
 export type MembershipType =
+  | { Founding: null }
   | { NotClaimed: null }
   | { Seasonal: null }
   | { Lifetime: null }

@@ -416,20 +416,7 @@ module {
                     return #err(#NotFound);
                 };
             };
-        };
-
-        //Timer update functions
-
-        public func createMembershipExpiredTimers() : async () {
-            for (canisterId in Iter.fromList(uniqueProfileCanisterIds)) {
-
-                let profile_canister = actor (canisterId) : actor {
-                    createMembershipExpiredTimers : () -> async ();
-                };
-
-                await profile_canister.createMembershipExpiredTimers();
-            };
-        };
+        }; 
 
         // private functions
         private func callerAllowed(caller : Base.PrincipalId) : Bool {
@@ -513,6 +500,7 @@ module {
         private func hasValidMembership(profile : T.Profile) : Bool {
             let membership = profile.membershipType;
             switch (membership) {
+                case (#Founding) { return true };
                 case (#Lifetime) { return true };
                 case (#Seasonal) {
                     let currentTimestamp = Time.now();

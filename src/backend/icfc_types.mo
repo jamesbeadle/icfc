@@ -39,6 +39,7 @@ module ICFCTypes {
     #Monthly;
     #Seasonal;
     #Lifetime;
+    #Founding;
     #Expired;
     #NotClaimed;
     #NotEligible;

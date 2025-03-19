@@ -23,7 +23,7 @@
         <HeaderContentSection title='Monthly Membership' content="Available by staking 1,000 ICFC for the maximum duration." />
         <HeaderContentSection title='Seasonal (July - August) Membership' content="Requires staking 10,000 ICFC for the maximum duration." />
         <HeaderContentSection title='Lifetime Membership' content="Can be claimed by any Internet Identity linked to a neuron with 100,000 ICFC or more, staked for the maximum duration." />
-
+        <HeaderContentSection title='Founding Membership' content="Can be claimed by any Internet Identity linked to a neuron with 1,000,000 ICFC or more, staked for the maximum duration." />
 
         <p>         
             ICFC membership is dynamic, with numbers fluctuating based on the value and supply of ICFC tokens, ensuring a truly community-driven and market-responsive system.
