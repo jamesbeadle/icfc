@@ -168,7 +168,7 @@ actor class Self() = this {
   };
 
   private func postUpgradeCallback() : async () {
-    //await updateProfileCanisterWasms();
+    await updateProfileCanisterWasms();
   };
 
   private func backupProfileData() {

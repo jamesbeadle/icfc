@@ -396,7 +396,6 @@ module Utils {
         var total_staked : Nat64 = 0;
 
         for (neuron in neurons.vals()) {
-            total_staked += neuron.cached_neuron_stake_e8s;
             switch (neuron.dissolve_state) {
                 case (?dissolve_state) {
                     switch (dissolve_state) {

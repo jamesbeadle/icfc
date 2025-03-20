@@ -33,6 +33,7 @@
 
     async function loadProfile() {
         profile = await userStore.getProfile();
+        console.log(profile)
     }
 
     async function handleRefresh() {
