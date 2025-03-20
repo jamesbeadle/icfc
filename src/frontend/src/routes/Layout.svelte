@@ -5,10 +5,8 @@
   import { page } from "$app/state";
 
   import { userStore } from "$lib/stores/user-store";
-  import { appStore } from "$lib/stores/app-store";
   import { initAuthWorker } from "$lib/services/worker.auth.services";
   import { authStore, type AuthStoreData } from "$lib/stores/auth-store";
-  import type { ProfileDTO } from "../../../declarations/backend/backend.did";
   
   import "../app.css";
   import Toasts from "$lib/components/toasts/toasts.svelte";
@@ -21,28 +19,31 @@
   import { authSignedInStore } from "$lib/derived/auth.derived";
   import { toasts } from "$lib/stores/toasts-store";
   import CreateUser from "$lib/components/profile/create-user.svelte";
-    import { writable } from "svelte/store";
+  import { writable } from "svelte/store";
     
   let worker: { syncAuthIdle: (auth: AuthStoreData) => void } | undefined;
+
   let isLoading = writable(true);
   let showLinkAccounts = false;
   let isMenuOpen = false;
   let hasProfile = false;
 
   const init = async () => {
+    console.log("init call sync auth store")
     await Promise.all([syncAuthStore()]);
+    console.log("init call init auth worker")
     worker = await initAuthWorker();
   };
 
   const syncAuthStore = async () => {
+    console.log("sync auth store")
     if (!browser) { return; }
 
     try {
+      console.log("authstore sync")
       await authStore.sync();
+      console.log("authstore sync complete")
 
-      let profile = await userStore.getProfile();
-      hasProfile = profile == undefined;
-      $isLoading = false;
       
     } catch (err: unknown) {
       toasts.addToast( { message: "Unexpected issue while syncing the status of your authentication.",
@@ -51,7 +52,19 @@
   };
 
   onMount(async () => {
+    console.log('on mount')
     worker = await initAuthWorker();
+    console.log('init worker complete')
+
+    console.log("get profile")
+      let profile = await userStore.getProfile();
+      console.log("profile")
+      console.log(profile)
+      hasProfile = profile != undefined;
+      console.log("hasProfile")
+      console.log(hasProfile)
+      console.log("set is loading")
+      $isLoading = false;
   });
 
   $: worker, $authStore, (() => worker?.syncAuthIdle($authStore))();
@@ -126,7 +139,7 @@
             <IcfcLinkAccountsModal isOpen={showLinkAccounts} on:close={() => showLinkAccounts = false} />  
         {:else}
           {#if $authSignedInStore}
-            <CreateUser />
+              <CreateUser />
           {:else}  
             <LandingPage />
           {/if}
