@@ -17,6 +17,7 @@
 {#if isOpen}
 <Modal {onClose}>
     <div class="flex flex-col w-full h-full">
+        <h2 class="text-2xl text-white cta-text">Link ICFC App Principal IDs</h2>
         <div class="top-0 p-6 pb-2 border-b border-gray-700 z-60 bg-ModalBackground">
             <div class="flex items-center justify-between">
                 <h2 class="text-2xl text-white cta-text">Link {appName} Account</h2>

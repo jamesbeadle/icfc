@@ -115,6 +115,7 @@
 {#if showModal}
     <Modal onClose={handleClose}>
         <div class="w-full max-w-2xl mx-auto">
+            <h2 class="text-2xl text-white cta-text">Participate In Sale</h2>
             <div class="p-8 space-y-6">
                 <div class="flex items-center justify-between pb-4 border-b border-gray-700">
                     <h3 class="text-xl text-white cta-text">Donate Tokens</h3>

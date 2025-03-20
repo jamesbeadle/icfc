@@ -62,35 +62,39 @@
     {#if isLoading}
         <LocalSpinner />
     {:else}
-    <div class="p-4 mx-4">
+    <div class="flex flex-col space-y-6">
+
+      <h2 class="text-2xl text-white cta-text">Claim Membership</h2>
         <form on:submit|preventDefault={updateUsername}>
-        <div class="mt-4">
-            <input
-            type="text"
-            class="w-full px-4 py-2 text-black border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="New Username"
-            bind:value={newUsername}
-            />
-        </div>
-        <div class="flex flex-row items-center py-3 space-x-4">
-            <button
-            class="px-4 py-2 default-button fpl-cancel-btn"
-            type="button"
-            on:click={cancelModal}
-            >
-            Cancel
-            </button>
-            <button
-            class={`px-4 py-2 ${
-                isSubmitDisabled ? "bg-gray-500" : "bg-BrandPurple"
-            } default-button bg-BrandPurple`}
-            type="submit"
-            disabled={isSubmitDisabled}
-            >
-            Update
-            </button>
-        </div>
+          <div class="mt-4">
+              <input
+              type="text"
+              class="w-full px-4 py-2 text-black border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="New Username"
+              bind:value={newUsername}
+              />
+          </div>
+          <div class="flex flex-row items-center py-3 space-x-4">
+              <button
+              class="px-4 py-2 default-button fpl-cancel-btn"
+              type="button"
+              on:click={cancelModal}
+              >
+              Cancel
+              </button>
+              <button
+              class={`px-4 py-2 ${
+                  isSubmitDisabled ? "bg-gray-500" : "bg-BrandPurple"
+              } default-button bg-BrandPurple`}
+              type="submit"
+              disabled={isSubmitDisabled}
+              >
+              Update
+              </button>
+          </div>
         </form>
+    
+
     </div>
     {/if}
     </Modal>

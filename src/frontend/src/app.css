@@ -145,3 +145,11 @@
 .brand-sub-title {
   @apply text-base text-BrandGrayShade4;
 }
+
+.already-claimed-membership-badge {
+  @apply px-4 py-2 bg-BrandSuccess text-black text-center items-center rounded cta-text text-sm;
+}
+
+.auto-claimed-membership-badge {
+  @apply px-4 py-2 bg-BrandBlue text-white text-center items-center rounded cta-text text-sm;
+}

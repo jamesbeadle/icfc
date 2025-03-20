@@ -1,4 +1,5 @@
 import * as FlagIcons from "svelte-flag-icons";
+import type { MembershipType } from "../../../../declarations/backend/backend.did";
 
 export function uint8ArrayToBase64(bytes: Uint8Array): string {
   const binary = Array.from(bytes)
@@ -727,4 +728,12 @@ export function createDeferred<T>(): Deferred<T> {
     reject = rej;
   });
   return { promise, resolve: resolve!, reject: reject! };
+}
+
+export function getCurrentLevelIndex(membershipType: MembershipType): number {
+  if ("Founding" in membershipType) return 3;
+  if ("Lifetime" in membershipType) return 2;
+  if ("Seasonal" in membershipType) return 1;
+  if ("Monthly" in membershipType) return 0;
+  return -1;
 }

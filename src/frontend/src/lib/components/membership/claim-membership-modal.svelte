@@ -1,16 +1,17 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { userStore } from "$lib/stores/user-store";
-    import { membershipStore } from "$lib/stores/membership-store";
-    import type { ProfileDTO, MembershipType } from "../../../../../declarations/backend/backend.did";
+    import type { ProfileDTO } from "../../../../../declarations/backend/backend.did";
     import Modal from "../shared/modal.svelte";
-    import LogoIconWhite from "$lib/icons/LogoIconWhite.svelte";
     import LocalSpinner from "../shared/local-spinner.svelte";
+    import MembershipCard from "./membership-card.svelte";
+    import { getCurrentLevelIndex } from "$lib/utils/helpers";
+    import IcfcCoinIcon from "$lib/icons/ICFCCoinIcon.svelte";
+    import CopyIcon from "$lib/icons/CopyIcon.svelte";
     import { toasts } from "$lib/stores/toasts-store";
 
     export let onClose: () => void;
-    export let userMembershipEligibility: MembershipType;
-    export let totalStakedICFC: number = 0;
+    export let totalStakedICFC: number;
 
     let isLoading = true;
     let profile: ProfileDTO | undefined = undefined;
@@ -23,7 +24,7 @@
         { type: "Founding", tokensRequired: 1000000, key: "Founding" }
     ];
 
-    $: currentLevelIndex = profile ? getCurrentLevelIndex(profile.membershipType) : 0;
+    $: currentLevelIndex = profile ? getCurrentLevelIndex(profile.membershipType) : -1;
 
     onMount(async () => {
         await loadProfile();
@@ -34,41 +35,23 @@
         profile = await userStore.getProfile();
     }
 
-    function getCurrentLevelIndex(membershipType: MembershipType): number {
-        if ("Founding" in membershipType) return 3;
-        if ("Lifetime" in membershipType) return 2;
-        if ("Seasonal" in membershipType) return 1;
-        if ("Monthly" in membershipType) return 0;
-        return -1;
+    async function handleRefresh() {
+        isLoading = true;
+        await loadProfile();
+        isLoading = false;
     }
 
-    function getLevelStatus(levelIndex: number) {
-        const isClaimed = levelIndex <= currentLevelIndex;
-        const level = membershipLevels[levelIndex];
-        const hasEnoughTokens = totalStakedICFC >= level.tokensRequired;
-        const isEligible = levelIndex <= membershipLevels.findIndex(l => l.key in userMembershipEligibility);
-        
-        if (isClaimed) return "Already Claimed";
-        if (isEligible && hasEnoughTokens) return "Claim Membership";
-        if (currentLevelIndex >= 0 && isEligible) return "Upgrade";
-        return `Stake ${level.tokensRequired} ICFC`;
+    async function copyTextAndShowToast(text: string) {
+    try {
+        await navigator.clipboard.writeText(text);
+        toasts.addToast({
+        type: "success",
+        message: "Copied to clipboard.",
+        duration: 2000,
+        });
+    } catch (err) {
+        console.error("Failed to copy:", err);
     }
-
-    async function handleClaimMembership() {
-        try {
-            submittingClaim = true;
-            const success = await membershipStore.claimMembership();
-            if (success) {
-                await loadProfile();
-                toasts.addToast({ type: "success", message: "Successfully claimed membership." });
-                submittingClaim = false;
-            }
-        } catch (error) {
-            console.error("Error claiming membership:", error);
-            toasts.addToast({ type: "error", message: "Failed to claim membership." });
-        } finally {
-            submittingClaim = false;
-        }
     }
 </script>
 
@@ -76,35 +59,53 @@
     {#if isLoading}
         <LocalSpinner />
     {:else}
-        <div class="flex flex-col space-y-4">
-            <p>Total Max Staked ICFC: {totalStakedICFC.toLocaleString('en-US', { maximumFractionDigits: 0 })}</p>
-            
+        <div class="flex flex-col space-y-6">
+            <h2 class="text-2xl text-white cta-text">Claim Membership</h2>
+            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+                <div class="flex flex-row items-center gap-2">
+                    <IcfcCoinIcon className="w-5 h-5" />
+                    <p class="text-lg sm:text-xl font-semibold">
+                        Total Max Staked ICFC: {totalStakedICFC.toLocaleString('en-US', { maximumFractionDigits: 0 })}
+                    </p>
+                </div>
+                <button 
+                    on:click={handleRefresh}
+                    class="brand-button"
+                >
+                    Refresh
+                </button>
+            </div>
+            <div class="flex w-full">
+                <div class="flex flex-col gap-2">
+                    <h3 class="text-lg text-white font-semibold">Your Principal ID</h3>
+                    <p class="text-xs">Add this hotkey to any neurons staked for 2 years that you would like to claim membership for.</p>
+                    <div class="relative bg-gray-800 rounded-lg p-4">
+                        <button 
+                            on:click={() => { copyTextAndShowToast(profile?.principalId ?? "") }}
+                            class="absolute top-2 right-2 text-gray-400 hover:text-white"
+                        >
+                            <CopyIcon className="w-5 h-5" fill='#000000' />
+                        </button>
+                        <p class="text-gray-300 font-mono text-sm break-all px-4">
+                            {profile?.principalId ?? "Not available"}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
             {#if submittingClaim}
                 <LocalSpinner />
             {:else}
-                <div class="grid gap-6 base:grid-cols-2 lg:grid-cols-4">
+                <div class="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
                     {#each membershipLevels as level, index}
-                        {@const status = getLevelStatus(index)}
-                        {@const isClaimed = status === "Already Claimed"}
-                        {@const isEligible = index <= membershipLevels.findIndex(l => l.key in userMembershipEligibility)}
-                        <div class={`flex flex-col p-4 space-y-2 ${isEligible ? "bg-BrandBlue text-white" : "bg-BrandGrayShade4 text-black"}`}>
-                            <p class="w-full text-center text-xl">{level.type} Membership</p>
-                            <div class="p-4 w-full text-center justify-center flex items-center">
-                                <LogoIconWhite className="w-12" />
-                            </div>
-                            {#if isEligible && !isClaimed}
-                                <button on:click={handleClaimMembership} class="w-full brand-button" disabled={isClaimed}>
-                                    {status}
-                                </button>
-                            {:else if !isEligible}
-                                <a href="https://nns.ic0.app/" target="_blank" class="brand-button-purple">
-                                    <div class="flex flex-col text-center items-center justify-center">
-                                        <p>{(level.tokensRequired - totalStakedICFC) > 0 ? (level.tokensRequired - totalStakedICFC).toLocaleString('en-US', { maximumFractionDigits: 0 }) : 0} ICFC Remaining</p>                                    <p>Stake in NNS</p>
-                                    </div>
-                                </a>
-                            {:else}
-                                <p>{status}</p>
-                            {/if}
+                        <div class="w-full">
+                            <MembershipCard 
+                                membership={level} 
+                                levelIndex={index}
+                                {currentLevelIndex} 
+                                {totalStakedICFC}
+                                on:claim={() => submittingClaim = true}
+                            />
                         </div>
                     {/each}
                 </div>

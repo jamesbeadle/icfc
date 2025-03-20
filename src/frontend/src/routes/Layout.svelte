@@ -11,7 +11,7 @@
   import "../app.css";
   import Toasts from "$lib/components/toasts/toasts.svelte";
   import FullScreenSpinner from "$lib/components/shared/full-screen-spinner.svelte";
-  import LandingPage from "$lib/components/homepage/landingPage/landing-page.svelte";
+  import LandingPage from "$lib/components/landing/landing-page.svelte";
   import IcfcLinkAccountsModal from "$lib/components/shared/icfc-link-accounts-modal.svelte";
   import Sidebar from "$lib/components/shared/sidebar.svelte";
   import PortalHost from 'svelte-portal';

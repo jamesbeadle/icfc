@@ -38,6 +38,7 @@
 {#if showModal}
     <Modal onClose={onClose}>
         <div class="flex flex-col w-full h-full max-w-2xl mx-auto">
+            <h2 class="text-2xl text-white cta-text">How To Stake ICFC</h2>
             <div class="relative flex flex-col flex-1 w-full bg-ModalBackground rounded-xl">
                 <div class="p-6 border-b border-white/10">
                     <div class="flex items-center justify-between">

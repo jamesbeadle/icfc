@@ -53,10 +53,10 @@
       ></div>
       <div 
         transition:scale={{ delay: 25, duration: 150, easing: quintOut }} 
-        class="relative w-[90%] md:w-[60%] mx-auto p-6 shadow-xl"
+        class="relative w-[95%] sm:w-[90%] md:w-[85%] lg:w-[80%] max-w-[1400px] mx-auto p-4 sm:p-6"
       >
         <div 
-          class="bg-ModalBackground border border-ModalBorder rounded-lg min-w-[600px] relative overflow-y-auto max-h-[90vh] px-8 py-6 drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)] transform-style-preserve-3d"
+          class="bg-ModalBackground border border-ModalBorder rounded-lg relative overflow-y-auto max-h-[90vh] px-6 py-6 sm:px-8 sm:py-6 drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)] transform-style-preserve-3d"
         >
           <div class="min-h-[300px] flex flex-col justify-center">
             {@render children()}

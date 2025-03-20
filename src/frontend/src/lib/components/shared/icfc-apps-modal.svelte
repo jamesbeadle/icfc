@@ -102,34 +102,21 @@
 
 {#if isOpen}
   <Modal {onClose}>
-    <div class="flex flex-col w-full h-full">
-      <div class="top-0 p-6 pb-2 border-b border-gray-700 z-60 bg-ModalBackground">
-        <div class="flex items-center justify-between">
-          <h2 class="text-2xl text-white cta-text">ICFC Apps</h2>
-          <button 
-            on:click={onClose}
-            class="p-2 transition-colors duration-300 rounded-lg hover:bg-white/10"
-          >
-            <CloseIcon className="w-8 h-8" fill="white" />
+    <h2 class="text-2xl text-white cta-text">ICFC Apps</h2>
+    <div class="flex-1 overflow-y-auto">
+      <div class="p-6 pt-4">
+        <div class="flex flex-col gap-3 md:flex-row md:overflow-x-auto">
+          {#each apps as app}
+          <button on:click={() => handleCardClick(app)} class="cursor-pointer">
+            <AppCard 
+                {app}
+                isFlipped={false}
+                onFlip={() => {}}
+                isModal={true}
+                disableFlip={true}
+            />
           </button>
-        </div>
-      </div>
-
-      <div class="flex-1 overflow-y-auto">
-        <div class="p-6 pt-4">
-          <div class="flex flex-col gap-3 md:flex-row md:overflow-x-auto">
-            {#each apps as app}
-            <button on:click={() => handleCardClick(app)} class="cursor-pointer">
-              <AppCard 
-                  {app}
-                  isFlipped={false}
-                  onFlip={() => {}}
-                  isModal={true}
-                  disableFlip={true}
-              />
-            </button>
-            {/each}
-          </div>
+          {/each}
         </div>
       </div>
     </div>

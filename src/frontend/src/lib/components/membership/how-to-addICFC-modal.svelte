@@ -22,6 +22,7 @@
 
 {#if showModal}
     <Modal onClose={onClose}>
+        <h2 class="text-2xl text-white cta-text">How To Add ICFC</h2>
         <div class="flex flex-col w-full h-full max-w-2xl mx-auto">
             <div class="relative flex flex-col flex-1 w-full bg-ModalBackground rounded-xl">
                 <div class="p-6 border-b border-white/10">

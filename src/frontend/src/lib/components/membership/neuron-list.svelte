@@ -163,7 +163,6 @@
 
 {#if showClaimMembershipModal}
     <ClaimMembershipModal 
-        {userMembershipEligibility} 
         totalStakedICFC={Math.round(totalStakedICFC)} 
         onClose={() => showClaimMembershipModal = false} 
     />
