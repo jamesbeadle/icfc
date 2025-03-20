@@ -34,7 +34,6 @@
     function handlePrincipalSubmit(principalId: string) {
         if (selectedApp) {
             const subApp = getSubApp(selectedApp.name);
-            console.log(`Linking ${JSON.stringify(subApp)} with principal ID: ${principalId}`);
             //TODO Make Store and service for needed call
         }
         showPrincipalModal = false;

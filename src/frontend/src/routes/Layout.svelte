@@ -29,22 +29,15 @@
   let hasProfile = false;
 
   const init = async () => {
-    console.log("init call sync auth store")
     await Promise.all([syncAuthStore()]);
-    console.log("init call init auth worker")
     worker = await initAuthWorker();
   };
 
   const syncAuthStore = async () => {
-    console.log("sync auth store")
     if (!browser) { return; }
 
     try {
-      console.log("authstore sync")
       await authStore.sync();
-      console.log("authstore sync complete")
-
-      
     } catch (err: unknown) {
       toasts.addToast( { message: "Unexpected issue while syncing the status of your authentication.",
       type: "error" });
@@ -52,19 +45,10 @@
   };
 
   onMount(async () => {
-    console.log('on mount')
     worker = await initAuthWorker();
-    console.log('init worker complete')
-
-    console.log("get profile")
-      let profile = await userStore.getProfile();
-      console.log("profile")
-      console.log(profile)
-      hasProfile = profile != undefined;
-      console.log("hasProfile")
-      console.log(hasProfile)
-      console.log("set is loading")
-      $isLoading = false;
+    let profile = await userStore.getProfile();
+    hasProfile = profile != undefined;
+    $isLoading = false;
   });
 
   $: worker, $authStore, (() => worker?.syncAuthIdle($authStore))();

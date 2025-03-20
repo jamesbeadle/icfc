@@ -43,16 +43,11 @@
     }
 
     function getLevelStatus(levelIndex: number) {
-        console.log(`Get level status ${levelIndex}`)
         const isClaimed = levelIndex <= currentLevelIndex;
-        console.log(`isClaimed ${isClaimed}`)
         const level = membershipLevels[levelIndex];
-        console.log(`level ${level}`)
         const hasEnoughTokens = totalStakedICFC >= level.tokensRequired;
-        console.log(`hasEnoughTokens ${hasEnoughTokens}`)
         const isEligible = levelIndex <= membershipLevels.findIndex(l => l.key in userMembershipEligibility);
-        console.log(`isEligible ${isEligible}`)
-
+        
         if (isClaimed) return "Already Claimed";
         if (isEligible && hasEnoughTokens) return "Claim Membership";
         if (currentLevelIndex >= 0 && isEligible) return "Upgrade";
