@@ -43,6 +43,7 @@ type Self =
    getICFCMembership: (GetICFCMembership) -> (Result_3);
    getProfile: () -> (Result_2);
    getUserNeurons: () -> (Result_1);
+   isUsernameValid: (IsUsernameValid) -> (bool) query;
    removeSubApp: (SubApp) -> (Result);
    updateDisplayName: (UpdateDisplayName) -> (Result);
    updateProfilePicture: (UpdateProfilePicture) -> (Result);
@@ -87,9 +88,14 @@ type ProfileDTO =
                         };
    createdOn: int;
    displayName: text;
+   favouriteMensClubId: opt ClubId;
+   favouriteMensLeagueId: opt LeagueId;
+   favouriteWomensClubId: opt ClubId;
+   favouriteWomensLeagueId: opt LeagueId;
    membershipClaims: vec MembershipClaim;
    membershipExpiryTime: int;
    membershipType: MembershipType;
+   nationalityId: opt CountryId;
    podcastIds: vec PrincipalId;
    principalId: PrincipalId;
    profilePicture: opt blob;
@@ -141,6 +147,8 @@ type MembershipClaim =
    expiresOn: opt int;
    membershipType: MembershipType;
  };
+type LeagueId = nat16;
+type IsUsernameValid = record {username: text;};
 type ICFCMembershipDTO = 
  record {
    membershipClaims: vec MembershipClaim;
@@ -188,6 +196,8 @@ type CreateProfile =
    profilePictureExtension: opt text;
    username: text;
  };
+type CountryId = nat16;
+type ClubId = nat16;
 type AppStatusDTO = 
  record {
    onHold: bool;

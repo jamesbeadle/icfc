@@ -471,14 +471,16 @@ module {
 
         };
 
-        private func isUsernameTaken(username : Text, principalId : Base.PrincipalId) : Bool {
-            for (profileUsername in usernames.entries()) {
+            
+
+        public func isUsernameTaken(username : Text, principalId : Text) : Bool {
+            for (managerUsername in usernames.entries()) {
 
                 let lowerCaseUsername = Utils.toLowercase(username);
-                let existingUsername = Utils.toLowercase(profileUsername.1);
+                let existingUsername = Utils.toLowercase(managerUsername.1);
 
-                if (lowerCaseUsername == existingUsername and profileUsername.0 != principalId) {
-                    return true;
+                if (lowerCaseUsername == existingUsername and managerUsername.0 != principalId) {
+                   return true;
                 };
             };
 

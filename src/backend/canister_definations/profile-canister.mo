@@ -67,6 +67,11 @@ actor class _ProfileCanister() {
                             membershipClaims = foundProfile.membershipClaims;
                             createdOn = foundProfile.createdOn;
                             membershipExpiryTime = foundProfile.membershipExpiryTime;
+                            favouriteMensLeagueId = foundProfile.favouriteMensLeagueId;
+                            favouriteMensClubId = foundProfile.favouriteMensClubId;
+                            favouriteWomensLeagueId = foundProfile.favouriteWomensLeagueId;
+                            favouriteWomensClubId = foundProfile.favouriteWomensClubId;
+                            nationalityId = foundProfile.nationalityId;
                         };
                         return #ok(dto);
                     };
@@ -142,6 +147,11 @@ actor class _ProfileCanister() {
             membershipClaims = [];
             createdOn = Time.now();
             membershipExpiryTime = 0;
+            favouriteMensLeagueId = null;
+            favouriteMensClubId = null;
+            favouriteWomensLeagueId = null;
+            favouriteWomensClubId = null;
+            nationalityId = null;
         };
         Debug.print("Adding profile to group");
         addProfile(newProfile);
@@ -178,6 +188,11 @@ actor class _ProfileCanister() {
                             appPrincipalIds = foundProfile.appPrincipalIds;
                             podcastIds = foundProfile.podcastIds;
                             membershipExpiryTime = foundProfile.membershipExpiryTime;
+                            favouriteMensLeagueId = foundProfile.favouriteMensLeagueId;
+                            favouriteMensClubId = foundProfile.favouriteMensClubId;
+                            favouriteWomensLeagueId = foundProfile.favouriteWomensLeagueId;
+                            favouriteWomensClubId = foundProfile.favouriteWomensClubId;
+                            nationalityId = foundProfile.nationalityId;
                         };
                         saveProfile(foundGroupIndex, updatedProfile);
                     };
@@ -219,6 +234,11 @@ actor class _ProfileCanister() {
                             appPrincipalIds = foundProfile.appPrincipalIds;
                             podcastIds = foundProfile.podcastIds;
                             membershipExpiryTime = foundProfile.membershipExpiryTime;
+                            favouriteMensLeagueId = foundProfile.favouriteMensLeagueId;
+                            favouriteMensClubId = foundProfile.favouriteMensClubId;
+                            favouriteWomensLeagueId = foundProfile.favouriteWomensLeagueId;
+                            favouriteWomensClubId = foundProfile.favouriteWomensClubId;
+                            nationalityId = foundProfile.nationalityId;
                         };
                         saveProfile(foundGroupIndex, updatedProfile);
                     };
@@ -290,6 +310,11 @@ actor class _ProfileCanister() {
                             appPrincipalIds = Buffer.toArray(appPrincipalIdsBuffer);
                             podcastIds = foundProfile.podcastIds;
                             membershipExpiryTime = foundProfile.membershipExpiryTime;
+                            favouriteMensLeagueId = foundProfile.favouriteMensLeagueId;
+                            favouriteMensClubId = foundProfile.favouriteMensClubId;
+                            favouriteWomensLeagueId = foundProfile.favouriteWomensLeagueId;
+                            favouriteWomensClubId = foundProfile.favouriteWomensClubId;
+                            nationalityId = foundProfile.nationalityId;
                         };
                         saveProfile(foundGroupIndex, updatedProfile);
                     };
@@ -339,6 +364,11 @@ actor class _ProfileCanister() {
                             appPrincipalIds = updatedAppPrincipalIds;
                             podcastIds = foundProfile.podcastIds;
                             membershipExpiryTime = foundProfile.membershipExpiryTime;
+                            favouriteMensLeagueId = foundProfile.favouriteMensLeagueId;
+                            favouriteMensClubId = foundProfile.favouriteMensClubId;
+                            favouriteWomensLeagueId = foundProfile.favouriteWomensLeagueId;
+                            favouriteWomensClubId = foundProfile.favouriteWomensClubId;
+                            nationalityId = foundProfile.nationalityId;
                         };
                         saveProfile(foundGroupIndex, updatedProfile);
                     };
@@ -380,6 +410,11 @@ actor class _ProfileCanister() {
                             appPrincipalIds = foundProfile.appPrincipalIds;
                             podcastIds = foundProfile.podcastIds;
                             membershipExpiryTime = foundProfile.membershipExpiryTime;
+                            favouriteMensLeagueId = foundProfile.favouriteMensLeagueId;
+                            favouriteMensClubId = foundProfile.favouriteMensClubId;
+                            favouriteWomensLeagueId = foundProfile.favouriteWomensLeagueId;
+                            favouriteWomensClubId = foundProfile.favouriteWomensClubId;
+                            nationalityId = foundProfile.nationalityId;
                         };
                         saveProfile(foundGroupIndex, updatedProfile);
                     };
@@ -438,6 +473,11 @@ actor class _ProfileCanister() {
                                     0;
                                 };
                             };
+                            favouriteMensLeagueId = foundProfile.favouriteMensLeagueId;
+                            favouriteMensClubId = foundProfile.favouriteMensClubId;
+                            favouriteWomensLeagueId = foundProfile.favouriteWomensLeagueId;
+                            favouriteWomensClubId = foundProfile.favouriteWomensClubId;
+                            nationalityId = foundProfile.nationalityId;
                         };
 
                         let res = saveProfile(foundGroupIndex, updatedProfile);
@@ -666,6 +706,11 @@ actor class _ProfileCanister() {
                             appPrincipalIds = foundProfile.appPrincipalIds;
                             podcastIds = foundProfile.podcastIds;
                             membershipExpiryTime = 0;
+                            favouriteMensLeagueId = foundProfile.favouriteMensLeagueId;
+                            favouriteMensClubId = foundProfile.favouriteMensClubId;
+                            favouriteWomensLeagueId = foundProfile.favouriteWomensLeagueId;
+                            favouriteWomensClubId = foundProfile.favouriteWomensClubId;
+                            nationalityId = foundProfile.nationalityId;
                         };
 
                         let _ = saveProfile(foundGroupIndex, updatedProfile);

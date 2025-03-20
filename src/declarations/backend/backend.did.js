@@ -64,11 +64,17 @@ export const idlFactory = ({ IDL }) => {
     membershipExpiryTime: IDL.Int,
   });
   const Result_3 = IDL.Variant({ ok: ICFCMembershipDTO, err: Error });
+  const LeagueId = IDL.Nat16;
+  const ClubId = IDL.Nat16;
+  const CountryId = IDL.Nat16;
   const ProfileDTO = IDL.Record({
+    favouriteMensLeagueId: IDL.Opt(LeagueId),
     username: IDL.Text,
+    favouriteWomensClubId: IDL.Opt(ClubId),
     displayName: IDL.Text,
     createdOn: IDL.Int,
     podcastIds: IDL.Vec(PrincipalId),
+    favouriteMensClubId: IDL.Opt(ClubId),
     profilePictureExtension: IDL.Text,
     membershipClaims: IDL.Vec(MembershipClaim),
     appPrincipalIds: IDL.Vec(IDL.Tuple(SubApp, PrincipalId)),
@@ -76,6 +82,8 @@ export const idlFactory = ({ IDL }) => {
     membershipType: MembershipType,
     termsAgreed: IDL.Bool,
     membershipExpiryTime: IDL.Int,
+    nationalityId: IDL.Opt(CountryId),
+    favouriteWomensLeagueId: IDL.Opt(LeagueId),
     principalId: PrincipalId,
   });
   const Result_2 = IDL.Variant({ ok: ProfileDTO, err: Error });
@@ -122,6 +130,7 @@ export const idlFactory = ({ IDL }) => {
     userNeurons: IDL.Vec(Neuron),
   });
   const Result_1 = IDL.Variant({ ok: UserNeuronsDTO, err: Error });
+  const IsUsernameValid = IDL.Record({ username: IDL.Text });
   const UpdateDisplayName = IDL.Record({
     displayName: IDL.Text,
     principalId: PrincipalId,
@@ -148,6 +157,7 @@ export const idlFactory = ({ IDL }) => {
     getICFCMembership: IDL.Func([GetICFCMembership], [Result_3], []),
     getProfile: IDL.Func([], [Result_2], []),
     getUserNeurons: IDL.Func([], [Result_1], []),
+    isUsernameValid: IDL.Func([IsUsernameValid], [IDL.Bool], ["query"]),
     removeSubApp: IDL.Func([SubApp], [Result], []),
     updateDisplayName: IDL.Func([UpdateDisplayName], [Result], []),
     updateProfilePicture: IDL.Func([UpdateProfilePicture], [Result], []),

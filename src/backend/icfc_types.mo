@@ -1,4 +1,5 @@
 import Base "mo:waterway-mops/BaseTypes";
+import FootballTypes "mo:waterway-mops/FootballTypes";
 import Principal "mo:base/Principal";
 import Blob "mo:base/Blob";
 //import ckBTCLedger "canister:ckbtc_ledger";
@@ -22,6 +23,11 @@ module ICFCTypes {
     termsAgreed : Bool;
     appPrincipalIds : [(SubApp, Base.PrincipalId)];
     podcastIds : [Base.PrincipalId];
+    favouriteMensLeagueId: ?FootballTypes.LeagueId;
+    favouriteMensClubId: ?FootballTypes.ClubId;
+    favouriteWomensLeagueId: ?FootballTypes.LeagueId;
+    favouriteWomensClubId: ?FootballTypes.ClubId;
+    nationalityId: ?Base.CountryId;
   };
 
   public type PodcastChannel = {

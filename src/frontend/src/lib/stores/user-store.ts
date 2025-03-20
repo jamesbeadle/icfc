@@ -6,6 +6,7 @@ import { UserService } from "../services/user-service";
 import type {
   ProfileDTO,
   CreateProfile,
+  IsUsernameValid,
 } from "../../../../declarations/backend/backend.did";
 
 function createUserStore() {
@@ -115,7 +116,8 @@ function createUserStore() {
       authStore,
       process.env.BACKEND_CANISTER_ID ?? "",
     );
-    return await identityActor.isUsernameValid(username);
+    let dto: IsUsernameValid = { username };
+    return await identityActor.isUsernameValid(dto);
   }
 
   async function cacheProfile() {

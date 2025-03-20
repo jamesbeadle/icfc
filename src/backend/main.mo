@@ -50,6 +50,13 @@ actor class Self() = this {
     return await profileManager.getProfile(dto);
   };
 
+  public shared query ({ caller }) func isUsernameValid(dto : ProfileQueries.IsUsernameValid) : async Bool {
+    assert not Principal.isAnonymous(caller);
+    let usernameValid = Utils.isUsernameValid(dto.username);
+    let usernameTaken = profileManager.isUsernameTaken(dto.username, Principal.toText(caller));
+    return usernameValid and not usernameTaken;
+  };
+
   public shared ({ caller }) func getUserNeurons() : async Result.Result<ProfileQueries.UserNeuronsDTO, T.Error> {
     assert not Principal.isAnonymous(caller);
 
@@ -161,7 +168,7 @@ actor class Self() = this {
   };
 
   private func postUpgradeCallback() : async () {
-    await updateProfileCanisterWasms();
+    //await updateProfileCanisterWasms();
   };
 
   private func backupProfileData() {

@@ -18,6 +18,9 @@
 
 .brand-button {
   @apply p-3 text-lg text-center text-white rounded-lg cta-text bg-BrandBlueComp hover:bg-BrandInfo;
+  &:disabled {
+    @apply text-black bg-BrandGrayShade4 hover:bg-BrandGrayShade4 hover:bg-BrandGrayShade4;
+  }
 }
 
 .brand-button-disabled {

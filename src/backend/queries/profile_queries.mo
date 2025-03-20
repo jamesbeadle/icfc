@@ -1,4 +1,5 @@
 import Base "mo:waterway-mops/BaseTypes";
+import FootballTypes "mo:waterway-mops/FootballTypes";
 import T "../icfc_types";
 import SNSGovernance "../sns-wrappers/governance";
 
@@ -20,6 +21,11 @@ module ProfileQueries {
         appPrincipalIds : [(T.SubApp, Base.PrincipalId)];
         podcastIds : [Base.PrincipalId];
         membershipExpiryTime : Int;
+        favouriteMensLeagueId: ?FootballTypes.LeagueId;
+        favouriteMensClubId: ?FootballTypes.ClubId;
+        favouriteWomensLeagueId: ?FootballTypes.LeagueId;
+        favouriteWomensClubId: ?FootballTypes.ClubId;
+        nationalityId: ?Base.CountryId;
     };
 
     public type ListProfiles = {
@@ -57,5 +63,11 @@ module ProfileQueries {
     };
 
     public type UsernameAvailable = Bool;
+
+
+
+    public type IsUsernameValid = {
+        username : Text;
+    };
 
 };
