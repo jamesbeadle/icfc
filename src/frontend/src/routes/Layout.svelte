@@ -32,7 +32,7 @@
     worker = await initAuthWorker();
   };
 
-  const syncAuthStore = async (retryCount = 0, maxRetries = 3) => {
+  const syncAuthStore = async (retryCount = 0, maxRetries = 5) => {
     if (!browser) return;
 
     try {
@@ -48,7 +48,7 @@
       let profile = await userStore.getProfile();
 
       if (!profile && retryCount < maxRetries) {
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 2000));
         return syncAuthStore(retryCount + 1, maxRetries);
       }
 

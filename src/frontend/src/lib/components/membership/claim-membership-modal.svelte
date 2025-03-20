@@ -85,7 +85,7 @@
                             on:click={() => { copyTextAndShowToast(profile?.principalId ?? "") }}
                             class="absolute top-2 right-2 text-gray-400 hover:text-white"
                         >
-                            <CopyIcon className="w-5 h-5" fill='#000000' />
+                            <CopyIcon className="w-5 h-5" fill='#FFFFFF' />
                         </button>
                         <p class="text-gray-300 font-mono text-sm break-all px-4">
                             {profile?.principalId ?? "Not available"}

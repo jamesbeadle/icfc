@@ -12,6 +12,9 @@
     import { toasts } from "$lib/stores/toasts-store";
     import ClaimMembershipModal from "./claim-membership-modal.svelte";
     import HowToClaimModal from "./how-to-claim-modal.svelte";
+    import { appStore } from "$lib/stores/app-store";
+    import { authStore } from "$lib/stores/auth-store";
+    import CopyIcon from "$lib/icons/CopyIcon.svelte";
 
     let isLoading: boolean = true;
     let neurons: Neuron[] = [];
@@ -147,9 +150,22 @@
         {#if neurons.length === 0}
             <div class="flex flex-col items-center justify-center w-full p-8 text-center rounded-lg bg-BrandBlueComp/10">
                 <p class="text-xl text-white">No Neurons Found</p>
-                <p class="mt-2 text-sm text-BrandGrayShade4">
-                    Stake ICFC tokens to create neurons and unlock membership benefits
-                </p>
+                
+                <div class="flex w-full flex-col gap-2">
+                    <p class="text-xs">Add this hotkey to any neurons staked for 2 years that you would like to claim membership for.</p>
+                    <div class="relative bg-gray-800 rounded-lg p-4">
+                        <button 
+                            on:click={() => { appStore.copyTextAndShowToast($authStore.identity?.getPrincipal().toString() ?? "") }}
+                            class="absolute top-2 right-2 text-gray-400 hover:text-white"
+                        >
+                            <CopyIcon className="w-5 h-5" fill='#FFFFFF' />
+                        </button>
+                        <p class="text-gray-300 font-mono text-sm break-all px-4">
+                            {$authStore.identity?.getPrincipal().toString() ?? ""}
+                        </p>
+                        <h3 class="text-xxs text-white font-semibold">Your Principal ID</h3>
+                    </div>
+                </div>
             </div>
         {:else}
             <div class="grid gap-6 base:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">

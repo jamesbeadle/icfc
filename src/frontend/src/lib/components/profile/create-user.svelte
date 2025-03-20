@@ -56,8 +56,9 @@
           username: username,
         };
         await userStore.createProfile(dto);
+        await userStore.sync();
         toasts.addToast({type: 'success', message: 'Profile successfully created'})
-        goto("/");
+        window.location.href = "/";
       } catch (error) {
         console.error("Error creating profile:", error);
       } finally {
