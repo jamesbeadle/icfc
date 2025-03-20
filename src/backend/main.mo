@@ -168,7 +168,7 @@ actor class Self() = this {
   };
 
   private func postUpgradeCallback() : async () {
-    await updateProfileCanisterWasms();
+    //await updateProfileCanisterWasms();
   };
 
   private func backupProfileData() {
@@ -236,6 +236,7 @@ actor class Self() = this {
   private type Subaccount = Blob;
   private var icfcExchange : Nat = 400; //400 ckSatoshis per ICFC
 
+  /*
   private func caller_allowed(caller : Principal) : Bool {
     let foundCaller = Array.find<Base.PrincipalId>(
       Environment.ADMIN_PRINCIPALS,
@@ -245,6 +246,7 @@ actor class Self() = this {
     );
     return Option.isSome(foundCaller);
   };
+  */
 
   // SNS Sale ckBTC Functions
   /*
