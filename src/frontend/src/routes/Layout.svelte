@@ -46,6 +46,11 @@
 
   onMount(async () => {
     worker = await initAuthWorker();
+    if(!$authSignedInStore){
+      hasProfile = false;
+      $isLoading = false;
+      return;
+    }
     let profile = await userStore.getProfile();
     hasProfile = profile != undefined;
     $isLoading = false;
@@ -120,7 +125,9 @@
                 aria-label="Close menu overlay"
               ></button>
             {/if}
-            <IcfcLinkAccountsModal isOpen={showLinkAccounts} on:close={() => showLinkAccounts = false} />  
+            {#if showLinkAccounts}
+              <IcfcLinkAccountsModal isOpen={showLinkAccounts} on:close={() => showLinkAccounts = false} />  
+            {/if}
         {:else}
           {#if $authSignedInStore}
               <CreateUser />
