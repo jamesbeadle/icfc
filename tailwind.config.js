@@ -85,6 +85,9 @@ export default {
         JeffBetsFont: "#000000",
         ModalBackground: "#222327",
         ModalBorder: "#323232",
+        MembershipYellow: "#FED06A",
+        MembershipRed: "#EC6A46",
+        MembershipBlue: "#1979F2",
       },
       perspective: {
         500: "500px",

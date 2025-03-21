@@ -2,14 +2,18 @@
     import { userGetProfilePicture } from "$lib/derived/user.derived";
     import { toasts } from "$lib/stores/toasts-store";
     import { userStore } from "$lib/stores/user-store";
+    import { getImageURL } from "$lib/utils/helpers";
 
+    import type { ProfileDTO } from "../../../../../declarations/backend/backend.did";
+    import LocalSpinner from "../shared/local-spinner.svelte";
+
+    export let profile: ProfileDTO;
     let fileInput: HTMLInputElement;
-    
     let uploadingImage = false;
 
     function clickFileInput() {
         fileInput.click();
-    }
+    } 
 
     function handleFileChange(event: Event) {
         const input = event.target as HTMLInputElement;
@@ -38,7 +42,7 @@
             });
         } catch (error) {
             toasts.addToast({
-                message: "Error updating profile image." ,
+                message: "Error updating profile image.",
                 type: "error",
             });
             console.error("Error updating profile image", error);
@@ -47,20 +51,36 @@
         }
     }
 </script>
-<div class="w-full px-2 md:w-1/2 lg:w-1/3 xl:w-1/4">
-    <div class="flex flex-col group md:block">
-        <img src={$userGetProfilePicture} alt="Profile" class="w-full mb-1 rounded-lg" />
 
-        <div class="mt-4 file-upload-wrapper">
-            <button class="btn-file-upload fpl-button" on:click={clickFileInput}>Upload Photo</button>
-            <input
-                type="file"
-                id="profile-image"
-                accept="image/*"
-                bind:this={fileInput}
-                on:change={handleFileChange}
-                style="opacity: 0; position: absolute; left: 0; top: 0;"
-            />
+<div class="w-full">
+    {#if uploadingImage}
+        <div class="flex justify-center items-center h-64">
+            <LocalSpinner />
         </div>
-    </div>
+    {:else}
+        <div class="relative group">
+            <img 
+                src={getImageURL(profile ? profile.profilePicture : "/profile_placeholder.png")} 
+                alt="Profile" 
+                class="relative w-full h-64 object-cover rounded-xl"
+            />
+            
+            <div class="mt-4 flex justify-center">
+                <button 
+                    class="px-4 py-2 text-sm mini:text-base font-semibold text-white bg-BrandBlue rounded-lg hover:bg-opacity-80 transition-all duration-300"
+                    on:click={clickFileInput}
+                >
+                    Upload Photo
+                </button>
+                <input
+                    type="file"
+                    id="profile-image"
+                    accept="image/*"
+                    bind:this={fileInput}
+                    on:change={handleFileChange}
+                    class="hidden"
+                />
+            </div>
+        </div>
+    {/if}
 </div>

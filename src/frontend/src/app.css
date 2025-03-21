@@ -153,3 +153,27 @@
 .auto-claimed-membership-badge {
   @apply px-4 py-2 bg-BrandBlue text-white text-center items-center rounded cta-text text-sm;
 }
+
+.small-brand-button {
+  @apply px-4 py-2 text-sm text-center text-white rounded cta-text bg-BrandBlue hover:bg-BrandInfo;
+}
+
+.nns-button {
+  @apply px-4 py-2 text-xxs text-center text-white rounded cta-text bg-BrandPurple hover:bg-BrandInfo;
+}
+
+.profile-wrapper-monthly {
+  @apply bg-MembershipYellow;
+}
+
+.profile-wrapper-seasonal {
+  @apply bg-MembershipRed;
+}
+
+.profile-wrapper-lifetime {
+  @apply bg-MembershipBlue;
+}
+
+.profile-wrapper-founding {
+  @apply bg-BrandGray;
+}

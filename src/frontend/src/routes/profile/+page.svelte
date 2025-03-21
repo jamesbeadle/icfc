@@ -13,14 +13,28 @@
     let isLoading = true;
     let showLinkICFCAppsModal = false;
     let profile: ProfileDTO | null = null;
+    let profileClass = '';
 
     onMount(async () => {
-        try{
+        try {
             let profileResult = await userStore.getProfile();
-            if(!profileResult) {return}
-            profile = profileResult
-        } catch{
-            toasts.addToast({ type: 'error', message: 'Error fetching user profile.'});
+            if (!profileResult) {
+                return;
+            }
+            profile = profileResult;
+            
+            if (!profile?.membershipClaims?.length) {
+                return;
+            }
+            
+            let membership = profile.membershipClaims[0]?.membershipType;
+            if (!membership) {
+                return;
+            }
+
+            profileClass = Object.keys(membership)[0]?.toLocaleLowerCase() || '';
+        } catch {
+            toasts.addToast({ type: 'error', message: 'Error fetching user profile.' });
         } finally {
             isLoading = false;
         }
@@ -36,21 +50,33 @@
 </script>
 
 <Layout>
-    {#if isLoading}
-        <LocalSpinner />
+    {#if isLoading && profile}
+        <div class="flex justify-center items-center h-screen">
+            <LocalSpinner />
+        </div>
     {:else}
-        <div class="flex flex-col w-full p-8 space-y-8">
-            <div class="flex flex-col gap-4 lg:gap-0 lg:items-center lg:flex-row lg:justify-between mini:px-4">
-                <h1 class="text-3xl lg:text-4xl cta-text">ICFC Profile</h1>
-                <button 
-                    class="p-3 text-base font-bold text-white transition-all duration-300 rounded-lg bg-BrandBlue hover:bg-opacity-90"
-                    on:click={openLinkICFCAppsModal}
-                >
-                    Link ICFC Apps
-                </button>
+        <div class="min-h-screen bg-BrandBlack flex items-center justify-center p-4 xxs:p-6">
+            <div class="bg-BrandGray rounded-xl shadow-lg w-full max-w-4xl p-6 xxs:p-8 space-y-6">
+                <div class="flex flex-col xxs:flex-row justify-between items-center gap-4">
+                    <h1 class="text-3xl mini:text-4xl font-bold text-white">ICFC Profile</h1>
+                    <button 
+                        class="px-4 py-2 text-sm mini:text-base font-semibold text-white bg-BrandBlue rounded-lg hover:bg-opacity-80 transition-all duration-300"
+                        on:click={openLinkICFCAppsModal}
+                    >
+                        Link ICFC Apps
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="w-full">
+                        <ProfileImage profile={profile!} />
+                    </div>
+
+                    <div class="w-full">
+                        <ProfileProperties profile={profile!} />
+                    </div>
+                </div>
             </div>
-            <ProfileImage />
-            <ProfileProperties />
         </div>
         {#if showLinkICFCAppsModal}
             <LinkICFCAppsModal

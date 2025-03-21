@@ -64,7 +64,7 @@
     {:else}
     <div class="flex flex-col space-y-6">
 
-      <h2 class="text-2xl text-white cta-text">Claim Membership</h2>
+      <h2 class="text-2xl text-white cta-text">Update Username</h2>
         <form on:submit|preventDefault={updateUsername}>
           <div class="mt-4">
               <input

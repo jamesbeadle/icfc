@@ -393,6 +393,8 @@ module Utils {
         let hundredK_ICFC_e8s : Nat64 = 100_000 * icfc_e8s;
         let million_ICFC_e8s : Nat64 = 1_000_000 * icfc_e8s;
 
+        let padding: Nat64 = 5_000_000;
+
         var total_staked : Nat64 = 0;
 
         for (neuron in neurons.vals()) {
@@ -416,13 +418,13 @@ module Utils {
             };
         };
 
-        if (total_staked + 5 >= million_ICFC_e8s) {
+        if (total_staked + padding >= million_ICFC_e8s) {
             return ?#Founding;
-        } else if (total_staked + 5 >= hundredK_ICFC_e8s) {
+        } else if (total_staked + padding >= hundredK_ICFC_e8s) {
             return ?#Lifetime;
-        } else if (total_staked + 5 >= tenK_ICFC_e8s) {
+        } else if (total_staked + padding >= tenK_ICFC_e8s) {
             return ?#Seasonal;
-        } else if (total_staked + 5 >= oneK_ICFC_e8s) {
+        } else if (total_staked + padding >= oneK_ICFC_e8s) {
             return ?#Monthly;
         } else {
             return ?#NotEligible;
