@@ -24,6 +24,8 @@ import SNSManager "managers/sns_manager";
 import Utils "utils/utils";
 import Management "utils/management";
 import ProfileCanister "canister_definations/profile-canister";
+import AppQueries "queries/app_queries";
+import Countries "utils/countries";
 
 actor class Self() = this {
 
@@ -71,9 +73,11 @@ actor class Self() = this {
 
     let neurons = await snsManager.getUsersNeurons(caller);
     let userEligibility = Utils.getMembershipType(neurons);
+    let totalMaxStaked = Utils.getTotalMaxStaked(neurons);
 
     let result : ProfileQueries.UserNeuronsDTO = {
       userNeurons = neurons;
+      totalMaxStaked;
       userMembershipEligibility = switch (userEligibility) {
         case (?membership) {
           membership;
@@ -138,6 +142,11 @@ actor class Self() = this {
     assert not Principal.isAnonymous(caller);
     assert dto.principalId == Principal.toText(caller);
     return await profileManager.updateProfilePicture(dto);
+  };
+
+  public shared query ({ caller }) func getCountries() : async Result.Result<[AppQueries.CountryDTO], T.Error> {
+    assert not Principal.isAnonymous(caller);
+    return #ok(Countries.countries);
   };
 
   // Stable Storage & System Functions:

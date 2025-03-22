@@ -15,6 +15,13 @@ module AppQueries {
         unconfirmedAppPrincipalIds: [(Text, Base.PrincipalId)];
         appPrincipalIds: [(Text, Base.PrincipalId)];
     };
+
+    public type CountryDTO = {
+        id : Base.CountryId;
+        name : Text;
+        code : Text;
+    };
+
 }
 
   

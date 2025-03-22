@@ -1,7 +1,6 @@
 <script lang="ts">
     import { userStore } from "$lib/stores/user-store";
-    import { goto } from "$app/navigation";
-    import type { CreateProfile, MembershipType, Neuron, PrincipalId, SubApp, UserNeuronsDTO } from "../../../../../declarations/backend/backend.did";
+    import type { ClubId, CountryDTO, CountryId, CreateProfile, LeagueId, MembershipType, Neuron, PrincipalId, SubApp, UserNeuronsDTO } from "../../../../../declarations/backend/backend.did";
     import LocalSpinner from "../shared/local-spinner.svelte";
     import Header from "../shared/header.svelte";
     import { toasts } from "$lib/stores/toasts-store";
@@ -10,7 +9,11 @@
     import { authStore } from "$lib/stores/auth-store";
     import { onMount } from "svelte";
     import { membershipStore } from "$lib/stores/membership-store";
-    import NeuronList from "../membership/neuron-list.svelte";
+    import AvailableMembership from "../membership/available-membership.svelte";
+    import DropdownSelect from "../shared/dropdown-select.svelte";
+    import { countryStore } from "$lib/stores/country-store";
+    import { leagueStore } from "$lib/stores/league-store";
+    import { clubStore } from "$lib/stores/club-store";
   
     let isLoading = false;
     let username = "";
@@ -21,11 +24,14 @@
     let usernameAvailable = false;
     let appPrincipalIds: Array<[SubApp, PrincipalId]> = [];
     let neurons: Neuron[] = [];
-    let totalStakedICFC: number = 0;
+    let maxStakedICFC = 0n;
+    let favouriteLeagueId: LeagueId | null = null;
+    let favouriteClubId: ClubId | null = null;
+    let nationalityId: CountryId | null = null;
     
     let userNeurons: UserNeuronsDTO | undefined;
     let userMembershipEligibility: MembershipType = { NotEligible: null };
-  
+    
     let usernameTimeout: NodeJS.Timeout;
   
     $: isSubmitDisabled = !username || !usernameAvailable || appPrincipalIds.length == 0;
@@ -37,7 +43,6 @@
     async function loadData(){
         try {
             await getNeurons();
-            totalStakedICFC = calculateTotalStakedICFC(neurons);
         } catch (error) {
             console.error("Error fetching funding data:", error);
         } finally {
@@ -50,6 +55,7 @@
       if (userNeurons) {
           neurons = userNeurons.userNeurons.sort(sortByHighestNeuron);
           userMembershipEligibility = userNeurons.userMembershipEligibility;
+          maxStakedICFC = userNeurons.totalMaxStaked;
       }
     }
 
@@ -120,20 +126,10 @@
         }
     }
 
-    function calculateTotalStakedICFC(neurons: Neuron[]): number {
-        if (!neurons || neurons.length === 0) return 0;
-        const totalE8s = neurons.reduce((sum, neuron) => sum + Number(neuron.cached_neuron_stake_e8s), 0);
-        return totalE8s / 100000000;
-    }
-
-    async function handleRefresh() {
+    async function refreshNeurons() {
         isLoading = true;
         await loadData();
         isLoading = false;
-    }
-
-    function formatICFC(amount: number): string {
-        return Math.round(amount).toLocaleString();
     }
 
   </script>
@@ -211,23 +207,44 @@
             </p>
         </div>
 
-        <button class="brand-button" on:click={handleRefresh}>Check for Neurons</button>
-
         {#if neurons.length > 0}
 
-          <NeuronList {neurons} />
+          <AvailableMembership {neurons} {refreshNeurons} availableMembership={userMembershipEligibility} {maxStakedICFC} />
 
           <div class="my-4">
             <AppPrincipalAccordian bind:appPrincipalIds />
           </div>
 
+          <p>Additional Information:</p>
 
+          <p>Your Nationality:</p>
+          <DropdownSelect
+            options={$countryStore.map((country: CountryDTO) => ({ id: country.id, label: country.name }))}
+            value={nationalityId}
+            onChange={(value: string | number) => {
+              nationalityId = Number(value);
+            }}
+          />
 
-          <!-- //TODO: Add Nationality -->
+          <p>Your Favourite League:</p>
+          <DropdownSelect
+            options={$leagueStore.map(league => ({ id: league.id, label: league.name }))}
+            value={favouriteLeagueId}
+            onChange={(value: string | number) => {
+              favouriteLeagueId = Number(value);
+            }}
+            scrollOnOpen={true}
+          />
 
-          <!-- //TODO: Add Favourite League -->
-
-          <!-- //TODO: Add Favourite Club Id -->
+          <p>Your Favourite Club Id:</p>
+          <DropdownSelect
+            options={$clubStore.map(club => ({ id: club.id, label: club.friendlyName }))}
+            value={favouriteClubId}
+            onChange={(value: string | number) => {
+              favouriteClubId = Number(value);
+            }}
+            scrollOnOpen={true}
+          />
 
           <div class="flex justify-between">
             <button 

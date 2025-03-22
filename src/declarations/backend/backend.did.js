@@ -45,7 +45,7 @@ export const idlFactory = ({ IDL }) => {
     claimedOn: IDL.Int,
     membershipType: MembershipType,
   });
-  const Result_5 = IDL.Variant({ ok: MembershipClaim, err: Error });
+  const Result_6 = IDL.Variant({ ok: MembershipClaim, err: Error });
   const CreateProfile = IDL.Record({
     username: IDL.Text,
     displayName: IDL.Text,
@@ -57,7 +57,14 @@ export const idlFactory = ({ IDL }) => {
     version: IDL.Text,
     onHold: IDL.Bool,
   });
-  const Result_4 = IDL.Variant({ ok: AppStatusDTO, err: Error });
+  const Result_5 = IDL.Variant({ ok: AppStatusDTO, err: Error });
+  const CountryId = IDL.Nat16;
+  const CountryDTO = IDL.Record({
+    id: CountryId,
+    code: IDL.Text,
+    name: IDL.Text,
+  });
+  const Result_4 = IDL.Variant({ ok: IDL.Vec(CountryDTO), err: Error });
   const GetICFCMembership = IDL.Record({ principalId: PrincipalId });
   const ICFCMembershipDTO = IDL.Record({
     membershipClaims: IDL.Vec(MembershipClaim),
@@ -67,7 +74,6 @@ export const idlFactory = ({ IDL }) => {
   const Result_3 = IDL.Variant({ ok: ICFCMembershipDTO, err: Error });
   const LeagueId = IDL.Nat16;
   const ClubId = IDL.Nat16;
-  const CountryId = IDL.Nat16;
   const ProfileDTO = IDL.Record({
     favouriteMensLeagueId: IDL.Opt(LeagueId),
     username: IDL.Text,
@@ -127,6 +133,7 @@ export const idlFactory = ({ IDL }) => {
     neuron_fees_e8s: IDL.Nat64,
   });
   const UserNeuronsDTO = IDL.Record({
+    totalMaxStaked: IDL.Nat64,
     userMembershipEligibility: MembershipType,
     userNeurons: IDL.Vec(Neuron),
   });
@@ -152,9 +159,10 @@ export const idlFactory = ({ IDL }) => {
   });
   const Self = IDL.Service({
     addSubApp: IDL.Func([AddSubApp], [Result], []),
-    claimMembership: IDL.Func([], [Result_5], []),
+    claimMembership: IDL.Func([], [Result_6], []),
     createProfile: IDL.Func([CreateProfile], [Result], []),
-    getAppStatus: IDL.Func([], [Result_4], ["query"]),
+    getAppStatus: IDL.Func([], [Result_5], ["query"]),
+    getCountries: IDL.Func([], [Result_4], ["query"]),
     getICFCMembership: IDL.Func([GetICFCMembership], [Result_3], []),
     getProfile: IDL.Func([], [Result_2], []),
     getUserNeurons: IDL.Func([], [Result_1], []),

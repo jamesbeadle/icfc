@@ -15,6 +15,11 @@ export interface AppStatusDTO {
   onHold: boolean;
 }
 export type ClubId = number;
+export interface CountryDTO {
+  id: CountryId;
+  code: string;
+  name: string;
+}
 export type CountryId = number;
 export interface CreateProfile {
   username: string;
@@ -126,13 +131,15 @@ export type Result = { ok: null } | { err: Error };
 export type Result_1 = { ok: UserNeuronsDTO } | { err: Error };
 export type Result_2 = { ok: ProfileDTO } | { err: Error };
 export type Result_3 = { ok: ICFCMembershipDTO } | { err: Error };
-export type Result_4 = { ok: AppStatusDTO } | { err: Error };
-export type Result_5 = { ok: MembershipClaim } | { err: Error };
+export type Result_4 = { ok: Array<CountryDTO> } | { err: Error };
+export type Result_5 = { ok: AppStatusDTO } | { err: Error };
+export type Result_6 = { ok: MembershipClaim } | { err: Error };
 export interface Self {
   addSubApp: ActorMethod<[AddSubApp], Result>;
-  claimMembership: ActorMethod<[], Result_5>;
+  claimMembership: ActorMethod<[], Result_6>;
   createProfile: ActorMethod<[CreateProfile], Result>;
-  getAppStatus: ActorMethod<[], Result_4>;
+  getAppStatus: ActorMethod<[], Result_5>;
+  getCountries: ActorMethod<[], Result_4>;
   getICFCMembership: ActorMethod<[GetICFCMembership], Result_3>;
   getProfile: ActorMethod<[], Result_2>;
   getUserNeurons: ActorMethod<[], Result_1>;
@@ -166,6 +173,7 @@ export interface UpdateUserName {
   principalId: PrincipalId;
 }
 export interface UserNeuronsDTO {
+  totalMaxStaked: bigint;
   userMembershipEligibility: MembershipType;
   userNeurons: Array<Neuron>;
 }

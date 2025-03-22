@@ -431,6 +431,34 @@ module Utils {
         };
     };
 
+    public func getTotalMaxStaked(neurons : [SNSGovernance.Neuron]) : Nat64 {
+
+        var total_staked : Nat64 = 0;
+
+        for (neuron in neurons.vals()) {
+            switch (neuron.dissolve_state) {
+                case (?dissolve_state) {
+                    switch (dissolve_state) {
+                        case (#DissolveDelaySeconds(dissolve_delay)) {
+                            if (convertSecondsToYears(Int64.toInt(Int64.fromNat64(dissolve_delay))) > 2.0) {
+                                total_staked += neuron.cached_neuron_stake_e8s;
+                            };
+                        };
+                        case (#WhenDissolvedTimestampSeconds(_)) {
+
+                        };
+                    };
+                };
+
+                case (null) {
+
+                };
+            };
+        };
+
+        return total_staked;
+    };
+
 
     public func isUsernameValid(username: Text) : Bool {
         if (Text.size(username) < 5 or Text.size(username) > 20) {

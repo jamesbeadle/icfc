@@ -35,6 +35,10 @@
   @apply p-3 text-base text-center text-white rounded-lg cta-text bg-BrandPurple hover:bg-BrandBlueComp;
 }
 
+.brand-dropdown {
+  @apply p-2 rounded-md;
+}
+
 .bg-frontend-update {
   @apply text-white bg-black;
 }

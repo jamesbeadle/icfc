@@ -53,6 +53,7 @@ module ProfileQueries {
 
     public type UserNeuronsDTO = {
         userNeurons : [SNSGovernance.Neuron];
+        totalMaxStaked: Nat64;
         userMembershipEligibility : T.MembershipType;
     };
 
