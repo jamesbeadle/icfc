@@ -1,23 +1,22 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  
-  import { authStore } from "$lib/stores/auth-store";
   import { userStore } from "$lib/stores/user-store";
+  import { clubStore } from "$lib/stores/club-store";
   import { countryStore } from "$lib/stores/country-store";
   import { leagueStore } from "$lib/stores/league-store";
-  import { clubStore } from "$lib/stores/club-store";
+    
   import { membershipStore } from "$lib/stores/membership-store";
   import { toasts } from "$lib/stores/toasts-store";
   
   import type { CreateProfile, MembershipType, Neuron, PrincipalId, SubApp } from "../../../../../declarations/backend/backend.did";
-  import type { LeagueId, ClubId, CountryDTO, CountryId, ClubDTO } from "../../../../../external_declarations/data_canister/data_canister.did";
+  import type { LeagueId, ClubId, CountryId, ClubDTO, CountryDTO } from "../../../../../external_declarations/data_canister/data_canister.did";
   
   import LocalSpinner from "../shared/local-spinner.svelte";
   import AppPrincipalAccordian from "./app-principal-accordian.svelte";
-  import CopyIcon from "$lib/icons/CopyIcon.svelte";
   import AvailableMembership from "../membership/available-membership.svelte";
-  import DropdownSelect from "../shared/dropdown-select.svelte";
   import LogoIcon from "$lib/icons/LogoIcon.svelte";
+  import CopyPrincipal from "./copy-principal.svelte";
+  import DropdownSelect from "../shared/dropdown-select.svelte";
   
   let isLoading = false;
   let isSubmitDisabled = true;
@@ -119,19 +118,6 @@
     }
   }
 
-  async function copyTextAndShowToast(text: string) {
-      try {
-          await navigator.clipboard.writeText(text);
-          toasts.addToast({
-          type: "success",
-          message: "Copied to clipboard.",
-          duration: 2000,
-          });
-      } catch (err) {
-          console.error("Failed to copy:", err);
-      }
-  }
-
   async function refreshNeurons() {
       isLoading = true;
       await loadData();
@@ -166,175 +152,158 @@
 </script>
 
 {#if isLoading}
-<LocalSpinner />
+  <LocalSpinner />
 {:else}
-  <div class="flex flex-col w-full h-full p-8 mt-16 overflow-x-hidden space-y-8">
+  <div class="page-wrapper">
+    <div class="flex flex-col space-y-4">
 
-    <div class="border-b border-white/10 w-full flex">
-      <div class="flex flex-row items-center w-full flex">
-        <p class="text-4xl cta-text flex flex-row space-y-1">Welcome to the 
-          <span class="flex flex-row items-center">
-            <LogoIcon className='w-8 mx-2' />
-            ICFC
-          </span>
-        </p>
-      </div>
-    </div>
+      <p class="text-4xl cta-text flex flex-row space-y-1">
+        Welcome to the 
+        <span class="flex flex-row items-center">
+          <LogoIcon className='w-8 mx-2' />
+          ICFC
+        </span>
+      </p>
 
-    <div class="w-full flex flex-col">
-      <p class="w-full text-lg">
+      <div class="horizontal-divider"></div>
+      
+      <p class="text-lg">
         The ICFC is the world's first, fully decentralised, fan owned football ecosystem. To become a member you will need to become an owner, we believe our 'Own to Use' model is the future access model for decentralised services. 
       </p>
-    </div>
 
-    <div class="flex w-full">
-      <p class="cta-text text-lg mb-1 w-full">User Details</p>
-    </div>
+      <div class="horizontal-divider"></div>
 
-    <div class="w-full flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2">
-           
-      <div class="flex w-full md:w-1/5 flex-col">
-        <p class="form-title">Profile Picture</p>
-        <p class="form-hint">Max size 1mb</p>
-        <img 
-          src="/profile_placeholder.png" 
-          alt="Profile" 
-          class="profile-picture"
-        />
-        <button 
-          class="brand-button"
-          on:click={clickFileInput}
-        >
-            Upload Photo
-        </button>
-        <input
-            type="file"
-            id="profile-image"
-            accept="image/*"
-            bind:this={fileInput}
-            on:change={handleFileChange}
-            class="hidden"
-        />
+      <div class="flex flex-col space-y-2">
 
-      </div>
-
-      <div class="flex w-full md:w-4/5 flex-col">
-      
-
-        <div class="flex w-full flex-col">
-          <p class="form-title">Username</p>
-          <p class="form-hint">5-20 characters,letters & numbers only.</p>
-          <input
-            type="text"
-            bind:value={username}
-            on:input={handleUsernameInput}
-            class="brand-input"
-            placeholder="Enter username"
-          />
-          {#if username.length > 0}
-            <div class="mt-1 text-sm">
-                {#if isCheckingUsername}
-                    <p class="text-BrandGrayShade3">Checking username availability...</p>
-                {:else if usernameError}
-                    <p class="text-BrandRed">{usernameError}</p>
-                {:else if usernameAvailable}
-                    <p class="text-BrandSuccess">Username is available!</p>
-                {/if}
-            </div>
-          {/if}
-        </div>
-      
-        <div class="flex w-full flex-col mt-4">
-          <p class="form-title">Display Name</p>
-          <p class="form-hint">5-20 characters,letters & numbers only.</p>
-          <input
-            type="text"
-            bind:value={displayName}
-            placeholder="Enter display name"
-            class="brand-input"
-          />
-        </div>
+        <p class="cta-text text-lg">User Details</p>
         
+        <div class="flex w-full flex-col md:flex-row">
+          <div class="flex flex-col space-y-1 w-full md:w-1/4">
+            <p class="form-title">Profile Picture</p>
+            <p class="form-hint">Max size 1mb</p>
+            <img 
+              src="/profile_placeholder.png" 
+              alt="Profile" 
+              class="profile-picture"
+            />
+            <button 
+              class="brand-button"
+              on:click={clickFileInput}
+            >
+                Upload Photo
+            </button>
+            <input
+              type="file"
+              id="profile-image"
+              accept="image/*"
+              bind:this={fileInput}
+              on:change={handleFileChange}
+              class="hidden"
+            />
+          </div>
+          <div class="flex w-full flex-col md:flex-row md:w-3/4">
+            <div class="flex flex-col space-y-2 w-full md:w-1/2 px-4">
+              <div class="flex flex-col space-y-1 w-full">
+                <p class="form-title">Username</p>
+                <p class="form-hint">5-20 characters,letters & numbers only. <span class="text-xs">(Required)</span></p>
+                <input
+                  type="text"
+                  bind:value={username}
+                  on:input={handleUsernameInput}
+                  class="brand-input"
+                  placeholder="Enter username"
+                />
+                {#if username.length > 0}
+                  <div class="mt-1 text-sm">
+                      {#if isCheckingUsername}
+                          <p class="text-BrandGrayShade3">Checking username availability...</p>
+                      {:else if usernameError}
+                          <p class="text-BrandRed">{usernameError}</p>
+                      {:else if usernameAvailable}
+                          <p class="text-BrandSuccess">Username is available!</p>
+                      {/if}
+                  </div>
+                {/if}
+              </div>
+              <div class="flex flex-col space-y-1 w-full">
+                <p class="form-title">Display Name</p>
+                <p class="form-hint">5-20 characters,letters & numbers only.</p>
+                <input
+                  type="text"
+                  bind:value={displayName}
+                  placeholder="Enter display name"
+                  class="brand-input"
+                />
+              </div>
+            </div>
+            <div class="flex flex-col space-y-2 w-full md:w-1/2 pr-4">
+              <div class="flex flex-col space-y-1 w-full">
+                <p class="form-title">Nationality</p>
+                <p class="form-hint">Select your nationality to participate in nationwide football competitions.</p>
+                <DropdownSelect
+                  options={$countryStore.map((country: CountryDTO) => ({ id: country.id, label: country.name }))}
+                  value={nationalityId}
+                  onChange={(value: string | number) => {
+                    nationalityId = Number(value);
+                  }}
+                />
+              </div>
+              <div class="flex flex-col space-y-1 w-full">
+                <p class="form-title">Your Favourite League</p>
+                <p class="form-hint">Select your favourite league to find your favourite club.</p>
+                <DropdownSelect
+                  options={$leagueStore.map(league => ({ id: league.id, label: league.name }))}
+                  value={favouriteLeagueId}
+                  onChange={(value: string | number) => {
+                    favouriteLeagueId = Number(value);
+                  }}
+                  scrollOnOpen={true}
+                />
+              </div>
+              <div class="flex flex-col space-y-1 w-full">
+                <p class="form-title">Your Favourite Club</p>
+                <p class="form-hint">Select your favourite club to enable groupings onto club specific leaderboards.</p>
+                <DropdownSelect
+                  options={$clubStore.map(club => ({ id: club.id, label: club.friendlyName }))}
+                  value={favouriteClubId}
+                  onChange={(value: string | number) => {
+                    favouriteClubId = Number(value);
+                  }}
+                  scrollOnOpen={true}
+                />
+              </div>
+            </div>
+          
+          </div>
+
+        </div>
       </div>
-      
-    </div>
 
-    <div class="flex w-full">
-      <p class="cta-text text-lg mb-1 w-full">Neuron Based Membership</p>
-    </div>
+      <div class="horizontal-divider"></div>
 
-    <div class="w-full flex flex-col space-y-2">
-      <p>
-        To join the ICFC you need to have a non-dissolving NNS neuron with at least 1,000 ICFC staked, max staked for 2 years.
-      </p>
-      <p>
-        Add your ICFC Principal as a hotkey to any ICFC NNS neuron over 1,000 ICFC to continue:
-      </p>
+      <div class="flex flex-col space-y-2">
 
-      <div class="relative bg-BrandGrayShade3 rounded-lg p-4">
-        <button 
-            on:click={() => { copyTextAndShowToast($authStore.identity?.getPrincipal().toString() ?? "") }}
-            class="absolute top-2 right-2 text-white"
-        >
-            <CopyIcon className="w-5 h-5" fill='#FFFFFF' />
-        </button>
-        <p class="text-white font-mono text-sm break-all px-4">
-            {$authStore.identity?.getPrincipal().toString() ?? "Not available"}
+        <p class="cta-text text-lg">Neuron Based Membership</p>
+
+        <p>
+          To join the ICFC you need to have a non-dissolving NNS neuron with at least 1,000 ICFC staked, max staked for 2 years.
         </p>
-      </div>
 
-      {#if neurons.length > 0}
-        <div class="flex w-full mt-8">
-          <AvailableMembership {neurons} {refreshNeurons} availableMembership={userMembershipEligibility} {maxStakedICFC} />
-        </div>
-       
-        <div class="my-4">
-          <AppPrincipalAccordian bind:appPrincipalIds />
-        </div>
+        <p>
+          Add your ICFC Principal as a hotkey to any ICFC NNS neuron over 1,000 ICFC to continue:
+        </p>
+        <CopyPrincipal />
 
-        <p>Additional Information:</p>
-
-        <p>Your Nationality:</p>
-        <DropdownSelect
-          options={$countryStore.map((country: CountryDTO) => ({ id: country.id, label: country.name }))}
-          value={nationalityId}
-          onChange={(value: string | number) => {
-            nationalityId = Number(value);
-          }}
-        />
-
-        <p>Your Favourite League:</p>
-        <DropdownSelect
-          options={$leagueStore.map(league => ({ id: league.id, label: league.name }))}
-          value={favouriteLeagueId}
-          onChange={(value: string | number) => {
-            favouriteLeagueId = Number(value);
-          }}
-          scrollOnOpen={true}
-        />
-
-        {#if favouriteLeagueId && favouriteLeagueId > 0 }
-          <p>Your Favourite Club Id:</p>
-          <DropdownSelect
-            options={$clubStore.map(club => ({ id: club.id, label: club.friendlyName }))}
-            value={favouriteClubId}
-            onChange={(value: string | number) => {
-              favouriteClubId = Number(value);
-            }}
-            scrollOnOpen={true}
-          />
+        {#if neurons.length > 0}
+          <div class="flex flex-col space-y-2">
+            <AvailableMembership {neurons} {refreshNeurons} availableMembership={userMembershipEligibility} {maxStakedICFC} />
+            <AppPrincipalAccordian bind:appPrincipalIds />
+            <button class="brand-button" on:click={createProfile} disabled={isSubmitDisabled}>JOIN</button>
+          </div>
         {/if}
 
-        <div class="flex justify-between">
-          <button 
-          class="brand-button"
-          on:click={createProfile}
-          disabled={isSubmitDisabled}
-          >
-          JOIN
-          </button>
-        </div>
-      {/if}
+      </div>     
+  
     </div>
 
   </div>

@@ -12,6 +12,15 @@
   --dialog-border-radius: 1px !important;
 }
 
+.page-wrapper {
+  @apply flex w-full h-full p-8 mt-12 overflow-x-hidden;
+}
+
+.horizontal-divider {
+  min-height: 2px;
+  @apply self-stretch flex-shrink-0 h-px bg-BrandGrayShade4;
+}
+
 .cta-text {
   font-family: "Bungee" !important;
 }
