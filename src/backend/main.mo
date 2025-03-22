@@ -74,14 +74,7 @@ actor class Self() = this {
 
     let result : ProfileQueries.UserNeuronsDTO = {
       userNeurons = neurons;
-      userMembershipEligibility = switch (userEligibility) {
-        case (?membership) {
-          membership;
-        };
-        case (null) {
-          #NotEligible;
-        };
-      };
+      userMembershipEligibility = userEligibility.membershipType;
     };
     return #ok(result);
 
@@ -146,6 +139,7 @@ actor class Self() = this {
   private stable var stable_usernames : [(Base.PrincipalId, Text)] = [];
   private stable var stable_unique_profile_canister_ids : [Base.CanisterId] = [];
   private stable var stable_total_profile : Nat = 0;
+  private stable var stable_neurons_used_for_membership : [(Blob, Base.PrincipalId)] = [];
 
   private stable var stable_podcast_channel_canister_index : [(T.PodcastChannelId, Base.CanisterId)] = [];
   private stable var stable_active_podcast_channel_canister_id : Base.CanisterId = "";
@@ -182,6 +176,8 @@ actor class Self() = this {
     stable_usernames := profileManager.getStableUsernames();
     stable_unique_profile_canister_ids := profileManager.getStableUniqueCanisterIds();
     stable_total_profile := profileManager.getStableTotalProfiles();
+    stable_neurons_used_for_membership := profileManager.getStableNeuronsUsedforMembership();
+
   };
 
   private func backupPodcastChannelData() {
@@ -200,6 +196,7 @@ actor class Self() = this {
     profileManager.setStableUsernames(stable_usernames);
     profileManager.setStableUniqueCanisterIds(stable_unique_profile_canister_ids);
     profileManager.setStableTotalProfiles(stable_total_profile);
+    profileManager.setStableNeuronsUsedforMembership(stable_neurons_used_for_membership);
   };
 
   private func setPodcastChannelData() {
@@ -210,8 +207,6 @@ actor class Self() = this {
     podcastChannelManager.setStableTotalPodcastChannels(stable_total_podcast_channels);
     podcastChannelManager.setStableNextPodcastChannelId(stable_next_podcast_channel_id);
   };
-
-
 
   private func updateProfileCanisterWasms() : async () {
     let profileCanisterIds = profileManager.getStableUniqueCanisterIds();

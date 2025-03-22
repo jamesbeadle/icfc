@@ -27,6 +27,7 @@ module {
         private var usernames : TrieMap.TrieMap<Base.PrincipalId, Text> = TrieMap.TrieMap<Base.PrincipalId, Text>(Text.equal, Text.hash);
         private var uniqueProfileCanisterIds : List.List<Base.CanisterId> = List.nil();
         private var totalProfiles : Nat = 0;
+        private var neuronsUsedforMembership : TrieMap.TrieMap<Blob, Base.PrincipalId> = TrieMap.TrieMap<Blob, Base.PrincipalId>(Blob.equal, Blob.hash);
 
         //Getters
 
@@ -384,29 +385,20 @@ module {
 
                             let snsManager = SNSManager.SNSManager();
                             let userNeurons : [SNSGovernance.Neuron] = await snsManager.getUsersNeurons(Principal.fromText(dto.principalId));
-                            let eligibleMembershipType : T.EligibleMembership = Utils.getMembershipType(userNeurons);
+                            let eligibleMembership : T.EligibleMembership = Utils.getMembershipType(userNeurons);
 
-                            switch (eligibleMembershipType.membershipType) {
+                            let isNeuronsValid = validNeurons(eligibleMembership.eligibleNeuronIds, dto.principalId);
+                            if (not isNeuronsValid) {
+                                return #err(#NeuronAlreadyUsed);
+                            };
+
+                            switch (eligibleMembership.membershipType) {
                                 case (newMembershipType) {
                                     if (newMembershipType == #NotEligible) {
                                         return #err(#InEligible);
                                     };
 
-                                    let canUpgrade = switch (currentMembership) {
-                                        case (#Founding) { false };
-                                        case (#Lifetime) {
-                                            newMembershipType == #Founding;
-                                        };
-                                        case (#Seasonal) {
-                                            newMembershipType == #Founding or newMembershipType == #Lifetime;
-                                        };
-                                        case (#Monthly) {
-                                            newMembershipType == #Founding or newMembershipType == #Lifetime or newMembershipType == #Seasonal;
-                                        };
-                                        case (#Expired) { true };
-                                        case (#NotClaimed) { true };
-                                        case (#NotEligible) { true };
-                                    };
+                                    let canUpgrade : Bool = Utils.canUpgradeMembership(currentMembership, newMembershipType);
 
                                     if (not canUpgrade) {
                                         switch (currentMembership) {
@@ -439,7 +431,21 @@ module {
                                         principalId = dto.principalId;
                                         membershipType = newMembershipType;
                                     };
-                                    return await updateMembership(updateMembershipCommand);
+                                    let res = await updateMembership(updateMembershipCommand);
+
+                                    switch (res) {
+                                        case (#ok(claim)) {
+                                            let neuronsUsed : [Blob] = eligibleMembership.eligibleNeuronIds;
+                                            for (neuronId in neuronsUsed.vals()) {
+                                                neuronsUsedforMembership.put(neuronId, dto.principalId);
+                                            };
+
+                                            return #ok(claim);
+                                        };
+                                        case (#err(err)) {
+                                            return #err(err);
+                                        };
+                                    };
                                 };
 
                             };
@@ -633,6 +639,23 @@ module {
             uniqueProfileCanisterIds := List.fromArray(Buffer.toArray(uniqueCanisterIdBuffer));
         };
 
+        private func validNeurons(neurons : [Blob], newPrinciaplId : Base.PrincipalId) : Bool {
+            for (neuron in neurons.vals()) {
+                let existingPrincipalId = neuronsUsedforMembership.get(neuron);
+                switch (existingPrincipalId) {
+                    case (?foundPrincipalId) {
+                        if (foundPrincipalId != newPrinciaplId) {
+                            return false;
+                        };
+                    };
+                    case (null) {
+                        return false;
+                    };
+                };
+            };
+            return true;
+        };
+
         // stable storage getters and setters
         public func getStableCanisterIndex() : [(Base.PrincipalId, Base.CanisterId)] {
             return Iter.toArray(profileCanisterIndex.entries());
@@ -687,6 +710,19 @@ module {
 
         public func setStableTotalProfiles(stable_total_profiles : Nat) : () {
             totalProfiles := stable_total_profiles;
+        };
+
+        public func getStableNeuronsUsedforMembership() : [(Blob, Base.PrincipalId)] {
+            return Iter.toArray(neuronsUsedforMembership.entries());
+        };
+
+        public func setStableNeuronsUsedforMembership(stable_neurons_used_for_membership : [(Blob, Base.PrincipalId)]) : () {
+            let neuronsUsedMap : TrieMap.TrieMap<Blob, Base.PrincipalId> = TrieMap.TrieMap<Blob, Base.PrincipalId>(Blob.equal, Blob.hash);
+
+            for (neuron in Iter.fromArray(stable_neurons_used_for_membership)) {
+                neuronsUsedMap.put(neuron);
+            };
+            neuronsUsedforMembership := neuronsUsedMap;
         };
     };
 

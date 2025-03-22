@@ -2,7 +2,6 @@ import Base "mo:waterway-mops/BaseTypes";
 import FootballTypes "mo:waterway-mops/FootballTypes";
 import Principal "mo:base/Principal";
 import Blob "mo:base/Blob";
-import SNSGovernance "./sns-wrappers/governance";
 //import ckBTCLedger "canister:ckbtc_ledger";
 
 module ICFCTypes {
@@ -24,11 +23,11 @@ module ICFCTypes {
     termsAgreed : Bool;
     appPrincipalIds : [(SubApp, Base.PrincipalId)];
     podcastIds : [Base.PrincipalId];
-    favouriteMensLeagueId: ?FootballTypes.LeagueId;
-    favouriteMensClubId: ?FootballTypes.ClubId;
-    favouriteWomensLeagueId: ?FootballTypes.LeagueId;
-    favouriteWomensClubId: ?FootballTypes.ClubId;
-    nationalityId: ?Base.CountryId;
+    favouriteMensLeagueId : ?FootballTypes.LeagueId;
+    favouriteMensClubId : ?FootballTypes.ClubId;
+    favouriteWomensLeagueId : ?FootballTypes.LeagueId;
+    favouriteWomensClubId : ?FootballTypes.ClubId;
+    nationalityId : ?Base.CountryId;
   };
 
   public type PodcastChannel = {
@@ -68,7 +67,7 @@ module ICFCTypes {
 
   public type EligibleMembership = {
     membershipType : MembershipType;
-    eligibleNeuronIds : [SNSGovernance.NeuronId];
+    eligibleNeuronIds : [Blob];
   };
 
   public type Error = {
@@ -89,6 +88,7 @@ module ICFCTypes {
     #UpdateFailed;
     #AlreadyClaimed;
     #InEligible;
+    #NeuronAlreadyUsed;
   };
 
   public type Club = {

@@ -389,7 +389,7 @@ module Utils {
 
     public func getMembershipType(neurons : [SNSGovernance.Neuron]) : T.EligibleMembership {
 
-        var eligibleNeuronIdds : [SNSGovernance.NeuronId] = [];
+        var eligibleNeuronIds : [Blob] = [];
 
         let icfc_e8s : Nat64 = 100_000_000;
         let oneK_ICFC_e8s : Nat64 = 1_000 * icfc_e8s;
@@ -409,8 +409,8 @@ module Utils {
                             if (convertSecondsToYears(Int64.toInt(Int64.fromNat64(dissolve_delay))) > 2.0) {
                                 total_staked += neuron.cached_neuron_stake_e8s;
                                 switch (neuron.id) {
-                                    case (?id) {
-                                        eligibleNeuronIdds := Array.append<SNSGovernance.NeuronId>([id], eligibleNeuronIdds);
+                                    case (?neuronId) {
+                                        eligibleNeuronIds := Array.append(eligibleNeuronIds, [neuronId.id]);
                                     };
                                     case null {};
                                 };
@@ -431,25 +431,25 @@ module Utils {
         if (total_staked + padding >= million_ICFC_e8s) {
             let dto : T.EligibleMembership = {
                 membershipType = #Founding;
-                eligibleNeuronIds = eligibleNeuronIdds;
+                eligibleNeuronIds = eligibleNeuronIds;
             };
             return dto;
         } else if (total_staked + padding >= hundredK_ICFC_e8s) {
             let dto : T.EligibleMembership = {
                 membershipType = #Lifetime;
-                eligibleNeuronIds = eligibleNeuronIdds;
+                eligibleNeuronIds = eligibleNeuronIds;
             };
             return dto;
         } else if (total_staked + padding >= tenK_ICFC_e8s) {
             let dto : T.EligibleMembership = {
                 membershipType = #Seasonal;
-                eligibleNeuronIds = eligibleNeuronIdds;
+                eligibleNeuronIds = eligibleNeuronIds;
             };
             return dto;
         } else if (total_staked + padding >= oneK_ICFC_e8s) {
             let dto : T.EligibleMembership = {
                 membershipType = #Monthly;
-                eligibleNeuronIds = eligibleNeuronIdds;
+                eligibleNeuronIds = eligibleNeuronIds;
             };
             return dto;
         } else {
@@ -482,4 +482,21 @@ module Utils {
         return true;
     };
 
+    public func canUpgradeMembership(currentMembership : T.MembershipType, newMembership : T.MembershipType) : Bool {
+        switch (currentMembership) {
+            case (#Founding) { false };
+            case (#Lifetime) {
+                newMembership == #Founding;
+            };
+            case (#Seasonal) {
+                newMembership == #Founding or newMembership == #Lifetime;
+            };
+            case (#Monthly) {
+                newMembership == #Founding or newMembership == #Lifetime or newMembership == #Seasonal;
+            };
+            case (#Expired) { true };
+            case (#NotClaimed) { true };
+            case (#NotEligible) { true };
+        };
+    };
 };
