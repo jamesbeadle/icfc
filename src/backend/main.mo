@@ -446,4 +446,10 @@ actor class Self() = this {
   */
 
   // public shared ({caller}) func create_podcast_group()
+
+  // call_backs for profile_canister
+  public shared ({ caller }) func removeNeuronsforExpiredMembership(pofile_principal : Base.PrincipalId) : async () {
+    assert not Principal.isAnonymous(caller);
+    await profileManager.removeNeuronsforExpiredMembership(pofile_principal);
+  };
 };

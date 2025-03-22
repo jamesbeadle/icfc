@@ -656,6 +656,15 @@ module {
             return true;
         };
 
+        private func isProfileCanister(callerId : Base.PrincipalId) : Bool {
+            for (canister in List.toArray(uniqueProfileCanisterIds).vals()) {
+                if (canister == callerId) {
+                    return true;
+                };
+            };
+            return false;
+        };
+
         // stable storage getters and setters
         public func getStableCanisterIndex() : [(Base.PrincipalId, Base.CanisterId)] {
             return Iter.toArray(profileCanisterIndex.entries());
@@ -723,6 +732,23 @@ module {
                 neuronsUsedMap.put(neuron);
             };
             neuronsUsedforMembership := neuronsUsedMap;
+        };
+
+        public shared ({ caller }) func removeNeuronsforExpiredMembership(principalId : Base.PrincipalId) : async () {
+            assert not isProfileCanister(Principal.toText(caller));
+            let existingProfileCanisterId = profileCanisterIndex.get(principalId);
+            switch (existingProfileCanisterId) {
+                case (?_) {
+                    for (neuron in neuronsUsedforMembership.entries()) {
+                        if (neuron.1 == principalId) {
+                            neuronsUsedforMembership.delete(neuron.0);
+                        };
+                    };
+
+                };
+                case (null) {};
+            };
+
         };
     };
 
