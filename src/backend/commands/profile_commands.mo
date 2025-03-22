@@ -8,6 +8,7 @@ module ProfileCommands {
         profilePicture : ?Blob;
         profilePictureExtension : ?Text;
         displayName : Text;
+        appPrincipalIds : [(T.SubApp, Base.PrincipalId)];
     };
 
     public type UpdateUserName = {

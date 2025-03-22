@@ -1,4 +1,5 @@
 import Base "mo:waterway-mops/BaseTypes";
+import FootballTypes "mo:waterway-mops/FootballTypes";
 import Result "mo:base/Result";
 import Principal "mo:base/Principal";
 import Iter "mo:base/Iter";
@@ -127,13 +128,12 @@ actor class _ProfileCanister() {
         if (getProfileCountInGroup(activeGroupIndex) >= MAX_PROFILES_PER_GROUP) {
             activeGroupIndex += 1;
         };
-        Debug.print("Active group index incremented");
+        
         if (activeGroupIndex > 11) {
             canisterFull := true;
             return #err(#CanisterFull);
         };
-        Debug.print("Canister is not full");
-
+        
         let newProfile : T.Profile = {
             principalId = profilePrincipalId;
             profilePicture = null;
@@ -141,7 +141,7 @@ actor class _ProfileCanister() {
             username = dto.username;
             displayName = dto.displayName;
             termsAgreed = false;
-            appPrincipalIds = [];
+            appPrincipalIds = dto.appPrincipalIds;
             podcastIds = [];
             membershipType = #NotClaimed;
             membershipClaims = [];
@@ -153,7 +153,7 @@ actor class _ProfileCanister() {
             favouriteWomensClubId = null;
             nationalityId = null;
         };
-        Debug.print("Adding profile to group");
+        
         addProfile(newProfile);
 
     };

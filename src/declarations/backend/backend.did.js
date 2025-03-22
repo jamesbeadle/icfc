@@ -50,6 +50,7 @@ export const idlFactory = ({ IDL }) => {
     username: IDL.Text,
     displayName: IDL.Text,
     profilePictureExtension: IDL.Opt(IDL.Text),
+    appPrincipalIds: IDL.Vec(IDL.Tuple(SubApp, PrincipalId)),
     profilePicture: IDL.Opt(IDL.Vec(IDL.Nat8)),
   });
   const AppStatusDTO = IDL.Record({

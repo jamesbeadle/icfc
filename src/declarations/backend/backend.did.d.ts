@@ -20,6 +20,7 @@ export interface CreateProfile {
   username: string;
   displayName: string;
   profilePictureExtension: [] | [string];
+  appPrincipalIds: Array<[SubApp, PrincipalId]>;
   profilePicture: [] | [Uint8Array | number[]];
 }
 export interface DisburseMaturityInProgress {

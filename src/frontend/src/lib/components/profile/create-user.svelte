@@ -1,10 +1,16 @@
 <script lang="ts">
     import { userStore } from "$lib/stores/user-store";
     import { goto } from "$app/navigation";
-    import type { CreateProfile } from "../../../../../declarations/backend/backend.did";
+    import type { CreateProfile, MembershipType, Neuron, PrincipalId, SubApp, UserNeuronsDTO } from "../../../../../declarations/backend/backend.did";
     import LocalSpinner from "../shared/local-spinner.svelte";
     import Header from "../shared/header.svelte";
     import { toasts } from "$lib/stores/toasts-store";
+    import AppPrincipalAccordian from "./app-principal-accordian.svelte";
+    import CopyIcon from "$lib/icons/CopyIcon.svelte";
+    import { authStore } from "$lib/stores/auth-store";
+    import { onMount } from "svelte";
+    import { membershipStore } from "$lib/stores/membership-store";
+    import NeuronList from "../membership/neuron-list.svelte";
   
     let isLoading = false;
     let username = "";
@@ -13,10 +19,43 @@
     let isCheckingUsername = false;
     let usernameError = "";
     let usernameAvailable = false;
+    let appPrincipalIds: Array<[SubApp, PrincipalId]> = [];
+    let neurons: Neuron[] = [];
+    let totalStakedICFC: number = 0;
+    
+    let userNeurons: UserNeuronsDTO | undefined;
+    let userMembershipEligibility: MembershipType = { NotEligible: null };
   
     let usernameTimeout: NodeJS.Timeout;
   
-    $: isSubmitDisabled = !username || !usernameAvailable;
+    $: isSubmitDisabled = !username || !usernameAvailable || appPrincipalIds.length == 0;
+
+    onMount(async () => {
+       await loadData();
+    });
+
+    async function loadData(){
+        try {
+            await getNeurons();
+            totalStakedICFC = calculateTotalStakedICFC(neurons);
+        } catch (error) {
+            console.error("Error fetching funding data:", error);
+        } finally {
+            isLoading = false;
+        }
+    }
+
+    async function getNeurons() {
+      userNeurons = await membershipStore.getUserNeurons();
+      if (userNeurons) {
+          neurons = userNeurons.userNeurons.sort(sortByHighestNeuron);
+          userMembershipEligibility = userNeurons.userMembershipEligibility;
+      }
+    }
+
+    function sortByHighestNeuron(a: Neuron, b: Neuron): number {
+        return Number(b.cached_neuron_stake_e8s) - Number(a.cached_neuron_stake_e8s);
+    }
   
     async function checkUsername() {
       if (username.length < 5) {
@@ -50,10 +89,11 @@
       isLoading = true;
       try {
         const dto: CreateProfile = {
-          displayName: displayName,
+          displayName,
           profilePicture: [],
           profilePictureExtension: [],
-          username: username,
+          username,
+          appPrincipalIds
         };
         await userStore.createProfile(dto);
         await userStore.sync();
@@ -65,6 +105,37 @@
         isLoading = false;
       }
     }
+
+
+    async function copyTextAndShowToast(text: string) {
+        try {
+            await navigator.clipboard.writeText(text);
+            toasts.addToast({
+            type: "success",
+            message: "Copied to clipboard.",
+            duration: 2000,
+            });
+        } catch (err) {
+            console.error("Failed to copy:", err);
+        }
+    }
+
+    function calculateTotalStakedICFC(neurons: Neuron[]): number {
+        if (!neurons || neurons.length === 0) return 0;
+        const totalE8s = neurons.reduce((sum, neuron) => sum + Number(neuron.cached_neuron_stake_e8s), 0);
+        return totalE8s / 100000000;
+    }
+
+    async function handleRefresh() {
+        isLoading = true;
+        await loadData();
+        isLoading = false;
+    }
+
+    function formatICFC(amount: number): string {
+        return Math.round(amount).toLocaleString();
+    }
+
   </script>
 
 
@@ -119,13 +190,46 @@
             />
         </div>
 
-        <!-- //TODO: Add Nationality -->
+        <p class="cta-text">Neuron Based Membership</p>
+        <p>
+          To join the ICFC you need to have a non-dissolving NNS neuron with at least 1,000 ICFC staked, max staked for 2 years.
+        </p>
 
-        <!-- //TODO: Add Favourite League -->
+        <p>
+          Once you have your neuron, add your ICFC Principal as a hotkey to your neuron:
+        </p>
 
-        <!-- //TODO: Add Favourite Club Id -->
+        <div class="relative bg-gray-800 rounded-lg p-4">
+            <button 
+                on:click={() => { copyTextAndShowToast($authStore.identity?.getPrincipal().toString() ?? "") }}
+                class="absolute top-2 right-2 text-gray-400 hover:text-white"
+            >
+                <CopyIcon className="w-5 h-5" fill='#FFFFFF' />
+            </button>
+            <p class="text-gray-300 font-mono text-sm break-all px-4">
+                {$authStore.identity?.getPrincipal().toString() ?? "Not available"}
+            </p>
+        </div>
 
-        <div class="flex justify-between">
+        <button class="brand-button" on:click={handleRefresh}>Check for Neurons</button>
+
+        {#if neurons.length > 0}
+
+          <NeuronList {neurons} />
+
+          <div class="my-4">
+            <AppPrincipalAccordian bind:appPrincipalIds />
+          </div>
+
+
+
+          <!-- //TODO: Add Nationality -->
+
+          <!-- //TODO: Add Favourite League -->
+
+          <!-- //TODO: Add Favourite Club Id -->
+
+          <div class="flex justify-between">
             <button 
             class="brand-button"
             on:click={createProfile}
@@ -133,7 +237,11 @@
             >
             Create
             </button>
-        </div>
+          </div>
+
+
+
+        {/if}
 
       </div>
   </div>
