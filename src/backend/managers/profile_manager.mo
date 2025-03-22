@@ -384,10 +384,10 @@ module {
 
                             let snsManager = SNSManager.SNSManager();
                             let userNeurons : [SNSGovernance.Neuron] = await snsManager.getUsersNeurons(Principal.fromText(dto.principalId));
-                            let eligibleMembershipType : ?T.MembershipType = Utils.getMembershipType(userNeurons);
+                            let eligibleMembershipType : T.EligibleMembership = Utils.getMembershipType(userNeurons);
 
-                            switch (eligibleMembershipType) {
-                                case (?newMembershipType) {
+                            switch (eligibleMembershipType.membershipType) {
+                                case (newMembershipType) {
                                     if (newMembershipType == #NotEligible) {
                                         return #err(#InEligible);
                                     };
@@ -441,10 +441,9 @@ module {
                                     };
                                     return await updateMembership(updateMembershipCommand);
                                 };
-                                case (null) {
-                                    return #err(#InEligible);
-                                };
+
                             };
+
                         };
                         case (#err(_)) {
                             return #err(#NotFound);

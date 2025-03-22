@@ -2,6 +2,7 @@ import Base "mo:waterway-mops/BaseTypes";
 import FootballTypes "mo:waterway-mops/FootballTypes";
 import Principal "mo:base/Principal";
 import Blob "mo:base/Blob";
+import SNSGovernance "./sns-wrappers/governance";
 //import ckBTCLedger "canister:ckbtc_ledger";
 
 module ICFCTypes {
@@ -63,6 +64,11 @@ module ICFCTypes {
     membershipType : MembershipType;
     claimedOn : Int;
     expiresOn : ?Int;
+  };
+
+  public type EligibleMembership = {
+    membershipType : MembershipType;
+    eligibleNeuronIds : [SNSGovernance.NeuronId];
   };
 
   public type Error = {

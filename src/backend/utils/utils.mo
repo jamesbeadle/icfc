@@ -13,6 +13,7 @@ import Management "management";
 import Cycles "mo:base/ExperimentalCycles";
 import Int "mo:base/Int";
 import Char "mo:base/Char";
+import Array "mo:base/Array";
 import T "../icfc_types";
 import SNSGovernance "../sns-wrappers/governance";
 
@@ -386,14 +387,17 @@ module Utils {
         Float.fromInt(seconds) / Float.fromInt(secondsInAYear);
     };
 
-    public func getMembershipType(neurons : [SNSGovernance.Neuron]) : ?T.MembershipType {
+    public func getMembershipType(neurons : [SNSGovernance.Neuron]) : T.EligibleMembership {
+
+        var eligibleNeuronIdds : [SNSGovernance.NeuronId] = [];
+
         let icfc_e8s : Nat64 = 100_000_000;
         let oneK_ICFC_e8s : Nat64 = 1_000 * icfc_e8s;
         let tenK_ICFC_e8s : Nat64 = 10_000 * icfc_e8s;
         let hundredK_ICFC_e8s : Nat64 = 100_000 * icfc_e8s;
         let million_ICFC_e8s : Nat64 = 1_000_000 * icfc_e8s;
 
-        let padding: Nat64 = 5_000_000;
+        let padding : Nat64 = 5_000_000;
 
         var total_staked : Nat64 = 0;
 
@@ -404,6 +408,12 @@ module Utils {
                         case (#DissolveDelaySeconds(dissolve_delay)) {
                             if (convertSecondsToYears(Int64.toInt(Int64.fromNat64(dissolve_delay))) > 2.0) {
                                 total_staked += neuron.cached_neuron_stake_e8s;
+                                switch (neuron.id) {
+                                    case (?id) {
+                                        eligibleNeuronIdds := Array.append<SNSGovernance.NeuronId>([id], eligibleNeuronIdds);
+                                    };
+                                    case null {};
+                                };
                             };
                         };
                         case (#WhenDissolvedTimestampSeconds(_)) {
@@ -419,36 +429,55 @@ module Utils {
         };
 
         if (total_staked + padding >= million_ICFC_e8s) {
-            return ?#Founding;
+            let dto : T.EligibleMembership = {
+                membershipType = #Founding;
+                eligibleNeuronIds = eligibleNeuronIdds;
+            };
+            return dto;
         } else if (total_staked + padding >= hundredK_ICFC_e8s) {
-            return ?#Lifetime;
+            let dto : T.EligibleMembership = {
+                membershipType = #Lifetime;
+                eligibleNeuronIds = eligibleNeuronIdds;
+            };
+            return dto;
         } else if (total_staked + padding >= tenK_ICFC_e8s) {
-            return ?#Seasonal;
+            let dto : T.EligibleMembership = {
+                membershipType = #Seasonal;
+                eligibleNeuronIds = eligibleNeuronIdds;
+            };
+            return dto;
         } else if (total_staked + padding >= oneK_ICFC_e8s) {
-            return ?#Monthly;
+            let dto : T.EligibleMembership = {
+                membershipType = #Monthly;
+                eligibleNeuronIds = eligibleNeuronIdds;
+            };
+            return dto;
         } else {
-            return ?#NotEligible;
+            let dto : T.EligibleMembership = {
+                membershipType = #NotEligible;
+                eligibleNeuronIds = [];
+            };
+            return dto;
         };
     };
 
-
-    public func isUsernameValid(username: Text) : Bool {
+    public func isUsernameValid(username : Text) : Bool {
         if (Text.size(username) < 5 or Text.size(username) > 20) {
-        return false;
+            return false;
         };
 
         let isAlphanumeric = func(s : Text) : Bool {
-        let chars = Text.toIter(s);
-        for (c in chars) {
-            if (not ((c >= 'a' and c <= 'z') or (c >= 'A' and c <= 'Z') or (c >= '0' and c <= '9') or (c == ' '))) {
-            return false;
+            let chars = Text.toIter(s);
+            for (c in chars) {
+                if (not ((c >= 'a' and c <= 'z') or (c >= 'A' and c <= 'Z') or (c >= '0' and c <= '9') or (c == ' '))) {
+                    return false;
+                };
             };
-        };
-        return true;
+            return true;
         };
 
         if (not isAlphanumeric(username)) {
-        return false;
+            return false;
         };
         return true;
     };
