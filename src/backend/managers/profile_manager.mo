@@ -371,34 +371,89 @@ module {
         public func claimMembership(dto : ProfileCommands.ClaimMembership) : async Result.Result<(T.MembershipClaim), T.Error> {
             let existingProfileCanisterId = profileCanisterIndex.get(dto.principalId);
             switch (existingProfileCanisterId) {
-                case (?_) {
-                    let snsManager = SNSManager.SNSManager();
-                    let userNeurons : [SNSGovernance.Neuron] = await snsManager.getUsersNeurons(Principal.fromText(dto.principalId));
+                case (?foundCanisterId) {
+                    let profile_canister = actor (foundCanisterId) : actor {
+                        getProfile : (dto : ProfileQueries.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, T.Error>;
+                    };
 
-                    let eligibleMembershipType : ?T.MembershipType = Utils.getMembershipType(userNeurons);
+                    let profile = await profile_canister.getProfile(dto);
+                    switch (profile) {
+                        case (#ok(profileDTO)) {
+                            let profile = profileDTO;
+                            let currentMembership = profile.membershipType;
 
-                    switch (eligibleMembershipType) {
+                            let snsManager = SNSManager.SNSManager();
+                            let userNeurons : [SNSGovernance.Neuron] = await snsManager.getUsersNeurons(Principal.fromText(dto.principalId));
+                            let eligibleMembershipType : ?T.MembershipType = Utils.getMembershipType(userNeurons);
 
-                        case (?membershipType) {
-                            if (membershipType == #NotEligible) {
-                                return #err(#InEligible);
+                            switch (eligibleMembershipType) {
+                                case (?newMembershipType) {
+                                    if (newMembershipType == #NotEligible) {
+                                        return #err(#InEligible);
+                                    };
+
+                                    let canUpgrade = switch (currentMembership) {
+                                        case (#Founding) { false };
+                                        case (#Lifetime) {
+                                            newMembershipType == #Founding;
+                                        };
+                                        case (#Seasonal) {
+                                            newMembershipType == #Founding or newMembershipType == #Lifetime;
+                                        };
+                                        case (#Monthly) {
+                                            newMembershipType == #Founding or newMembershipType == #Lifetime or newMembershipType == #Seasonal;
+                                        };
+                                        case (#Expired) { true };
+                                        case (#NotClaimed) { true };
+                                        case (#NotEligible) { true };
+                                    };
+
+                                    if (not canUpgrade) {
+                                        switch (currentMembership) {
+                                            case (#Monthly or #Seasonal) {
+                                                let currentTimestamp = Time.now();
+                                                let membershipClaim = List.last(List.fromArray(profile.membershipClaims));
+                                                switch (membershipClaim) {
+                                                    case (?claim) {
+                                                        let expiresOn = claim.expiresOn;
+                                                        switch (expiresOn) {
+                                                            case (?exp) {
+                                                                if (exp > currentTimestamp) {
+                                                                    return #err(#AlreadyClaimed);
+                                                                };
+                                                            };
+                                                            case (null) {};
+                                                        };
+                                                    };
+                                                    case (null) {};
+                                                };
+                                            };
+                                            case (_) {
+
+                                                return #err(#AlreadyClaimed);
+                                            };
+                                        };
+                                    };
+
+                                    let updateMembershipCommand : ProfileCommands.UpdateMembership = {
+                                        principalId = dto.principalId;
+                                        membershipType = newMembershipType;
+                                    };
+                                    return await updateMembership(updateMembershipCommand);
+                                };
+                                case (null) {
+                                    return #err(#InEligible);
+                                };
                             };
-
-                            let updateMembershipCommand : ProfileCommands.UpdateMembership = {
-                                principalId = dto.principalId;
-                                membershipType = membershipType;
-                            };
-                            return await updateMembership(updateMembershipCommand);
                         };
-                        case (null) {
-                            return #err(#InEligible);
+                        case (#err(_)) {
+                            return #err(#NotFound);
                         };
                     };
                 };
                 case (null) {
                     return #err(#NotFound);
                 };
-
             };
         };
 
@@ -416,7 +471,7 @@ module {
                     return #err(#NotFound);
                 };
             };
-        }; 
+        };
 
         // private functions
         private func callerAllowed(caller : Base.PrincipalId) : Bool {
@@ -471,8 +526,6 @@ module {
 
         };
 
-            
-
         public func isUsernameTaken(username : Text, principalId : Text) : Bool {
             for (managerUsername in usernames.entries()) {
 
@@ -480,7 +533,7 @@ module {
                 let existingUsername = Utils.toLowercase(managerUsername.1);
 
                 if (lowerCaseUsername == existingUsername and managerUsername.0 != principalId) {
-                   return true;
+                    return true;
                 };
             };
 
@@ -575,7 +628,7 @@ module {
             let _ = await Utils.updateCanister_(canister, principal, IC);
         };
 
-        private func storeCanisterId(canisterId: Text){
+        private func storeCanisterId(canisterId : Text) {
             let uniqueCanisterIdBuffer = Buffer.fromArray<Base.CanisterId>(List.toArray(uniqueProfileCanisterIds));
             uniqueCanisterIdBuffer.add(canisterId);
             uniqueProfileCanisterIds := List.fromArray(Buffer.toArray(uniqueCanisterIdBuffer));
