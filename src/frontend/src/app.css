@@ -39,6 +39,18 @@
   @apply p-2 rounded-md;
 }
 
+.form-title {
+  @apply text-sm text-BrandGrayShade4;
+}
+
+.form-hint {
+  @apply text-xxs text-BrandGrayShade3 my-3;
+}
+
+.brand-input {
+  @apply bg-BrandGrayShade4 text-black p-4;
+}
+
 .bg-frontend-update {
   @apply text-white bg-black;
 }

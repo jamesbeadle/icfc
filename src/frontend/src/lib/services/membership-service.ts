@@ -25,10 +25,6 @@ export class MembershipService {
 
       return result.ok;
     } catch (error) {
-      toasts.addToast({
-        message: "Failed to get user neurons",
-        type: "error",
-      });
       throw error;
     }
   }
@@ -49,11 +45,6 @@ export class MembershipService {
 
       return result.ok;
     } catch (error) {
-      toasts.addToast({
-        message: "Failed to claim membership",
-        type: "error",
-      });
-      console.error("Failed to claim membership", error);
       throw error;
     }
   }

@@ -1,6 +1,9 @@
 import { writable } from "svelte/store";
 import { ClubService } from "../services/club-service";
-import type { ClubDTO, LeagueId } from "../../../../external_declarations/data_canister/data_canister.did";
+import type {
+  ClubDTO,
+  LeagueId,
+} from "../../../../external_declarations/data_canister/data_canister.did";
 
 function createClubStore() {
   const { subscribe, set } = writable<ClubDTO[]>([]);

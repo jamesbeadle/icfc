@@ -22,7 +22,7 @@
     export let availableMembership: MembershipType;
     export let maxStakedICFC: bigint;
 
-    let isLoading: boolean = true;
+    let isLoading: boolean = false;
     let showHowToClaimModal = false;
 
     function formatICFC(amount: bigint): string {
@@ -133,15 +133,15 @@
     </div>
 {/if}
 
-<div class="flex">
-    <div class="w-1/2">
+<div class="flex mt-4">
+    <div class="w-1/2 flex flex-col items-center justify-center text-center p-8 space-y-2">
         <p>Total ICFC Staked:</p>
-        <div class="flex flex-row items-center">
+        <div class="flex flex-row items-center w-full">
             <IcfcCoinIcon className="w-6 mr-2" />
-            <p>{formatICFC(maxStakedICFC)}</p>
+            <p>{formatICFC(maxStakedICFC / 100000000n)}</p>
         </div>
     </div>
-    <div class="w-1/2">
+    <div class="w-1/2 flex flex-col items-center justify-center text-center p-8 space-y-2">
         <p>Membership Level:</p>
 
         {#if Object.keys(availableMembership)[0].toLowerCase() == 'monthly'}

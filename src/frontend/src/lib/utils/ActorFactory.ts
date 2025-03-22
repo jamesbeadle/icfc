@@ -89,7 +89,6 @@ export class ActorFactory {
     });
   }
 
-  
   static createDataCanisterIdentityActor(
     authStore: AuthStore,
     canisterId: string,

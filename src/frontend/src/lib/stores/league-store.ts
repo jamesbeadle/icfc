@@ -1,6 +1,9 @@
 import { writable } from "svelte/store";
 import { LeagueService } from "$lib/services/league-service";
-import type { FootballLeagueDTO, LeagueStatus } from "../../../../external_declarations/data_canister/data_canister.did";
+import type {
+  FootballLeagueDTO,
+  LeagueStatus,
+} from "../../../../external_declarations/data_canister/data_canister.did";
 
 function createLeagueStore() {
   const { subscribe, set } = writable<FootballLeagueDTO[]>([]);
@@ -39,7 +42,7 @@ function createLeagueStore() {
     subscribe,
     setLeagues: (leagues: FootballLeagueDTO[]) => set(leagues),
     setLeagueStatus: (leagueStatus: LeagueStatus[]) =>
-    setLeagueStatus(leagueStatus),
+      setLeagueStatus(leagueStatus),
     getLeagues,
     getLeagueStatus,
     subscribeLeagueStatus,

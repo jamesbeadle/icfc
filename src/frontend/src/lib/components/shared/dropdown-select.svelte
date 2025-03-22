@@ -7,10 +7,10 @@
 
 
     export let value: any;
-    export let options: { id: string | number; label: string }[];
+    export let options: { id: any; label: string }[];
     export let placeholder = "Select...";
     export let compact = false;
-    export let onChange: (value: string | number) => void;
+    export let onChange: (value: any) => void;
     export let allOptionText: string | undefined = undefined;
     export let scrollOnOpen = false;
 
@@ -47,7 +47,7 @@
         }
     }
 
-    function selectOption(optionId: string | number, e: MouseEvent) {
+    function selectOption(optionId: any, e: MouseEvent) {
         e.stopPropagation();
         onChange(optionId);
         isDropdownOpen = false;

@@ -62,15 +62,6 @@ actor class Self() = this {
   public shared ({ caller }) func getUserNeurons() : async Result.Result<ProfileQueries.UserNeuronsDTO, T.Error> {
     assert not Principal.isAnonymous(caller);
 
-    let dto : ProfileQueries.GetProfile = {
-      principalId = Principal.toText(caller);
-    };
-    let profile = await profileManager.getProfile(dto);
-    switch (profile) {
-      case (#err(e)) return #err(e);
-      case (#ok(_)) {};
-    };
-
     let neurons = await snsManager.getUsersNeurons(caller);
     let userEligibility = Utils.getMembershipType(neurons);
     let totalMaxStaked = Utils.getTotalMaxStaked(neurons);
@@ -173,15 +164,15 @@ actor class Self() = this {
   system func postupgrade() {
     setProfileData();
     setPodcastChannelData();
-    ignore Timer.setTimer<system>(#nanoseconds(Int.abs(1)), postUpgradeCallback);
+    //ignore Timer.setTimer<system>(#nanoseconds(Int.abs(1)), postUpgradeCallback);
   };
 
   private func postUpgradeCallback() : async () {
-    /*
     await updateProfileCanisterWasms();
     profileManager.setStableCanisterIndex([]);
     profileManager.setStableUsernames([]);
     profileManager.setStableTotalProfiles(0);
+    /*
     */
   };
 

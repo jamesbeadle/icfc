@@ -10,10 +10,10 @@
   
     const subAppOptions: SubApp[] = [
       { OpenFPL: null },
-      /*{ OpenWSL: null },
+      { OpenWSL: null },
       { FootballGod: null },
       { TransferKings: null },
-      { JeffBets: null },*/
+      { JeffBets: null }
     ];
   
     function getSubAppName(subApp: SubApp): string {
