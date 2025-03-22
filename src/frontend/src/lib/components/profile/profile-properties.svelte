@@ -1,76 +1,85 @@
 <script lang="ts">
-    import CopyIcon from "$lib/icons/CopyIcon.svelte";
-    import { userStore } from "$lib/stores/user-store";
-    import { onMount } from "svelte";
-    import UpdateUsernameModal from "./update-username-modal.svelte";
-    import { getDateFromBigInt } from "$lib/utils/helpers";
-    import { authStore } from "$lib/stores/auth-store";
-    import { appStore } from "$lib/stores/app-store";
-    import LoadingDots from "../shared/loading-dots.svelte";
+  import CopyIcon from "$lib/icons/CopyIcon.svelte";
+  import { onMount } from "svelte";
+  import UpdateUsernameModal from "./update-username-modal.svelte";
+  import { getDateFromBigInt } from "$lib/utils/helpers";
+  import { authStore } from "$lib/stores/auth-store";
+  import { appStore } from "$lib/stores/app-store";
+  import LoadingDots from "../shared/loading-dots.svelte";
+  import type { ProfileDTO } from "../../../../../declarations/backend/backend.did";
 
-    let isLoading = true;
-    let showUsernameModal: boolean = false;
-    let username = "Not Set";
-    let joinedDate = "";
-    let unsubscribeUserProfile: () => void;
-  
-    onMount(async () => {
-      await userStore.sync();
+  export let profile: ProfileDTO;
 
-      unsubscribeUserProfile = userStore.subscribe((value) => {
-        if (!value) { return; }
-        username = value.username;
-        joinedDate = getDateFromBigInt(Number(value.createDate));
-      });
+  let isLoading = true;
+  let showUsernameModal: boolean = false;
+  let username = "Not Set";
+  let joinedDate = "";
+
+  onMount(async () => {
+      username = profile.username;
+      joinedDate = getDateFromBigInt(Number(profile.createdOn));
       isLoading = false;
-    });
+  });
 
   function displayUsernameModal(): void {
-    showUsernameModal = true;
+      showUsernameModal = true;
   }
+
   async function copyTextAndShowToast() {
-    await appStore.copyTextAndShowToast($userStore ? $userStore.principalId : "");
+      await appStore.copyTextAndShowToast(profile.principalId);
   }
 </script>
 
-<div class="w-full mb-4 md:w-1/2 lg:w-2/3 xl:w-3/4 md:px-2 md:mb-0">
-    <div class="px-4 mt-2 rounded-lg md:ml-4 md:px-4 md:mt-1">
-      <p class="mb-1">Username:</p>
-      <h2 class="mb-1 default-header md:mb-2">
-        {#if isLoading}
-          <LoadingDots />
-        {:else}
-          {username}
-        {/if}
-      </h2>
-      <button class="p-1 px-2 rounded md:p-2 md:px-4 fpl-button" on:click={displayUsernameModal}>Update</button>
-      
-      <p class="mt-4 mb-1">Joined:</p>
-      <h2 class="mb-1 default-header md:mb-2">
-        {#if isLoading}
-          <LoadingDots />
-        {:else}
-          {joinedDate}
-        {/if}</h2>
-      <p class="mb-1">Principal:</p>
-      <div class="flex items-center">
-        <button class="flex items-center text-left" on:click={copyTextAndShowToast}>
-          <span>
-            {#if isLoading}
-              <LoadingDots />
-            {:else}
-              {$authStore.identity?.getPrincipal().toText()}
-            {/if}
-          </span>
-          <CopyIcon className="w-7 xs:w-6 text-left" fill="#FFFFFF" />
-        </button>
+<div class="w-full text-white space-y-4">
+  <div>
+      <p class="text-sm text-BrandGrayShade5">Username:</p>
+      <div class="flex items-center justify-between">
+          <h2 class="text-xl mini:text-2xl font-semibold">
+              {#if isLoading}
+                  <LoadingDots />
+              {:else}
+                  {username}
+              {/if}
+          </h2>
+          <button 
+              class="px-3 py-1 text-sm mini:text-base font-semibold text-white bg-BrandBlue rounded-lg hover:bg-opacity-80 transition-all duration-300"
+              on:click={displayUsernameModal}
+          >
+              Update
+          </button>
       </div>
-    </div>
+  </div>
+
+  <div>
+      <p class="text-sm text-BrandGrayShade5">Joined:</p>
+      <h2 class="text-xl mini:text-2xl font-semibold">
+          {#if isLoading}
+              <LoadingDots />
+          {:else}
+              {joinedDate}
+          {/if}
+      </h2>
+  </div>
+
+  <div>
+      <p class="text-sm text-BrandGrayShade5">Principal:</p>
+      <div class="flex items-center">
+          <button class="flex items-center space-x-2" on:click={copyTextAndShowToast}>
+              <span class="text-sm mini:text-base truncate max-w-xs">
+                  {#if isLoading}
+                      <LoadingDots />
+                  {/if}
+                  {$authStore.identity?.getPrincipal().toText()}
+              </span>
+              <CopyIcon className="w-5 h-5 text-BrandGrayShade5 hover:text-white transition-colors" fill="currentColor" />
+          </button>
+      </div>
+  </div>
 </div>
 
-  {#if !isLoading}
+{#if !isLoading}
   <UpdateUsernameModal
-    newUsername={$userStore.username}
-    bind:visible={showUsernameModal}
+      newUsername={profile.username}
+      bind:visible={showUsernameModal}
   />
-  {/if}
+{/if}

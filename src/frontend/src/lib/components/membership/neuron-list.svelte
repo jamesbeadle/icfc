@@ -26,6 +26,10 @@
     let totalStakedICFC: number = 0;
 
     onMount(async () => {
+       await loadData();
+    });
+
+    async function loadData(){
         try {
             await getNeurons();
             totalStakedICFC = calculateTotalStakedICFC(neurons);
@@ -34,7 +38,7 @@
         } finally {
             isLoading = false;
         }
-    });
+    }
 
     async function getNeurons() {
         try {
@@ -118,6 +122,13 @@
         return totalE8s / 100000000;
     }
 
+    async function closeClaimMembership(reload = false){
+        showClaimMembershipModal = false;
+        if(reload){
+            await loadData();
+        }
+    }
+
 
 
 </script>
@@ -180,7 +191,7 @@
 {#if showClaimMembershipModal}
     <ClaimMembershipModal 
         totalStakedICFC={Math.round(totalStakedICFC)} 
-        onClose={() => showClaimMembershipModal = false} 
+        {closeClaimMembership} 
     />
 {/if}
 
