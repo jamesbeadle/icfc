@@ -16,45 +16,11 @@
     import { authStore } from "$lib/stores/auth-store";
     import CopyIcon from "$lib/icons/CopyIcon.svelte";
 
+    export let neurons: Neuron[];
+
     let isLoading: boolean = true;
-    let neurons: Neuron[] = [];
     let showHowToClaimModal = false;
     let showClaimMembershipModal = false;
-    
-    let userNeurons: UserNeuronsDTO | undefined;
-    let userMembershipEligibility: MembershipType = { NotEligible: null };
-    let totalStakedICFC: number = 0;
-
-    onMount(async () => {
-       await loadData();
-    });
-
-    async function loadData(){
-        try {
-            await getNeurons();
-            totalStakedICFC = calculateTotalStakedICFC(neurons);
-        } catch (error) {
-            console.error("Error fetching funding data:", error);
-        } finally {
-            isLoading = false;
-        }
-    }
-
-    async function getNeurons() {
-        try {
-            busy.start();
-            userNeurons = await membershipStore.getUserNeurons();
-            if (userNeurons) {
-                neurons = userNeurons.userNeurons.sort(sortByHighestNeuron);
-                userMembershipEligibility = userNeurons.userMembershipEligibility;
-            }
-        } catch (error) {
-            console.error(error);
-        } finally {
-            busy.stop();
-        }
-    }
-
     function formatICFC(amount: number): string {
         return Math.round(amount).toLocaleString();
     }
@@ -122,15 +88,6 @@
         return totalE8s / 100000000;
     }
 
-    async function closeClaimMembership(reload = false){
-        showClaimMembershipModal = false;
-        if(reload){
-            await loadData();
-        }
-    }
-
-
-
 </script>
 
 {#if isLoading}
@@ -186,13 +143,6 @@
             </div>
         {/if}
     </div>
-{/if}
-
-{#if showClaimMembershipModal}
-    <ClaimMembershipModal 
-        totalStakedICFC={Math.round(totalStakedICFC)} 
-        {closeClaimMembership} 
-    />
 {/if}
 
 {#if showHowToClaimModal}

@@ -191,6 +191,10 @@ type DisburseMaturityInProgress =
  };
 type CreateProfile = 
  record {
+   appPrincipalIds: vec record {
+                          SubApp;
+                          PrincipalId;
+                        };
    displayName: text;
    profilePicture: opt blob;
    profilePictureExtension: opt text;
