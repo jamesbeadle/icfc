@@ -6,7 +6,7 @@
     import { activeDropdownId } from "$lib/stores/dropdown-store";
 
 
-    export let value: string | number | null;
+    export let value: any;
     export let options: { id: string | number; label: string }[];
     export let placeholder = "Select...";
     export let compact = false;

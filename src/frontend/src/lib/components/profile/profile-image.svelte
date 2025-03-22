@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { userGetProfilePicture } from "$lib/derived/user.derived";
     import { toasts } from "$lib/stores/toasts-store";
     import { userStore } from "$lib/stores/user-store";
     import { getImageURL } from "$lib/utils/helpers";

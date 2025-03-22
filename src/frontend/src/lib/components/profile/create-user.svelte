@@ -1,40 +1,50 @@
 <script lang="ts">
-    import { userStore } from "$lib/stores/user-store";
-    import type { ClubId, CountryDTO, CountryId, CreateProfile, LeagueId, MembershipType, Neuron, PrincipalId, SubApp, UserNeuronsDTO } from "../../../../../declarations/backend/backend.did";
-    import LocalSpinner from "../shared/local-spinner.svelte";
-    import Header from "../shared/header.svelte";
-    import { toasts } from "$lib/stores/toasts-store";
-    import AppPrincipalAccordian from "./app-principal-accordian.svelte";
-    import CopyIcon from "$lib/icons/CopyIcon.svelte";
-    import { authStore } from "$lib/stores/auth-store";
     import { onMount } from "svelte";
-    import { membershipStore } from "$lib/stores/membership-store";
-    import AvailableMembership from "../membership/available-membership.svelte";
-    import DropdownSelect from "../shared/dropdown-select.svelte";
+    
+    import { authStore } from "$lib/stores/auth-store";
+    import { userStore } from "$lib/stores/user-store";
     import { countryStore } from "$lib/stores/country-store";
     import { leagueStore } from "$lib/stores/league-store";
     import { clubStore } from "$lib/stores/club-store";
-  
+    import { membershipStore } from "$lib/stores/membership-store";
+    import { toasts } from "$lib/stores/toasts-store";
+    
+    import type { CreateProfile, MembershipType, Neuron, PrincipalId, SubApp, UserNeuronsDTO } from "../../../../../declarations/backend/backend.did";
+    import type { LeagueId, ClubId, CountryDTO, CountryId, ClubDTO } from "../../../../../external_declarations/data_canister/data_canister.did";
+    import LocalSpinner from "../shared/local-spinner.svelte";
+    
+    import Header from "../shared/header.svelte";
+    import AppPrincipalAccordian from "./app-principal-accordian.svelte";
+    import CopyIcon from "$lib/icons/CopyIcon.svelte";
+    import AvailableMembership from "../membership/available-membership.svelte";
+    import DropdownSelect from "../shared/dropdown-select.svelte";
+    
     let isLoading = false;
+    let isCheckingUsername = false;
+    let usernameAvailable = false;
+    let isSubmitDisabled = true;
+    
+    let usernameError = "";
+    
+
     let username = "";
     let displayName = "";
-    let isSubmitDisabled = true;
-    let isCheckingUsername = false;
-    let usernameError = "";
-    let usernameAvailable = false;
     let appPrincipalIds: Array<[SubApp, PrincipalId]> = [];
-    let neurons: Neuron[] = [];
-    let maxStakedICFC = 0n;
     let favouriteLeagueId: LeagueId | null = null;
     let favouriteClubId: ClubId | null = null;
     let nationalityId: CountryId | null = null;
+    let fileInput: HTMLInputElement;
+
+    let neurons: Neuron[] = [];
+    let maxStakedICFC = 0n;
+    let clubs: ClubDTO[] = [];
     
-    let userNeurons: UserNeuronsDTO | undefined;
     let userMembershipEligibility: MembershipType = { NotEligible: null };
     
     let usernameTimeout: NodeJS.Timeout;
   
     $: isSubmitDisabled = !username || !usernameAvailable || appPrincipalIds.length == 0;
+    let leaguesLoaded = false;
 
     onMount(async () => {
        await loadData();
@@ -51,11 +61,11 @@
     }
 
     async function getNeurons() {
-      userNeurons = await membershipStore.getUserNeurons();
-      if (userNeurons) {
-          neurons = userNeurons.userNeurons.sort(sortByHighestNeuron);
-          userMembershipEligibility = userNeurons.userMembershipEligibility;
-          maxStakedICFC = userNeurons.totalMaxStaked;
+      let neuronsResult = await membershipStore.getUserNeurons();
+      if (neuronsResult) {
+          neurons = neuronsResult.userNeurons.sort(sortByHighestNeuron);
+          userMembershipEligibility = neuronsResult.userMembershipEligibility;
+          maxStakedICFC = neuronsResult.totalMaxStaked;
       }
     }
 
@@ -132,6 +142,32 @@
         isLoading = false;
     }
 
+    $: if (leaguesLoaded && favouriteLeagueId && favouriteLeagueId > 0) {
+      getClubs();
+    }
+
+    async function getClubs() {
+      let clubsResult = await clubStore.getClubs(favouriteLeagueId!);
+      if(!clubsResult){ return }
+      clubs = clubsResult;
+    }
+
+    function clickFileInput() {
+        fileInput.click();
+    } 
+
+    function handleFileChange(event: Event) {
+        const input = event.target as HTMLInputElement;
+        if (input.files && input.files[0]) {
+            const file = input.files[0];
+            if (file.size > 1000 * 1024) {
+                toasts.addToast({ type: "error", message: "Profile image too large. The maximum size is 1MB." });
+                console.error("Error updating profile image.");
+                return;
+            }
+        }
+    }
+
   </script>
 
 
@@ -186,6 +222,33 @@
             />
         </div>
 
+        <div class="relative group">
+          <img 
+              src="/profile_placeholder.png" 
+              alt="Profile" 
+              class="relative w-full h-64 object-cover rounded-xl"
+          />
+          
+          <div class="mt-4 flex justify-center">
+              <button 
+                  class="px-4 py-2 text-sm mini:text-base font-semibold text-white bg-BrandBlue rounded-lg hover:bg-opacity-80 transition-all duration-300"
+                  on:click={clickFileInput}
+              >
+                  Upload Photo
+              </button>
+              <input
+                  type="file"
+                  id="profile-image"
+                  accept="image/*"
+                  bind:this={fileInput}
+                  on:change={handleFileChange}
+                  class="hidden"
+              />
+          </div>
+      </div>
+
+
+
         <p class="cta-text">Neuron Based Membership</p>
         <p>
           To join the ICFC you need to have a non-dissolving NNS neuron with at least 1,000 ICFC staked, max staked for 2 years.
@@ -236,15 +299,17 @@
             scrollOnOpen={true}
           />
 
-          <p>Your Favourite Club Id:</p>
-          <DropdownSelect
-            options={$clubStore.map(club => ({ id: club.id, label: club.friendlyName }))}
-            value={favouriteClubId}
-            onChange={(value: string | number) => {
-              favouriteClubId = Number(value);
-            }}
-            scrollOnOpen={true}
-          />
+          {#if favouriteLeagueId && favouriteLeagueId > 0 && !isLoading }
+            <p>Your Favourite Club Id:</p>
+            <DropdownSelect
+              options={$clubStore.map(club => ({ id: club.id, label: club.friendlyName }))}
+              value={favouriteClubId}
+              onChange={(value: string | number) => {
+                favouriteClubId = Number(value);
+              }}
+              scrollOnOpen={true}
+            />
+          {/if}
 
           <div class="flex justify-between">
             <button 
