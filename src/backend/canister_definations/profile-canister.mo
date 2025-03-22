@@ -1117,5 +1117,10 @@ actor class _ProfileCanister() {
     };
 
     system func postupgrade() {
+        /*
+        stable_profile_group_indexes := [];
+        profileGroup1 := [];
+        totalProfiles := 0;
+        */
     };
 };

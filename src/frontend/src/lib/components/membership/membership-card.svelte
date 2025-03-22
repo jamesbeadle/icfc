@@ -2,8 +2,6 @@
     import Card from '../shared/card.svelte';
     import ICFCCoinIcon from '$lib/icons/ICFCCoinIcon.svelte';
     import LogoIcon from '$lib/icons/LogoIcon.svelte';
-    import { membershipStore } from '$lib/stores/membership-store';
-    import { toasts } from '$lib/stores/toasts-store';
     import MonthlyMembershipIcon from '$lib/icons/MonthlyMembershipIcon.svelte';
     import SeasonalMembershipIcon from '$lib/icons/SeasonalMembershipIcon.svelte';
     import LifetimeMembershipIcon from '$lib/icons/LifetimeMembershipIcon.svelte';
@@ -13,6 +11,7 @@
     export let levelIndex: number;
     export let currentLevelIndex: number;
     export let totalStakedICFC: number;
+    export let handleClaimMembership: () => void;
 
     const backgroundProperties = {
         opacity: "opacity-[0.10]",
@@ -42,26 +41,13 @@
         return `Need ${formatStakeAmount(tokensNeeded)} more ICFC`;
     }
 
-    async function handleClaimMembership() {
-        if (!canClaim) return;
-        
-        try {
-            await membershipStore.claimMembership();
-            toasts.addToast({ 
-                type: "success", 
-                message: `Successfully claimed membership.` 
-            });
-        } catch (error) {
-            console.error("Error claiming membership:", error);
-            toasts.addToast({ 
-                type: "error", 
-                message: "Failed to claim membership." 
-            });
-        }
-    }
-
     function loadNNS(){
         window.open("https://nns.ic0.app/neurons/?u=gyito-zyaaa-aaaaq-aacpq-cai/", "_blank");
+    }
+
+    function claimMembership(){
+        if(!canClaim) {return}
+        handleClaimMembership();
     }
 
 </script>
@@ -115,7 +101,7 @@
                 </div>
             {:else if status === "Claim" || status === "Upgrade"}
                 <button 
-                    on:click={handleClaimMembership}
+                    on:click={claimMembership}
                     class="small-brand-button  w-full"
                 >
                     {status}

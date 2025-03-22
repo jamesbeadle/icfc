@@ -9,8 +9,9 @@
     import IcfcCoinIcon from "$lib/icons/ICFCCoinIcon.svelte";
     import CopyIcon from "$lib/icons/CopyIcon.svelte";
     import { toasts } from "$lib/stores/toasts-store";
+    import { membershipStore } from "$lib/stores/membership-store";
 
-    export let onClose: () => void;
+    export let closeClaimMembership: (reload: boolean) => void;
     export let totalStakedICFC: number;
 
     let isLoading = true;
@@ -43,16 +44,43 @@
     }
 
     async function copyTextAndShowToast(text: string) {
-    try {
-        await navigator.clipboard.writeText(text);
-        toasts.addToast({
-        type: "success",
-        message: "Copied to clipboard.",
-        duration: 2000,
-        });
-    } catch (err) {
-        console.error("Failed to copy:", err);
+        try {
+            await navigator.clipboard.writeText(text);
+            toasts.addToast({
+            type: "success",
+            message: "Copied to clipboard.",
+            duration: 2000,
+            });
+        } catch (err) {
+            console.error("Failed to copy:", err);
+        }
     }
+
+
+
+    async function handleClaimMembership() {
+        
+        try {
+            isLoading = true;
+            await membershipStore.claimMembership();
+            toasts.addToast({ 
+                type: "success", 
+                message: `Successfully claimed membership.` 
+            });
+        } catch (error) {
+            console.error("Error claiming membership:", error);
+            toasts.addToast({ 
+                type: "error", 
+                message: "Failed to claim membership." 
+            });
+        } finally {
+            closeClaimMembership(true);
+            isLoading = false;
+        }
+    }
+
+    function onClose(){
+        closeClaimMembership(false);
     }
 </script>
 
@@ -106,6 +134,7 @@
                                 {currentLevelIndex} 
                                 {totalStakedICFC}
                                 on:claim={() => submittingClaim = true}
+                                {handleClaimMembership}
                             />
                         </div>
                     {/each}
