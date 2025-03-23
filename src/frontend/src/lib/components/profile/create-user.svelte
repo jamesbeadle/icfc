@@ -15,27 +15,26 @@
   import LogoIcon from "$lib/icons/LogoIcon.svelte";
   import CopyPrincipal from "./copy-principal.svelte";
   import DropdownSelect from "../shared/dropdown-select.svelte";
-    import { isPrincipalValid } from "$lib/utils/helpers";
-  
-  let isLoading = false;
+  import { getFileExtensionFromFile, isPrincipalValid } from "$lib/utils/helpers";
+    
+  let isLoading = true;
   let isSubmitDisabled = true;
   let isCheckingUsername = false;
   let usernameAvailable = false;
   let usernameError = "";
+  let loadingNeurons = false;
   
   let username = "";
   let displayName = "";
   let favouriteLeagueId: LeagueId | null = null;
   let favouriteClubId: ClubId | null = null;
   let nationalityId: CountryId | null = null;
-  let fileInput: HTMLInputElement;
   let openFplPrincipalId = '';
   let footballGodPrincipalId = '';
   let transferKingsPrincipalId = '';
   let jeffBetsPrincipalId = '';
   let openWslPrincipalId = '';
   
-
   let neurons: Neuron[] = [];
   let maxStakedICFC = 0n;
   let clubs: ClubDTO[] = [];
@@ -46,17 +45,27 @@
   
   let usernameTimeout: NodeJS.Timeout;
 
+  let profileSrc = '/profile_placeholder.png';
+  let file: File | null = null;
+  let fileInput: HTMLInputElement;
+
   $: isSubmitDisabled = !username || !usernameAvailable;
 
   onMount(async () => {
-     await loadData();
+    try{
+      countries = await countryStore.getCountries();
+      leagues = await leagueStore.getLeagues();
+      await loadData();
+    } catch {
+      toasts.addToast({type: 'error', message: 'Failed to load data.'});
+    } finally {
+      isLoading = false;
+    }
   });
 
   async function loadData(){
       try {
           await getNeurons();
-          countries = await countryStore.getCountries();
-          leagues = await leagueStore.getLeagues();
       } catch (error) {
           console.error("No neurons found:", error);
       } finally {
@@ -130,28 +139,64 @@
         appPrincipalIds.push([{ JeffBets: null }, jeffBetsPrincipalId]);
       }
 
-      const dto: CreateProfile = {
-        displayName,
-        profilePicture: [],
-        profilePictureExtension: [],
-        username,
-        appPrincipalIds
-      };
-      await userStore.createProfile(dto);
+      if (file) {
+        const extension = getFileExtensionFromFile(file);
+        const reader = new FileReader();
+        
+        const profilePictureData = new Promise<Uint8Array>((resolve, reject) => {
+          reader.onloadend = () => {
+            const arrayBuffer = reader.result as ArrayBuffer;
+            const uint8Array = new Uint8Array(arrayBuffer);
+            resolve(uint8Array);
+          };
+          reader!.onerror = reject;
+          reader.readAsArrayBuffer(file!);
+        });
+
+        const profilePicture = await profilePictureData;
+
+        const dto: CreateProfile = {
+          displayName,
+          profilePicture: [profilePicture],
+          profilePictureExtension: [extension],
+          username,
+          appPrincipalIds
+        };
+
+        await userStore.createProfile(dto);
+      } else {
+        const dto: CreateProfile = {
+          displayName,
+          profilePicture: [],
+          profilePictureExtension: [],
+          username,
+          appPrincipalIds
+        };
+
+        await userStore.createProfile(dto);
+      }
+
       await userStore.sync();
-      toasts.addToast({type: 'success', message: 'Profile successfully created'})
+      toasts.addToast({type: 'success', message: 'Profile successfully created'});
       window.location.href = "/";
     } catch (error) {
       console.error("Error creating profile:", error);
+      toasts.addToast({type: 'error', message: 'Failed to create profile'});
     } finally {
       isLoading = false;
     }
   }
 
+
   async function refreshNeurons() {
-      isLoading = true;
+    try{
+      loadingNeurons = true;
       await loadData();
-      isLoading = false;
+    } catch {
+      toasts.addToast({ type: 'error', message: 'Failed to refresh neurons' })
+    } finally {
+      loadingNeurons = false;
+    }
   }
 
   $: if (!isLoading && favouriteLeagueId && favouriteLeagueId > 0) {
@@ -169,16 +214,22 @@
   } 
 
   function handleFileChange(event: Event) {
-      const input = event.target as HTMLInputElement;
-      if (input.files && input.files[0]) {
-          const file = input.files[0];
-          if (file.size > 1000 * 1024) {
-              toasts.addToast({ type: "error", message: "Profile image too large. The maximum size is 1MB." });
-              console.error("Error updating profile image.");
-              return;
-          }
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      file = input.files[0];
+      if (file.size > 1000 * 1024) {
+        toasts.addToast({ 
+          type: "error", 
+          message: "Profile image too large. The maximum size is 1MB." 
+        });
+        file = null;
+        profileSrc = '/profile_placeholder.png';
+        return;
       }
+      profileSrc = URL.createObjectURL(file);
+    }
   }
+
 </script>
 
 {#if isLoading}
@@ -210,8 +261,9 @@
           <div class="flex flex-col space-y-2 w-full md:w-1/5">
             <p class="form-title">Profile Picture</p>
             <p class="form-hint">Max size 1mb</p>
+            
             <img 
-              src="/profile_placeholder.png" 
+              src={profileSrc} 
               alt="Profile" 
               class="profile-picture w-full h-48 object-cover rounded-lg"
             />
@@ -246,11 +298,11 @@
                 {#if username.length > 0}
                   <div class="text-sm">
                     {#if isCheckingUsername}
-                      <p class="text-BrandGrayShade2 mt-1">Checking username availability...</p>
+                      <p class="text-BrandGrayShade2 mt-2">Checking username availability...</p>
                     {:else if usernameError}
-                      <p class="text-BrandRed mt-1">{usernameError}</p>
+                      <p class="text-BrandRed mt-2">{usernameError}</p>
                     {:else if usernameAvailable}
-                      <p class="text-BrandSuccess mt-1">Username is available!</p>
+                      <p class="text-BrandSuccess mt-2">Username is available!</p>
                     {/if}
                   </div>
                 {/if}
@@ -262,7 +314,7 @@
                   type="text"
                   bind:value={displayName}
                   placeholder="Enter display name"
-                  class="brand-input bg-BrandGrayShade5 text-white border border-BrandGrayShade3 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+                  class="brand-input"
                 />
               </div>
             </div>
@@ -270,9 +322,9 @@
             <div class="flex flex-col md:flex-row gap-4">
               <div class="flex flex-col space-y-1 w-full md:w-1/3">
                 <p class="form-title">Nationality</p>
-                <p class="form-hint">Select your nationality to participate in nationwide football competitions.</p>
+                <p class="form-hint">Select to participate in nationwide football competitions.</p>
                 <DropdownSelect
-                  options={countries.map((country: CountryDTO) => ({ id: country.id, label: country.name }))}
+                  options={countries.sort((a, b) => a.name.localeCompare(b.name)).map((country: CountryDTO) => ({ id: country.id, label: country.name }))}
                   value={nationalityId}
                   onChange={(value: string | number) => {
                     nationalityId = Number(value);
@@ -281,9 +333,9 @@
               </div>
               <div class="flex flex-col space-y-1 w-full md:w-1/3">
                 <p class="form-title">Your Favourite League</p>
-                <p class="form-hint">Select your favourite league to find your favourite club.</p>
+                <p class="form-hint">Select to find your favourite club.</p>
                 <DropdownSelect
-                  options={$leagueStore.map(league => ({ id: league.id, label: league.name }))}
+                  options={leagues.map(league => ({ id: league.id, label: league.name }))}
                   value={favouriteLeagueId}
                   onChange={(value: string | number) => {
                     favouriteLeagueId = Number(value);
@@ -293,14 +345,15 @@
               </div>
               <div class="flex flex-col space-y-1 w-full md:w-1/3">
                 <p class="form-title">Your Favourite Club</p>
-                <p class="form-hint">Select your favourite club to enable groupings onto club specific leaderboards.</p>
+                <p class="form-hint">Select to enable club based rewards.</p>
                 <DropdownSelect
-                  options={clubs.map(club => ({ id: club.id, label: club.friendlyName }))}
+                  options={clubs.sort((a, b) => a.friendlyName.localeCompare(b.friendlyName)).map(club => ({ id: club.id, label: club.friendlyName }))}
                   value={favouriteClubId}
                   onChange={(value: string | number) => {
                     favouriteClubId = Number(value);
                   }}
                   scrollOnOpen={true}
+                  disabled={favouriteLeagueId != null && favouriteLeagueId > 0}
                 />
               </div>
             </div>
@@ -316,138 +369,146 @@
           To join the ICFC you need to have a non-dissolving NNS neuron with at least 1,000 ICFC staked, max staked for 2 years. Add your ICFC Principal as a hotkey to any ICFC NNS neuron over 1,000 ICFC to continue:
         </p>
         <CopyPrincipal />
-        {#if neurons.length > 0}
-          <div class="flex flex-col space-y-4">
-            <AvailableMembership {neurons} {refreshNeurons} availableMembership={userMembershipEligibility} {maxStakedICFC} />
-
-            <div class="horizontal-divider border-t border-BrandGrayShade3"></div>
-
+        {#if loadingNeurons}
+          <LocalSpinner />
+        {:else}
+          {#if neurons.length > 0}
             <div class="flex flex-col space-y-4">
-              <p class="cta-text text-lg text-white">Sub-App Principal IDs</p>
-              <p class="text-BrandGrayShade2">
-                Enter your Principal IDs for ICFC sub-applications (optional)
-              </p>
-              
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="flex flex-col space-y-4">
-                  <div class="flex flex-col space-y-1">
-                    <p class="form-title">OpenFPL Principal ID</p>
-                    <p class="form-hint">A valid principal ID</p>
-                    <input
-                      type="text"
-                      bind:value={openFplPrincipalId}
-                      class="brand-input bg-BrandGrayShade5 text-white border border-BrandGrayShade3 rounded-lg p-2 focus:outline-none focus:border-blue-500"
-                      placeholder="Enter OpenFPL Principal ID"
-                    />
-                    {#if openFplPrincipalId.length > 0}
-                      <div class="mt-1 text-sm">
-                        {#if !isPrincipalValid(openFplPrincipalId)}
-                          <p class="text-BrandRed mt-1">Invalid Principal ID</p>
-                        {:else}
-                          <p class="text-BrandSuccess mt-1">Valid Principal ID</p>
-                        {/if}
-                      </div>
-                    {/if}
-                  </div>
 
-                  <div class="flex flex-col space-y-1">
-                    <p class="form-title">Football God Principal ID</p>
-                    <p class="form-hint">A valid principal ID</p>
-                    <input
-                      type="text"
-                      bind:value={footballGodPrincipalId}
-                      class="brand-input bg-BrandGrayShade5 text-white border border-BrandGrayShade3 rounded-lg p-2 focus:outline-none focus:border-blue-500"
-                      placeholder="Enter Football God Principal ID"
-                    />
-                    {#if footballGodPrincipalId.length > 0}
-                      <div class="mt-1 text-sm">
-                        {#if !isPrincipalValid(footballGodPrincipalId)}
-                          <p class="text-BrandRed">Invalid Principal ID</p>
-                        {:else}
-                          <p class="text-BrandGreed">Valid Principal ID</p>
-                        {/if}
-                      </div>
-                    {/if}
-                  </div>
-
-                  <div class="flex flex-col space-y-1">
-                    <p class="form-title">Transfer Kings Principal ID</p>
-                    <p class="form-hint">A valid principal ID</p>
-                    <input
-                      type="text"
-                      bind:value={transferKingsPrincipalId}
-                      class="brand-input bg-BrandGrayShade5 text-white border border-BrandGrayShade3 rounded-lg p-2 focus:outline-none focus:border-blue-500"
-                      placeholder="Enter Transfer Kings Principal ID"
-                    />
-                    {#if transferKingsPrincipalId.length > 0}
-                      <div class="mt-1 text-sm">
-                        {#if !isPrincipalValid(transferKingsPrincipalId)}
-                          <p class="text-BrandRed mt-1">Invalid Principal ID</p>
-                        {:else}
-                          <p class="text-BrandSuccess mt-1">Valid Principal ID</p>
-                        {/if}
-                      </div>
-                    {/if}
-                  </div>
-                </div>
-
-                <div class="flex flex-col space-y-4">
-                  <div class="flex flex-col space-y-1">
-                    <p class="form-title">Jeff Bets Principal ID</p>
-                    <p class="form-hint">A valid principal ID</p>
-                    <input
-                      type="text"
-                      bind:value={jeffBetsPrincipalId}
-                      class="brand-input bg-BrandGrayShade5 text-white border border-BrandGrayShade3 rounded-lg p-2 focus:outline-none focus:border-blue-500"
-                      placeholder="Enter Jeff Bets Principal ID"
-                    />
-                    {#if jeffBetsPrincipalId.length > 0}
-                      <div class="mt-1 text-sm">
-                        {#if !isPrincipalValid(jeffBetsPrincipalId)}
-                          <p class="text-BrandRed mt-1">Invalid Principal ID</p>
-                        {:else}
-                          <p class="text-BrandSuccess mt-1">Valid Principal ID</p>
-                        {/if}
-                      </div>
-                    {/if}
-                  </div>
-
-                  <div class="flex flex-col space-y-1">
-                    <p class="form-title">OpenWSL Principal ID</p>
-                    <p class="form-hint">A valid principal ID</p>
-                    <input
-                      type="text"
-                      bind:value={openWslPrincipalId}
-                      class="brand-input bg-BrandGrayShade5 text-white border border-BrandGrayShade3 rounded-lg p-2 focus:outline-none focus:border-blue-500"
-                      placeholder="Enter OpenWSL Principal ID"
-                    />
-                    {#if openWslPrincipalId.length > 0}
-                      <div class="mt-1 text-sm">
-                        {#if !isPrincipalValid(openWslPrincipalId)}
-                          <p class="text-BrandRed mt-1">Invalid Principal ID</p>
-                        {:else}
-                          <p class="text-BrandSuccess mt-1">Valid Principal ID</p>
-                        {/if}
-                      </div>
-                    {/if}
-                  </div>
-                </div>
-              </div>
+              <AvailableMembership {neurons} {refreshNeurons} availableMembership={userMembershipEligibility} {maxStakedICFC} />
 
               <div class="horizontal-divider border-t border-BrandGrayShade3"></div>
-            
-              <button 
-                class="brand-button bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition disabled:bg-BrandGrayShade3 mb-8" 
-                on:click={createProfile} 
-                disabled={isSubmitDisabled}
-              >
-                JOIN
-              </button>
-            </div>
 
-          </div>
+              <div class="flex flex-col space-y-4">
+                <p class="cta-text text-lg text-white">Sub-App Principal IDs</p>
+                <p class="text-BrandGrayShade2">
+                  Enter your Principal IDs for ICFC sub-applications (optional)
+                </p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div class="flex flex-col space-y-4">
+                    <div class="flex flex-col space-y-1">
+                      <p class="form-title">OpenFPL Principal ID</p>
+                      <p class="form-hint">A valid principal ID</p>
+                      <input
+                        type="text"
+                        bind:value={openFplPrincipalId}
+                        class="brand-input bg-BrandGrayShade5 text-white border border-BrandGrayShade3 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+                        placeholder="Enter OpenFPL Principal ID"
+                      />
+                      {#if openFplPrincipalId.length > 0}
+                        <div class="mt-1 text-sm">
+                          {#if !isPrincipalValid(openFplPrincipalId)}
+                            <p class="text-BrandRed mt-1">Invalid Principal ID</p>
+                          {:else}
+                            <p class="text-BrandSuccess mt-1">Valid Principal ID</p>
+                          {/if}
+                        </div>
+                      {/if}
+                    </div>
+
+                    <div class="flex flex-col space-y-1">
+                      <p class="form-title">Football God Principal ID</p>
+                      <p class="form-hint">A valid principal ID</p>
+                      <input
+                        type="text"
+                        bind:value={footballGodPrincipalId}
+                        class="brand-input bg-BrandGrayShade5 text-white border border-BrandGrayShade3 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+                        placeholder="Enter Football God Principal ID"
+                      />
+                      {#if footballGodPrincipalId.length > 0}
+                        <div class="mt-1 text-sm">
+                          {#if !isPrincipalValid(footballGodPrincipalId)}
+                            <p class="text-BrandRed">Invalid Principal ID</p>
+                          {:else}
+                            <p class="text-BrandGreed">Valid Principal ID</p>
+                          {/if}
+                        </div>
+                      {/if}
+                    </div>
+
+                    <div class="flex flex-col space-y-1">
+                      <p class="form-title">Transfer Kings Principal ID</p>
+                      <p class="form-hint">A valid principal ID</p>
+                      <input
+                        type="text"
+                        bind:value={transferKingsPrincipalId}
+                        class="brand-input bg-BrandGrayShade5 text-white border border-BrandGrayShade3 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+                        placeholder="Enter Transfer Kings Principal ID"
+                      />
+                      {#if transferKingsPrincipalId.length > 0}
+                        <div class="mt-1 text-sm">
+                          {#if !isPrincipalValid(transferKingsPrincipalId)}
+                            <p class="text-BrandRed mt-1">Invalid Principal ID</p>
+                          {:else}
+                            <p class="text-BrandSuccess mt-1">Valid Principal ID</p>
+                          {/if}
+                        </div>
+                      {/if}
+                    </div>
+                  </div>
+
+                  <div class="flex flex-col space-y-4">
+                    <div class="flex flex-col space-y-1">
+                      <p class="form-title">Jeff Bets Principal ID</p>
+                      <p class="form-hint">A valid principal ID</p>
+                      <input
+                        type="text"
+                        bind:value={jeffBetsPrincipalId}
+                        class="brand-input bg-BrandGrayShade5 text-white border border-BrandGrayShade3 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+                        placeholder="Enter Jeff Bets Principal ID"
+                      />
+                      {#if jeffBetsPrincipalId.length > 0}
+                        <div class="mt-1 text-sm">
+                          {#if !isPrincipalValid(jeffBetsPrincipalId)}
+                            <p class="text-BrandRed mt-1">Invalid Principal ID</p>
+                          {:else}
+                            <p class="text-BrandSuccess mt-1">Valid Principal ID</p>
+                          {/if}
+                        </div>
+                      {/if}
+                    </div>
+
+                    <div class="flex flex-col space-y-1">
+                      <p class="form-title">OpenWSL Principal ID</p>
+                      <p class="form-hint">A valid principal ID</p>
+                      <input
+                        type="text"
+                        bind:value={openWslPrincipalId}
+                        class="brand-input bg-BrandGrayShade5 text-white border border-BrandGrayShade3 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+                        placeholder="Enter OpenWSL Principal ID"
+                      />
+                      {#if openWslPrincipalId.length > 0}
+                        <div class="mt-1 text-sm">
+                          {#if !isPrincipalValid(openWslPrincipalId)}
+                            <p class="text-BrandRed mt-1">Invalid Principal ID</p>
+                          {:else}
+                            <p class="text-BrandSuccess mt-1">Valid Principal ID</p>
+                          {/if}
+                        </div>
+                      {/if}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="horizontal-divider border-t border-BrandGrayShade3"></div>
+              
+                <button 
+                  class="brand-button bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition disabled:bg-BrandGrayShade3" 
+                  on:click={createProfile} 
+                  disabled={isSubmitDisabled}
+                >
+                  JOIN
+                </button>
+
+              </div>
+
+            </div>
+          {/if}
         {/if}
-      </div>     
+        <div class="h-6"></div>
+      </div>
+           
     </div>
   </div>
 {/if}

@@ -13,6 +13,7 @@
     export let onChange: (value: any) => void;
     export let allOptionText: string | undefined = undefined;
     export let scrollOnOpen = false;
+    export let disabled = false;
 
     const dropdownId = Math.random().toString(36).substring(7);
     let isDropdownOpen = false;
@@ -72,7 +73,7 @@
     });
 </script>
 
-<div class="relative w-full px-3 mt-1 md:px-0" bind:this={dropdownElement}>
+<div class="relative w-full mt-1 md:px-0" bind:this={dropdownElement}>
     <button
         class="flex items-center justify-between w-full rounded-lg {compact ? 'p-3 bg-BrandGray  hover:bg-BrandGray/50' : 'px-2 py-3 hover:bg-BrandGray'}"
         on:click={e => toggleDropdown(e)}
@@ -92,6 +93,7 @@
             {#each allOptions as option}
                 <li class="mb-1">
                     <button 
+                        disabled
                         class={`w-full px-4 py-2 text-left rounded-lg flex items-center justify-between ${value === option.id ? "text-white" : "text-BrandGrayShade2 hover:text-white hover:bg-BrandPurple"}`}
                         on:click={e => selectOption(option.id, e)}
                     >

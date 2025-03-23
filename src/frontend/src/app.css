@@ -13,7 +13,7 @@
 }
 
 .page-wrapper {
-  @apply flex w-full h-full p-8 mt-12 overflow-x-hidden;
+  @apply flex w-full h-full p-8 mt-16 mb-16 overflow-x-hidden;
 }
 
 .horizontal-divider {
@@ -49,7 +49,7 @@
 }
 
 .form-title {
-  @apply text-sm text-BrandGrayShade2 mb-3;
+  @apply text-sm text-BrandGrayShade4 mb-3;
 }
 
 .form-hint {

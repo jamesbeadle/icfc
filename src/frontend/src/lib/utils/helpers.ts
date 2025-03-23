@@ -745,3 +745,9 @@ export function isPrincipalValid(principalId: string): boolean {
   const regex = /^([a-z2-7]{5}-){10}[a-z2-7]{3}$/i;
   return regex.test(principalId);
 }
+
+export function getFileExtensionFromFile(file: File): string {
+  const filename = file.name;
+  const lastIndex = filename.lastIndexOf(".");
+  return lastIndex !== -1 ? filename.substring(lastIndex + 1) : "";
+}

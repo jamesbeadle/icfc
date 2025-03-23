@@ -6,7 +6,7 @@
   .widget {
     position: relative;
     width: 100%;
-    height: 50px;
+    height: 200px;
     margin-top: 25px;
     margin-bottom: 25px;
   }
