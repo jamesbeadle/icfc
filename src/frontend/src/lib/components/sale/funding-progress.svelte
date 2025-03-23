@@ -39,18 +39,18 @@
             <h3 class="text-xl text-center text-white md:text-2xl cta-text">
                 {raisedCkBTC.toLocaleString()} ckBTC
             </h3>
-            <span class="text-xs text-gray-300 md:text-sm">Amount Raised</span>
+            <span class="text-xs text-BrandGrayShade2 md:text-sm">Amount Raised</span>
         </div>
 
         <div class="flex items-center gap-6 lg:gap-3 xl:gap-6 md:w-2/3">
             <div class="flex flex-col items-center flex-1">
                 <ProgressCircle percentage={minProgressPercentage} />
-                <span class="text-xs text-gray-300 md:text-sm">Minimum Goal</span>
+                <span class="text-xs text-BrandGrayShade2 md:text-sm">Minimum Goal</span>
             </div>
 
             <div class="flex flex-col items-center flex-1">
                 <ProgressCircle percentage={maxProgressPercentage} />
-                <span class="text-xs text-gray-300 md:text-sm">Maximum Goal</span>
+                <span class="text-xs text-BrandGrayShade2 md:text-sm">Maximum Goal</span>
             </div>
         </div>
     </div>
@@ -58,15 +58,15 @@
     <div class="flex flex-col gap-3 md:flex-row md:justify-between">
         <div class="p-4 text-center rounded-lg bg-white/10 md:w-1/3">
             <p class="text-lg text-white cta-text">{totalICFC.toLocaleString()}</p>
-            <p class="text-xs text-gray-300 lg:text-xxs xl:text-xs">ICFC to be swapped</p>
+            <p class="text-xs text-BrandGrayShade2 lg:text-xxs xl:text-xs">ICFC to be swapped</p>
         </div>
         <div class="p-4 text-center rounded-lg bg-white/10 md:w-1/3">
             <p class="text-lg text-white cta-text">{minTarget} ckBTC</p>
-            <p class="text-xs text-gray-300 lg:text-xxs xl:text-xs">Min Target</p>
+            <p class="text-xs text-BrandGrayShade2 lg:text-xxs xl:text-xs">Min Target</p>
         </div>
         <div class="p-4 text-center rounded-lg bg-white/10 md:w-1/3">
             <p class="text-lg text-white cta-text">{maxTarget} ckBTC</p>
-            <p class="text-xs text-gray-300 lg:text-xxs xl:text-xs">Max Target</p>
+            <p class="text-xs text-BrandGrayShade2 lg:text-xxs xl:text-xs">Max Target</p>
         </div>
     </div>
 

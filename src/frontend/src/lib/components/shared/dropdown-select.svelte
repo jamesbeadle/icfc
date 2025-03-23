@@ -92,7 +92,7 @@
             {#each allOptions as option}
                 <li class="mb-1">
                     <button 
-                        class={`w-full px-4 py-2 text-left rounded-lg flex items-center justify-between ${value === option.id ? "text-white" : "text-gray-400 hover:text-white hover:bg-BrandPurple"}`}
+                        class={`w-full px-4 py-2 text-left rounded-lg flex items-center justify-between ${value === option.id ? "text-white" : "text-BrandGrayShade2 hover:text-white hover:bg-BrandPurple"}`}
                         on:click={e => selectOption(option.id, e)}
                     >
                         {option.label}

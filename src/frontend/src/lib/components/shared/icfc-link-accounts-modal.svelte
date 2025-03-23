@@ -22,17 +22,17 @@
       <div class="bg-white rounded-lg shadow-lg max-w-md w-full p-6 transform transition-all duration-300 scale-100">
         
         <div class="flex justify-between items-center border-b pb-3">
-          <h2 class="text-xl font-bold text-gray-900">Link your ICFC Accounts</h2>
-          <button on:click={closeModal} class="text-gray-500 hover:text-gray-700 transition duration-200">
+          <h2 class="text-xl font-bold text-BrandGrayShade5">Link your ICFC Accounts</h2>
+          <button on:click={closeModal} class="text-BrandGrayShade3 hover:text-BrandGrayShade3 transition duration-200">
             ✖
           </button>
         </div>
   
         <div class="mt-4 space-y-4">
           {#each apps as app}
-            <a href={app.link} target="_blank" class="block p-3 border rounded-lg hover:bg-gray-100 transition duration-200">
-              <h3 class="text-lg font-semibold text-gray-800">{app.name}</h3>
-              <p class="text-sm text-gray-600">{app.description}</p>
+            <a href={app.link} target="_blank" class="block p-3 border rounded-lg hover:bg-BrandGrayShade2 transition duration-200">
+              <h3 class="text-lg font-semibold text-BrandGrayShade5">{app.name}</h3>
+              <p class="text-sm text-BrandGrayShade3">{app.description}</p>
             </a>
           {/each}
         </div>

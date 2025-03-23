@@ -1,4 +1,4 @@
-<div class="border-b border-gray-300 dark:border-gray-700 overflow-x-auto whitespace-nowrap">
+<div class="border-b border-BrandGrayShade2 dark:border-BrandGrayShade3 overflow-x-auto whitespace-nowrap">
     <div class="flex items-center">
         <slot />
     </div>

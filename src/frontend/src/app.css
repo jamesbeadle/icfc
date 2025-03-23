@@ -49,11 +49,11 @@
 }
 
 .form-title {
-  @apply text-sm text-BrandGrayShade4;
+  @apply text-sm text-BrandGrayShade2 mb-3;
 }
 
 .form-hint {
-  @apply text-xxs text-BrandGrayShade3 my-3;
+  @apply text-xxs text-BrandGrayShade3 mb-4;
 }
 
 .brand-input {
@@ -136,7 +136,7 @@
 
 .horizontal-divider {
   min-height: 2px;
-  @apply self-stretch flex-shrink-0 h-px my-4 bg-gray-400;
+  @apply self-stretch flex-shrink-0 h-px my-4 bg-BrandGrayShade3;
 }
 
 .main-title {

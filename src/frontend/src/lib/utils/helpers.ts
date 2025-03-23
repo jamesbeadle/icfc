@@ -737,3 +737,11 @@ export function getCurrentLevelIndex(membershipType: MembershipType): number {
   if ("Monthly" in membershipType) return 0;
   return -1;
 }
+
+export function isPrincipalValid(principalId: string): boolean {
+  if (!principalId) {
+    return false;
+  }
+  const regex = /^([a-z2-7]{5}-){10}[a-z2-7]{3}$/i;
+  return regex.test(principalId);
+}

@@ -101,15 +101,15 @@
             <div class="flex flex-col items-center justify-center w-full p-6 text-center rounded-lg bg-blue-500/10">
                 <p class="text-xl text-white mb-4">No Neurons Found</p>
                 <div class="flex flex-col gap-3 w-full max-w-md">
-                    <p class="text-sm text-gray-300">Add this hotkey to any neurons staked for 2 years that you would like to claim membership for.</p>
-                    <div class="relative bg-gray-800 rounded-lg p-4">
+                    <p class="text-sm text-BrandGrayShade2">Add this hotkey to any neurons staked for 2 years that you would like to claim membership for.</p>
+                    <div class="relative bg-BrandGrayShade4 rounded-lg p-4">
                         <button 
                             on:click={() => { appStore.copyTextAndShowToast($authStore.identity?.getPrincipal().toString() ?? "") }}
-                            class="absolute top-2 right-2 text-gray-400 hover:text-white"
+                            class="absolute top-2 right-2 text-BrandGrayShade3 hover:text-white"
                         >
                             <CopyIcon className="w-5 h-5" fill='#FFFFFF' />
                         </button>
-                        <p class="text-gray-300 font-mono text-sm break-all px-4 mb-2">
+                        <p class="text-BrandGrayShade2 font-mono text-sm break-all px-4 mb-2">
                             {$authStore.identity?.getPrincipal().toString() ?? ""}
                         </p>
                         <h3 class="text-xs text-white font-semibold">Your Principal ID</h3>
@@ -124,44 +124,44 @@
             </div>
         {/if}
 
-        <div class="flex flex-col md:flex-row border-t border-gray-600 pt-4">
+        <div class="flex flex-col md:flex-row rounded bg-BrandGrayShade5 p-4">
             <div class="w-full md:w-1/2 flex flex-col items-center justify-center text-center p-4 space-y-2">
-                <p class="text-gray-300">Total ICFC Staked:</p>
+                <p class="text-BrandGrayShade2">Total ICFC Staked:</p>
                 <div class="flex flex-row items-center">
                     <IcfcCoinIcon className="w-6 mr-2" />
-                    <p class="text-white">{formatICFC(maxStakedICFC / 100000000n)}</p>
+                    <p class="text-BrandGrayShade1">{formatICFC(maxStakedICFC / 100000000n)}</p>
                 </div>
+                <p class="text-sm text-BrandGrayShade3">Non-dissolving neurons with a dissolve delay greater than 2 years.</p>
             </div>
             <div class="w-full md:w-1/2 flex flex-col items-center justify-center text-center p-4 space-y-2">
-                <p class="text-gray-300">Membership Level:</p>
+                <p class="text-BrandGrayShade2">Membership Level:</p>
                 {#if Object.keys(availableMembership)[0].toLowerCase() === 'monthly'}
                     <div class="flex flex-row items-center">
                         <MonthlyMembershipIcon className="w-6 mr-2" />
-                        <p class="text-white">Monthly</p>
+                        <p class="text-BrandGrayShade1">Monthly</p>
                     </div>
                 {:else if Object.keys(availableMembership)[0].toLowerCase() === 'seasonal'}
                     <div class="flex flex-row items-center">
                         <SeasonalMembershipIcon className="w-6 mr-2" />
-                        <p class="text-white">Seasonal</p>
+                        <p class="text-BrandGrayShade1">Seasonal</p>
                     </div>
                 {:else if Object.keys(availableMembership)[0].toLowerCase() === 'lifetime'}
                     <div class="flex flex-row items-center">
                         <LifetimeMembershipIcon className="w-6 mr-2" />
-                        <p class="text-white">Lifetime</p>
+                        <p class="text-BrandGrayShade1">Lifetime</p>
                     </div>
                 {:else if Object.keys(availableMembership)[0].toLowerCase() === 'founding'}
                     <div class="flex flex-row items-center">
                         <FoundingMembershipIcon className="w-6 mr-2" />
-                        <p class="text-white">Founding</p>
+                        <p class="text-BrandGrayShade1">Founding</p>
                     </div>
                 {:else}
-                    <p class="text-white">Not Eligible</p>
+                    <p class="text-BrandGrayShade1">Not Eligible</p>
                 {/if}
-                <p class="text-sm text-gray-400">You can upgrade your membership level at any time.</p>
+                <p class="text-sm text-BrandGrayShade3">You can upgrade your membership level at any time.</p>
             </div>
         </div>
 
-        <!-- Refresh Button -->
         <div class="flex w-full justify-center">
             <button 
                 class="brand-button bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition"

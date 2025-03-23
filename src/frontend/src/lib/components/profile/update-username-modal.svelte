@@ -84,7 +84,7 @@
               </button>
               <button
               class={`px-4 py-2 ${
-                  isSubmitDisabled ? "bg-gray-500" : "bg-BrandPurple"
+                  isSubmitDisabled ? "bg-BrandGrayShade3" : "bg-BrandPurple"
               } default-button bg-BrandPurple`}
               type="submit"
               disabled={isSubmitDisabled}

@@ -14,7 +14,7 @@
 <div class="relative inline-flex">
     <svg class="w-24 h-24 md:w-32 md:h-32">
         <circle
-            class="text-gray-200 md:hidden"
+            class="text-BrandGrayShade2 md:hidden"
             stroke-width="6"
             stroke="currentColor"
             fill="transparent"
@@ -23,7 +23,7 @@
             cy="48"
         />
         <circle
-            class="hidden text-gray-200 md:block"
+            class="hidden text-BrandGrayShade2 md:block"
             stroke-width="6"
             stroke="currentColor"
             fill="transparent"

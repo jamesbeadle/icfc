@@ -17,7 +17,7 @@
   {#if tooltipVisible}
     <button
     aria-label=""
-      class="absolute z-10 p-2 bg-BrandGreen text-white rounded-md shadow-lg p-2 px-4 hidden md:flex bg-opacity-75"
+      class="absolute z-10 p-2 bg-BrandSuccess text-white rounded-md shadow-lg p-2 px-4 hidden md:flex bg-opacity-75"
       style="transform: translate(20%, -50%); top: 50%; left: 50%;"
       on:click={toggleTooltip}
     >

@@ -69,7 +69,7 @@
         <div class="flex flex-col w-full h-full">
             <h2 class="text-2xl text-white cta-text">Claim Membership</h2>
             <div class="top-0 p-6 z-60 bg-ModalBackground">
-                <div class="flex items-center justify-between pb-4 mb-4 border-b border-gray-700">
+                <div class="flex items-center justify-between pb-4 mb-4 border-b border-BrandGrayShade4">
                     <h3 class="text-2xl text-white cta-text">Membership Benefits</h3>
                     <button 
                         onclick={onClose}
