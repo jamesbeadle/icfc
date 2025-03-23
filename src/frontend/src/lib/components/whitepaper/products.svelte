@@ -17,7 +17,7 @@
 
     <button 
         slot="action"
-        class="flex items-center gap-2 px-4 py-2 text-white transition bg-blue-600 rounded-md hover:bg-blue-500"
+        class="flex items-center gap-2 px-4 py-2 text-white transition bg-BrandBlue rounded-md hover:bg-BrandInfo"
         onclick={() => showApps = true}
     >
         View Apps

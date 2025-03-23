@@ -69,7 +69,7 @@
           <div class="mt-4">
               <input
               type="text"
-              class="w-full px-4 py-2 text-black border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="w-full px-4 py-2 text-black border rounded-md focus:outline-none focus:ring-2 focus:ring-BrandBlue"
               placeholder="New Username"
               bind:value={newUsername}
               />

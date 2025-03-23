@@ -75,6 +75,7 @@
 
 <div class="relative w-full mt-1 md:px-0" bind:this={dropdownElement}>
     <button
+        {disabled}
         class="flex items-center justify-between w-full rounded-lg {compact ? 'p-3 bg-BrandGray  hover:bg-BrandGray/50' : 'px-2 py-3 hover:bg-BrandGray'}"
         on:click={e => toggleDropdown(e)}
     >
@@ -93,7 +94,7 @@
             {#each allOptions as option}
                 <li class="mb-1">
                     <button 
-                        disabled
+                        {disabled}
                         class={`w-full px-4 py-2 text-left rounded-lg flex items-center justify-between ${value === option.id ? "text-white" : "text-BrandGrayShade2 hover:text-white hover:bg-BrandPurple"}`}
                         on:click={e => selectOption(option.id, e)}
                     >

@@ -353,7 +353,7 @@
                     favouriteClubId = Number(value);
                   }}
                   scrollOnOpen={true}
-                  disabled={favouriteLeagueId != null && favouriteLeagueId > 0}
+                  disabled={favouriteLeagueId == null || favouriteLeagueId == 0}
                 />
               </div>
             </div>
@@ -393,7 +393,7 @@
                       <input
                         type="text"
                         bind:value={openFplPrincipalId}
-                        class="brand-input bg-BrandGrayShade5 text-white border border-BrandGrayShade3 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+                        class="brand-input"
                         placeholder="Enter OpenFPL Principal ID"
                       />
                       {#if openFplPrincipalId.length > 0}
@@ -413,7 +413,7 @@
                       <input
                         type="text"
                         bind:value={footballGodPrincipalId}
-                        class="brand-input bg-BrandGrayShade5 text-white border border-BrandGrayShade3 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+                        class="brand-input"
                         placeholder="Enter Football God Principal ID"
                       />
                       {#if footballGodPrincipalId.length > 0}
@@ -433,7 +433,7 @@
                       <input
                         type="text"
                         bind:value={transferKingsPrincipalId}
-                        class="brand-input bg-BrandGrayShade5 text-white border border-BrandGrayShade3 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+                        class="brand-input"
                         placeholder="Enter Transfer Kings Principal ID"
                       />
                       {#if transferKingsPrincipalId.length > 0}
@@ -455,7 +455,7 @@
                       <input
                         type="text"
                         bind:value={jeffBetsPrincipalId}
-                        class="brand-input bg-BrandGrayShade5 text-white border border-BrandGrayShade3 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+                        class="brand-input"
                         placeholder="Enter Jeff Bets Principal ID"
                       />
                       {#if jeffBetsPrincipalId.length > 0}
@@ -475,7 +475,7 @@
                       <input
                         type="text"
                         bind:value={openWslPrincipalId}
-                        class="brand-input bg-BrandGrayShade5 text-white border border-BrandGrayShade3 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+                        class="brand-input"
                         placeholder="Enter OpenWSL Principal ID"
                       />
                       {#if openWslPrincipalId.length > 0}
@@ -494,7 +494,7 @@
                 <div class="horizontal-divider border-t border-BrandGrayShade3"></div>
               
                 <button 
-                  class="brand-button bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition disabled:bg-BrandGrayShade3" 
+                  class="brand-button bg-BrandBlue text-white py-2 rounded-lg hover:bg-BrandInfo transition disabled:bg-BrandGrayShade3" 
                   on:click={createProfile} 
                   disabled={isSubmitDisabled}
                 >

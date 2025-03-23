@@ -57,7 +57,7 @@
 }
 
 .brand-input {
-  @apply bg-BrandGrayShade4 text-black p-4;
+  @apply bg-BrandGrayShade5 text-white border border-BrandGrayShade3 rounded-lg p-2 focus:outline-none focus:border-BrandBlue;
 }
 
 .bg-frontend-update {

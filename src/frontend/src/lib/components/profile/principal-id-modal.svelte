@@ -44,7 +44,7 @@
                 </div>
                 <button
                     type="submit"
-                    class="px-4 py-2 text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700"
+                    class="px-4 py-2 text-white transition-colors bg-BrandBlue rounded-lg hover:bg-BrandInfo"
                 >
                     Link Account
                 </button>

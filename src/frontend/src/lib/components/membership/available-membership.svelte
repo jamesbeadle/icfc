@@ -89,7 +89,7 @@
             <h1 class="text-2xl lg:text-3xl cta-text text-white">Your Neurons</h1>
             {#if neurons.length === 0}
                 <button 
-                    class="brand-button bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition w-full sm:w-auto"
+                    class="brand-button w-full sm:w-auto"
                     on:click={() => showHowToClaimModal = true}
                 >
                     How To Claim Membership
@@ -98,7 +98,7 @@
         </div>
 
         {#if neurons.length === 0}
-            <div class="flex flex-col items-center justify-center w-full p-6 text-center rounded-lg bg-blue-500/10">
+            <div class="flex flex-col items-center justify-center w-full p-6 text-center rounded-lg bg-BrandBlue">
                 <p class="text-xl text-white mb-4">No Neurons Found</p>
                 <div class="flex flex-col gap-3 w-full max-w-md">
                     <p class="text-sm text-BrandGrayShade2">Add this hotkey to any neurons staked for 2 years that you would like to claim membership for.</p>
@@ -164,7 +164,7 @@
 
         <div class="flex w-full justify-center">
             <button 
-                class="brand-button bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition"
+                class="brand-button bg-BrandBlue text-white py-2 px-4 rounded-lg hover:bg-BrandBlue transition"
                 on:click={refreshNeurons}
             >
                 Refresh
