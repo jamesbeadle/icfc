@@ -10,7 +10,6 @@ module AppQueries {
         membershipClaims: [T.MembershipClaim];
         createdOn: Int;
         profilePicture: Blob;
-        profilePictureExtension: Text;
         termsAgreed: Bool;
         unconfirmedAppPrincipalIds: [(Text, Base.PrincipalId)];
         appPrincipalIds: [(Text, Base.PrincipalId)];

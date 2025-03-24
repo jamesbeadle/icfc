@@ -12,8 +12,6 @@
     import CopyPrincipal from "./copy-principal.svelte";
   
     export let profile: ProfileDTO;
-  
-    let isLoading = true;
 
     let showUpdateUsernameModal: boolean = false;
     let showUpdateDisplayNameModal: boolean = false;
@@ -34,12 +32,12 @@
     let profileSrc = '/profile_placeholder.png';
     
     onMount(async () => {
+        console.log(profile)
         principalId = profile.principalId;
         username = profile.username;
         joinedDate = getDateFromBigInt(Number(profile.createdOn));
         profileSrc = getImageURL(profile.profilePicture);
         countries = await countryStore.getCountries();
-        isLoading = false;
     });
   
 </script>

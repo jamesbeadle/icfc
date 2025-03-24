@@ -55,7 +55,6 @@ actor class _ProfileCanister() {
                             principalId = foundProfile.principalId;
                             username = foundProfile.username;
                             profilePicture = foundProfile.profilePicture;
-                            profilePictureExtension = foundProfile.profilePictureExtension;
                             displayName = foundProfile.displayName;
                             termsAgreed = foundProfile.termsAgreed;
                             appPrincipalIds = foundProfile.appPrincipalIds;
@@ -130,8 +129,7 @@ actor class _ProfileCanister() {
 
         let newProfile : T.Profile = {
             principalId = profilePrincipalId;
-            profilePicture = null;
-            profilePictureExtension = "";
+            profilePicture = dto.profilePicture;
             username = dto.username;
             displayName = dto.displayName;
             termsAgreed = false;
@@ -141,9 +139,9 @@ actor class _ProfileCanister() {
             membershipClaims = [];
             createdOn = Time.now();
             membershipExpiryTime = 0;
-            favouriteLeagueId = null;
-            favouriteClubId = null;
-            nationalityId = null;
+            favouriteLeagueId = dto.favouriteLeagueId;
+            favouriteClubId = dto.favouriteClubId;
+            nationalityId = dto.nationalityId;
         };
 
         addProfile(newProfile);
@@ -175,7 +173,6 @@ actor class _ProfileCanister() {
                             membershipClaims = foundProfile.membershipClaims;
                             createdOn = foundProfile.createdOn;
                             profilePicture = foundProfile.profilePicture;
-                            profilePictureExtension = foundProfile.profilePictureExtension;
                             termsAgreed = foundProfile.termsAgreed;
                             appPrincipalIds = foundProfile.appPrincipalIds;
                             podcastIds = foundProfile.podcastIds;
@@ -219,7 +216,6 @@ actor class _ProfileCanister() {
                             membershipClaims = foundProfile.membershipClaims;
                             createdOn = foundProfile.createdOn;
                             profilePicture = foundProfile.profilePicture;
-                            profilePictureExtension = foundProfile.profilePictureExtension;
                             termsAgreed = foundProfile.termsAgreed;
                             appPrincipalIds = foundProfile.appPrincipalIds;
                             podcastIds = foundProfile.podcastIds;
@@ -263,14 +259,13 @@ actor class _ProfileCanister() {
                             membershipClaims = foundProfile.membershipClaims;
                             createdOn = foundProfile.createdOn;
                             profilePicture = foundProfile.profilePicture;
-                            profilePictureExtension = foundProfile.profilePictureExtension;
                             termsAgreed = foundProfile.termsAgreed;
                             appPrincipalIds = foundProfile.appPrincipalIds;
                             podcastIds = foundProfile.podcastIds;
                             membershipExpiryTime = foundProfile.membershipExpiryTime;
                             favouriteLeagueId = foundProfile.favouriteLeagueId;
                             favouriteClubId = foundProfile.favouriteClubId;
-                            nationalityId = ?dto.countryId;
+                            nationalityId = ?dto.nationalityId;
                         };
                         saveProfile(foundGroupIndex, updatedProfile);
                     };
@@ -307,7 +302,6 @@ actor class _ProfileCanister() {
                             membershipClaims = foundProfile.membershipClaims;
                             createdOn = foundProfile.createdOn;
                             profilePicture = foundProfile.profilePicture;
-                            profilePictureExtension = foundProfile.profilePictureExtension;
                             termsAgreed = foundProfile.termsAgreed;
                             appPrincipalIds = foundProfile.appPrincipalIds;
                             podcastIds = foundProfile.podcastIds;
@@ -383,7 +377,6 @@ actor class _ProfileCanister() {
                             membershipClaims = foundProfile.membershipClaims;
                             createdOn = foundProfile.createdOn;
                             profilePicture = foundProfile.profilePicture;
-                            profilePictureExtension = foundProfile.profilePictureExtension;
                             termsAgreed = foundProfile.termsAgreed;
                             appPrincipalIds = Buffer.toArray(appPrincipalIdsBuffer);
                             podcastIds = foundProfile.podcastIds;
@@ -435,7 +428,6 @@ actor class _ProfileCanister() {
                             membershipClaims = foundProfile.membershipClaims;
                             createdOn = foundProfile.createdOn;
                             profilePicture = foundProfile.profilePicture;
-                            profilePictureExtension = foundProfile.profilePictureExtension;
                             termsAgreed = foundProfile.termsAgreed;
                             appPrincipalIds = updatedAppPrincipalIds;
                             podcastIds = foundProfile.podcastIds;
@@ -479,7 +471,6 @@ actor class _ProfileCanister() {
                             membershipClaims = foundProfile.membershipClaims;
                             createdOn = foundProfile.createdOn;
                             profilePicture = dto.profilePicture;
-                            profilePictureExtension = dto.profilePictureExtension;
                             termsAgreed = foundProfile.termsAgreed;
                             appPrincipalIds = foundProfile.appPrincipalIds;
                             podcastIds = foundProfile.podcastIds;
@@ -533,7 +524,6 @@ actor class _ProfileCanister() {
                             membershipClaims = updatedMembershipClaims;
                             createdOn = foundProfile.createdOn;
                             profilePicture = foundProfile.profilePicture;
-                            profilePictureExtension = foundProfile.profilePictureExtension;
                             termsAgreed = foundProfile.termsAgreed;
                             appPrincipalIds = foundProfile.appPrincipalIds;
                             podcastIds = foundProfile.podcastIds;
@@ -692,7 +682,6 @@ actor class _ProfileCanister() {
                             membershipClaims = foundProfile.membershipClaims;
                             createdOn = foundProfile.createdOn;
                             profilePicture = foundProfile.profilePicture;
-                            profilePictureExtension = foundProfile.profilePictureExtension;
                             termsAgreed = foundProfile.termsAgreed;
                             appPrincipalIds = foundProfile.appPrincipalIds;
                             podcastIds = foundProfile.podcastIds;
@@ -1115,10 +1104,10 @@ actor class _ProfileCanister() {
     system func preupgrade() {};
 
     system func postupgrade() {
-        /*
         stable_profile_group_indexes := [];
         profileGroup1 := [];
         totalProfiles := 0;
+        /*
         */
     };
 };

@@ -7,9 +7,11 @@ module ProfileCommands {
     public type CreateProfile = {
         username : Text;
         profilePicture : ?Blob;
-        profilePictureExtension : ?Text;
         displayName : Text;
         appPrincipalIds : [(T.SubApp, Base.PrincipalId)];
+        favouriteLeagueId : ?FootballTypes.LeagueId;
+        favouriteClubId : ?FootballTypes.ClubId;
+        nationalityId : ?Base.CountryId;
     };
 
     public type UpdateUserName = {
@@ -30,13 +32,12 @@ module ProfileCommands {
 
     public type UpdateNationality = {
         principalId : Base.PrincipalId;
-        countryId : Base.CountryId;
+        nationalityId : Base.CountryId;
     };
 
     public type UpdateProfilePicture = {
         principalId : Base.PrincipalId;
         profilePicture : ?Blob;
-        profilePictureExtension : Text;
     };
 
     public type DeleteProfile = {

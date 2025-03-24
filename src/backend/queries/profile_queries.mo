@@ -16,7 +16,6 @@ module ProfileQueries {
         membershipClaims : [T.MembershipClaim];
         createdOn : Int;
         profilePicture : ?Blob;
-        profilePictureExtension : Text;
         termsAgreed : Bool;
         appPrincipalIds : [(T.SubApp, Base.PrincipalId)];
         podcastIds : [Base.PrincipalId];
