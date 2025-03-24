@@ -63,20 +63,13 @@ actor class Self() = this {
     assert not Principal.isAnonymous(caller);
 
     let neurons = await snsManager.getUsersNeurons(caller);
-    let userEligibility = Utils.getMembershipType(neurons);
+    let userEligibility : T.EligibleMembership = Utils.getMembershipType(neurons);
     let totalMaxStaked = Utils.getTotalMaxStaked(neurons);
 
     let result : ProfileQueries.UserNeuronsDTO = {
       userNeurons = neurons;
       totalMaxStaked;
-      userMembershipEligibility = switch (userEligibility) {
-        case (?membership) {
-          membership;
-        };
-        case (null) {
-          #NotEligible;
-        };
-      };
+      userMembershipEligibility = userEligibility;
     };
     return #ok(result);
 
