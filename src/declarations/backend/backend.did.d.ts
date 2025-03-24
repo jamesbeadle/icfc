@@ -109,22 +109,20 @@ export interface NeuronPermission {
 }
 export type PrincipalId = string;
 export interface ProfileDTO {
-  favouriteMensLeagueId: [] | [LeagueId];
   username: string;
-  favouriteWomensClubId: [] | [ClubId];
   displayName: string;
   createdOn: bigint;
   podcastIds: Array<PrincipalId>;
-  favouriteMensClubId: [] | [ClubId];
   profilePictureExtension: string;
+  favouriteClubId: [] | [ClubId];
   membershipClaims: Array<MembershipClaim>;
   appPrincipalIds: Array<[SubApp, PrincipalId]>;
   profilePicture: [] | [Uint8Array | number[]];
   membershipType: MembershipType;
   termsAgreed: boolean;
   membershipExpiryTime: bigint;
+  favouriteLeagueId: [] | [LeagueId];
   nationalityId: [] | [CountryId];
-  favouriteWomensLeagueId: [] | [LeagueId];
   principalId: PrincipalId;
 }
 export type Result = { ok: null } | { err: Error };
@@ -146,6 +144,8 @@ export interface Self {
   isUsernameValid: ActorMethod<[IsUsernameValid], boolean>;
   removeSubApp: ActorMethod<[SubApp], Result>;
   updateDisplayName: ActorMethod<[UpdateDisplayName], Result>;
+  updateFavouriteClub: ActorMethod<[UpdateFavouriteClub], Result>;
+  updateNationality: ActorMethod<[UpdateNationality], Result>;
   updateProfilePicture: ActorMethod<[UpdateProfilePicture], Result>;
   updateUsername: ActorMethod<[UpdateUserName], Result>;
   verifySubApp: ActorMethod<[VerifySubApp], Result>;
@@ -161,6 +161,15 @@ export interface Subaccount {
 }
 export interface UpdateDisplayName {
   displayName: string;
+  principalId: PrincipalId;
+}
+export interface UpdateFavouriteClub {
+  favouriteClubId: ClubId;
+  favouriteLeagueId: LeagueId;
+  principalId: PrincipalId;
+}
+export interface UpdateNationality {
+  countryId: CountryId;
   principalId: PrincipalId;
 }
 export interface UpdateProfilePicture {

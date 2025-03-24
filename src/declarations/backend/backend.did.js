@@ -72,25 +72,23 @@ export const idlFactory = ({ IDL }) => {
     membershipExpiryTime: IDL.Int,
   });
   const Result_3 = IDL.Variant({ ok: ICFCMembershipDTO, err: Error });
-  const LeagueId = IDL.Nat16;
   const ClubId = IDL.Nat16;
+  const LeagueId = IDL.Nat16;
   const ProfileDTO = IDL.Record({
-    favouriteMensLeagueId: IDL.Opt(LeagueId),
     username: IDL.Text,
-    favouriteWomensClubId: IDL.Opt(ClubId),
     displayName: IDL.Text,
     createdOn: IDL.Int,
     podcastIds: IDL.Vec(PrincipalId),
-    favouriteMensClubId: IDL.Opt(ClubId),
     profilePictureExtension: IDL.Text,
+    favouriteClubId: IDL.Opt(ClubId),
     membershipClaims: IDL.Vec(MembershipClaim),
     appPrincipalIds: IDL.Vec(IDL.Tuple(SubApp, PrincipalId)),
     profilePicture: IDL.Opt(IDL.Vec(IDL.Nat8)),
     membershipType: MembershipType,
     termsAgreed: IDL.Bool,
     membershipExpiryTime: IDL.Int,
+    favouriteLeagueId: IDL.Opt(LeagueId),
     nationalityId: IDL.Opt(CountryId),
-    favouriteWomensLeagueId: IDL.Opt(LeagueId),
     principalId: PrincipalId,
   });
   const Result_2 = IDL.Variant({ ok: ProfileDTO, err: Error });
@@ -143,6 +141,15 @@ export const idlFactory = ({ IDL }) => {
     displayName: IDL.Text,
     principalId: PrincipalId,
   });
+  const UpdateFavouriteClub = IDL.Record({
+    favouriteClubId: ClubId,
+    favouriteLeagueId: LeagueId,
+    principalId: PrincipalId,
+  });
+  const UpdateNationality = IDL.Record({
+    countryId: CountryId,
+    principalId: PrincipalId,
+  });
   const UpdateProfilePicture = IDL.Record({
     profilePictureExtension: IDL.Text,
     profilePicture: IDL.Opt(IDL.Vec(IDL.Nat8)),
@@ -169,6 +176,8 @@ export const idlFactory = ({ IDL }) => {
     isUsernameValid: IDL.Func([IsUsernameValid], [IDL.Bool], ["query"]),
     removeSubApp: IDL.Func([SubApp], [Result], []),
     updateDisplayName: IDL.Func([UpdateDisplayName], [Result], []),
+    updateFavouriteClub: IDL.Func([UpdateFavouriteClub], [Result], []),
+    updateNationality: IDL.Func([UpdateNationality], [Result], []),
     updateProfilePicture: IDL.Func([UpdateProfilePicture], [Result], []),
     updateUsername: IDL.Func([UpdateUserName], [Result], []),
     verifySubApp: IDL.Func([VerifySubApp], [Result], []),

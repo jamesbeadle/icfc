@@ -1,4 +1,5 @@
 import Base "mo:waterway-mops/BaseTypes";
+import FootballTypes "mo:waterway-mops/FootballTypes";
 import T "../icfc_types";
 
 module ProfileCommands {
@@ -19,6 +20,17 @@ module ProfileCommands {
     public type UpdateDisplayName = {
         principalId : Base.PrincipalId;
         displayName : Text;
+    };
+
+    public type UpdateFavouriteClub = {
+        principalId : Base.PrincipalId;
+        favouriteLeagueId : FootballTypes.LeagueId;
+        favouriteClubId : FootballTypes.ClubId;
+    };
+
+    public type UpdateNationality = {
+        principalId : Base.PrincipalId;
+        countryId : Base.CountryId;
     };
 
     public type UpdateProfilePicture = {

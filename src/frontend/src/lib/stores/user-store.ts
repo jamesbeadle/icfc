@@ -7,6 +7,10 @@ import type {
   ProfileDTO,
   CreateProfile,
   IsUsernameValid,
+  UpdateUserName,
+  UpdateDisplayName,
+  UpdateFavouriteClub,
+  UpdateNationality,
 } from "../../../../declarations/backend/backend.did";
 
 function createUserStore() {
@@ -27,13 +31,13 @@ function createUserStore() {
     }
   }
 
-  async function updateUsername(username: string): Promise<any> {
+  async function updateUsername(dto: UpdateUserName): Promise<any> {
     try {
       const identityActor = await ActorFactory.createIdentityActor(
         authStore,
         process.env.BACKEND_CANISTER_ID ?? "",
       );
-      const result = await identityActor.updateDisplayName(username);
+      const result = await identityActor.updateUsername(dto);
       if (isError(result)) {
         console.error("Error updating username");
         return;
@@ -46,23 +50,60 @@ function createUserStore() {
     }
   }
 
-  async function agreeTerms(): Promise<any> {
+  async function updateDisplayName(dto: UpdateDisplayName): Promise<any> {
     try {
       const identityActor = await ActorFactory.createIdentityActor(
         authStore,
         process.env.BACKEND_CANISTER_ID ?? "",
       );
-      const result = await identityActor.agreeTerms();
+      const result = await identityActor.updateDisplayName(dto);
       if (isError(result)) {
-        console.error("Error agreeing terms");
+        console.error("Error updating display name");
         return;
       }
-
       await cacheProfile();
       return result;
     } catch (error) {
-      console.error(error);
-      console.error("Error agreeing terms:", error);
+      console.error("Error updating display name:", error);
+      throw error;
+    }
+  }
+
+  async function updateFavouriteClub(dto: UpdateFavouriteClub): Promise<any> {
+    try {
+      const identityActor = await ActorFactory.createIdentityActor(
+        authStore,
+        process.env.BACKEND_CANISTER_ID ?? "",
+      );
+      const result = await identityActor.updateFavouriteClub(dto);
+      if (isError(result)) {
+        console.error("Error updating favourite club.");
+        return;
+      }
+      await cacheProfile();
+      return result;
+    } catch (error) {
+      console.error("Error updating favourite club:", error);
+      throw error;
+    }
+  }
+
+  async function updateNationality(dto: UpdateNationality): Promise<any> {
+    try {
+      const identityActor = await ActorFactory.createIdentityActor(
+        authStore,
+        process.env.BACKEND_CANISTER_ID ?? "",
+      );
+      const result = await identityActor.updateNationality(dto);
+      if (isError(result)) {
+        console.error("Error updating nationality.");
+        return;
+      }
+      await cacheProfile();
+      return result;
+    } catch (error) {
+      console.error("Error updating nationality:", error);
+      throw error;
     }
   }
 
@@ -149,8 +190,10 @@ function createUserStore() {
     subscribe,
     sync,
     getProfile,
-    agreeTerms,
     updateUsername,
+    updateDisplayName,
+    updateFavouriteClub,
+    updateNationality,
     updateProfilePicture,
     isUsernameAvailable,
     cacheProfile,

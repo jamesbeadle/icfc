@@ -23,10 +23,8 @@ module ICFCTypes {
     termsAgreed : Bool;
     appPrincipalIds : [(SubApp, Base.PrincipalId)];
     podcastIds : [Base.PrincipalId];
-    favouriteMensLeagueId: ?FootballTypes.LeagueId;
-    favouriteMensClubId: ?FootballTypes.ClubId;
-    favouriteWomensLeagueId: ?FootballTypes.LeagueId;
-    favouriteWomensClubId: ?FootballTypes.ClubId;
+    favouriteLeagueId: ?FootballTypes.LeagueId;
+    favouriteClubId: ?FootballTypes.ClubId;
     nationalityId: ?Base.CountryId;
   };
 

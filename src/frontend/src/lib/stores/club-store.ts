@@ -8,7 +8,7 @@ import type {
 function createClubStore() {
   const { subscribe, set } = writable<ClubDTO[]>([]);
 
-  async function getClubs(leagueId: LeagueId) {
+  async function getClubs(leagueId: LeagueId): Promise<any> {
     return new ClubService().getClubs(leagueId);
   }
   return {

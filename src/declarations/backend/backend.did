@@ -21,6 +21,17 @@ type UpdateProfilePicture =
    profilePicture: opt blob;
    profilePictureExtension: text;
  };
+type UpdateNationality = 
+ record {
+   countryId: CountryId;
+   principalId: PrincipalId;
+ };
+type UpdateFavouriteClub = 
+ record {
+   favouriteClubId: ClubId;
+   favouriteLeagueId: LeagueId;
+   principalId: PrincipalId;
+ };
 type UpdateDisplayName = 
  record {
    displayName: text;
@@ -48,6 +59,8 @@ type Self =
    isUsernameValid: (IsUsernameValid) -> (bool) query;
    removeSubApp: (SubApp) -> (Result);
    updateDisplayName: (UpdateDisplayName) -> (Result);
+   updateFavouriteClub: (UpdateFavouriteClub) -> (Result);
+   updateNationality: (UpdateNationality) -> (Result);
    updateProfilePicture: (UpdateProfilePicture) -> (Result);
    updateUsername: (UpdateUserName) -> (Result);
    verifySubApp: (VerifySubApp) -> (Result);
@@ -95,10 +108,8 @@ type ProfileDTO =
                         };
    createdOn: int;
    displayName: text;
-   favouriteMensClubId: opt ClubId;
-   favouriteMensLeagueId: opt LeagueId;
-   favouriteWomensClubId: opt ClubId;
-   favouriteWomensLeagueId: opt LeagueId;
+   favouriteClubId: opt ClubId;
+   favouriteLeagueId: opt LeagueId;
    membershipClaims: vec MembershipClaim;
    membershipExpiryTime: int;
    membershipType: MembershipType;

@@ -124,15 +124,30 @@ actor class Self() = this {
     return await profileManager.updateDisplayName(dto);
   };
 
-  public shared ({ caller }) func getICFCMembership(dto : ProfileCommands.GetICFCMembership) : async Result.Result<ProfileQueries.ICFCMembershipDTO, T.Error> {
+  public shared ({ caller }) func updateNationality(dto: ProfileCommands.UpdateNationality) : async Result.Result<(), T.Error> {
     assert not Principal.isAnonymous(caller);
-    return await profileManager.getICFCMembership(Principal.toText(caller), dto);
+    assert dto.principalId == Principal.toText(caller);
+    return await profileManager.updateNationality(dto);
+  };
+
+  public shared ({ caller }) func updateFavouriteClub(dto: ProfileCommands.UpdateFavouriteClub) : async Result.Result<(), T.Error> {
+    assert not Principal.isAnonymous(caller);
+    assert dto.principalId == Principal.toText(caller);
+    return await profileManager.updateFavouriteClub(dto);
   };
 
   public shared ({ caller }) func updateProfilePicture(dto : ProfileCommands.UpdateProfilePicture) : async Result.Result<(), T.Error> {
     assert not Principal.isAnonymous(caller);
     assert dto.principalId == Principal.toText(caller);
     return await profileManager.updateProfilePicture(dto);
+  };
+
+  
+  
+
+  public shared ({ caller }) func getICFCMembership(dto : ProfileCommands.GetICFCMembership) : async Result.Result<ProfileQueries.ICFCMembershipDTO, T.Error> {
+    assert not Principal.isAnonymous(caller);
+    return await profileManager.getICFCMembership(Principal.toText(caller), dto);
   };
 
   public shared query ({ caller }) func getCountries() : async Result.Result<[AppQueries.CountryDTO], T.Error> {
@@ -168,11 +183,11 @@ actor class Self() = this {
   };
 
   private func postUpgradeCallback() : async () {
+    /*
     await updateProfileCanisterWasms();
     profileManager.setStableCanisterIndex([]);
     profileManager.setStableUsernames([]);
     profileManager.setStableTotalProfiles(0);
-    /*
     */
   };
 

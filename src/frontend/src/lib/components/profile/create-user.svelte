@@ -15,7 +15,7 @@
   import LogoIcon from "$lib/icons/LogoIcon.svelte";
   import CopyPrincipal from "./copy-principal.svelte";
   import DropdownSelect from "../shared/dropdown-select.svelte";
-  import { getFileExtensionFromFile, isPrincipalValid } from "$lib/utils/helpers";
+  import { getFileExtensionFromFile, isPrincipalValid, isUsernameValid } from "$lib/utils/helpers";
     
   let isLoading = true;
   let isSubmitDisabled = true;
@@ -87,14 +87,11 @@
   }
 
   async function checkUsername() {
-    if (username.length < 5) {
-      usernameError = "Username must be at least 5 characters";
-      usernameAvailable = false;
-      return;
-    }
-    
     isCheckingUsername = true;
     try {
+      if(!isUsernameValid(username)){
+        usernameError = "Username must be between 5 and 20 characters.";
+      }
       const available = await userStore.isUsernameAvailable(username);
       usernameAvailable = available;
       usernameError = available ? "" : "Username is already taken";

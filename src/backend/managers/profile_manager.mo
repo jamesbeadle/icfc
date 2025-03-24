@@ -327,6 +327,36 @@ module {
             };
         };
 
+        public func updateNationality(dto : ProfileCommands.UpdateNationality) : async Result.Result<(), T.Error> {
+            let existingProfileCanisterId = profileCanisterIndex.get(dto.principalId);
+            switch (existingProfileCanisterId) {
+                case (?foundCanisterId) {
+                    let profile_canister = actor (foundCanisterId) : actor {
+                        updateNationality : (dto : ProfileCommands.UpdateNationality) -> async Result.Result<(), T.Error>;
+                    };
+                    return await profile_canister.updateNationality(dto);
+                };
+                case (null) {
+                    return #err(#NotFound);
+                };
+            };
+        };
+
+        public func updateFavouriteClub(dto : ProfileCommands.UpdateFavouriteClub) : async Result.Result<(), T.Error> {
+            let existingProfileCanisterId = profileCanisterIndex.get(dto.principalId);
+            switch (existingProfileCanisterId) {
+                case (?foundCanisterId) {
+                    let profile_canister = actor (foundCanisterId) : actor {
+                        updateFavouriteClub : (dto : ProfileCommands.UpdateFavouriteClub) -> async Result.Result<(), T.Error>;
+                    };
+                    return await profile_canister.updateFavouriteClub(dto);
+                };
+                case (null) {
+                    return #err(#NotFound);
+                };
+            };
+        };
+
         public func updateProfilePicture(dto : ProfileCommands.UpdateProfilePicture) : async Result.Result<(), T.Error> {
             let validProfilePicture = isProfilePictureValid(dto.profilePicture);
             if (not validProfilePicture) {

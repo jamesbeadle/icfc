@@ -751,3 +751,27 @@ export function getFileExtensionFromFile(file: File): string {
   const lastIndex = filename.lastIndexOf(".");
   return lastIndex !== -1 ? filename.substring(lastIndex + 1) : "";
 }
+
+export function isDisplayNameValid(displayName: string): boolean {
+  if (!displayName) {
+    return false;
+  }
+
+  if (displayName.length < 3 || displayName.length > 20) {
+    return false;
+  }
+
+  return /^[a-zA-Z0-9 ]+$/.test(displayName);
+}
+
+export function isUsernameValid(username: string): boolean {
+  if (!username) {
+    return false;
+  }
+
+  if (username.length < 5 || username.length > 20) {
+    return false;
+  }
+
+  return /^[a-zA-Z0-9]+$/.test(username);
+}

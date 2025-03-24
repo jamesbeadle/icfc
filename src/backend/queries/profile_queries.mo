@@ -21,10 +21,8 @@ module ProfileQueries {
         appPrincipalIds : [(T.SubApp, Base.PrincipalId)];
         podcastIds : [Base.PrincipalId];
         membershipExpiryTime : Int;
-        favouriteMensLeagueId: ?FootballTypes.LeagueId;
-        favouriteMensClubId: ?FootballTypes.ClubId;
-        favouriteWomensLeagueId: ?FootballTypes.LeagueId;
-        favouriteWomensClubId: ?FootballTypes.ClubId;
+        favouriteLeagueId: ?FootballTypes.LeagueId;
+        favouriteClubId: ?FootballTypes.ClubId;
         nationalityId: ?Base.CountryId;
     };
 
