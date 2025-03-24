@@ -22,9 +22,9 @@ module ICFCTypes {
     termsAgreed : Bool;
     appPrincipalIds : [(SubApp, Base.PrincipalId)];
     podcastIds : [Base.PrincipalId];
-    favouriteLeagueId: ?FootballTypes.LeagueId;
-    favouriteClubId: ?FootballTypes.ClubId;
-    nationalityId: ?Base.CountryId;
+    favouriteLeagueId : ?FootballTypes.LeagueId;
+    favouriteClubId : ?FootballTypes.ClubId;
+    nationalityId : ?Base.CountryId;
   };
 
   public type PodcastChannel = {
@@ -62,6 +62,11 @@ module ICFCTypes {
     expiresOn : ?Int;
   };
 
+  public type EligibleMembership = {
+    membershipType : MembershipType;
+    eligibleNeuronIds : [Blob];
+  };
+
   public type Error = {
     #NotFound;
     #AlreadyExists;
@@ -80,6 +85,8 @@ module ICFCTypes {
     #UpdateFailed;
     #AlreadyClaimed;
     #InEligible;
+    #NeuronAlreadyUsed;
+    #AlreadyLinked;
   };
 
   public type Club = {
