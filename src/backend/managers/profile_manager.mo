@@ -208,9 +208,9 @@ module {
 
             switch (currentOwner) {
                 case (?existingOwner) {
-                    if (existingOwner == dto.principalId) {
-                        return #ok;
-                    };
+                    // if (existingOwner == dto.principalId) {
+                    //     return #ok;
+                    // };
 
                     var getCurrentOwnerProfileQuery : ProfileQueries.GetProfile = {
                         principalId = existingOwner;
@@ -236,6 +236,7 @@ module {
                                     case (?foundCanisterId) {
                                         let profile_canister = actor (foundCanisterId) : actor {
                                             updateUsername : (dto : ProfileCommands.UpdateUserName) -> async Result.Result<(), T.Error>;
+                                            getProfile : (dto : ProfileQueries.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, T.Error>;
                                         };
 
                                         let updateOldUser = await profile_canister.updateUsername({
@@ -248,6 +249,27 @@ module {
                                         };
 
                                         usernames.put(existingOwner, newRandomUsername);
+
+                                        let oldUserProfile = await profile_canister.getProfile({
+                                            principalId = existingOwner;
+                                        });
+
+                                        switch (oldUserProfile) {
+                                            case (#ok(existingProfile)) {
+                                                let profile : ProfileQueries.ProfileDTO = existingProfile;
+                                                for ((subApp, subAppPrincipal) in profile.appPrincipalIds.vals()) {
+                                                    let _ = notifyAppsofProfileUpdate({
+                                                        subApp = subApp;
+                                                        subAppUserPrincipalId = subAppPrincipal;
+                                                    });
+                                                };
+
+                                            };
+                                            case (#err(err)) {
+                                                return #err(err);
+                                            };
+                                        };
+
                                     };
                                     case (null) {
                                         return #err(#NotFound);
@@ -260,11 +282,32 @@ module {
                                     case (?foundCanisterId) {
                                         let profile_canister = actor (foundCanisterId) : actor {
                                             updateUsername : (dto : ProfileCommands.UpdateUserName) -> async Result.Result<(), T.Error>;
+                                            getProfile : (dto : ProfileQueries.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, T.Error>;
                                         };
 
                                         let updateNewUser = await profile_canister.updateUsername(dto);
                                         if (updateNewUser == #ok) {
                                             usernames.put(dto.principalId, dto.username);
+
+                                            let newUserProfile = await profile_canister.getProfile({
+                                                principalId = dto.principalId;
+                                            });
+
+                                            switch (newUserProfile) {
+                                                case (#ok(newProfile)) {
+                                                    let profile : ProfileQueries.ProfileDTO = newProfile;
+                                                    for ((subApp, subAppPrincipal) in profile.appPrincipalIds.vals()) {
+                                                        let _ = notifyAppsofProfileUpdate({
+                                                            subApp = subApp;
+                                                            subAppUserPrincipalId = subAppPrincipal;
+                                                        });
+                                                    };
+                                                };
+                                                case (#err(err)) {
+                                                    return #err(err);
+                                                };
+                                            };
+
                                             return #ok;
                                         } else {
                                             return #err(#UpdateFailed);
@@ -290,11 +333,32 @@ module {
                         case (?foundCanisterId) {
                             let profile_canister = actor (foundCanisterId) : actor {
                                 updateUsername : (dto : ProfileCommands.UpdateUserName) -> async Result.Result<(), T.Error>;
+                                getProfile : (dto : ProfileQueries.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, T.Error>;
                             };
 
                             let updateResult = await profile_canister.updateUsername(dto);
                             if (updateResult == #ok) {
                                 usernames.put(dto.principalId, dto.username);
+
+                                let profile = await profile_canister.getProfile({
+                                    principalId = dto.principalId;
+                                });
+
+                                switch (profile) {
+                                    case (#ok(existingProfile)) {
+                                        let profile : ProfileQueries.ProfileDTO = existingProfile;
+                                        for ((subApp, subAppPrincipal) in profile.appPrincipalIds.vals()) {
+                                            let _ = notifyAppsofProfileUpdate({
+                                                subApp = subApp;
+                                                subAppUserPrincipalId = subAppPrincipal;
+                                            });
+                                        };
+                                    };
+                                    case (#err(err)) {
+                                        return #err(err);
+                                    };
+                                };
+
                                 return #ok;
                             } else {
                                 return #err(#UpdateFailed);
@@ -319,8 +383,36 @@ module {
                 case (?foundCanisterId) {
                     let profile_canister = actor (foundCanisterId) : actor {
                         updateDisplayname : (dto : ProfileCommands.UpdateDisplayName) -> async Result.Result<(), T.Error>;
+                        getProfile : (dto : ProfileQueries.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, T.Error>;
                     };
-                    return await profile_canister.updateDisplayname(dto);
+                    let res = await profile_canister.updateDisplayname(dto);
+                    switch (res) {
+                        case (#ok) {
+                            let profile = await profile_canister.getProfile({
+                                principalId = dto.principalId;
+                            });
+
+                            switch (profile) {
+                                case (#ok(existingProfile)) {
+                                    let profile : ProfileQueries.ProfileDTO = existingProfile;
+                                    for ((subApp, subAppPrincipal) in profile.appPrincipalIds.vals()) {
+                                        let _ = notifyAppsofProfileUpdate({
+                                            subApp = subApp;
+                                            subAppUserPrincipalId = subAppPrincipal;
+                                        });
+                                    };
+                                };
+                                case (#err(err)) {
+                                    return #err(err);
+                                };
+                            };
+
+                            return #ok;
+                        };
+                        case (#err(err)) {
+                            return #err(err);
+                        };
+                    };
                 };
                 case (null) {
                     return #err(#NotFound);
@@ -339,30 +431,39 @@ module {
                 case (?foundCanisterId) {
                     let profile_canister = actor (foundCanisterId) : actor {
                         updateProfilePicture : (dto : ProfileCommands.UpdateProfilePicture) -> async Result.Result<(), T.Error>;
+                        getProfile : (dto : ProfileQueries.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, T.Error>;
                     };
-                    return await profile_canister.updateProfilePicture(dto);
-                };
-                case (null) {
-                    if (activeCanisterId == "") {
-                        await createNewCanister();
-                    };
+                    let res = await profile_canister.updateProfilePicture(dto);
+                    switch (res) {
+                        case (#ok) {
+                            let profile = await profile_canister.getProfile({
+                                principalId = dto.principalId;
+                            });
 
-                    var profile_canister = actor (activeCanisterId) : actor {
-                        isCanisterFull : () -> async Bool;
-                        updateProfilePicture : (dto : ProfileCommands.UpdateProfilePicture) -> async Result.Result<(), T.Error>;
-                    };
+                            switch (profile) {
+                                case (#ok(existingProfile)) {
+                                    let profile : ProfileQueries.ProfileDTO = existingProfile;
+                                    for ((subApp, subAppPrincipal) in profile.appPrincipalIds.vals()) {
+                                        let _ = notifyAppsofProfileUpdate({
+                                            subApp = subApp;
+                                            subAppUserPrincipalId = subAppPrincipal;
+                                        });
+                                    };
+                                };
+                                case (#err(err)) {
+                                    return #err(err);
+                                };
+                            };
 
-                    let isCanisterFull = await profile_canister.isCanisterFull();
-                    if (isCanisterFull) {
-                        await createNewCanister();
-
-                        profile_canister := actor (activeCanisterId) : actor {
-                            updateProfilePicture : (dto : ProfileCommands.UpdateProfilePicture) -> async Result.Result<(), T.Error>;
-                            isCanisterFull : () -> async Bool;
+                            return #ok;
+                        };
+                        case (#err(err)) {
+                            return #err(err);
                         };
                     };
-
-                    return await profile_canister.updateProfilePicture(dto);
+                };
+                case (null) {
+                    return #err(#NotFound);
                 };
             };
 
@@ -435,11 +536,6 @@ module {
 
                                     switch (res) {
                                         case (#ok(claim)) {
-                                            let neuronsUsed : [Blob] = eligibleMembership.eligibleNeuronIds;
-                                            for (neuronId in neuronsUsed.vals()) {
-                                                neuronsUsedforMembership.put(neuronId, dto.principalId);
-                                            };
-
                                             return #ok(claim);
                                         };
                                         case (#err(err)) {
@@ -468,9 +564,37 @@ module {
                 case (?foundCanisterId) {
                     let profile_canister = actor (foundCanisterId) : actor {
                         updateMembership : (dto : ProfileCommands.UpdateMembership) -> async Result.Result<(T.MembershipClaim), T.Error>;
+                        getProfile : (dto : ProfileQueries.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, T.Error>;
                     };
                     let res = await profile_canister.updateMembership(dto);
-                    return res;
+
+                    switch (res) {
+                        case (#ok(claim)) {
+                            let profile = await profile_canister.getProfile({
+                                principalId = dto.principalId;
+                            });
+
+                            switch (profile) {
+                                case (#ok(existingProfile)) {
+                                    let profile : ProfileQueries.ProfileDTO = existingProfile;
+                                    for ((subApp, subAppPrincipal) in profile.appPrincipalIds.vals()) {
+                                        let _ = notifyAppsofProfileUpdate({
+                                            subApp = subApp;
+                                            subAppUserPrincipalId = subAppPrincipal;
+                                        });
+                                    };
+                                };
+                                case (#err(err)) {
+                                    return #err(err);
+                                };
+                            };
+
+                            return #ok(claim);
+                        };
+                        case (#err(err)) {
+                            return #err(err);
+                        };
+                    };
                 };
                 case (null) {
                     return #err(#NotFound);
@@ -526,6 +650,41 @@ module {
                         notifyAppLink : (dto : ProfileCommands.NotifyAppofLink) -> async Result.Result<(), T.Error>;
                     };
                     return await footballGodCanister.notifyAppLink(dto);
+                };
+            };
+
+        };
+        private func notifyAppsofProfileUpdate(dto : ProfileCommands.UpdateICFCProfile) : async Result.Result<(), T.Error> {
+            switch (dto.subApp) {
+                case (#OpenFPL) {
+                    let openFPLCanister = actor (Environment.OPENFPL_BACKEND_CANISTER_ID) : actor {
+                        noitifyAppofICFCProfileUpdate(dto : ProfileCommands.UpdateICFCProfile) : async Result.Result<(), T.Error>;
+                    };
+                    return await openFPLCanister.noitifyAppofICFCProfileUpdate(dto);
+                };
+                case (#OpenWSL) {
+                    let openWSLCanister = actor (Environment.OPENWSL_BACKEND_CANISTER_ID) : actor {
+                        noitifyAppofICFCProfileUpdate(dto : ProfileCommands.UpdateICFCProfile) : async Result.Result<(), T.Error>;
+                    };
+                    return await openWSLCanister.noitifyAppofICFCProfileUpdate(dto);
+                };
+                case (#JeffBets) {
+                    let jeffBetsCanister = actor (Environment.JEFF_BETS_BACKEND_CANISTER_ID) : actor {
+                        noitifyAppofICFCProfileUpdate(dto : ProfileCommands.UpdateICFCProfile) : async Result.Result<(), T.Error>;
+                    };
+                    return await jeffBetsCanister.noitifyAppofICFCProfileUpdate(dto);
+                };
+                case (#TransferKings) {
+                    let transferKingsCanister = actor (Environment.TRANSFERKINGS_CANISTER_ID) : actor {
+                        noitifyAppofICFCProfileUpdate(dto : ProfileCommands.UpdateICFCProfile) : async Result.Result<(), T.Error>;
+                    };
+                    return await transferKingsCanister.noitifyAppofICFCProfileUpdate(dto);
+                };
+                case (#FootballGod) {
+                    let footballGodCanister = actor (Environment.FOOTBALL_GOD_BACKEND_CANISTER_ID) : actor {
+                        noitifyAppofICFCProfileUpdate(dto : ProfileCommands.UpdateICFCProfile) : async Result.Result<(), T.Error>;
+                    };
+                    return await footballGodCanister.noitifyAppofICFCProfileUpdate(dto);
                 };
             };
 

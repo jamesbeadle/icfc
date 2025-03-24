@@ -282,18 +282,20 @@ actor class _ProfileCanister() {
                             appPrincipalIdsBuffer.add((dto.subApp, dto.subAppUserPrincipalId));
                         } else {
                             // update subapp if already linked
-                            let updatedAppPrincipalIds = Array.map<(T.SubApp, Base.PrincipalId), (T.SubApp, Base.PrincipalId)>(
-                                foundProfile.appPrincipalIds,
-                                func(appPrincipalId : (T.SubApp, Base.PrincipalId)) {
-                                    if (appPrincipalId.0 == dto.subApp) {
-                                        (appPrincipalId.0, dto.subAppUserPrincipalId);
-                                    } else {
-                                        appPrincipalId;
-                                    };
-                                },
-                            );
+                            // let updatedAppPrincipalIds = Array.map<(T.SubApp, Base.PrincipalId), (T.SubApp, Base.PrincipalId)>(
+                            //     foundProfile.appPrincipalIds,
+                            //     func(appPrincipalId : (T.SubApp, Base.PrincipalId)) {
+                            //         if (appPrincipalId.0 == dto.subApp) {
+                            //             (appPrincipalId.0, dto.subAppUserPrincipalId);
+                            //         } else {
+                            //             appPrincipalId;
+                            //         };
+                            //     },
+                            // );
 
-                            appPrincipalIdsBuffer := Buffer.fromArray<(T.SubApp, Base.PrincipalId)>(updatedAppPrincipalIds);
+                            // appPrincipalIdsBuffer := Buffer.fromArray<(T.SubApp, Base.PrincipalId)>(updatedAppPrincipalIds);
+
+                            return #err(#AlreadyLinked);
 
                         };
 
@@ -502,7 +504,7 @@ actor class _ProfileCanister() {
         return (totalProfiles >= MAX_PROFILES_PER_CANISTER);
     };
 
-    private func checkAndExpireMembership() : async () {
+    public func checkAndExpireMembership() : async () {
 
         for (index in Iter.range(0, 11)) {
             switch (index) {
