@@ -179,15 +179,15 @@ actor class Self() = this {
   system func postupgrade() {
     setProfileData();
     setPodcastChannelData();
-    //ignore Timer.setTimer<system>(#nanoseconds(Int.abs(1)), postUpgradeCallback);
+    ignore Timer.setTimer<system>(#nanoseconds(Int.abs(1)), postUpgradeCallback);
   };
 
   private func postUpgradeCallback() : async () {
-    /*
     await updateProfileCanisterWasms();
     profileManager.setStableCanisterIndex([]);
     profileManager.setStableUsernames([]);
     profileManager.setStableTotalProfiles(0);
+    /*
     */
   };
 

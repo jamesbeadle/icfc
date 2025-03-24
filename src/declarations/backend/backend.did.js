@@ -46,19 +46,23 @@ export const idlFactory = ({ IDL }) => {
     membershipType: MembershipType,
   });
   const Result_6 = IDL.Variant({ ok: MembershipClaim, err: Error });
+  const ClubId = IDL.Nat16;
+  const LeagueId = IDL.Nat16;
+  const CountryId = IDL.Nat16;
   const CreateProfile = IDL.Record({
     username: IDL.Text,
     displayName: IDL.Text,
-    profilePictureExtension: IDL.Opt(IDL.Text),
+    favouriteClubId: IDL.Opt(ClubId),
     appPrincipalIds: IDL.Vec(IDL.Tuple(SubApp, PrincipalId)),
     profilePicture: IDL.Opt(IDL.Vec(IDL.Nat8)),
+    favouriteLeagueId: IDL.Opt(LeagueId),
+    nationalityId: IDL.Opt(CountryId),
   });
   const AppStatusDTO = IDL.Record({
     version: IDL.Text,
     onHold: IDL.Bool,
   });
   const Result_5 = IDL.Variant({ ok: AppStatusDTO, err: Error });
-  const CountryId = IDL.Nat16;
   const CountryDTO = IDL.Record({
     id: CountryId,
     code: IDL.Text,
@@ -72,14 +76,11 @@ export const idlFactory = ({ IDL }) => {
     membershipExpiryTime: IDL.Int,
   });
   const Result_3 = IDL.Variant({ ok: ICFCMembershipDTO, err: Error });
-  const ClubId = IDL.Nat16;
-  const LeagueId = IDL.Nat16;
   const ProfileDTO = IDL.Record({
     username: IDL.Text,
     displayName: IDL.Text,
     createdOn: IDL.Int,
     podcastIds: IDL.Vec(PrincipalId),
-    profilePictureExtension: IDL.Text,
     favouriteClubId: IDL.Opt(ClubId),
     membershipClaims: IDL.Vec(MembershipClaim),
     appPrincipalIds: IDL.Vec(IDL.Tuple(SubApp, PrincipalId)),
@@ -147,11 +148,10 @@ export const idlFactory = ({ IDL }) => {
     principalId: PrincipalId,
   });
   const UpdateNationality = IDL.Record({
-    countryId: CountryId,
+    nationalityId: CountryId,
     principalId: PrincipalId,
   });
   const UpdateProfilePicture = IDL.Record({
-    profilePictureExtension: IDL.Text,
     profilePicture: IDL.Opt(IDL.Vec(IDL.Nat8)),
     principalId: PrincipalId,
   });

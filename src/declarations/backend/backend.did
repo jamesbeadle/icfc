@@ -19,11 +19,10 @@ type UpdateProfilePicture =
  record {
    principalId: PrincipalId;
    profilePicture: opt blob;
-   profilePictureExtension: text;
  };
 type UpdateNationality = 
  record {
-   countryId: CountryId;
+   nationalityId: CountryId;
    principalId: PrincipalId;
  };
 type UpdateFavouriteClub = 
@@ -117,7 +116,6 @@ type ProfileDTO =
    podcastIds: vec PrincipalId;
    principalId: PrincipalId;
    profilePicture: opt blob;
-   profilePictureExtension: text;
    termsAgreed: bool;
    username: text;
  };
@@ -214,8 +212,10 @@ type CreateProfile =
                           PrincipalId;
                         };
    displayName: text;
+   favouriteClubId: opt ClubId;
+   favouriteLeagueId: opt LeagueId;
+   nationalityId: opt CountryId;
    profilePicture: opt blob;
-   profilePictureExtension: opt text;
    username: text;
  };
 type CountryId = nat16;

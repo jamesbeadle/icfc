@@ -24,9 +24,11 @@ export type CountryId = number;
 export interface CreateProfile {
   username: string;
   displayName: string;
-  profilePictureExtension: [] | [string];
+  favouriteClubId: [] | [ClubId];
   appPrincipalIds: Array<[SubApp, PrincipalId]>;
   profilePicture: [] | [Uint8Array | number[]];
+  favouriteLeagueId: [] | [LeagueId];
+  nationalityId: [] | [CountryId];
 }
 export interface DisburseMaturityInProgress {
   timestamp_of_disbursement_seconds: bigint;
@@ -113,7 +115,6 @@ export interface ProfileDTO {
   displayName: string;
   createdOn: bigint;
   podcastIds: Array<PrincipalId>;
-  profilePictureExtension: string;
   favouriteClubId: [] | [ClubId];
   membershipClaims: Array<MembershipClaim>;
   appPrincipalIds: Array<[SubApp, PrincipalId]>;
@@ -169,11 +170,10 @@ export interface UpdateFavouriteClub {
   principalId: PrincipalId;
 }
 export interface UpdateNationality {
-  countryId: CountryId;
+  nationalityId: CountryId;
   principalId: PrincipalId;
 }
 export interface UpdateProfilePicture {
-  profilePictureExtension: string;
   profilePicture: [] | [Uint8Array | number[]];
   principalId: PrincipalId;
 }

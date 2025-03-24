@@ -155,9 +155,11 @@
         const dto: CreateProfile = {
           displayName,
           profilePicture: [profilePicture],
-          profilePictureExtension: [extension],
           username,
-          appPrincipalIds
+          appPrincipalIds,
+          favouriteLeagueId: favouriteLeagueId != null ? [favouriteLeagueId] : [],
+          favouriteClubId: favouriteClubId != null ? [favouriteClubId!] : [],
+          nationalityId: nationalityId != null ? [nationalityId!] : []
         };
 
         await userStore.createProfile(dto);
@@ -165,9 +167,11 @@
         const dto: CreateProfile = {
           displayName,
           profilePicture: [],
-          profilePictureExtension: [],
           username,
-          appPrincipalIds
+          appPrincipalIds,
+          favouriteLeagueId: favouriteLeagueId != null ? [favouriteLeagueId] : [],
+          favouriteClubId: favouriteClubId != null ? [favouriteClubId!] : [],
+          nationalityId: nationalityId != null ? [nationalityId!] : []
         };
 
         await userStore.createProfile(dto);

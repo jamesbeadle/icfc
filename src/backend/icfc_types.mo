@@ -19,7 +19,6 @@ module ICFCTypes {
     membershipExpiryTime : Int;
     createdOn : Int;
     profilePicture : ?Blob;
-    profilePictureExtension : Text;
     termsAgreed : Bool;
     appPrincipalIds : [(SubApp, Base.PrincipalId)];
     podcastIds : [Base.PrincipalId];
