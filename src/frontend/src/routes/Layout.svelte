@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from "svelte"; 
+  import { onMount } from "svelte";
   import { fade } from "svelte/transition";
   import { browser } from "$app/environment";
   import { page } from "$app/state";
@@ -19,6 +19,7 @@
   import { toasts } from "$lib/stores/toasts-store";
   import CreateUser from "$lib/components/profile/create-user.svelte";
   import LoggedInHeader from "$lib/components/shared/logged-in-header.svelte";
+  import Header from "$lib/components/shared/header.svelte";
     
   let worker: { syncAuthIdle: (auth: AuthStoreData) => void } | undefined;
 
@@ -26,58 +27,89 @@
   let showLinkAccounts = false;
   let isMenuOpen = false;
   let hasProfile = false;
+  let hasSynced = false; // Flag to prevent repeated syncs
+
+  let syncTimeout: NodeJS.Timeout | null = null;
+  let lastSync = 0;
+  let lastAuthSignedInState: boolean | null = null;
 
   const init = async () => {
-    await syncAuthStore();
+    console.log('layout initialisation');
     worker = await initAuthWorker();
+    console.log('auth worker intialised in layout initialisation');
+  };
+
+  const debounceSyncAuthStore = (retryCount = 0, maxRetries = 5) => {
+    if (syncTimeout) clearTimeout(syncTimeout);
+    syncTimeout = setTimeout(() => syncAuthStore(retryCount, maxRetries), 500); // Increased to 500ms
+  };
+
+  const throttleWorkerSync = () => {
+    const now = Date.now();
+    if (now - lastSync < 5000) return; // Throttle to once every 5 seconds
+    lastSync = now;
+    worker?.syncAuthIdle($authStore);
   };
 
   const syncAuthStore = async (retryCount = 0, maxRetries = 5) => {
+    console.log('sync auth store');
     if (!browser) return;
+    console.log('browser object exists');
 
     try {
       isLoading = true;
+      console.log('sync auth store in syncAuthStore');
       await authStore.sync();
       
       if (!$authSignedInStore) {
         hasProfile = false;
         isLoading = false;
+        hasSynced = true;
+        console.log('no auth');
         return;
       }
 
+      console.log('getting profile');
       let profile = await userStore.getProfile();
 
-      if (!profile && retryCount < maxRetries) {
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        return syncAuthStore(retryCount + 1, maxRetries);
-      }
-
+      console.log('set profile');
       hasProfile = !!profile;
-      isLoading = false;
-    } catch (err: unknown) {
+      hasSynced = true;
+    } catch (err: any) {
       console.error("Error syncing auth store:", err);
       toasts.addToast({ 
-        message: "Unexpected issue while syncing the status of your authentication.",
+        message: "Unexpected issue while syncing the status of your authentication. Please check your network or server configuration.",
         type: "error" 
       });
+      if (err.message.includes('CORS')) {
+        isLoading = false;
+        hasSynced = true;
+        return;
+      }
+    } finally {
       isLoading = false;
     }
   };
 
   const handleStorageEvent = (event: StorageEvent) => {
-    syncAuthStore();
+    hasSynced = false; // Allow sync on storage event
+    debounceSyncAuthStore();
   };
 
   onMount(async () => {
     await init();
   });
 
-  $: if (browser && $authSignedInStore) {
-    syncAuthStore();
+  $: if (browser && $authSignedInStore !== lastAuthSignedInState) {
+    console.log('Reactive authSignedInStore triggered:', $authSignedInStore);
+    lastAuthSignedInState = $authSignedInStore;
+    if (!hasSynced) {
+      debounceSyncAuthStore();
+    }
   }
 
   $: if (worker && $authStore) {
-    worker.syncAuthIdle($authStore);
+    throttleWorkerSync();
   }
 
   $: if (browser && $authStore !== undefined) {
@@ -87,8 +119,10 @@
   let currentPathname = '';
   $: if (browser && page.url) {
     if (page.url.pathname !== currentPathname) {
+      console.log('Reactive page.url triggered:', page.url.pathname);
       currentPathname = page.url.pathname;
-      syncAuthStore();
+      hasSynced = false; // Allow sync on path change
+      debounceSyncAuthStore();
     }
   }
 
@@ -116,6 +150,7 @@
     {#if isLoading}
       <FullScreenSpinner />
     {:else if $authSignedInStore && !hasProfile && !isWhitepaper && !isSale}
+      <Header />
       <CreateUser on:profileCreated={handleProfileCreated} />
     {:else if !$authSignedInStore && !isWhitepaper && !isSale}
       <LandingPage />

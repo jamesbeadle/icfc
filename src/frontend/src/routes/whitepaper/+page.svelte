@@ -85,7 +85,7 @@
           
             <div class="p-4 mt-4 rounded-lg bg-BrandBlueComp">
                 <svelte:component this={sections[activeTab].component} />
-            </div>
+            </div><!-- //TODO Deprecated -->
 
             <div class="flex flex-col items-center mt-6 space-y-4">
                 <div class="flex space-x-4">

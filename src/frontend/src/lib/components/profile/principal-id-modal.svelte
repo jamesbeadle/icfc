@@ -18,7 +18,7 @@
 <Modal {onClose}>
     <div class="flex flex-col w-full h-full">
         <h2 class="text-2xl text-white cta-text">Link ICFC App Principal IDs</h2>
-        <div class="top-0 p-6 pb-2 border-b border-gray-700 z-60 bg-ModalBackground">
+        <div class="top-0 p-6 pb-2 border-b border-BrandGrayShade3 z-60 bg-ModalBackground">
             <div class="flex items-center justify-between">
                 <h2 class="text-2xl text-white cta-text">Link {appName} Account</h2>
                 <button 
@@ -38,13 +38,13 @@
                         type="text"
                         id="principalId"
                         bind:value={principalId}
-                        class="p-2 text-white bg-gray-800 border border-gray-700 rounded-lg"
+                        class="p-2 text-white bg-BrandGrayShade5 border border-BrandGrayShade3 rounded-lg"
                         placeholder="Enter Principal ID"
                     />
                 </div>
                 <button
                     type="submit"
-                    class="px-4 py-2 text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700"
+                    class="px-4 py-2 text-white transition-colors bg-BrandBlue rounded-lg hover:bg-BrandInfo"
                 >
                     Link Account
                 </button>

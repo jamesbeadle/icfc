@@ -12,6 +12,15 @@
   --dialog-border-radius: 1px !important;
 }
 
+.page-wrapper {
+  @apply flex w-full h-full p-8 mt-16 mb-16 overflow-x-hidden;
+}
+
+.horizontal-divider {
+  min-height: 2px;
+  @apply self-stretch flex-shrink-0 h-px bg-BrandGrayShade4;
+}
+
 .cta-text {
   font-family: "Bungee" !important;
 }
@@ -33,6 +42,22 @@
 
 .brand-button-purple {
   @apply p-3 text-base text-center text-white rounded-lg cta-text bg-BrandPurple hover:bg-BrandBlueComp;
+}
+
+.brand-dropdown {
+  @apply p-2 rounded-md;
+}
+
+.form-title {
+  @apply text-sm text-BrandGrayShade4 mb-3;
+}
+
+.form-hint {
+  @apply text-xxs text-BrandGrayShade3 mb-4;
+}
+
+.brand-input {
+  @apply bg-BrandGrayShade5 text-black border border-BrandGrayShade3 rounded-lg p-4 focus:outline-none focus:border-BrandBlue;
 }
 
 .bg-frontend-update {
@@ -111,7 +136,7 @@
 
 .horizontal-divider {
   min-height: 2px;
-  @apply self-stretch flex-shrink-0 h-px my-4 bg-gray-400;
+  @apply self-stretch flex-shrink-0 h-px my-4 bg-BrandGrayShade3;
 }
 
 .main-title {

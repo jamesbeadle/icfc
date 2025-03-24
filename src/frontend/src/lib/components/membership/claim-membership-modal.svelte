@@ -108,14 +108,14 @@
                 <div class="flex flex-col gap-2">
                     <h3 class="text-lg text-white font-semibold">Your Principal ID</h3>
                     <p class="text-xs">Add this hotkey to any neurons staked for 2 years that you would like to claim membership for.</p>
-                    <div class="relative bg-gray-800 rounded-lg p-4">
+                    <div class="relative bg-BrandGrayShade4 rounded-lg p-4">
                         <button 
                             on:click={() => { copyTextAndShowToast(profile?.principalId ?? "") }}
-                            class="absolute top-2 right-2 text-gray-400 hover:text-white"
+                            class="absolute top-2 right-2 text-BrandGrayShade3 hover:text-white"
                         >
                             <CopyIcon className="w-5 h-5" fill='#FFFFFF' />
                         </button>
-                        <p class="text-gray-300 font-mono text-sm break-all px-4">
+                        <p class="text-BrandGrayShade2 font-mono text-sm break-all px-4">
                             {profile?.principalId ?? "Not available"}
                         </p>
                     </div>

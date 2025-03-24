@@ -64,10 +64,8 @@ actor class _ProfileCanister() {
                             membershipClaims = foundProfile.membershipClaims;
                             createdOn = foundProfile.createdOn;
                             membershipExpiryTime = foundProfile.membershipExpiryTime;
-                            favouriteMensLeagueId = foundProfile.favouriteMensLeagueId;
-                            favouriteMensClubId = foundProfile.favouriteMensClubId;
-                            favouriteWomensLeagueId = foundProfile.favouriteWomensLeagueId;
-                            favouriteWomensClubId = foundProfile.favouriteWomensClubId;
+                            favouriteLeagueId = foundProfile.favouriteLeagueId;
+                            favouriteClubId = foundProfile.favouriteClubId;
                             nationalityId = foundProfile.nationalityId;
                         };
                         return #ok(dto);
@@ -143,10 +141,8 @@ actor class _ProfileCanister() {
             membershipClaims = [];
             createdOn = Time.now();
             membershipExpiryTime = 0;
-            favouriteMensLeagueId = null;
-            favouriteMensClubId = null;
-            favouriteWomensLeagueId = null;
-            favouriteWomensClubId = null;
+            favouriteLeagueId = null;
+            favouriteClubId = null;
             nationalityId = null;
         };
 
@@ -184,10 +180,8 @@ actor class _ProfileCanister() {
                             appPrincipalIds = foundProfile.appPrincipalIds;
                             podcastIds = foundProfile.podcastIds;
                             membershipExpiryTime = foundProfile.membershipExpiryTime;
-                            favouriteMensLeagueId = foundProfile.favouriteMensLeagueId;
-                            favouriteMensClubId = foundProfile.favouriteMensClubId;
-                            favouriteWomensLeagueId = foundProfile.favouriteWomensLeagueId;
-                            favouriteWomensClubId = foundProfile.favouriteWomensClubId;
+                            favouriteLeagueId = foundProfile.favouriteLeagueId;
+                            favouriteClubId = foundProfile.favouriteClubId;
                             nationalityId = foundProfile.nationalityId;
                         };
                         saveProfile(foundGroupIndex, updatedProfile);
@@ -200,7 +194,7 @@ actor class _ProfileCanister() {
         };
     };
 
-    public shared ({ caller }) func updateDisplayname(dto : ProfileCommands.UpdateDisplayName) : async Result.Result<(), T.Error> {
+    public shared ({ caller }) func updateDisplayName(dto : ProfileCommands.UpdateDisplayName) : async Result.Result<(), T.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
         assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
@@ -230,10 +224,96 @@ actor class _ProfileCanister() {
                             appPrincipalIds = foundProfile.appPrincipalIds;
                             podcastIds = foundProfile.podcastIds;
                             membershipExpiryTime = foundProfile.membershipExpiryTime;
-                            favouriteMensLeagueId = foundProfile.favouriteMensLeagueId;
-                            favouriteMensClubId = foundProfile.favouriteMensClubId;
-                            favouriteWomensLeagueId = foundProfile.favouriteWomensLeagueId;
-                            favouriteWomensClubId = foundProfile.favouriteWomensClubId;
+                            favouriteLeagueId = foundProfile.favouriteLeagueId;
+                            favouriteClubId = foundProfile.favouriteClubId;
+                            nationalityId = foundProfile.nationalityId;
+                        };
+                        saveProfile(foundGroupIndex, updatedProfile);
+                    };
+                    case (null) {
+                        return #err(#NotFound);
+                    };
+                };
+            };
+        };
+    };
+
+    public shared ({ caller }) func updateNationality(dto : ProfileCommands.UpdateNationality) : async Result.Result<(), T.Error> {
+        assert not Principal.isAnonymous(caller);
+        let backendPrincipalId = Principal.toText(caller);
+        assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
+
+        var groupIndex : ?Nat8 = null;
+        for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
+            if (profileGroupIndex.0 == dto.principalId) {
+                groupIndex := ?profileGroupIndex.1;
+            };
+        };
+        switch (groupIndex) {
+            case (null) { return #err(#NotFound) };
+            case (?foundGroupIndex) {
+                let profile = findProfile(foundGroupIndex, dto.principalId);
+                switch (profile) {
+                    case (?foundProfile) {
+                        let updatedProfile : T.Profile = {
+                            principalId = foundProfile.principalId;
+                            username = foundProfile.username;
+                            displayName = foundProfile.displayName;
+                            membershipType = foundProfile.membershipType;
+                            membershipClaims = foundProfile.membershipClaims;
+                            createdOn = foundProfile.createdOn;
+                            profilePicture = foundProfile.profilePicture;
+                            profilePictureExtension = foundProfile.profilePictureExtension;
+                            termsAgreed = foundProfile.termsAgreed;
+                            appPrincipalIds = foundProfile.appPrincipalIds;
+                            podcastIds = foundProfile.podcastIds;
+                            membershipExpiryTime = foundProfile.membershipExpiryTime;
+                            favouriteLeagueId = foundProfile.favouriteLeagueId;
+                            favouriteClubId = foundProfile.favouriteClubId;
+                            nationalityId = ?dto.countryId;
+                        };
+                        saveProfile(foundGroupIndex, updatedProfile);
+                    };
+                    case (null) {
+                        return #err(#NotFound);
+                    };
+                };
+            };
+        };
+    };
+
+    public shared ({ caller }) func updateFavouriteClub(dto : ProfileCommands.UpdateFavouriteClub) : async Result.Result<(), T.Error> {
+        assert not Principal.isAnonymous(caller);
+        let backendPrincipalId = Principal.toText(caller);
+        assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
+
+        var groupIndex : ?Nat8 = null;
+        for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
+            if (profileGroupIndex.0 == dto.principalId) {
+                groupIndex := ?profileGroupIndex.1;
+            };
+        };
+        switch (groupIndex) {
+            case (null) { return #err(#NotFound) };
+            case (?foundGroupIndex) {
+                let profile = findProfile(foundGroupIndex, dto.principalId);
+                switch (profile) {
+                    case (?foundProfile) {
+                        let updatedProfile : T.Profile = {
+                            principalId = foundProfile.principalId;
+                            username = foundProfile.username;
+                            displayName = foundProfile.displayName;
+                            membershipType = foundProfile.membershipType;
+                            membershipClaims = foundProfile.membershipClaims;
+                            createdOn = foundProfile.createdOn;
+                            profilePicture = foundProfile.profilePicture;
+                            profilePictureExtension = foundProfile.profilePictureExtension;
+                            termsAgreed = foundProfile.termsAgreed;
+                            appPrincipalIds = foundProfile.appPrincipalIds;
+                            podcastIds = foundProfile.podcastIds;
+                            membershipExpiryTime = foundProfile.membershipExpiryTime;
+                            favouriteLeagueId = ?dto.favouriteLeagueId;
+                            favouriteClubId = ?dto.favouriteClubId;
                             nationalityId = foundProfile.nationalityId;
                         };
                         saveProfile(foundGroupIndex, updatedProfile);
@@ -308,10 +388,8 @@ actor class _ProfileCanister() {
                             appPrincipalIds = Buffer.toArray(appPrincipalIdsBuffer);
                             podcastIds = foundProfile.podcastIds;
                             membershipExpiryTime = foundProfile.membershipExpiryTime;
-                            favouriteMensLeagueId = foundProfile.favouriteMensLeagueId;
-                            favouriteMensClubId = foundProfile.favouriteMensClubId;
-                            favouriteWomensLeagueId = foundProfile.favouriteWomensLeagueId;
-                            favouriteWomensClubId = foundProfile.favouriteWomensClubId;
+                            favouriteLeagueId = foundProfile.favouriteLeagueId;
+                            favouriteClubId = foundProfile.favouriteClubId;
                             nationalityId = foundProfile.nationalityId;
                         };
                         saveProfile(foundGroupIndex, updatedProfile);
@@ -362,10 +440,8 @@ actor class _ProfileCanister() {
                             appPrincipalIds = updatedAppPrincipalIds;
                             podcastIds = foundProfile.podcastIds;
                             membershipExpiryTime = foundProfile.membershipExpiryTime;
-                            favouriteMensLeagueId = foundProfile.favouriteMensLeagueId;
-                            favouriteMensClubId = foundProfile.favouriteMensClubId;
-                            favouriteWomensLeagueId = foundProfile.favouriteWomensLeagueId;
-                            favouriteWomensClubId = foundProfile.favouriteWomensClubId;
+                            favouriteLeagueId = foundProfile.favouriteLeagueId;
+                            favouriteClubId = foundProfile.favouriteClubId;
                             nationalityId = foundProfile.nationalityId;
                         };
                         saveProfile(foundGroupIndex, updatedProfile);
@@ -408,10 +484,8 @@ actor class _ProfileCanister() {
                             appPrincipalIds = foundProfile.appPrincipalIds;
                             podcastIds = foundProfile.podcastIds;
                             membershipExpiryTime = foundProfile.membershipExpiryTime;
-                            favouriteMensLeagueId = foundProfile.favouriteMensLeagueId;
-                            favouriteMensClubId = foundProfile.favouriteMensClubId;
-                            favouriteWomensLeagueId = foundProfile.favouriteWomensLeagueId;
-                            favouriteWomensClubId = foundProfile.favouriteWomensClubId;
+                            favouriteLeagueId = foundProfile.favouriteLeagueId;
+                            favouriteClubId = foundProfile.favouriteClubId;
                             nationalityId = foundProfile.nationalityId;
                         };
                         saveProfile(foundGroupIndex, updatedProfile);
@@ -471,10 +545,8 @@ actor class _ProfileCanister() {
                                     0;
                                 };
                             };
-                            favouriteMensLeagueId = foundProfile.favouriteMensLeagueId;
-                            favouriteMensClubId = foundProfile.favouriteMensClubId;
-                            favouriteWomensLeagueId = foundProfile.favouriteWomensLeagueId;
-                            favouriteWomensClubId = foundProfile.favouriteWomensClubId;
+                            favouriteLeagueId = foundProfile.favouriteLeagueId;
+                            favouriteClubId = foundProfile.favouriteClubId;
                             nationalityId = foundProfile.nationalityId;
                         };
 
@@ -625,10 +697,8 @@ actor class _ProfileCanister() {
                             appPrincipalIds = foundProfile.appPrincipalIds;
                             podcastIds = foundProfile.podcastIds;
                             membershipExpiryTime = 0;
-                            favouriteMensLeagueId = foundProfile.favouriteMensLeagueId;
-                            favouriteMensClubId = foundProfile.favouriteMensClubId;
-                            favouriteWomensLeagueId = foundProfile.favouriteWomensLeagueId;
-                            favouriteWomensClubId = foundProfile.favouriteWomensClubId;
+                            favouriteLeagueId = foundProfile.favouriteLeagueId;
+                            favouriteClubId = foundProfile.favouriteClubId;
                             nationalityId = foundProfile.nationalityId;
                         };
 

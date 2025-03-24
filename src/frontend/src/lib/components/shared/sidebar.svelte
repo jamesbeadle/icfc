@@ -19,7 +19,7 @@
 
   <button
     on:click={toggleMenu}
-    class="absolute p-2 text-gray-600 top-4 right-4 hover:text-gray-800"
+    class="absolute p-2 text-BrandGrayShade4 top-4 right-4 hover:text-BrandGrayShade5"
     aria-label="Close sidebar"
   >
     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

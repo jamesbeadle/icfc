@@ -22,6 +22,7 @@
     function handleFlip(id: string) {
         isFlipped = !isFlipped;
     }
+    
 </script>
 
 <Card 

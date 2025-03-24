@@ -57,22 +57,22 @@
         <p class="text-lg lg:text-base cta-text">Sale starts in:</p>
         <div class="flex flex-col items-center gap-4 md:flex-row lg:gap-2 xl:gap-4">
             <FlipNumber value={timeLeft.days} label="Days" />
-            <span class="hidden mb-6 text-xl font-bold text-gray-400 md:block lg:mb-4">:</span>
+            <span class="hidden mb-6 text-xl font-bold text-BrandGrayShade2 md:block lg:mb-4">:</span>
             <FlipNumber value={timeLeft.hours} label="Hours" />
-            <span class="hidden mb-6 text-xl font-bold text-gray-400 md:block lg:mb-4">:</span>
+            <span class="hidden mb-6 text-xl font-bold text-BrandGrayShade2 md:block lg:mb-4">:</span>
             <FlipNumber value={timeLeft.minutes} label="Minutes" />
-            <span class="hidden mb-6 text-xl font-bold text-gray-400 md:block lg:mb-4">:</span>
+            <span class="hidden mb-6 text-xl font-bold text-BrandGrayShade2 md:block lg:mb-4">:</span>
             <FlipNumber value={timeLeft.seconds} label="Seconds" />
         </div>
     {:else if saleStatus === "active"}
         <p class="text-lg font-semibold lg:text-base">Sale ends in:</p>
         <div class="flex flex-col items-center gap-4 md:flex-row lg:gap-2 xl:gap-4">
             <FlipNumber value={timeLeft.days} label="Days" />
-            <span class="hidden mb-6 text-xl font-bold text-gray-400 md:block lg:mb-4">:</span>
+            <span class="hidden mb-6 text-xl font-bold text-BrandGrayShade2 md:block lg:mb-4">:</span>
             <FlipNumber value={timeLeft.hours} label="Hours" />
-            <span class="hidden mb-6 text-xl font-bold text-gray-400 md:block lg:mb-4">:</span>
+            <span class="hidden mb-6 text-xl font-bold text-BrandGrayShade2 md:block lg:mb-4">:</span>
             <FlipNumber value={timeLeft.minutes} label="Minutes" />
-            <span class="hidden mb-6 text-xl font-bold text-gray-400 md:block lg:mb-4">:</span>
+            <span class="hidden mb-6 text-xl font-bold text-BrandGrayShade2 md:block lg:mb-4">:</span>
             <FlipNumber value={timeLeft.seconds} label="Seconds" />
         </div>
     {/if}

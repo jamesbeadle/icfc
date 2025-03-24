@@ -6,6 +6,7 @@ type VerifySubApp =
  };
 type UserNeuronsDTO = 
  record {
+   totalMaxStaked: nat64;
    userMembershipEligibility: MembershipType;
    userNeurons: vec Neuron;
  };
@@ -19,6 +20,17 @@ type UpdateProfilePicture =
    principalId: PrincipalId;
    profilePicture: opt blob;
    profilePictureExtension: text;
+ };
+type UpdateNationality = 
+ record {
+   countryId: CountryId;
+   principalId: PrincipalId;
+ };
+type UpdateFavouriteClub = 
+ record {
+   favouriteClubId: ClubId;
+   favouriteLeagueId: LeagueId;
+   principalId: PrincipalId;
  };
 type UpdateDisplayName = 
  record {
@@ -37,28 +49,36 @@ type SubApp =
 type Self = 
  service {
    addSubApp: (AddSubApp) -> (Result);
-   claimMembership: () -> (Result_5);
+   claimMembership: () -> (Result_6);
    createProfile: (CreateProfile) -> (Result);
-   getAppStatus: () -> (Result_4) query;
+   getAppStatus: () -> (Result_5) query;
+   getCountries: () -> (Result_4) query;
    getICFCMembership: (GetICFCMembership) -> (Result_3);
    getProfile: () -> (Result_2);
    getUserNeurons: () -> (Result_1);
    isUsernameValid: (IsUsernameValid) -> (bool) query;
    removeSubApp: (SubApp) -> (Result);
    updateDisplayName: (UpdateDisplayName) -> (Result);
+   updateFavouriteClub: (UpdateFavouriteClub) -> (Result);
+   updateNationality: (UpdateNationality) -> (Result);
    updateProfilePicture: (UpdateProfilePicture) -> (Result);
    updateUsername: (UpdateUserName) -> (Result);
    verifySubApp: (VerifySubApp) -> (Result);
  };
-type Result_5 = 
+type Result_6 = 
  variant {
    err: Error;
    ok: MembershipClaim;
  };
-type Result_4 = 
+type Result_5 = 
  variant {
    err: Error;
    ok: AppStatusDTO;
+ };
+type Result_4 = 
+ variant {
+   err: Error;
+   ok: vec CountryDTO;
  };
 type Result_3 = 
  variant {
@@ -88,10 +108,8 @@ type ProfileDTO =
                         };
    createdOn: int;
    displayName: text;
-   favouriteMensClubId: opt ClubId;
-   favouriteMensLeagueId: opt LeagueId;
-   favouriteWomensClubId: opt ClubId;
-   favouriteWomensLeagueId: opt LeagueId;
+   favouriteClubId: opt ClubId;
+   favouriteLeagueId: opt LeagueId;
    membershipClaims: vec MembershipClaim;
    membershipExpiryTime: int;
    membershipType: MembershipType;
@@ -201,6 +219,12 @@ type CreateProfile =
    username: text;
  };
 type CountryId = nat16;
+type CountryDTO = 
+ record {
+   code: text;
+   id: CountryId;
+   name: text;
+ };
 type ClubId = nat16;
 type AppStatusDTO = 
  record {

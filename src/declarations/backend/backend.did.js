@@ -45,7 +45,7 @@ export const idlFactory = ({ IDL }) => {
     claimedOn: IDL.Int,
     membershipType: MembershipType,
   });
-  const Result_5 = IDL.Variant({ ok: MembershipClaim, err: Error });
+  const Result_6 = IDL.Variant({ ok: MembershipClaim, err: Error });
   const CreateProfile = IDL.Record({
     username: IDL.Text,
     displayName: IDL.Text,
@@ -57,7 +57,14 @@ export const idlFactory = ({ IDL }) => {
     version: IDL.Text,
     onHold: IDL.Bool,
   });
-  const Result_4 = IDL.Variant({ ok: AppStatusDTO, err: Error });
+  const Result_5 = IDL.Variant({ ok: AppStatusDTO, err: Error });
+  const CountryId = IDL.Nat16;
+  const CountryDTO = IDL.Record({
+    id: CountryId,
+    code: IDL.Text,
+    name: IDL.Text,
+  });
+  const Result_4 = IDL.Variant({ ok: IDL.Vec(CountryDTO), err: Error });
   const GetICFCMembership = IDL.Record({ principalId: PrincipalId });
   const ICFCMembershipDTO = IDL.Record({
     membershipClaims: IDL.Vec(MembershipClaim),
@@ -65,26 +72,23 @@ export const idlFactory = ({ IDL }) => {
     membershipExpiryTime: IDL.Int,
   });
   const Result_3 = IDL.Variant({ ok: ICFCMembershipDTO, err: Error });
-  const LeagueId = IDL.Nat16;
   const ClubId = IDL.Nat16;
-  const CountryId = IDL.Nat16;
+  const LeagueId = IDL.Nat16;
   const ProfileDTO = IDL.Record({
-    favouriteMensLeagueId: IDL.Opt(LeagueId),
     username: IDL.Text,
-    favouriteWomensClubId: IDL.Opt(ClubId),
     displayName: IDL.Text,
     createdOn: IDL.Int,
     podcastIds: IDL.Vec(PrincipalId),
-    favouriteMensClubId: IDL.Opt(ClubId),
     profilePictureExtension: IDL.Text,
+    favouriteClubId: IDL.Opt(ClubId),
     membershipClaims: IDL.Vec(MembershipClaim),
     appPrincipalIds: IDL.Vec(IDL.Tuple(SubApp, PrincipalId)),
     profilePicture: IDL.Opt(IDL.Vec(IDL.Nat8)),
     membershipType: MembershipType,
     termsAgreed: IDL.Bool,
     membershipExpiryTime: IDL.Int,
+    favouriteLeagueId: IDL.Opt(LeagueId),
     nationalityId: IDL.Opt(CountryId),
-    favouriteWomensLeagueId: IDL.Opt(LeagueId),
     principalId: PrincipalId,
   });
   const Result_2 = IDL.Variant({ ok: ProfileDTO, err: Error });
@@ -127,6 +131,7 @@ export const idlFactory = ({ IDL }) => {
     neuron_fees_e8s: IDL.Nat64,
   });
   const UserNeuronsDTO = IDL.Record({
+    totalMaxStaked: IDL.Nat64,
     userMembershipEligibility: MembershipType,
     userNeurons: IDL.Vec(Neuron),
   });
@@ -134,6 +139,15 @@ export const idlFactory = ({ IDL }) => {
   const IsUsernameValid = IDL.Record({ username: IDL.Text });
   const UpdateDisplayName = IDL.Record({
     displayName: IDL.Text,
+    principalId: PrincipalId,
+  });
+  const UpdateFavouriteClub = IDL.Record({
+    favouriteClubId: ClubId,
+    favouriteLeagueId: LeagueId,
+    principalId: PrincipalId,
+  });
+  const UpdateNationality = IDL.Record({
+    countryId: CountryId,
     principalId: PrincipalId,
   });
   const UpdateProfilePicture = IDL.Record({
@@ -152,15 +166,18 @@ export const idlFactory = ({ IDL }) => {
   });
   const Self = IDL.Service({
     addSubApp: IDL.Func([AddSubApp], [Result], []),
-    claimMembership: IDL.Func([], [Result_5], []),
+    claimMembership: IDL.Func([], [Result_6], []),
     createProfile: IDL.Func([CreateProfile], [Result], []),
-    getAppStatus: IDL.Func([], [Result_4], ["query"]),
+    getAppStatus: IDL.Func([], [Result_5], ["query"]),
+    getCountries: IDL.Func([], [Result_4], ["query"]),
     getICFCMembership: IDL.Func([GetICFCMembership], [Result_3], []),
     getProfile: IDL.Func([], [Result_2], []),
     getUserNeurons: IDL.Func([], [Result_1], []),
     isUsernameValid: IDL.Func([IsUsernameValid], [IDL.Bool], ["query"]),
     removeSubApp: IDL.Func([SubApp], [Result], []),
     updateDisplayName: IDL.Func([UpdateDisplayName], [Result], []),
+    updateFavouriteClub: IDL.Func([UpdateFavouriteClub], [Result], []),
+    updateNationality: IDL.Func([UpdateNationality], [Result], []),
     updateProfilePicture: IDL.Func([UpdateProfilePicture], [Result], []),
     updateUsername: IDL.Func([UpdateUserName], [Result], []),
     verifySubApp: IDL.Func([VerifySubApp], [Result], []),

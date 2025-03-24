@@ -24,6 +24,8 @@ import SNSManager "managers/sns_manager";
 import Utils "utils/utils";
 import Management "utils/management";
 import ProfileCanister "canister_definations/profile-canister";
+import AppQueries "queries/app_queries";
+import Countries "utils/countries";
 
 actor class Self() = this {
 
@@ -60,21 +62,21 @@ actor class Self() = this {
   public shared ({ caller }) func getUserNeurons() : async Result.Result<ProfileQueries.UserNeuronsDTO, T.Error> {
     assert not Principal.isAnonymous(caller);
 
-    let dto : ProfileQueries.GetProfile = {
-      principalId = Principal.toText(caller);
-    };
-    let profile = await profileManager.getProfile(dto);
-    switch (profile) {
-      case (#err(e)) return #err(e);
-      case (#ok(_)) {};
-    };
-
     let neurons = await snsManager.getUsersNeurons(caller);
     let userEligibility = Utils.getMembershipType(neurons);
+    let totalMaxStaked = Utils.getTotalMaxStaked(neurons);
 
     let result : ProfileQueries.UserNeuronsDTO = {
       userNeurons = neurons;
-      userMembershipEligibility = userEligibility.membershipType;
+      totalMaxStaked;
+      userMembershipEligibility = switch (userEligibility) {
+        case (?membership) {
+          membership;
+        };
+        case (null) {
+          #NotEligible;
+        };
+      };
     };
     return #ok(result);
 
@@ -122,15 +124,32 @@ actor class Self() = this {
     return await profileManager.updateDisplayName(dto);
   };
 
-  public shared ({ caller }) func getICFCMembership(dto : ProfileCommands.GetICFCMembership) : async Result.Result<ProfileQueries.ICFCMembershipDTO, T.Error> {
+  public shared ({ caller }) func updateNationality(dto : ProfileCommands.UpdateNationality) : async Result.Result<(), T.Error> {
     assert not Principal.isAnonymous(caller);
-    return await profileManager.getICFCMembership(Principal.toText(caller), dto);
+    assert dto.principalId == Principal.toText(caller);
+    return await profileManager.updateNationality(dto);
+  };
+
+  public shared ({ caller }) func updateFavouriteClub(dto : ProfileCommands.UpdateFavouriteClub) : async Result.Result<(), T.Error> {
+    assert not Principal.isAnonymous(caller);
+    assert dto.principalId == Principal.toText(caller);
+    return await profileManager.updateFavouriteClub(dto);
   };
 
   public shared ({ caller }) func updateProfilePicture(dto : ProfileCommands.UpdateProfilePicture) : async Result.Result<(), T.Error> {
     assert not Principal.isAnonymous(caller);
     assert dto.principalId == Principal.toText(caller);
     return await profileManager.updateProfilePicture(dto);
+  };
+
+  public shared ({ caller }) func getICFCMembership(dto : ProfileCommands.GetICFCMembership) : async Result.Result<ProfileQueries.ICFCMembershipDTO, T.Error> {
+    assert not Principal.isAnonymous(caller);
+    return await profileManager.getICFCMembership(Principal.toText(caller), dto);
+  };
+
+  public shared query ({ caller }) func getCountries() : async Result.Result<[AppQueries.CountryDTO], T.Error> {
+    assert not Principal.isAnonymous(caller);
+    return #ok(Countries.countries);
   };
 
   // Stable Storage & System Functions:
@@ -167,12 +186,9 @@ actor class Self() = this {
     setPodcastChannelData();
 
     // restart membershipcheck timer
-    stable_membership_timer_id := Timer.recurringTimer<system>(
-      #seconds(86_400),
-      checkMembership,
-    );
+    stable_membership_timer_id := Timer.recurringTimer<system>(#seconds(86_400), checkMembership);
 
-    ignore Timer.setTimer<system>(#nanoseconds(Int.abs(1)), postUpgradeCallback);
+    /* ignore Timer.setTimer<system>(#nanoseconds(Int.abs(1)), postUpgradeCallback); */
   };
 
   private func postUpgradeCallback() : async () {

@@ -41,7 +41,7 @@
             </div>
         {/each}
     </div>
-    <span class="mt-1 text-xs text-gray-400 md:mt-2 lg:mt-1 xl:mt-2">{label}</span>
+    <span class="mt-1 text-xs text-BrandGrayShade2 md:mt-2 lg:mt-1 xl:mt-2">{label}</span>
 </div>
 
 <style>

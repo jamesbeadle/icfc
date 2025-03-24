@@ -15,6 +15,11 @@ export interface AppStatusDTO {
   onHold: boolean;
 }
 export type ClubId = number;
+export interface CountryDTO {
+  id: CountryId;
+  code: string;
+  name: string;
+}
 export type CountryId = number;
 export interface CreateProfile {
   username: string;
@@ -104,41 +109,43 @@ export interface NeuronPermission {
 }
 export type PrincipalId = string;
 export interface ProfileDTO {
-  favouriteMensLeagueId: [] | [LeagueId];
   username: string;
-  favouriteWomensClubId: [] | [ClubId];
   displayName: string;
   createdOn: bigint;
   podcastIds: Array<PrincipalId>;
-  favouriteMensClubId: [] | [ClubId];
   profilePictureExtension: string;
+  favouriteClubId: [] | [ClubId];
   membershipClaims: Array<MembershipClaim>;
   appPrincipalIds: Array<[SubApp, PrincipalId]>;
   profilePicture: [] | [Uint8Array | number[]];
   membershipType: MembershipType;
   termsAgreed: boolean;
   membershipExpiryTime: bigint;
+  favouriteLeagueId: [] | [LeagueId];
   nationalityId: [] | [CountryId];
-  favouriteWomensLeagueId: [] | [LeagueId];
   principalId: PrincipalId;
 }
 export type Result = { ok: null } | { err: Error };
 export type Result_1 = { ok: UserNeuronsDTO } | { err: Error };
 export type Result_2 = { ok: ProfileDTO } | { err: Error };
 export type Result_3 = { ok: ICFCMembershipDTO } | { err: Error };
-export type Result_4 = { ok: AppStatusDTO } | { err: Error };
-export type Result_5 = { ok: MembershipClaim } | { err: Error };
+export type Result_4 = { ok: Array<CountryDTO> } | { err: Error };
+export type Result_5 = { ok: AppStatusDTO } | { err: Error };
+export type Result_6 = { ok: MembershipClaim } | { err: Error };
 export interface Self {
   addSubApp: ActorMethod<[AddSubApp], Result>;
-  claimMembership: ActorMethod<[], Result_5>;
+  claimMembership: ActorMethod<[], Result_6>;
   createProfile: ActorMethod<[CreateProfile], Result>;
-  getAppStatus: ActorMethod<[], Result_4>;
+  getAppStatus: ActorMethod<[], Result_5>;
+  getCountries: ActorMethod<[], Result_4>;
   getICFCMembership: ActorMethod<[GetICFCMembership], Result_3>;
   getProfile: ActorMethod<[], Result_2>;
   getUserNeurons: ActorMethod<[], Result_1>;
   isUsernameValid: ActorMethod<[IsUsernameValid], boolean>;
   removeSubApp: ActorMethod<[SubApp], Result>;
   updateDisplayName: ActorMethod<[UpdateDisplayName], Result>;
+  updateFavouriteClub: ActorMethod<[UpdateFavouriteClub], Result>;
+  updateNationality: ActorMethod<[UpdateNationality], Result>;
   updateProfilePicture: ActorMethod<[UpdateProfilePicture], Result>;
   updateUsername: ActorMethod<[UpdateUserName], Result>;
   verifySubApp: ActorMethod<[VerifySubApp], Result>;
@@ -156,6 +163,15 @@ export interface UpdateDisplayName {
   displayName: string;
   principalId: PrincipalId;
 }
+export interface UpdateFavouriteClub {
+  favouriteClubId: ClubId;
+  favouriteLeagueId: LeagueId;
+  principalId: PrincipalId;
+}
+export interface UpdateNationality {
+  countryId: CountryId;
+  principalId: PrincipalId;
+}
 export interface UpdateProfilePicture {
   profilePictureExtension: string;
   profilePicture: [] | [Uint8Array | number[]];
@@ -166,6 +182,7 @@ export interface UpdateUserName {
   principalId: PrincipalId;
 }
 export interface UserNeuronsDTO {
+  totalMaxStaked: bigint;
   userMembershipEligibility: MembershipType;
   userNeurons: Array<Neuron>;
 }
