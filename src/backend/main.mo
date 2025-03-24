@@ -148,16 +148,30 @@ actor class Self() = this {
   private stable var stable_total_podcast_channels : Nat = 0;
   private stable var stable_next_podcast_channel_id : Nat = 0;
 
+  private stable var stable_membership_timer_id : Nat = 0;
+
   //System Backup and Upgrade Functions:
 
   system func preupgrade() {
     backupProfileData();
     backupPodcastChannelData();
+
+    // stop membership timer
+    if (stable_membership_timer_id != 0) {
+      Timer.cancelTimer(stable_membership_timer_id);
+    };
   };
 
   system func postupgrade() {
     setProfileData();
     setPodcastChannelData();
+
+    // restart membershipcheck timer
+    stable_membership_timer_id := Timer.recurringTimer<system>(
+      #seconds(86_400),
+      checkMembership,
+    );
+
     ignore Timer.setTimer<system>(#nanoseconds(Int.abs(1)), postUpgradeCallback);
   };
 
@@ -217,6 +231,16 @@ actor class Self() = this {
       let _ = await (system ProfileCanister._ProfileCanister)(#upgrade oldCanister)();
       await IC.start_canister({ canister_id = Principal.fromText(canisterId) });
     };
+  };
+
+  // call_backs for profile_canister
+  public shared ({ caller }) func removeNeuronsforExpiredMembership(pofile_principal : Base.PrincipalId) : async () {
+    assert profileManager.isProfileCanister(Principal.toText(caller));
+    await profileManager.removeNeuronsforExpiredMembership(pofile_principal);
+  };
+
+  private func checkMembership() : async () {
+    await profileManager.checkMemberships();
   };
 
   /* Below is code related to a second sale */
@@ -446,10 +470,4 @@ actor class Self() = this {
   */
 
   // public shared ({caller}) func create_podcast_group()
-
-  // call_backs for profile_canister
-  public shared ({ caller }) func removeNeuronsforExpiredMembership(pofile_principal : Base.PrincipalId) : async () {
-    assert not Principal.isAnonymous(caller);
-    await profileManager.removeNeuronsforExpiredMembership(pofile_principal);
-  };
 };

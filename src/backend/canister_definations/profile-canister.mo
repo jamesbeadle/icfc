@@ -1,14 +1,10 @@
 import Base "mo:waterway-mops/BaseTypes";
-import FootballTypes "mo:waterway-mops/FootballTypes";
 import Result "mo:base/Result";
 import Principal "mo:base/Principal";
 import Iter "mo:base/Iter";
-import Debug "mo:base/Debug";
 import Time "mo:base/Time";
 import Array "mo:base/Array";
 import Buffer "mo:base/Buffer";
-import Int "mo:base/Int";
-import Timer "mo:base/Timer";
 import T "../icfc_types";
 import ProfileQueries "../queries/profile_queries";
 import Environment "../environment";
@@ -504,7 +500,10 @@ actor class _ProfileCanister() {
         return (totalProfiles >= MAX_PROFILES_PER_CANISTER);
     };
 
-    public func checkAndExpireMembership() : async () {
+    public shared ({ caller }) func checkAndExpireMembership() : async () {
+        assert not Principal.isAnonymous(caller);
+        let backendPrincipalId = Principal.toText(caller);
+        assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
 
         for (index in Iter.range(0, 11)) {
             switch (index) {

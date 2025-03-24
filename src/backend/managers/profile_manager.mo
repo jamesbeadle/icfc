@@ -815,7 +815,7 @@ module {
             return true;
         };
 
-        private func isProfileCanister(callerId : Base.PrincipalId) : Bool {
+        public func isProfileCanister(callerId : Base.PrincipalId) : Bool {
             for (canister in List.toArray(uniqueProfileCanisterIds).vals()) {
                 if (canister == callerId) {
                     return true;
@@ -893,8 +893,7 @@ module {
             neuronsUsedforMembership := neuronsUsedMap;
         };
 
-        public shared ({ caller }) func removeNeuronsforExpiredMembership(principalId : Base.PrincipalId) : async () {
-            assert not isProfileCanister(Principal.toText(caller));
+        public func removeNeuronsforExpiredMembership(principalId : Base.PrincipalId) : async () {
             let existingProfileCanisterId = profileCanisterIndex.get(principalId);
             switch (existingProfileCanisterId) {
                 case (?_) {
@@ -908,6 +907,15 @@ module {
                 case (null) {};
             };
 
+        };
+
+        public func checkMemberships() : async () {
+            for (canisterId in List.toArray(uniqueProfileCanisterIds).vals()) {
+                let profile_canister = actor (canisterId) : actor {
+                    checkAndExpireMembership : () -> async ();
+                };
+                await profile_canister.checkAndExpireMembership();
+            };
         };
     };
 
