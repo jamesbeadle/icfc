@@ -39,6 +39,10 @@ export interface DisburseMaturityInProgress {
 export type DissolveState =
   | { DissolveDelaySeconds: bigint }
   | { WhenDissolvedTimestampSeconds: bigint };
+export interface EligibleMembership {
+  eligibleNeuronIds: Array<Uint8Array | number[]>;
+  membershipType: MembershipType;
+}
 export type Error =
   | { InvalidProfilePicture: null }
   | { DecodeError: null }
@@ -53,7 +57,9 @@ export type Error =
   | { AlreadyExists: null }
   | { CreateGameError: null }
   | { UpdateFailed: null }
+  | { NeuronAlreadyUsed: null }
   | { OutOfRange: null }
+  | { AlreadyLinked: null }
   | { PaymentError: null }
   | { CanisterFull: null }
   | { InEligible: null };
@@ -145,6 +151,7 @@ export interface Self {
   getTokenBalances: ActorMethod<[], Result_2>;
   getUserNeurons: ActorMethod<[], Result_1>;
   isUsernameValid: ActorMethod<[IsUsernameValid], boolean>;
+  removeNeuronsforExpiredMembership: ActorMethod<[PrincipalId], undefined>;
   removeSubApp: ActorMethod<[SubApp], Result>;
   updateDisplayName: ActorMethod<[UpdateDisplayName], Result>;
   updateFavouriteClub: ActorMethod<[UpdateFavouriteClub], Result>;
@@ -191,7 +198,7 @@ export interface UpdateUserName {
 }
 export interface UserNeuronsDTO {
   totalMaxStaked: bigint;
-  userMembershipEligibility: MembershipType;
+  userMembershipEligibility: EligibleMembership;
   userNeurons: Array<Neuron>;
 }
 export interface VerifySubApp {

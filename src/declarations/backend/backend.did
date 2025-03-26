@@ -7,7 +7,7 @@ type VerifySubApp =
 type UserNeuronsDTO = 
  record {
    totalMaxStaked: nat64;
-   userMembershipEligibility: MembershipType;
+   userMembershipEligibility: EligibleMembership;
    userNeurons: vec Neuron;
  };
 type UpdateUserName = 
@@ -64,6 +64,7 @@ type Self =
    getTokenBalances: () -> (Result_2);
    getUserNeurons: () -> (Result_1);
    isUsernameValid: (IsUsernameValid) -> (bool) query;
+   removeNeuronsforExpiredMembership: (PrincipalId) -> ();
    removeSubApp: (SubApp) -> (Result);
    updateDisplayName: (UpdateDisplayName) -> (Result);
    updateFavouriteClub: (UpdateFavouriteClub) -> (Result);
@@ -190,12 +191,14 @@ type Error =
  variant {
    AlreadyClaimed;
    AlreadyExists;
+   AlreadyLinked;
    CanisterFull;
    CreateGameError;
    DecodeError;
    InEligible;
    InvalidData;
    InvalidProfilePicture;
+   NeuronAlreadyUsed;
    NotAllowed;
    NotAuthorized;
    NotEnoughFunds;
@@ -205,6 +208,11 @@ type Error =
    TooLong;
    TooShort;
    UpdateFailed;
+ };
+type EligibleMembership = 
+ record {
+   eligibleNeuronIds: vec blob;
+   membershipType: MembershipType;
  };
 type DissolveState = 
  variant {
