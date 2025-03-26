@@ -17,17 +17,18 @@ import Account "lib/Account";
 import Utils "../backend/utils/utils";
 import SaleManager "manager/sale_manager";
 
+
 actor class Self() = this {
 
     private let saleManager = SaleManager.SaleManager();
 
     private var appStatus : Base.AppStatus = {
         onHold = false;
-        version = "0.0.1";
+        version = "0.0.2";
     };
 
 
-    private stable var stable_saleCompleted : Bool = false;
+    private stable var stable_saleComplete : Bool = false;
 
     private stable var stable_saleParticipants : [T.SaleParticipant] = [];
 
@@ -40,6 +41,11 @@ actor class Self() = this {
     };
 
     // SNS Sale icp Functions
+
+    public shared ({caller}) func getPrinciapl() : async Result.Result<(Base.PrincipalId), Text> {
+        assert not Principal.isAnonymous(caller);
+        return #ok(Principal.toText(caller));
+    };
 
 
 

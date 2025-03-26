@@ -4,10 +4,6 @@ import T "../icfc_types";
 import SNSGovernance "../sns-wrappers/governance";
 
 module ProfileQueries {
-    public type GetProfile = {
-        principalId : Base.PrincipalId;
-    };
-
     public type ProfileDTO = {
         principalId : Base.PrincipalId;
         username : Text;
@@ -54,11 +50,11 @@ module ProfileQueries {
         userMembershipEligibility : T.EligibleMembership;
     };
 
-    public type ICFCMembershipDTO = {
-        membershipType : T.MembershipType;
-        membershipClaims : [T.MembershipClaim];
-        membershipExpiryTime : Int;
-    };
+    // public type ICFCMembershipDTO = {
+    //     membershipType : T.MembershipType;
+    //     membershipClaims : [T.MembershipClaim];
+    //     membershipExpiryTime : Int;
+    // };
 
     public type UsernameAvailable = Bool;
 
