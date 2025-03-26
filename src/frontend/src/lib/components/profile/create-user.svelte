@@ -74,11 +74,16 @@
   }
 
   async function getNeurons() {
+    console.log("Getting neurons for create user");
     let neuronsResult = await membershipStore.getUserNeurons();
+    console.log("neuronsResult: ", neuronsResult);
     if (neuronsResult) {
         neurons = neuronsResult.userNeurons.sort(sortByHighestNeuron);
+        console.log("Sorted neurons: ", neurons);
         userMembershipEligibility = neuronsResult.userMembershipEligibility;
+        console.log("userMembershipEligibility: ", userMembershipEligibility);
         maxStakedICFC = neuronsResult.totalMaxStaked;
+        console.log("maxStakedICFC: ", maxStakedICFC);
     }
   }
 
@@ -232,10 +237,10 @@
 {#if isLoading}
   <LocalSpinner />
 {:else}
-  <div class="page-wrapper px-4 py-6 max-w-7xl mx-auto">
+  <div class="px-4 py-6 mx-auto page-wrapper max-w-7xl">
     <div class="flex flex-col space-y-6">
 
-      <p class="text-4xl cta-text flex flex-row space-y-1">
+      <p class="flex flex-row space-y-1 text-4xl cta-text">
         Welcome to the 
         <span class="flex flex-row items-center">
           <LogoIcon className='w-8 mx-2' />
@@ -243,26 +248,26 @@
         </span>
       </p>
 
-      <div class="horizontal-divider border-t border-BrandGrayShade3"></div>
+      <div class="border-t horizontal-divider border-BrandGrayShade3"></div>
       
       <p class="text-lg text-BrandGrayShade5">
         The ICFC is the world's first, fully decentralised, fan owned football ecosystem. To become a member you will need to become an owner, we believe our 'Own to Use' model is the future access model for decentralised services. 
       </p>
 
-      <div class="horizontal-divider border-t border-BrandGrayShade3"></div>
+      <div class="border-t horizontal-divider border-BrandGrayShade3"></div>
 
       <div class="flex flex-col space-y-4">
-        <p class="cta-text text-lg text-white">User Details</p>
+        <p class="text-lg text-white cta-text">User Details</p>
         
-        <div class="flex flex-col md:flex-row gap-6">
-          <div class="flex flex-col space-y-2 w-full md:w-1/5">
+        <div class="flex flex-col gap-6 md:flex-row">
+          <div class="flex flex-col w-full space-y-2 md:w-1/5">
             <p class="form-title">Profile Picture</p>
             <p class="form-hint">Max size 1mb</p>
             
             <img 
               src={profileSrc} 
               alt="Profile" 
-              class="profile-picture w-full h-48 object-cover rounded-lg"
+              class="object-cover w-full h-48 rounded-lg profile-picture"
             />
             <button 
               class="brand-button"
@@ -280,9 +285,9 @@
             />
           </div>
 
-          <div class="flex flex-col space-y-6 w-full md:w-4/5">
-            <div class="flex flex-col md:flex-row gap-4">
-              <div class="flex flex-col space-y-1 w-full md:w-1/2">
+          <div class="flex flex-col w-full space-y-6 md:w-4/5">
+            <div class="flex flex-col gap-4 md:flex-row">
+              <div class="flex flex-col w-full space-y-1 md:w-1/2">
                 <p class="form-title">Username</p>
                 <p class="form-hint">5-20 characters, letters & numbers only. <span class="text-xs">(Required)</span></p>
                 <input
@@ -295,16 +300,16 @@
                 {#if username.length > 0}
                   <div class="text-sm">
                     {#if isCheckingUsername}
-                      <p class="text-BrandGrayShade2 mt-2">Checking username availability...</p>
+                      <p class="mt-2 text-BrandGrayShade2">Checking username availability...</p>
                     {:else if usernameError}
-                      <p class="text-BrandRed mt-2">{usernameError}</p>
+                      <p class="mt-2 text-BrandRed">{usernameError}</p>
                     {:else if usernameAvailable}
-                      <p class="text-BrandSuccess mt-2">Username is available!</p>
+                      <p class="mt-2 text-BrandSuccess">Username is available!</p>
                     {/if}
                   </div>
                 {/if}
               </div>
-              <div class="flex flex-col space-y-1 w-full md:w-1/2">
+              <div class="flex flex-col w-full space-y-1 md:w-1/2">
                 <p class="form-title">Display Name</p>
                 <p class="form-hint">5-20 characters, letters & numbers only.</p>
                 <input
@@ -316,8 +321,8 @@
               </div>
             </div>
 
-            <div class="flex flex-col md:flex-row gap-4">
-              <div class="flex flex-col space-y-1 w-full md:w-1/3">
+            <div class="flex flex-col gap-4 md:flex-row">
+              <div class="flex flex-col w-full space-y-1 md:w-1/3">
                 <p class="form-title">Nationality</p>
                 <p class="form-hint">Select to participate in nationwide football competitions.</p>
                 <DropdownSelect
@@ -328,7 +333,7 @@
                   }}
                 />
               </div>
-              <div class="flex flex-col space-y-1 w-full md:w-1/3">
+              <div class="flex flex-col w-full space-y-1 md:w-1/3">
                 <p class="form-title">Your Favourite League</p>
                 <p class="form-hint">Select to find your favourite club.</p>
                 <DropdownSelect
@@ -340,7 +345,7 @@
                   scrollOnOpen={true}
                 />
               </div>
-              <div class="flex flex-col space-y-1 w-full md:w-1/3">
+              <div class="flex flex-col w-full space-y-1 md:w-1/3">
                 <p class="form-title">Your Favourite Club</p>
                 <p class="form-hint">Select to enable club based rewards.</p>
                 <DropdownSelect
@@ -358,10 +363,10 @@
         </div>
       </div>
 
-      <div class="horizontal-divider border-t border-BrandGrayShade3"></div>
+      <div class="border-t horizontal-divider border-BrandGrayShade3"></div>
 
       <div class="flex flex-col space-y-4">
-        <p class="cta-text text-lg text-white">Neuron Based Membership</p>
+        <p class="text-lg text-white cta-text">Neuron Based Membership</p>
         <p class="text-BrandGrayShade5">
           To join the ICFC you need to have a non-dissolving NNS neuron with at least 1,000 ICFC staked, max staked for 2 years. Add your ICFC Principal as a hotkey to any ICFC NNS neuron over 1,000 ICFC to continue:
         </p>
@@ -374,15 +379,15 @@
 
               <AvailableMembership {neurons} {refreshNeurons} availableMembership={userMembershipEligibility?.membershipType!} {maxStakedICFC} />
 
-              <div class="horizontal-divider border-t border-BrandGrayShade3"></div>
+              <div class="border-t horizontal-divider border-BrandGrayShade3"></div>
 
               <div class="flex flex-col space-y-4">
-                <p class="cta-text text-lg text-white">Sub-App Principal IDs</p>
+                <p class="text-lg text-white cta-text">Sub-App Principal IDs</p>
                 <p class="text-BrandGrayShade2">
                   Enter your Principal IDs for ICFC sub-applications (optional)
                 </p>
                 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <div class="flex flex-col space-y-4">
                     <div class="flex flex-col space-y-1">
                       <p class="form-title">OpenFPL Principal ID</p>
@@ -396,9 +401,9 @@
                       {#if openFplPrincipalId.length > 0}
                         <div class="mt-1 text-sm">
                           {#if !isPrincipalValid(openFplPrincipalId)}
-                            <p class="text-BrandRed mt-1">Invalid Principal ID</p>
+                            <p class="mt-1 text-BrandRed">Invalid Principal ID</p>
                           {:else}
-                            <p class="text-BrandSuccess mt-1">Valid Principal ID</p>
+                            <p class="mt-1 text-BrandSuccess">Valid Principal ID</p>
                           {/if}
                         </div>
                       {/if}
@@ -436,9 +441,9 @@
                       {#if transferKingsPrincipalId.length > 0}
                         <div class="mt-1 text-sm">
                           {#if !isPrincipalValid(transferKingsPrincipalId)}
-                            <p class="text-BrandRed mt-1">Invalid Principal ID</p>
+                            <p class="mt-1 text-BrandRed">Invalid Principal ID</p>
                           {:else}
-                            <p class="text-BrandSuccess mt-1">Valid Principal ID</p>
+                            <p class="mt-1 text-BrandSuccess">Valid Principal ID</p>
                           {/if}
                         </div>
                       {/if}
@@ -458,9 +463,9 @@
                       {#if jeffBetsPrincipalId.length > 0}
                         <div class="mt-1 text-sm">
                           {#if !isPrincipalValid(jeffBetsPrincipalId)}
-                            <p class="text-BrandRed mt-1">Invalid Principal ID</p>
+                            <p class="mt-1 text-BrandRed">Invalid Principal ID</p>
                           {:else}
-                            <p class="text-BrandSuccess mt-1">Valid Principal ID</p>
+                            <p class="mt-1 text-BrandSuccess">Valid Principal ID</p>
                           {/if}
                         </div>
                       {/if}
@@ -478,9 +483,9 @@
                       {#if openWslPrincipalId.length > 0}
                         <div class="mt-1 text-sm">
                           {#if !isPrincipalValid(openWslPrincipalId)}
-                            <p class="text-BrandRed mt-1">Invalid Principal ID</p>
+                            <p class="mt-1 text-BrandRed">Invalid Principal ID</p>
                           {:else}
-                            <p class="text-BrandSuccess mt-1">Valid Principal ID</p>
+                            <p class="mt-1 text-BrandSuccess">Valid Principal ID</p>
                           {/if}
                         </div>
                       {/if}
@@ -488,10 +493,10 @@
                   </div>
                 </div>
 
-                <div class="horizontal-divider border-t border-BrandGrayShade3"></div>
+                <div class="border-t horizontal-divider border-BrandGrayShade3"></div>
               
                 <button 
-                  class="brand-button bg-BrandBlue text-white py-2 rounded-lg hover:bg-BrandInfo transition disabled:bg-BrandGrayShade3" 
+                  class="py-2 text-white transition rounded-lg brand-button bg-BrandBlue hover:bg-BrandInfo disabled:bg-BrandGrayShade3" 
                   on:click={createProfile} 
                   disabled={isSubmitDisabled}
                 >

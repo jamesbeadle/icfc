@@ -46,11 +46,16 @@
     }
 
     async function getNeurons() {
+        console.log("Getting neurons for profile membership");
         let neuronsResult = await membershipStore.getUserNeurons();
+        console.log("neuronsResult: ", neuronsResult);
         if (neuronsResult) {
             neurons = neuronsResult.userNeurons.sort(sortByHighestNeuron);
+            console.log("Sorted neurons: ", neurons);
             userMembershipEligibility = neuronsResult.userMembershipEligibility;
+            console.log("userMembershipEligibility: ", userMembershipEligibility);
             maxStakedICFC = neuronsResult.totalMaxStaked;
+            console.log("maxStakedICFC: ", maxStakedICFC);
         }
     }
     
@@ -87,7 +92,7 @@
 </script>
 
 <div class="flex flex-col space-y-4">
-    <p class="cta-text text-lg text-white">Your ICFC Membership</p>
+    <p class="text-lg text-white cta-text">Your ICFC Membership</p>
     <p class="text-BrandGrayShade5">
       Please see information below related to your neuron based membership.
     </p>
@@ -103,7 +108,7 @@
 
           <AvailableMembership {neurons} {refreshNeurons} availableMembership={userMembershipEligibility?.membershipType!} {maxStakedICFC} />
 
-            <div class="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+            <div class="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-4">
                 {#each membershipLevels as level, index}
                     <div class="w-full">
                         <MembershipCard 
