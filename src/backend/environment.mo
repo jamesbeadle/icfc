@@ -12,7 +12,7 @@ module Environment {
   public let SNS_LEDGER_CANISTER_ID = "ddsp7-7iaaa-aaaaq-aacqq-cai";
   public let CKBTC_LEDGER_CANISTER_ID = "mxzaz-hqaaa-aaaar-qaada-cai";
 
-  public let ICFC_SALE_2_CANISTER_ID = "";
+  public let ICFC_SALE_2_CANISTER_ID = "fiex2-wyaaa-aaaal-qslmq-cai";
 
   // SubApps canister IDs
   public let FOOTBALL_GOD_BACKEND_CANISTER_ID = "44kin-waaaa-aaaal-qbxra-cai";

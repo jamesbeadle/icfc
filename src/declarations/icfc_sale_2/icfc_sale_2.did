@@ -1,50 +1,11 @@
 type Self = 
  service {
-   getAppStatus: () -> (Result_3) query;
-   get_goal: () -> (Result_2) query;
-   get_sale_countdown: () -> (Result_1);
-   get_sale_participants: () -> (vec SaleParticipant);
-   get_user_ckBTC_balance: () -> (nat);
-   get_user_sale_contribution: () -> (vec SaleParticipant);
-   participate: (nat) -> (Result);
- };
-type SaleParticipant = 
- record {
-   amount: nat;
-   icfc_staked: float64;
-   time: nat64;
-   user: principal;
- };
-type SaleGoalDTO = 
- record {
-   currentProgress: nat;
-   goal: nat;
- };
-type SaleCountDownDTO = 
- record {
-   status: text;
-   stringTime: text;
-   timeRemaining: nat64;
- };
-type Result_3 = 
- variant {
-   err: Error;
-   ok: AppStatusDTO;
- };
-type Result_2 = 
- variant {
-   err: text;
-   ok: SaleGoalDTO;
- };
-type Result_1 = 
- variant {
-   err: text;
-   ok: SaleCountDownDTO;
+   getAppStatus: () -> (Result) query;
  };
 type Result = 
  variant {
-   err: text;
-   ok;
+   err: Error;
+   ok: AppStatusDTO;
  };
 type Error = 
  variant {
