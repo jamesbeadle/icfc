@@ -14,9 +14,9 @@ import Cycles "mo:base/ExperimentalCycles";
 import Int "mo:base/Int";
 import Char "mo:base/Char";
 import Array "mo:base/Array";
+import Base "mo:waterway-mops/BaseTypes";
 import T "../icfc_types";
 import SNSGovernance "../sns-wrappers/governance";
-import Base "mo:waterway-mops/BaseTypes";
 import Environment "../environment";
 
 module Utils {
@@ -536,7 +536,7 @@ module Utils {
             Environment.OPENFPL_BACKEND_CANISTER_ID,
             Environment.OPENWSL_BACKEND_CANISTER_ID,
             Environment.JEFF_BETS_BACKEND_CANISTER_ID,
-            Environment.TRANSFERKINGS_CANISTER_ID,
+            Environment.TRANSFER_KINGS_CANISTER_ID,
         ];
         for (principal in allowed.vals()) {
             if (principal == caller) {

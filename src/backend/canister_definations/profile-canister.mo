@@ -120,8 +120,6 @@ actor class _ProfileCanister() {
 
         let _ = addProfile(newProfile);
 
-        await notifyAppsOfNewProfile(newProfile);
-
         return #ok();
 
     };
@@ -1034,8 +1032,6 @@ actor class _ProfileCanister() {
             };
         };
 
-        await notifyAppsOfProfileChange(updatedProfile);
-
         return #ok();
     };
 
@@ -1083,21 +1079,13 @@ actor class _ProfileCanister() {
         };
     };
 
-    private func notifyAppsOfNewProfile(profile: T.Profile) : async () {
-
-    };
-
-    private func notifyAppsOfProfileChange(profile: T.Profile) : async () {
-        
-    };
-
     system func preupgrade() {};
 
     system func postupgrade() {
+        /*
         stable_profile_group_indexes := [];
         profileGroup1 := [];
         totalProfiles := 0;
-        /*
         */
     };
 };

@@ -72,7 +72,7 @@ module {
         };
 
         // Update Functions
-        public func createProfile(principalId : Base.PrincipalId, dto : ProfileCommands.CreateProfile, membership: T.EligibleMembership) : async Result.Result<(), T.Error> {
+        public func createProfile(principalId : Base.PrincipalId, dto : ProfileCommands.CreateProfile, membership : T.EligibleMembership) : async Result.Result<(), T.Error> {
 
             if (Text.size(dto.username) < 5 or Text.size(dto.username) > 20) {
                 return #err(#TooLong);
@@ -95,7 +95,7 @@ module {
 
                     var profile_canister = actor (activeCanisterId) : actor {
                         isCanisterFull : () -> async Bool;
-                         createProfile : (principalId : Base.PrincipalId, dto : ProfileCommands.CreateProfile, membership: T.EligibleMembership) -> async Result.Result<(), T.Error>;
+                        createProfile : (principalId : Base.PrincipalId, dto : ProfileCommands.CreateProfile, membership : T.EligibleMembership) -> async Result.Result<(), T.Error>;
                     };
 
                     let isCanisterFull = await profile_canister.isCanisterFull();
@@ -104,7 +104,7 @@ module {
                         await createNewCanister();
                         profile_canister := actor (activeCanisterId) : actor {
                             isCanisterFull : () -> async Bool;
-                            createProfile : (principalId : Base.PrincipalId, dto : ProfileCommands.CreateProfile, membership: T.EligibleMembership) -> async Result.Result<(), T.Error>;
+                            createProfile : (principalId : Base.PrincipalId, dto : ProfileCommands.CreateProfile, membership : T.EligibleMembership) -> async Result.Result<(), T.Error>;
                         };
                     };
 
@@ -154,7 +154,7 @@ module {
             };
         };
 
-        public func verifySubApp( verifySubAppRecord : ProfileCommands.VerifySubApp) : async Result.Result<(), T.Error> {
+        public func verifySubApp(verifySubAppRecord : ProfileCommands.VerifySubApp) : async Result.Result<(), T.Error> {
             let existingProfileCanisterId = profileCanisterIndex.get(verifySubAppRecord.icfcPrincipalId);
             switch (existingProfileCanisterId) {
                 case (?foundCanisterId) {
@@ -631,7 +631,7 @@ module {
                     return await jeffBetsCanister.notifyAppLink(dto);
                 };
                 case (#TransferKings) {
-                    let transferKingsCanister = actor (Environment.TRANSFERKINGS_CANISTER_ID) : actor {
+                    let transferKingsCanister = actor (Environment.TRANSFER_KINGS_CANISTER_ID) : actor {
                         notifyAppLink : (dto : ProfileCommands.NotifyAppofLink) -> async Result.Result<(), T.Error>;
                     };
                     return await transferKingsCanister.notifyAppLink(dto);
@@ -666,7 +666,7 @@ module {
                     return await jeffBetsCanister.noitifyAppofICFCProfileUpdate(dto);
                 };
                 case (#TransferKings) {
-                    let transferKingsCanister = actor (Environment.TRANSFERKINGS_CANISTER_ID) : actor {
+                    let transferKingsCanister = actor (Environment.TRANSFER_KINGS_CANISTER_ID) : actor {
                         noitifyAppofICFCProfileUpdate(dto : ProfileCommands.UpdateICFCProfile) : async Result.Result<(), T.Error>;
                     };
                     return await transferKingsCanister.noitifyAppofICFCProfileUpdate(dto);
