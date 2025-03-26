@@ -3,6 +3,9 @@ import FootballTypes "mo:waterway-mops/FootballTypes";
 import T "../icfc_types";
 
 module ProfileCommands {
+    public type GetProfile = {
+        principalId : Base.PrincipalId;
+    };
 
     public type CreateProfile = {
         username : Text;
@@ -59,9 +62,8 @@ module ProfileCommands {
         subApp : T.SubApp;
     };
 
-    public type GetICFCMembership = {
+    public type GetICFCProfile = {
         principalId : Base.PrincipalId;
-
     };
 
     public type RemoveSubApp = {

@@ -41,7 +41,7 @@ actor class Self() = this {
 
   public shared ({ caller }) func getProfile() : async Result.Result<ProfileQueries.ProfileDTO, T.Error> {
     assert not Principal.isAnonymous(caller);
-    let dto : ProfileQueries.GetProfile = {
+    let dto : ProfileCommands.GetProfile = {
       principalId = Principal.toText(caller);
     };
     return await profileManager.getProfile(dto);
@@ -101,7 +101,8 @@ actor class Self() = this {
 
   public shared ({ caller }) func verifySubApp(dto : ProfileCommands.VerifySubApp) : async Result.Result<(), T.Error> {
     assert not Principal.isAnonymous(caller);
-    return await profileManager.verifySubApp(Principal.toText(caller), dto);
+    assert Utils.isSubApp(Principal.toText(caller));
+    return await profileManager.verifySubApp(dto);
   };
 
   public shared ({ caller }) func updateUsername(dto : ProfileCommands.UpdateUserName) : async Result.Result<(), T.Error> {
@@ -154,9 +155,10 @@ actor class Self() = this {
     })
   };
 
-  public shared ({ caller }) func getICFCMembership(dto : ProfileCommands.GetICFCMembership) : async Result.Result<ProfileQueries.ICFCMembershipDTO, T.Error> {
+  public shared ({ caller }) func getICFCProfile(dto : ProfileCommands.GetICFCProfile) : async Result.Result<ProfileQueries.ProfileDTO, T.Error> {
     assert not Principal.isAnonymous(caller);
-    return await profileManager.getICFCMembership(Principal.toText(caller), dto);
+    assert Utils.isSubApp(Principal.toText(caller));
+    return await profileManager.getProfile(dto);
   };
 
   public shared query ({ caller }) func getCountries() : async Result.Result<[AppQueries.CountryDTO], T.Error> {

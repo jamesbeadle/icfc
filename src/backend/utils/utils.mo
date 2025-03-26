@@ -529,4 +529,21 @@ module Utils {
             case (#NotEligible) { true };
         };
     };
+
+    public func isSubApp(caller : Base.PrincipalId) : Bool {
+        let allowed = [
+            Environment.FOOTBALL_GOD_BACKEND_CANISTER_ID,
+            Environment.OPENFPL_BACKEND_CANISTER_ID,
+            Environment.OPENWSL_BACKEND_CANISTER_ID,
+            Environment.JEFF_BETS_BACKEND_CANISTER_ID,
+            Environment.TRANSFER_KINGS_CANISTER_ID,
+        ];
+        for (principal in allowed.vals()) {
+            if (principal == caller) {
+                return true;
+            };
+        };
+        return false;
+    };
+
 };

@@ -36,7 +36,7 @@ actor class _ProfileCanister() {
 
     //Public endpoints
 
-    public shared ({ caller }) func getProfile(dto : ProfileQueries.GetProfile) : async Result.Result<ProfileQueries.ProfileDTO, T.Error> {
+    public shared ({ caller }) func getProfile(dto : ProfileCommands.GetProfile) : async Result.Result<ProfileQueries.ProfileDTO, T.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
         assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
@@ -68,38 +68,6 @@ actor class _ProfileCanister() {
                             favouriteLeagueId = foundProfile.favouriteLeagueId;
                             favouriteClubId = foundProfile.favouriteClubId;
                             nationalityId = foundProfile.nationalityId;
-                        };
-                        return #ok(dto);
-                    };
-                    case (null) {
-                        return #err(#NotFound);
-                    };
-                };
-            };
-        };
-    };
-
-    public shared ({ caller }) func getICFCMembership(dto : ProfileCommands.GetICFCMembership) : async Result.Result<ProfileQueries.ICFCMembershipDTO, T.Error> {
-        assert not Principal.isAnonymous(caller);
-        let backendPrincipalId = Principal.toText(caller);
-        assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
-
-        var groupIndex : ?Nat8 = null;
-        for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
-            if (profileGroupIndex.0 == dto.principalId) {
-                groupIndex := ?profileGroupIndex.1;
-            };
-        };
-        switch (groupIndex) {
-            case (null) { return #err(#NotFound) };
-            case (?foundGroupIndex) {
-                let profile = findProfile(foundGroupIndex, dto.principalId);
-                switch (profile) {
-                    case (?foundProfile) {
-                        let dto : ProfileQueries.ICFCMembershipDTO = {
-                            membershipType = foundProfile.membershipType;
-                            membershipClaims = foundProfile.membershipClaims;
-                            membershipExpiryTime = foundProfile.membershipExpiryTime;
                         };
                         return #ok(dto);
                     };
