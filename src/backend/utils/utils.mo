@@ -14,8 +14,10 @@ import Cycles "mo:base/ExperimentalCycles";
 import Int "mo:base/Int";
 import Char "mo:base/Char";
 import Array "mo:base/Array";
+import Base "mo:waterway-mops/BaseTypes";
 import T "../icfc_types";
 import SNSGovernance "../sns-wrappers/governance";
+import Environment "../environment";
 
 module Utils {
     public let getHour = func() : Nat {

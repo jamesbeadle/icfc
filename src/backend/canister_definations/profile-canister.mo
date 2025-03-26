@@ -152,8 +152,6 @@ actor class _ProfileCanister() {
 
         let _ = addProfile(newProfile);
 
-        await notifyAppsOfNewProfile(newProfile);
-
         return #ok();
 
     };
@@ -1066,8 +1064,6 @@ actor class _ProfileCanister() {
             };
         };
 
-        await notifyAppsOfProfileChange(updatedProfile);
-
         return #ok();
     };
 
@@ -1113,14 +1109,6 @@ actor class _ProfileCanister() {
                 return 0;
             };
         };
-    };
-
-    private func notifyAppsOfNewProfile(profile: T.Profile) : async () {
-
-    };
-
-    private func notifyAppsOfProfileChange(profile: T.Profile) : async () {
-        
     };
 
     system func preupgrade() {};

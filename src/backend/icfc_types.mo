@@ -86,6 +86,7 @@ module ICFCTypes {
     #InEligible;
     #NeuronAlreadyUsed;
     #AlreadyLinked;
+    #FailedInterCanisterCall;
   };
 
   public type Club = {

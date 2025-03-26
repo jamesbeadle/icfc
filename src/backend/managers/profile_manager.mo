@@ -639,7 +639,7 @@ module {
                 Environment.OPENFPL_BACKEND_CANISTER_ID,
                 Environment.OPENWSL_BACKEND_CANISTER_ID,
                 Environment.JEFF_BETS_BACKEND_CANISTER_ID,
-                Environment.TRANSFERKINGS_CANISTER_ID,
+                Environment.TRANSFER_KINGS_CANISTER_ID,
             ];
             for (principal in allowed.vals()) {
                 if (principal == caller) {
@@ -670,7 +670,7 @@ module {
                     return await jeffBetsCanister.notifyAppLink(dto);
                 };
                 case (#TransferKings) {
-                    let transferKingsCanister = actor (Environment.TRANSFERKINGS_CANISTER_ID) : actor {
+                    let transferKingsCanister = actor (Environment.TRANSFER_KINGS_CANISTER_ID) : actor {
                         notifyAppLink : (dto : ProfileCommands.NotifyAppofLink) -> async Result.Result<(), T.Error>;
                     };
                     return await transferKingsCanister.notifyAppLink(dto);
@@ -705,7 +705,7 @@ module {
                     return await jeffBetsCanister.noitifyAppofICFCProfileUpdate(dto);
                 };
                 case (#TransferKings) {
-                    let transferKingsCanister = actor (Environment.TRANSFERKINGS_CANISTER_ID) : actor {
+                    let transferKingsCanister = actor (Environment.TRANSFER_KINGS_CANISTER_ID) : actor {
                         noitifyAppofICFCProfileUpdate(dto : ProfileCommands.UpdateICFCProfile) : async Result.Result<(), T.Error>;
                     };
                     return await transferKingsCanister.noitifyAppofICFCProfileUpdate(dto);

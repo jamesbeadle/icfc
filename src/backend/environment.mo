@@ -19,7 +19,7 @@ module Environment {
   public let OPENFPL_BACKEND_CANISTER_ID = "y22zx-giaaa-aaaal-qmzpq-cai";
   public let OPENWSL_BACKEND_CANISTER_ID = "5bafg-ayaaa-aaaal-qmzqq-cai";
   public let JEFF_BETS_BACKEND_CANISTER_ID = "cmdaz-kqaaa-aaaal-qshqa-cai";
-  public let TRANSFERKINGS_CANISTER_ID = "fpmh5-ziaaa-aaaal-qjfbq-cai";
+  public let TRANSFER_KINGS_CANISTER_ID = "fpmh5-ziaaa-aaaal-qjfbq-cai";
 
   public let ADMIN_PRINCIPALS = [
     "", //JB
