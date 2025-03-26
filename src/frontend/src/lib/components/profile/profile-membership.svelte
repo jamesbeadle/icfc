@@ -46,6 +46,7 @@
     }
 
     async function getNeurons() {
+        console.log("Getting neurons for profile membership");
         let neuronsResult = await membershipStore.getUserNeurons();
         console.log("neuronsResult: ", neuronsResult);
         if (neuronsResult) {
