@@ -91,7 +91,7 @@ module {
         };
 
         // Update Functions
-        public func createProfile(principalId : Base.PrincipalId, dto : ProfileCommands.CreateProfile) : async Result.Result<(), T.Error> {
+        public func createProfile(principalId : Base.PrincipalId, dto : ProfileCommands.CreateProfile, membership: T.EligibleMembership) : async Result.Result<(), T.Error> {
 
             if (Text.size(dto.username) < 5 or Text.size(dto.username) > 20) {
                 return #err(#TooLong);
@@ -114,7 +114,7 @@ module {
 
                     var profile_canister = actor (activeCanisterId) : actor {
                         isCanisterFull : () -> async Bool;
-                        createProfile : (principalId : Base.PrincipalId, dto : ProfileCommands.CreateProfile) -> async Result.Result<(), T.Error>;
+                         createProfile : (principalId : Base.PrincipalId, dto : ProfileCommands.CreateProfile, membership: T.EligibleMembership) -> async Result.Result<(), T.Error>;
                     };
 
                     let isCanisterFull = await profile_canister.isCanisterFull();
@@ -123,13 +123,13 @@ module {
                         await createNewCanister();
                         profile_canister := actor (activeCanisterId) : actor {
                             isCanisterFull : () -> async Bool;
-                            createProfile : (principalId : Base.PrincipalId, dto : ProfileCommands.CreateProfile) -> async Result.Result<(), T.Error>;
+                            createProfile : (principalId : Base.PrincipalId, dto : ProfileCommands.CreateProfile, membership: T.EligibleMembership) -> async Result.Result<(), T.Error>;
                         };
                     };
 
                     profileCanisterIndex.put((principalId, activeCanisterId));
                     usernames.put(principalId, activeCanisterId);
-                    return await profile_canister.createProfile(principalId, dto);
+                    return await profile_canister.createProfile(principalId, dto, membership);
                 };
             };
         };
