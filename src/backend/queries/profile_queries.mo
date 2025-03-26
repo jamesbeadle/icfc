@@ -20,9 +20,9 @@ module ProfileQueries {
         appPrincipalIds : [(T.SubApp, Base.PrincipalId)];
         podcastIds : [Base.PrincipalId];
         membershipExpiryTime : Int;
-        favouriteLeagueId: ?FootballTypes.LeagueId;
-        favouriteClubId: ?FootballTypes.ClubId;
-        nationalityId: ?Base.CountryId;
+        favouriteLeagueId : ?FootballTypes.LeagueId;
+        favouriteClubId : ?FootballTypes.ClubId;
+        nationalityId : ?Base.CountryId;
     };
 
     public type ListProfiles = {
@@ -50,8 +50,8 @@ module ProfileQueries {
 
     public type UserNeuronsDTO = {
         userNeurons : [SNSGovernance.Neuron];
-        totalMaxStaked: Nat64;
-        userMembershipEligibility : T.MembershipType;
+        totalMaxStaked : Nat64;
+        userMembershipEligibility : T.EligibleMembership;
     };
 
     public type ICFCMembershipDTO = {
@@ -61,8 +61,6 @@ module ProfileQueries {
     };
 
     public type UsernameAvailable = Bool;
-
-
 
     public type IsUsernameValid = {
         username : Text;

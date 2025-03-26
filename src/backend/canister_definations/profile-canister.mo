@@ -1,14 +1,10 @@
 import Base "mo:waterway-mops/BaseTypes";
-import FootballTypes "mo:waterway-mops/FootballTypes";
 import Result "mo:base/Result";
 import Principal "mo:base/Principal";
 import Iter "mo:base/Iter";
-import Debug "mo:base/Debug";
 import Time "mo:base/Time";
 import Array "mo:base/Array";
 import Buffer "mo:base/Buffer";
-import Int "mo:base/Int";
-import Timer "mo:base/Timer";
 import T "../icfc_types";
 import ProfileQueries "../queries/profile_queries";
 import Environment "../environment";
@@ -125,12 +121,12 @@ actor class _ProfileCanister() {
         if (getProfileCountInGroup(activeGroupIndex) >= MAX_PROFILES_PER_GROUP) {
             activeGroupIndex += 1;
         };
-        
+
         if (activeGroupIndex > 11) {
             canisterFull := true;
             return #err(#CanisterFull);
         };
-        
+
         let newProfile : T.Profile = {
             principalId = profilePrincipalId;
             profilePicture = dto.profilePicture;
@@ -147,7 +143,7 @@ actor class _ProfileCanister() {
             favouriteClubId = dto.favouriteClubId;
             nationalityId = dto.nationalityId;
         };
-        
+
         addProfile(newProfile);
 
     };
@@ -356,18 +352,20 @@ actor class _ProfileCanister() {
                             appPrincipalIdsBuffer.add((dto.subApp, dto.subAppUserPrincipalId));
                         } else {
                             // update subapp if already linked
-                            let updatedAppPrincipalIds = Array.map<(T.SubApp, Base.PrincipalId), (T.SubApp, Base.PrincipalId)>(
-                                foundProfile.appPrincipalIds,
-                                func(appPrincipalId : (T.SubApp, Base.PrincipalId)) {
-                                    if (appPrincipalId.0 == dto.subApp) {
-                                        (appPrincipalId.0, dto.subAppUserPrincipalId);
-                                    } else {
-                                        appPrincipalId;
-                                    };
-                                },
-                            );
+                            // let updatedAppPrincipalIds = Array.map<(T.SubApp, Base.PrincipalId), (T.SubApp, Base.PrincipalId)>(
+                            //     foundProfile.appPrincipalIds,
+                            //     func(appPrincipalId : (T.SubApp, Base.PrincipalId)) {
+                            //         if (appPrincipalId.0 == dto.subApp) {
+                            //             (appPrincipalId.0, dto.subAppUserPrincipalId);
+                            //         } else {
+                            //             appPrincipalId;
+                            //         };
+                            //     },
+                            // );
 
-                            appPrincipalIdsBuffer := Buffer.fromArray<(T.SubApp, Base.PrincipalId)>(updatedAppPrincipalIds);
+                            // appPrincipalIdsBuffer := Buffer.fromArray<(T.SubApp, Base.PrincipalId)>(updatedAppPrincipalIds);
+
+                            return #err(#AlreadyLinked);
 
                         };
 
@@ -564,172 +562,94 @@ actor class _ProfileCanister() {
         return (totalProfiles >= MAX_PROFILES_PER_CANISTER);
     };
 
-    private func createMembershipExpiredTimers() : async () { //TODO
-
-        for (index in Iter.range(0, 11)) {
-            switch (index) {
-                case 0 {
-                    for (profile in Iter.fromArray(profileGroup1)) {
-                        let durationUntilExpiry = #nanoseconds(Int.abs(((profile.membershipExpiryTime) - Time.now())));
-                        ignore Timer.setTimer<system>(durationUntilExpiry, membershipExpired);
-                    };
-                };
-                case 1 {
-                    for (profile in Iter.fromArray(profileGroup2)) {
-                        let durationUntilExpiry = #nanoseconds(Int.abs(((profile.membershipExpiryTime) - Time.now())));
-                        ignore Timer.setTimer<system>(durationUntilExpiry, membershipExpired);
-                    };
-                };
-                case 2 {
-                    for (profile in Iter.fromArray(profileGroup3)) {
-                        let durationUntilExpiry = #nanoseconds(Int.abs(((profile.membershipExpiryTime) - Time.now())));
-                        ignore Timer.setTimer<system>(durationUntilExpiry, membershipExpired);
-                    };
-                };
-                case 3 {
-                    for (profile in Iter.fromArray(profileGroup4)) {
-                        let durationUntilExpiry = #nanoseconds(Int.abs(((profile.membershipExpiryTime) - Time.now())));
-                        ignore Timer.setTimer<system>(durationUntilExpiry, membershipExpired);
-                    };
-                };
-                case 4 {
-                    for (profile in Iter.fromArray(profileGroup5)) {
-                        let durationUntilExpiry = #nanoseconds(Int.abs(((profile.membershipExpiryTime) - Time.now())));
-                        ignore Timer.setTimer<system>(durationUntilExpiry, membershipExpired);
-                    };
-                };
-                case 5 {
-                    for (profile in Iter.fromArray(profileGroup6)) {
-                        let durationUntilExpiry = #nanoseconds(Int.abs(((profile.membershipExpiryTime) - Time.now())));
-                        ignore Timer.setTimer<system>(durationUntilExpiry, membershipExpired);
-                    };
-                };
-                case 6 {
-                    for (profile in Iter.fromArray(profileGroup7)) {
-                        let durationUntilExpiry = #nanoseconds(Int.abs(((profile.membershipExpiryTime) - Time.now())));
-                        ignore Timer.setTimer<system>(durationUntilExpiry, membershipExpired);
-                    };
-                };
-                case 7 {
-                    for (profile in Iter.fromArray(profileGroup8)) {
-                        let durationUntilExpiry = #nanoseconds(Int.abs(((profile.membershipExpiryTime) - Time.now())));
-                        ignore Timer.setTimer<system>(durationUntilExpiry, membershipExpired);
-                    };
-                };
-                case 8 {
-                    for (profile in Iter.fromArray(profileGroup9)) {
-                        let durationUntilExpiry = #nanoseconds(Int.abs(((profile.membershipExpiryTime) - Time.now())));
-                        ignore Timer.setTimer<system>(durationUntilExpiry, membershipExpired);
-                    };
-                };
-                case 9 {
-                    for (profile in Iter.fromArray(profileGroup10)) {
-                        let durationUntilExpiry = #nanoseconds(Int.abs(((profile.membershipExpiryTime) - Time.now())));
-                        ignore Timer.setTimer<system>(durationUntilExpiry, membershipExpired);
-                    };
-                };
-                case 10 {
-                    for (profile in Iter.fromArray(profileGroup11)) {
-                        let durationUntilExpiry = #nanoseconds(Int.abs(((profile.membershipExpiryTime) - Time.now())));
-                        ignore Timer.setTimer<system>(durationUntilExpiry, membershipExpired);
-                    };
-                };
-                case 11 {
-                    for (profile in Iter.fromArray(profileGroup12)) {
-                        let durationUntilExpiry = #nanoseconds(Int.abs(((profile.membershipExpiryTime) - Time.now())));
-                        ignore Timer.setTimer<system>(durationUntilExpiry, membershipExpired);
-                    };
-                };
-                case _ {};
-            };
-        };
-    };
-
-    private func membershipExpired() : async () {
+    public shared ({ caller }) func checkAndExpireMembership() : async () {
+        assert not Principal.isAnonymous(caller);
+        let backendPrincipalId = Principal.toText(caller);
+        assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
 
         for (index in Iter.range(0, 11)) {
             switch (index) {
                 case 0 {
                     for (profile in Iter.fromArray(profileGroup1)) {
                         if (profile.membershipExpiryTime < Time.now()) {
-                            expireMembership(profile.principalId);
+                            let _ = expireMembership(profile.principalId);
                         };
                     };
                 };
                 case 1 {
                     for (profile in Iter.fromArray(profileGroup2)) {
                         if (profile.membershipExpiryTime < Time.now()) {
-                            expireMembership(profile.principalId);
+                            let _ = expireMembership(profile.principalId);
                         };
                     };
                 };
                 case 2 {
                     for (profile in Iter.fromArray(profileGroup3)) {
                         if (profile.membershipExpiryTime < Time.now()) {
-                            expireMembership(profile.principalId);
+                            let _ = expireMembership(profile.principalId);
                         };
                     };
                 };
                 case 3 {
                     for (profile in Iter.fromArray(profileGroup4)) {
                         if (profile.membershipExpiryTime < Time.now()) {
-                            expireMembership(profile.principalId);
+                            let _ = expireMembership(profile.principalId);
                         };
                     };
                 };
                 case 4 {
                     for (profile in Iter.fromArray(profileGroup5)) {
                         if (profile.membershipExpiryTime < Time.now()) {
-                            expireMembership(profile.principalId);
+                            let _ = expireMembership(profile.principalId);
                         };
                     };
                 };
                 case 5 {
                     for (profile in Iter.fromArray(profileGroup6)) {
                         if (profile.membershipExpiryTime < Time.now()) {
-                            expireMembership(profile.principalId);
+                            let _ = expireMembership(profile.principalId);
                         };
                     };
                 };
                 case 6 {
                     for (profile in Iter.fromArray(profileGroup7)) {
                         if (profile.membershipExpiryTime < Time.now()) {
-                            expireMembership(profile.principalId);
+                            let _ = expireMembership(profile.principalId);
                         };
                     };
                 };
                 case 7 {
                     for (profile in Iter.fromArray(profileGroup8)) {
                         if (profile.membershipExpiryTime < Time.now()) {
-                            expireMembership(profile.principalId);
+                            let _ = expireMembership(profile.principalId);
                         };
                     };
                 };
                 case 8 {
                     for (profile in Iter.fromArray(profileGroup9)) {
                         if (profile.membershipExpiryTime < Time.now()) {
-                            expireMembership(profile.principalId);
+                            let _ = expireMembership(profile.principalId);
                         };
                     };
                 };
                 case 9 {
                     for (profile in Iter.fromArray(profileGroup10)) {
                         if (profile.membershipExpiryTime < Time.now()) {
-                            expireMembership(profile.principalId);
+                            let _ = expireMembership(profile.principalId);
                         };
                     };
                 };
                 case 10 {
                     for (profile in Iter.fromArray(profileGroup11)) {
                         if (profile.membershipExpiryTime < Time.now()) {
-                            expireMembership(profile.principalId);
+                            let _ = expireMembership(profile.principalId);
                         };
                     };
                 };
                 case 11 {
                     for (profile in Iter.fromArray(profileGroup12)) {
                         if (profile.membershipExpiryTime < Time.now()) {
-                            expireMembership(profile.principalId);
+                            let _ = expireMembership(profile.principalId);
                         };
                     };
                 };
@@ -738,8 +658,7 @@ actor class _ProfileCanister() {
         };
     };
 
-    private func expireMembership(principalId : Base.PrincipalId) {
-        //expire the membership
+    private func expireMembership(principalId : Base.PrincipalId) : async () {
 
         var groupIndex : ?Nat8 = null;
         for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
@@ -772,7 +691,18 @@ actor class _ProfileCanister() {
                             nationalityId = foundProfile.nationalityId;
                         };
 
-                        let _ = saveProfile(foundGroupIndex, updatedProfile);
+                        let res = saveProfile(foundGroupIndex, updatedProfile);
+                        switch (res) {
+                            case (#err(_)) { return };
+                            case (#ok) {
+
+                                var backend = actor (Environment.BACKEND_CANISTER_ID) : actor {
+                                    removeNeuronsforExpiredMembership : shared query Base.PrincipalId -> async ();
+                                };
+
+                                await backend.removeNeuronsforExpiredMembership(principalId);
+                            };
+                        };
                     };
                     case (null) {
                         return;
@@ -1171,9 +1101,7 @@ actor class _ProfileCanister() {
         };
     };
 
-
-    system func preupgrade() {
-    };
+    system func preupgrade() {};
 
     system func postupgrade() {
         stable_profile_group_indexes := [];

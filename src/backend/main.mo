@@ -65,20 +65,13 @@ actor class Self() = this {
     assert not Principal.isAnonymous(caller);
 
     let neurons = await snsManager.getUsersNeurons(caller);
-    let userEligibility = Utils.getMembershipType(neurons);
+    let userEligibility : T.EligibleMembership = Utils.getMembershipType(neurons);
     let totalMaxStaked = Utils.getTotalMaxStaked(neurons);
 
     let result : ProfileQueries.UserNeuronsDTO = {
       userNeurons = neurons;
       totalMaxStaked;
-      userMembershipEligibility = switch (userEligibility) {
-        case (?membership) {
-          membership;
-        };
-        case (null) {
-          #NotEligible;
-        };
-      };
+      userMembershipEligibility = userEligibility;
     };
     return #ok(result);
 
@@ -126,13 +119,13 @@ actor class Self() = this {
     return await profileManager.updateDisplayName(dto);
   };
 
-  public shared ({ caller }) func updateNationality(dto: ProfileCommands.UpdateNationality) : async Result.Result<(), T.Error> {
+  public shared ({ caller }) func updateNationality(dto : ProfileCommands.UpdateNationality) : async Result.Result<(), T.Error> {
     assert not Principal.isAnonymous(caller);
     assert dto.principalId == Principal.toText(caller);
     return await profileManager.updateNationality(dto);
   };
 
-  public shared ({ caller }) func updateFavouriteClub(dto: ProfileCommands.UpdateFavouriteClub) : async Result.Result<(), T.Error> {
+  public shared ({ caller }) func updateFavouriteClub(dto : ProfileCommands.UpdateFavouriteClub) : async Result.Result<(), T.Error> {
     assert not Principal.isAnonymous(caller);
     assert dto.principalId == Principal.toText(caller);
     return await profileManager.updateFavouriteClub(dto);
@@ -180,6 +173,7 @@ actor class Self() = this {
   private stable var stable_usernames : [(Base.PrincipalId, Text)] = [];
   private stable var stable_unique_profile_canister_ids : [Base.CanisterId] = [];
   private stable var stable_total_profile : Nat = 0;
+  private stable var stable_neurons_used_for_membership : [(Blob, Base.PrincipalId)] = [];
 
   private stable var stable_podcast_channel_canister_index : [(T.PodcastChannelId, Base.CanisterId)] = [];
   private stable var stable_active_podcast_channel_canister_id : Base.CanisterId = "";
@@ -188,16 +182,24 @@ actor class Self() = this {
   private stable var stable_total_podcast_channels : Nat = 0;
   private stable var stable_next_podcast_channel_id : Nat = 0;
 
+  private stable var stable_membership_timer_id : Nat = 0;
+
   //System Backup and Upgrade Functions:
 
   system func preupgrade() {
     backupProfileData();
     backupPodcastChannelData();
+
+    // stop membership timer
+    if (stable_membership_timer_id != 0) {
+      Timer.cancelTimer(stable_membership_timer_id);
+    };
   };
 
   system func postupgrade() {
     setProfileData();
     setPodcastChannelData();
+    stable_membership_timer_id := Timer.recurringTimer<system>(#seconds(86_400), checkMembership);
     ignore Timer.setTimer<system>(#nanoseconds(Int.abs(1)), postUpgradeCallback);
   };
 
@@ -216,6 +218,8 @@ actor class Self() = this {
     stable_usernames := profileManager.getStableUsernames();
     stable_unique_profile_canister_ids := profileManager.getStableUniqueCanisterIds();
     stable_total_profile := profileManager.getStableTotalProfiles();
+    stable_neurons_used_for_membership := profileManager.getStableNeuronsUsedforMembership();
+
   };
 
   private func backupPodcastChannelData() {
@@ -234,6 +238,7 @@ actor class Self() = this {
     profileManager.setStableUsernames(stable_usernames);
     profileManager.setStableUniqueCanisterIds(stable_unique_profile_canister_ids);
     profileManager.setStableTotalProfiles(stable_total_profile);
+    profileManager.setStableNeuronsUsedforMembership(stable_neurons_used_for_membership);
   };
 
   private func setPodcastChannelData() {
@@ -245,8 +250,6 @@ actor class Self() = this {
     podcastChannelManager.setStableNextPodcastChannelId(stable_next_podcast_channel_id);
   };
 
-
-
   private func updateProfileCanisterWasms() : async () {
     let profileCanisterIds = profileManager.getStableUniqueCanisterIds();
     let IC : Management.Management = actor (Environment.Default);
@@ -256,6 +259,16 @@ actor class Self() = this {
       let _ = await (system ProfileCanister._ProfileCanister)(#upgrade oldCanister)();
       await IC.start_canister({ canister_id = Principal.fromText(canisterId) });
     };
+  };
+
+  // call_backs for profile_canister
+  public shared ({ caller }) func removeNeuronsforExpiredMembership(pofile_principal : Base.PrincipalId) : async () {
+    assert profileManager.isProfileCanister(Principal.toText(caller));
+    await profileManager.removeNeuronsforExpiredMembership(pofile_principal);
+  };
+
+  private func checkMembership() : async () {
+    await profileManager.checkMemberships();
   };
 
   /* Below is code related to a second sale */

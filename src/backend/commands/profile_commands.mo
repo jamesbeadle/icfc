@@ -45,7 +45,6 @@ module ProfileCommands {
         confirm : Bool;
     };
 
-
     public type UpdateMembership = {
         principalId : Base.PrincipalId;
         membershipType : T.MembershipType;
@@ -79,5 +78,9 @@ module ProfileCommands {
         subAppUserPrincipalId : Base.PrincipalId;
         subApp : T.SubApp;
         icfcPrincipalId : Base.PrincipalId;
-    }
+    };
+    public type UpdateICFCProfile = {
+        subAppUserPrincipalId : Base.PrincipalId;
+        subApp : T.SubApp;
+    };
 };
