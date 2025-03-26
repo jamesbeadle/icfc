@@ -75,9 +75,10 @@
 
   async function getNeurons() {
     let neuronsResult = await membershipStore.getUserNeurons();
+    console.log(neuronsResult);
     if (neuronsResult) {
         neurons = neuronsResult.userNeurons.sort(sortByHighestNeuron);
-        userMembershipEligibility = neuronsResult.userMembershipEligibility.membershipType;
+        userMembershipEligibility = neuronsResult.userMembershipEligibility;
         maxStakedICFC = neuronsResult.totalMaxStaked;
     }
   }
