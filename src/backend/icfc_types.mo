@@ -1,6 +1,5 @@
 import Base "mo:waterway-mops/BaseTypes";
 import FootballTypes "mo:waterway-mops/FootballTypes";
-import Principal "mo:base/Principal";
 import Blob "mo:base/Blob";
 //import ckBTCLedger "canister:ckbtc_ledger";
 
@@ -100,27 +99,5 @@ module ICFCTypes {
 
   public type Manager = {
 
-  };
-
-  /*
-  public type DepositArgs = {
-    spender_subaccount : ?Blob;
-    token : Principal;
-    from : ckBTCLedger.Account;
-    amount : Nat;
-    fee : ?Nat;
-    memo : ?Blob;
-    created_at_time : ?Nat64;
-  };
-  public type DepositError = {
-    #TransferFromError : ckBTCLedger.TransferFromError;
-  };
-  */
-
-  public type SaleParticipant = {
-    user : Principal;
-    amount : Nat;
-    icfc_staked : Nat;
-    time : Nat64;
   };
 };

@@ -1,23 +1,17 @@
 {
   "canisters": {
-    "ckbtc_ledger": {
-      "type": "custom",
-      "candid": "https://raw.githubusercontent.com/dfinity/ic/95787355499f3be929f2ab302ed44cdad7c64061/rs/rosetta-api/icrc1/ledger/ledger.did",
-      "wasm": "https://download.dfinity.systems/ic/95787355499f3be929f2ab302ed44cdad7c64061/canisters/ic-icrc1-ledger.wasm.gz",
-      "remote": {
-        "id": {
-          "ic": "mxzaz-hqaaa-aaaar-qaada-cai"
-        }
-      }
-    },
     "backend": {
       "main": "src/backend/main.mo",
       "type": "motoko",
-      "optimize": "cycles",
-      "dependencies": ["ckbtc_ledger"]
+      "optimize": "cycles"
+    },
+    "icfc_sale_2": {
+      "main": "src/icfc_sale_2/main.mo",
+      "type": "motoko",
+      "optimize": "cycles"
     },
     "frontend": {
-      "dependencies": ["backend"],
+      "dependencies": ["backend", "icfc_sale_2"],
       "frontend": {
         "entrypoint": "build/index.html"
       },
