@@ -33,10 +33,11 @@
       <li><a class="hover:text-BrandInfo" href="/apps" on:click={toggleMenu}>Apps</a></li>
       <li><a class="hover:text-BrandInfo" href="/profile" on:click={toggleMenu}>Profile</a></li>
       <li><a class="hover:text-BrandInfo" href="/membership" on:click={toggleMenu}>Membership</a></li>
-      <li><a class="hover:text-BrandInfo" href="/podcasts" on:click={toggleMenu}>Podcasts</a></li>
+      <li><a class="hover:text-BrandInfo" href="/channels" on:click={toggleMenu}>Channels</a></li>
       <li><a class="hover:text-BrandInfo" href="/shop" on:click={toggleMenu}>Shop</a></li>
       <li><a class="hover:text-BrandInfo" href="/whitepaper" on:click={toggleMenu}>Whitepaper</a></li>
       <li><a class="hover:text-BrandInfo" href="/sale" on:click={toggleMenu}>Decentralisation Sale 2</a></li>
+      <li><a class="hover:text-BrandInfo" href="/tokens" on:click={toggleMenu}>Token Balances</a></li>
       <li><a class="hover:text-BrandInfo" href="/" on:click={signOut}>Sign Out</a></li>
     </ul>
   </nav>

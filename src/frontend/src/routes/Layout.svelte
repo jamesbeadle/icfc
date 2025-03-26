@@ -27,52 +27,55 @@
   let showLinkAccounts = false;
   let isMenuOpen = false;
   let hasProfile = false;
-  let hasSynced = false; // Flag to prevent repeated syncs
+  let hasSynced = false;
 
   let syncTimeout: NodeJS.Timeout | null = null;
   let lastSync = 0;
   let lastAuthSignedInState: boolean | null = null;
 
   const init = async () => {
-    console.log('layout initialisation');
+    console.log("Layout worker initialised, calling initAuthWorker");
     worker = await initAuthWorker();
-    console.log('auth worker intialised in layout initialisation');
+    console.log("initAuthWorker complete, calling syncAuthStore");
+    await syncAuthStore(); 
   };
 
   const debounceSyncAuthStore = (retryCount = 0, maxRetries = 5) => {
+    console.log("Debouncing auth store");
     if (syncTimeout) clearTimeout(syncTimeout);
-    syncTimeout = setTimeout(() => syncAuthStore(retryCount, maxRetries), 500); // Increased to 500ms
+    syncTimeout = setTimeout(() => syncAuthStore(retryCount, maxRetries), 500);
+    console.log("Debouncing auth store complete");
   };
 
   const throttleWorkerSync = () => {
+    console.log("Throttle worker sync");
     const now = Date.now();
-    if (now - lastSync < 5000) return; // Throttle to once every 5 seconds
+    if (now - lastSync < 5000) return;
     lastSync = now;
     worker?.syncAuthIdle($authStore);
+    console.log("Throttle worker sync complete");
   };
 
   const syncAuthStore = async (retryCount = 0, maxRetries = 5) => {
-    console.log('sync auth store');
+    console.log("sync auth store begin");
     if (!browser) return;
-    console.log('browser object exists');
-
+    
     try {
       isLoading = true;
-      console.log('sync auth store in syncAuthStore');
+      console.log("sync auth store sync");
       await authStore.sync();
+      console.log("sync auth store sync complete");
       
       if (!$authSignedInStore) {
         hasProfile = false;
-        isLoading = false;
         hasSynced = true;
-        console.log('no auth');
+        isLoading = false;
         return;
       }
 
-      console.log('getting profile');
+      console.log("get user profile");
       let profile = await userStore.getProfile();
-
-      console.log('set profile');
+      console.log("get user profile complete");
       hasProfile = !!profile;
       hasSynced = true;
     } catch (err: any) {
@@ -92,37 +95,51 @@
   };
 
   const handleStorageEvent = (event: StorageEvent) => {
-    hasSynced = false; // Allow sync on storage event
+    console.log("begin handle storage event");
+    hasSynced = false;
     debounceSyncAuthStore();
+    console.log("handle storage event complete");
   };
 
   onMount(async () => {
+    console.log("on mount");
     await init();
+    console.log("on mount complete");
   });
 
   $: if (browser && $authSignedInStore !== lastAuthSignedInState) {
-    console.log('Reactive authSignedInStore triggered:', $authSignedInStore);
+    
+    console.log("reactive auth state and browser check");
     lastAuthSignedInState = $authSignedInStore;
+    console.log("lastAuthSignedInState");
+    console.log(lastAuthSignedInState);
+    console.log("hasSynced");
+    console.log(hasSynced);
     if (!hasSynced) {
+      console.log("begin debounce auth store");
       debounceSyncAuthStore();
     }
   }
 
   $: if (worker && $authStore) {
+    console.log("reactive worker and auth store check");
     throttleWorkerSync();
+    console.log("end reactive worker and auth store check");
   }
 
   $: if (browser && $authStore !== undefined) {
+    console.log("browser clean up");
     document.querySelector("body > #app-spinner")?.remove();
   }
 
   let currentPathname = '';
   $: if (browser && page.url) {
+    console.log("page url check");
     if (page.url.pathname !== currentPathname) {
-      console.log('Reactive page.url triggered:', page.url.pathname);
       currentPathname = page.url.pathname;
-      hasSynced = false; // Allow sync on path change
-      debounceSyncAuthStore();
+      if (!hasSynced) {
+        debounceSyncAuthStore(); // Ensure sync on path change
+      }
     }
   }
 

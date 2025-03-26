@@ -45,7 +45,7 @@ export const idlFactory = ({ IDL }) => {
     claimedOn: IDL.Int,
     membershipType: MembershipType,
   });
-  const Result_6 = IDL.Variant({ ok: MembershipClaim, err: Error });
+  const Result_7 = IDL.Variant({ ok: MembershipClaim, err: Error });
   const ClubId = IDL.Nat16;
   const LeagueId = IDL.Nat16;
   const CountryId = IDL.Nat16;
@@ -62,20 +62,20 @@ export const idlFactory = ({ IDL }) => {
     version: IDL.Text,
     onHold: IDL.Bool,
   });
-  const Result_5 = IDL.Variant({ ok: AppStatusDTO, err: Error });
+  const Result_6 = IDL.Variant({ ok: AppStatusDTO, err: Error });
   const CountryDTO = IDL.Record({
     id: CountryId,
     code: IDL.Text,
     name: IDL.Text,
   });
-  const Result_4 = IDL.Variant({ ok: IDL.Vec(CountryDTO), err: Error });
+  const Result_5 = IDL.Variant({ ok: IDL.Vec(CountryDTO), err: Error });
   const GetICFCMembership = IDL.Record({ principalId: PrincipalId });
   const ICFCMembershipDTO = IDL.Record({
     membershipClaims: IDL.Vec(MembershipClaim),
     membershipType: MembershipType,
     membershipExpiryTime: IDL.Int,
   });
-  const Result_3 = IDL.Variant({ ok: ICFCMembershipDTO, err: Error });
+  const Result_4 = IDL.Variant({ ok: ICFCMembershipDTO, err: Error });
   const ProfileDTO = IDL.Record({
     username: IDL.Text,
     displayName: IDL.Text,
@@ -92,7 +92,14 @@ export const idlFactory = ({ IDL }) => {
     nationalityId: IDL.Opt(CountryId),
     principalId: PrincipalId,
   });
-  const Result_2 = IDL.Variant({ ok: ProfileDTO, err: Error });
+  const Result_3 = IDL.Variant({ ok: ProfileDTO, err: Error });
+  const TokenBalances = IDL.Record({
+    icgcBalance: IDL.Nat,
+    icfcBalance: IDL.Nat,
+    icpBalance: IDL.Nat,
+    ckBTCBalance: IDL.Nat,
+  });
+  const Result_2 = IDL.Variant({ ok: TokenBalances, err: Error });
   const NeuronId = IDL.Record({ id: IDL.Vec(IDL.Nat8) });
   const NeuronPermission = IDL.Record({
     principal: IDL.Opt(IDL.Principal),
@@ -166,12 +173,13 @@ export const idlFactory = ({ IDL }) => {
   });
   const Self = IDL.Service({
     addSubApp: IDL.Func([AddSubApp], [Result], []),
-    claimMembership: IDL.Func([], [Result_6], []),
+    claimMembership: IDL.Func([], [Result_7], []),
     createProfile: IDL.Func([CreateProfile], [Result], []),
-    getAppStatus: IDL.Func([], [Result_5], ["query"]),
-    getCountries: IDL.Func([], [Result_4], ["query"]),
-    getICFCMembership: IDL.Func([GetICFCMembership], [Result_3], []),
-    getProfile: IDL.Func([], [Result_2], []),
+    getAppStatus: IDL.Func([], [Result_6], ["query"]),
+    getCountries: IDL.Func([], [Result_5], ["query"]),
+    getICFCMembership: IDL.Func([GetICFCMembership], [Result_4], []),
+    getProfile: IDL.Func([], [Result_3], []),
+    getTokenBalances: IDL.Func([], [Result_2], []),
     getUserNeurons: IDL.Func([], [Result_1], []),
     isUsernameValid: IDL.Func([IsUsernameValid], [IDL.Bool], ["query"]),
     removeSubApp: IDL.Func([SubApp], [Result], []),

@@ -21,6 +21,13 @@ module AppQueries {
         code : Text;
     };
 
+    public type TokenBalances = {
+        icpBalance : Nat;
+        icfcBalance : Nat;
+        ckBTCBalance : Nat;
+        icgcBalance : Nat;
+    };
+
 }
 
   

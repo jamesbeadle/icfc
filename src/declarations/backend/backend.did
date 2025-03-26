@@ -36,6 +36,13 @@ type UpdateDisplayName =
    displayName: text;
    principalId: PrincipalId;
  };
+type TokenBalances = 
+ record {
+   ckBTCBalance: nat;
+   icfcBalance: nat;
+   icgcBalance: nat;
+   icpBalance: nat;
+ };
 type Subaccount = record {subaccount: blob;};
 type SubApp = 
  variant {
@@ -48,12 +55,13 @@ type SubApp =
 type Self = 
  service {
    addSubApp: (AddSubApp) -> (Result);
-   claimMembership: () -> (Result_6);
+   claimMembership: () -> (Result_7);
    createProfile: (CreateProfile) -> (Result);
-   getAppStatus: () -> (Result_5) query;
-   getCountries: () -> (Result_4) query;
-   getICFCMembership: (GetICFCMembership) -> (Result_3);
-   getProfile: () -> (Result_2);
+   getAppStatus: () -> (Result_6) query;
+   getCountries: () -> (Result_5) query;
+   getICFCMembership: (GetICFCMembership) -> (Result_4);
+   getProfile: () -> (Result_3);
+   getTokenBalances: () -> (Result_2);
    getUserNeurons: () -> (Result_1);
    isUsernameValid: (IsUsernameValid) -> (bool) query;
    removeSubApp: (SubApp) -> (Result);
@@ -64,30 +72,35 @@ type Self =
    updateUsername: (UpdateUserName) -> (Result);
    verifySubApp: (VerifySubApp) -> (Result);
  };
-type Result_6 = 
+type Result_7 = 
  variant {
    err: Error;
    ok: MembershipClaim;
  };
-type Result_5 = 
+type Result_6 = 
  variant {
    err: Error;
    ok: AppStatusDTO;
  };
-type Result_4 = 
+type Result_5 = 
  variant {
    err: Error;
    ok: vec CountryDTO;
  };
-type Result_3 = 
+type Result_4 = 
  variant {
    err: Error;
    ok: ICFCMembershipDTO;
  };
-type Result_2 = 
+type Result_3 = 
  variant {
    err: Error;
    ok: ProfileDTO;
+ };
+type Result_2 = 
+ variant {
+   err: Error;
+   ok: TokenBalances;
  };
 type Result_1 = 
  variant {

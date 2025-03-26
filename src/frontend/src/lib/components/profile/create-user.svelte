@@ -15,7 +15,7 @@
   import LogoIcon from "$lib/icons/LogoIcon.svelte";
   import CopyPrincipal from "./copy-principal.svelte";
   import DropdownSelect from "../shared/dropdown-select.svelte";
-  import { getFileExtensionFromFile, isPrincipalValid, isUsernameValid } from "$lib/utils/helpers";
+  import { getFileExtensionFromFile, isPrincipalValid, isUsernameValid, sortByHighestNeuron } from "$lib/utils/helpers";
     
   let isLoading = true;
   let isSubmitDisabled = true;
@@ -80,10 +80,6 @@
         userMembershipEligibility = neuronsResult.userMembershipEligibility;
         maxStakedICFC = neuronsResult.totalMaxStaked;
     }
-  }
-
-  function sortByHighestNeuron(a: Neuron, b: Neuron): number {
-      return Number(b.cached_neuron_stake_e8s) - Number(a.cached_neuron_stake_e8s);
   }
 
   async function checkUsername() {

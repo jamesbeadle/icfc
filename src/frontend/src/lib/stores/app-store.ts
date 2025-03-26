@@ -1,5 +1,8 @@
 import { isError } from "../utils/helpers";
-import type { AppStatusDTO } from "../../../../declarations/backend/backend.did";
+import type {
+  AppStatusDTO,
+  TokenBalances,
+} from "../../../../declarations/backend/backend.did";
 import { AppService } from "$lib/services/app-service";
 import { toasts } from "./toasts-store";
 
@@ -24,6 +27,10 @@ function createAppStore() {
         type: "frontend-update",
       });
     }
+  }
+
+  async function getTokenBalances(): Promise<TokenBalances | undefined> {
+    return new AppService().getTokenBalances();
   }
 
   async function updateFrontend() {
@@ -54,6 +61,7 @@ function createAppStore() {
     checkServerVersion,
     updateFrontend,
     copyTextAndShowToast,
+    getTokenBalances,
   };
 }
 

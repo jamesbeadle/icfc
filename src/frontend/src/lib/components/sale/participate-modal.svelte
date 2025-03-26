@@ -18,7 +18,7 @@
     export let showModal: boolean;
     export let onClose: () => void;
 
-    let userBalance: bigint = BigInt(50);
+    let userBalance: bigint = BigInt(0);
     let donationAmount: bigint = BigInt(0);
     let maxDonationAmount: bigint = BigInt(20);
     let showConfirm: boolean = false;

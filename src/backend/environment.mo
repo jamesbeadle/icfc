@@ -9,6 +9,8 @@ module Environment {
   public let BACKEND_CANISTER_ID = "cfalf-4yaaa-aaaal-qshrq-cai";
   public let FRONTEND_CANISTER_ID = "cqh2i-5qaaa-aaaal-qshsa-cai";
   public let SNS_GOVERNANCE_CANISTER_ID = "detjl-sqaaa-aaaaq-aacqa-cai";
+  public let SNS_LEDGER_CANISTER_ID = "ddsp7-7iaaa-aaaaq-aacqq-cai";
+  public let CKBTC_LEDGER_CANISTER_ID = "mxzaz-hqaaa-aaaar-qaada-cai";
 
   // SubApps canister IDs
   public let FOOTBALL_GOD_BACKEND_CANISTER_ID = "44kin-waaaa-aaaal-qbxra-cai";

@@ -1,5 +1,8 @@
 import * as FlagIcons from "svelte-flag-icons";
-import type { MembershipType } from "../../../../declarations/backend/backend.did";
+import type {
+  MembershipType,
+  Neuron,
+} from "../../../../declarations/backend/backend.did";
 
 export function uint8ArrayToBase64(bytes: Uint8Array): string {
   const binary = Array.from(bytes)
@@ -774,4 +777,16 @@ export function isUsernameValid(username: string): boolean {
   }
 
   return /^[a-zA-Z0-9]+$/.test(username);
+}
+
+export function sortByHighestNeuron(a: Neuron, b: Neuron): number {
+  return Number(b.cached_neuron_stake_e8s) - Number(a.cached_neuron_stake_e8s);
+}
+
+export function formatTokenBalance(balance: BigInt): string {
+  const balanceInTokens = Number(balance) / 100_000_000;
+  let balanceFormatted = balanceInTokens.toLocaleString("en-US", {
+    maximumFractionDigits: 4,
+  });
+  return balanceFormatted;
 }

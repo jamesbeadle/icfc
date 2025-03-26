@@ -7,9 +7,9 @@
     import MembershipCard from "./membership-card.svelte";
     import { getCurrentLevelIndex } from "$lib/utils/helpers";
     import IcfcCoinIcon from "$lib/icons/ICFCCoinIcon.svelte";
-    import CopyIcon from "$lib/icons/CopyIcon.svelte";
     import { toasts } from "$lib/stores/toasts-store";
     import { membershipStore } from "$lib/stores/membership-store";
+    import CopyPrincipal from "../profile/copy-principal.svelte";
 
     export let closeClaimMembership: (reload: boolean) => void;
     export let totalStakedICFC: number;
@@ -34,7 +34,6 @@
 
     async function loadProfile() {
         profile = await userStore.getProfile();
-        console.log(profile)
     }
 
     async function handleRefresh() {
@@ -108,17 +107,7 @@
                 <div class="flex flex-col gap-2">
                     <h3 class="text-lg text-white font-semibold">Your Principal ID</h3>
                     <p class="text-xs">Add this hotkey to any neurons staked for 2 years that you would like to claim membership for.</p>
-                    <div class="relative bg-BrandGrayShade4 rounded-lg p-4">
-                        <button 
-                            on:click={() => { copyTextAndShowToast(profile?.principalId ?? "") }}
-                            class="absolute top-2 right-2 text-BrandGrayShade3 hover:text-white"
-                        >
-                            <CopyIcon className="w-5 h-5" fill='#FFFFFF' />
-                        </button>
-                        <p class="text-BrandGrayShade2 font-mono text-sm break-all px-4">
-                            {profile?.principalId ?? "Not available"}
-                        </p>
-                    </div>
+                   <CopyPrincipal />
                 </div>
             </div>
 

@@ -128,19 +128,21 @@ export interface ProfileDTO {
 }
 export type Result = { ok: null } | { err: Error };
 export type Result_1 = { ok: UserNeuronsDTO } | { err: Error };
-export type Result_2 = { ok: ProfileDTO } | { err: Error };
-export type Result_3 = { ok: ICFCMembershipDTO } | { err: Error };
-export type Result_4 = { ok: Array<CountryDTO> } | { err: Error };
-export type Result_5 = { ok: AppStatusDTO } | { err: Error };
-export type Result_6 = { ok: MembershipClaim } | { err: Error };
+export type Result_2 = { ok: TokenBalances } | { err: Error };
+export type Result_3 = { ok: ProfileDTO } | { err: Error };
+export type Result_4 = { ok: ICFCMembershipDTO } | { err: Error };
+export type Result_5 = { ok: Array<CountryDTO> } | { err: Error };
+export type Result_6 = { ok: AppStatusDTO } | { err: Error };
+export type Result_7 = { ok: MembershipClaim } | { err: Error };
 export interface Self {
   addSubApp: ActorMethod<[AddSubApp], Result>;
-  claimMembership: ActorMethod<[], Result_6>;
+  claimMembership: ActorMethod<[], Result_7>;
   createProfile: ActorMethod<[CreateProfile], Result>;
-  getAppStatus: ActorMethod<[], Result_5>;
-  getCountries: ActorMethod<[], Result_4>;
-  getICFCMembership: ActorMethod<[GetICFCMembership], Result_3>;
-  getProfile: ActorMethod<[], Result_2>;
+  getAppStatus: ActorMethod<[], Result_6>;
+  getCountries: ActorMethod<[], Result_5>;
+  getICFCMembership: ActorMethod<[GetICFCMembership], Result_4>;
+  getProfile: ActorMethod<[], Result_3>;
+  getTokenBalances: ActorMethod<[], Result_2>;
   getUserNeurons: ActorMethod<[], Result_1>;
   isUsernameValid: ActorMethod<[IsUsernameValid], boolean>;
   removeSubApp: ActorMethod<[SubApp], Result>;
@@ -159,6 +161,12 @@ export type SubApp =
   | { JeffBets: null };
 export interface Subaccount {
   subaccount: Uint8Array | number[];
+}
+export interface TokenBalances {
+  icgcBalance: bigint;
+  icfcBalance: bigint;
+  icpBalance: bigint;
+  ckBTCBalance: bigint;
 }
 export interface UpdateDisplayName {
   displayName: string;

@@ -26,6 +26,8 @@ import Management "utils/management";
 import ProfileCanister "canister_definations/profile-canister";
 import AppQueries "queries/app_queries";
 import Countries "utils/countries";
+import SNSToken "./sns-wrappers/ledger";
+import Account "lib/Account";
 
 actor class Self() = this {
 
@@ -142,8 +144,25 @@ actor class Self() = this {
     return await profileManager.updateProfilePicture(dto);
   };
 
-  
-  
+  public shared ({ caller }) func getTokenBalances() : async Result.Result<AppQueries.TokenBalances, T.Error>{
+    assert not Principal.isAnonymous(caller);
+    
+    let icfc_ledger : SNSToken.Interface = actor (Environment.SNS_LEDGER_CANISTER_ID);
+    let ckBTC_ledger : SNSToken.Interface = actor (Environment.CKBTC_LEDGER_CANISTER_ID);
+    let icp_ledger : SNSToken.Interface = actor (Environment.NNS_LEDGER_CANISTER_ID);
+
+
+    let icfc_tokens = await icfc_ledger.icrc1_balance_of({owner = Principal.fromText(Environment.BACKEND_CANISTER_ID); subaccount = null});  
+    let ckBTC_tokens = await ckBTC_ledger.icrc1_balance_of({owner = Principal.fromText(Environment.BACKEND_CANISTER_ID); subaccount = null}); 
+    let icp_tokens = await icp_ledger.icrc1_balance_of({owner = Principal.fromText(Environment.BACKEND_CANISTER_ID); subaccount = null}); 
+    
+    return #ok({
+      ckBTCBalance = ckBTC_tokens;
+      icfcBalance = icfc_tokens;
+      icpBalance = icp_tokens;
+      icgcBalance = 0; // TODO after ICGC SNS
+    })
+  };
 
   public shared ({ caller }) func getICFCMembership(dto : ProfileCommands.GetICFCMembership) : async Result.Result<ProfileQueries.ICFCMembershipDTO, T.Error> {
     assert not Principal.isAnonymous(caller);

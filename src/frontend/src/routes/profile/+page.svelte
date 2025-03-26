@@ -16,6 +16,7 @@
     let activeTab = $state(0);
 
     onMount(async () => {
+        console.log("profile on mount");
         try {
             const profileResult = await userStore.getProfile();
             if (!profileResult) {
@@ -42,7 +43,7 @@
         </div>
     {:else if profile}
         <div class="min-h-screen bg-BrandBlack flex items-center justify-center p-4 xxs:p-6">
-            <div class="bg-BrandGrayShade2 rounded-xl shadow-lg w-full max-w-4xl p-6 xxs:p-8 space-y-6">
+            <div class="bg-BrandGrayShade2 rounded-xl shadow-lg w-full mx-4 md:mx-8 p-6 xxs:p-8 space-y-6">
                 <div class="flex flex-col xxs:flex-row justify-between items-center gap-4">
                     <h1 class="text-3xl cta-text">ICFC Profile</h1>
                 </div>

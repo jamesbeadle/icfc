@@ -54,7 +54,8 @@
     {:else if saleStatus === "ended"}
         <p class="text-lg lg:text-2xl cta-text">Sale has ended</p>
     {:else if saleStatus === "upcoming"}
-        <p class="text-lg lg:text-base cta-text">Sale starts in:</p>
+        <p class="text-lg lg:text-base cta-text">Sale date TBC:</p>
+        <!--
         <div class="flex flex-col items-center gap-4 md:flex-row lg:gap-2 xl:gap-4">
             <FlipNumber value={timeLeft.days} label="Days" />
             <span class="hidden mb-6 text-xl font-bold text-BrandGrayShade2 md:block lg:mb-4">:</span>
@@ -64,6 +65,7 @@
             <span class="hidden mb-6 text-xl font-bold text-BrandGrayShade2 md:block lg:mb-4">:</span>
             <FlipNumber value={timeLeft.seconds} label="Seconds" />
         </div>
+        -->
     {:else if saleStatus === "active"}
         <p class="text-lg font-semibold lg:text-base">Sale ends in:</p>
         <div class="flex flex-col items-center gap-4 md:flex-row lg:gap-2 xl:gap-4">
