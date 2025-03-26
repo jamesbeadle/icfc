@@ -50,7 +50,8 @@
 
     <CopyPrincipal />
 
-    <div class="flex flex-col space-y-2 w-full md:w-1/5">
+    <div class="flex flex-col md:flex-row">
+      <div class="w-full md:w-1/6 flex flex-col">
         <p class="form-title">Profile Picture</p>
         <p class="form-hint">Max size 1mb</p>
         <img 
@@ -59,37 +60,46 @@
           class="profile-picture w-full h-48 object-cover rounded-lg"
         />
       </div>
+      <div class="w-full md:w-5/6 flex flex-col md:flex-row">
 
-      <div class="flex flex-col md:flex-row gap-4">
-        <div class="flex flex-col space-y-1 w-full md:w-1/2">
-          <p class="form-title">Username</p>
-          <p class="form-hint">5-20 characters, letters & numbers only. <span class="text-xs">(Required)</span></p>
-          <p>{username}</p>
+        <div class="flex flex-col md:flex-row">
+        
+          <div class="flex flex-col space-y-1 w-full md:w-1/2">
+            <p class="form-title">Username</p>
+            <p class="form-hint">5-20 characters, letters & numbers only. <span class="text-xs">(Required)</span></p>
+            <p>{username}</p>
+          </div>
+          <div class="flex flex-col space-y-1 w-full md:w-1/2">
+            <p class="form-title">Display Name</p>
+            <p class="form-hint">5-20 characters, letters & numbers only.</p>
+            <p>{displayName}</p>
+          </div>
+
         </div>
-        <div class="flex flex-col space-y-1 w-full md:w-1/2">
-          <p class="form-title">Display Name</p>
-          <p class="form-hint">5-20 characters, letters & numbers only.</p>
-          <p>{displayName}</p>
+        <div class="flex flex-col md:flex-row">
+          <div class="flex flex-col space-y-1 w-full md:w-1/2">
+            <p class="form-title">Your Favourite League</p>
+            <p class="form-hint">Select to find your favourite club.</p>
+            <p>{leagues.find(x => x.id == favouriteLeagueId) }</p>
+          </div>
+          <div class="flex flex-col space-y-1 w-full md:w-1/2">
+            <p class="form-title">Your Favourite Club</p>
+            <p class="form-hint">Select to enable club based rewards.</p>
+            <p>{clubs.find(x => x.id == favouriteClubId) }</p>
+          </div>
+
         </div>
+        <div class="flex flex-col md:flex-row">
+          <div class="flex flex-col space-y-1 w-full md:w-1/2">
+            <p class="form-title">Nationality</p>
+            <p class="form-hint">Select to participate in nationwide football competitions.</p>
+            <p>{countries.find(x => x.id == nationalityId) }</p>
+          </div>
+        </div>
+
       </div>
 
-      <div class="flex flex-col space-y-1 w-full md:w-1/3">
-        <p class="form-title">Nationality</p>
-        <p class="form-hint">Select to participate in nationwide football competitions.</p>
-        <p>{countries.find(x => x.id == nationalityId) }</p>
-      </div>
-      <div class="flex flex-col space-y-1 w-full md:w-1/3">
-        <p class="form-title">Your Favourite League</p>
-        <p class="form-hint">Select to find your favourite club.</p>
-        <p>{leagues.find(x => x.id == favouriteLeagueId) }</p>
-      </div>
-      <div class="flex flex-col space-y-1 w-full md:w-1/3">
-        <p class="form-title">Your Favourite Club</p>
-        <p class="form-hint">Select to enable club based rewards.</p>
-        <p>{clubs.find(x => x.id == favouriteClubId) }</p>
-      </div>
-
-
+    </div>
 
 </div>
 

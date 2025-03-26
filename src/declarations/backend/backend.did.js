@@ -25,7 +25,9 @@ export const idlFactory = ({ IDL }) => {
     AlreadyExists: IDL.Null,
     CreateGameError: IDL.Null,
     UpdateFailed: IDL.Null,
+    NeuronAlreadyUsed: IDL.Null,
     OutOfRange: IDL.Null,
+    AlreadyLinked: IDL.Null,
     PaymentError: IDL.Null,
     CanisterFull: IDL.Null,
     InEligible: IDL.Null,
@@ -100,6 +102,10 @@ export const idlFactory = ({ IDL }) => {
     ckBTCBalance: IDL.Nat,
   });
   const Result_2 = IDL.Variant({ ok: TokenBalances, err: Error });
+  const EligibleMembership = IDL.Record({
+    eligibleNeuronIds: IDL.Vec(IDL.Vec(IDL.Nat8)),
+    membershipType: MembershipType,
+  });
   const NeuronId = IDL.Record({ id: IDL.Vec(IDL.Nat8) });
   const NeuronPermission = IDL.Record({
     principal: IDL.Opt(IDL.Principal),
@@ -140,7 +146,7 @@ export const idlFactory = ({ IDL }) => {
   });
   const UserNeuronsDTO = IDL.Record({
     totalMaxStaked: IDL.Nat64,
-    userMembershipEligibility: MembershipType,
+    userMembershipEligibility: EligibleMembership,
     userNeurons: IDL.Vec(Neuron),
   });
   const Result_1 = IDL.Variant({ ok: UserNeuronsDTO, err: Error });
@@ -182,6 +188,7 @@ export const idlFactory = ({ IDL }) => {
     getTokenBalances: IDL.Func([], [Result_2], []),
     getUserNeurons: IDL.Func([], [Result_1], []),
     isUsernameValid: IDL.Func([IsUsernameValid], [IDL.Bool], ["query"]),
+    removeNeuronsforExpiredMembership: IDL.Func([PrincipalId], [], []),
     removeSubApp: IDL.Func([SubApp], [Result], []),
     updateDisplayName: IDL.Func([UpdateDisplayName], [Result], []),
     updateFavouriteClub: IDL.Func([UpdateFavouriteClub], [Result], []),

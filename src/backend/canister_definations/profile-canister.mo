@@ -10,6 +10,8 @@ import ProfileQueries "../queries/profile_queries";
 import Environment "../environment";
 import ProfileCommands "../commands/profile_commands";
 import Utils "../utils/utils";
+import SNSManager "../managers/sns_manager";
+import SNSGovernance "../sns-wrappers/governance";
 
 actor class _ProfileCanister() {
     private stable var stable_profile_group_indexes : [(Base.PrincipalId, Nat8)] = [];
@@ -109,7 +111,7 @@ actor class _ProfileCanister() {
         };
     };
 
-    public shared ({ caller }) func createProfile(profilePrincipalId : Base.PrincipalId, dto : ProfileCommands.CreateProfile) : async Result.Result<(), T.Error> {
+    public shared ({ caller }) func createProfile(profilePrincipalId : Base.PrincipalId, dto : ProfileCommands.CreateProfile, membership: T.EligibleMembership) : async Result.Result<(), T.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
         assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
@@ -135,8 +137,12 @@ actor class _ProfileCanister() {
             termsAgreed = false;
             appPrincipalIds = dto.appPrincipalIds;
             podcastIds = [];
-            membershipType = #NotClaimed;
-            membershipClaims = [];
+            membershipType = membership.membershipType;
+            membershipClaims = [{
+                claimedOn = Time.now(); 
+                expiresOn = ?Utils.getMembershipExpirationDate(membership.membershipType);
+                membershipType = membership.membershipType;
+            }];
             createdOn = Time.now();
             membershipExpiryTime = 0;
             favouriteLeagueId = dto.favouriteLeagueId;
@@ -144,7 +150,11 @@ actor class _ProfileCanister() {
             nationalityId = dto.nationalityId;
         };
 
-        addProfile(newProfile);
+        let _ = addProfile(newProfile);
+
+        await notifyAppsOfNewProfile(newProfile);
+
+        return #ok();
 
     };
 
@@ -181,7 +191,7 @@ actor class _ProfileCanister() {
                             favouriteClubId = foundProfile.favouriteClubId;
                             nationalityId = foundProfile.nationalityId;
                         };
-                        saveProfile(foundGroupIndex, updatedProfile);
+                        await saveProfile(foundGroupIndex, updatedProfile);
                     };
                     case (null) {
                         return #err(#NotFound);
@@ -224,7 +234,7 @@ actor class _ProfileCanister() {
                             favouriteClubId = foundProfile.favouriteClubId;
                             nationalityId = foundProfile.nationalityId;
                         };
-                        saveProfile(foundGroupIndex, updatedProfile);
+                        await saveProfile(foundGroupIndex, updatedProfile);
                     };
                     case (null) {
                         return #err(#NotFound);
@@ -267,7 +277,7 @@ actor class _ProfileCanister() {
                             favouriteClubId = foundProfile.favouriteClubId;
                             nationalityId = ?dto.nationalityId;
                         };
-                        saveProfile(foundGroupIndex, updatedProfile);
+                        await saveProfile(foundGroupIndex, updatedProfile);
                     };
                     case (null) {
                         return #err(#NotFound);
@@ -310,7 +320,7 @@ actor class _ProfileCanister() {
                             favouriteClubId = ?dto.favouriteClubId;
                             nationalityId = foundProfile.nationalityId;
                         };
-                        saveProfile(foundGroupIndex, updatedProfile);
+                        await saveProfile(foundGroupIndex, updatedProfile);
                     };
                     case (null) {
                         return #err(#NotFound);
@@ -385,7 +395,7 @@ actor class _ProfileCanister() {
                             favouriteClubId = foundProfile.favouriteClubId;
                             nationalityId = foundProfile.nationalityId;
                         };
-                        saveProfile(foundGroupIndex, updatedProfile);
+                        await saveProfile(foundGroupIndex, updatedProfile);
                     };
                     case (null) {
                         return #err(#NotFound);
@@ -436,7 +446,7 @@ actor class _ProfileCanister() {
                             favouriteClubId = foundProfile.favouriteClubId;
                             nationalityId = foundProfile.nationalityId;
                         };
-                        saveProfile(foundGroupIndex, updatedProfile);
+                        await saveProfile(foundGroupIndex, updatedProfile);
                     };
                     case (null) {
                         return #err(#NotFound);
@@ -479,7 +489,7 @@ actor class _ProfileCanister() {
                             favouriteClubId = foundProfile.favouriteClubId;
                             nationalityId = foundProfile.nationalityId;
                         };
-                        saveProfile(foundGroupIndex, updatedProfile);
+                        await saveProfile(foundGroupIndex, updatedProfile);
                     };
                     case (null) {
                         return #err(#NotFound);
@@ -540,7 +550,7 @@ actor class _ProfileCanister() {
                             nationalityId = foundProfile.nationalityId;
                         };
 
-                        let res = saveProfile(foundGroupIndex, updatedProfile);
+                        let res = await saveProfile(foundGroupIndex, updatedProfile);
                         switch (res) {
                             case (#err(error)) { return #err(error) };
                             case (#ok) { return #ok(newClaim) };
@@ -691,7 +701,7 @@ actor class _ProfileCanister() {
                             nationalityId = foundProfile.nationalityId;
                         };
 
-                        let res = saveProfile(foundGroupIndex, updatedProfile);
+                        let res = await saveProfile(foundGroupIndex, updatedProfile);
                         switch (res) {
                             case (#err(_)) { return };
                             case (#ok) {
@@ -905,7 +915,7 @@ actor class _ProfileCanister() {
         return #ok();
     };
 
-    private func saveProfile(profileGroupIndex : Nat8, updatedProfile : T.Profile) : Result.Result<(), T.Error> {
+    private func saveProfile(profileGroupIndex : Nat8, updatedProfile : T.Profile) : async Result.Result<(), T.Error> {
         switch (profileGroupIndex) {
             case 0 {
                 profileGroup1 := Array.map<T.Profile, T.Profile>(
@@ -1055,8 +1065,12 @@ actor class _ProfileCanister() {
                 return #err(#NotFound);
             };
         };
+
+        await notifyAppsOfProfileChange(updatedProfile);
+
         return #ok();
     };
+
     private func getProfileCountInGroup(groupIndex : Nat8) : Nat {
         switch (groupIndex) {
             case 0 {
@@ -1099,6 +1113,14 @@ actor class _ProfileCanister() {
                 return 0;
             };
         };
+    };
+
+    private func notifyAppsOfNewProfile(profile: T.Profile) : async () {
+
+    };
+
+    private func notifyAppsOfProfileChange(profile: T.Profile) : async () {
+        
     };
 
     system func preupgrade() {};
