@@ -7,7 +7,7 @@
   import { membershipStore } from "$lib/stores/membership-store";
   import { toasts } from "$lib/stores/toasts-store";
   
-  import type { CreateProfile, MembershipType, Neuron, PrincipalId, SubApp } from "../../../../../declarations/backend/backend.did";
+  import type { CreateProfile, EligibleMembership, Neuron, PrincipalId, SubApp } from "../../../../../declarations/backend/backend.did";
   import type { LeagueId, ClubId, CountryId, ClubDTO, CountryDTO, FootballLeagueDTO } from "../../../../../external_declarations/data_canister/data_canister.did";
   
   import LocalSpinner from "../shared/local-spinner.svelte";
@@ -41,7 +41,7 @@
   let countries: CountryDTO[] = [];
   let leagues: FootballLeagueDTO[] = [];
   
-  let userMembershipEligibility: MembershipType = { NotEligible: null };
+  let userMembershipEligibility: EligibleMembership | null = null;
   
   let usernameTimeout: NodeJS.Timeout;
 
@@ -372,7 +372,7 @@
           {#if neurons.length > 0}
             <div class="flex flex-col space-y-4">
 
-              <AvailableMembership {neurons} {refreshNeurons} availableMembership={userMembershipEligibility} {maxStakedICFC} />
+              <AvailableMembership {neurons} {refreshNeurons} availableMembership={userMembershipEligibility?.membershipType!} {maxStakedICFC} />
 
               <div class="border-t horizontal-divider border-BrandGrayShade3"></div>
 

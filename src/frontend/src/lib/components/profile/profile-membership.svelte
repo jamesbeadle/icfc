@@ -1,7 +1,7 @@
 <script lang="ts">
     import { toasts } from "$lib/stores/toasts-store";
     import { onMount } from "svelte";
-    import type { MembershipType, Neuron, ProfileDTO } from "../../../../../declarations/backend/backend.did";
+    import type { EligibleMembership, Neuron, ProfileDTO } from "../../../../../declarations/backend/backend.did";
     import CopyPrincipal from "./copy-principal.svelte";
     import { membershipStore } from "$lib/stores/membership-store";
     import { getCurrentLevelIndex, sortByHighestNeuron } from "$lib/utils/helpers";
@@ -12,7 +12,7 @@
     export let profile: ProfileDTO;
     let isLoading = true;
     let neurons: Neuron[] = [];
-    let userMembershipEligibility: MembershipType = { NotEligible: null };
+    let userMembershipEligibility: EligibleMembership | null = null;
     let maxStakedICFC = 0n;
     let submittingClaim = false;
 
@@ -101,7 +101,7 @@
       {#if neurons.length > 0}
         <div class="flex flex-col space-y-4">
 
-          <AvailableMembership {neurons} {refreshNeurons} availableMembership={userMembershipEligibility} {maxStakedICFC} />
+          <AvailableMembership {neurons} {refreshNeurons} availableMembership={userMembershipEligibility?.membershipType!} {maxStakedICFC} />
 
             <div class="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
                 {#each membershipLevels as level, index}
