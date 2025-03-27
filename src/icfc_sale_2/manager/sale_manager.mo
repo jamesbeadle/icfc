@@ -1,147 +1,94 @@
-import SNSToken "../sns-wrappers/ledger";
 import Environment "../../backend/environment";
 import Nat64 "mo:base/Nat64";
 import Int "mo:base/Int";
 import Time "mo:base/Time";
 import Nat "mo:base/Nat";
-import Nat8 "mo:base/Nat8";
 import Result "mo:base/Result";
-import Debug "mo:base/Debug";
-import Array "mo:base/Array";
 import Principal "mo:base/Principal";
+import Buffer "mo:base/Buffer";
+import List "mo:base/List";
 import SaleCommands "../commands/sale_commands";
 import SaleQueries "../queries/sale_queries";
 import Base "mo:waterway-mops/BaseTypes";
 import T "../sale_types";
-import Account "../lib/Account";
+import DTO "../dtos/dtos";
 
 module {
     public class SaleManager() {
-        private var ICP_GOAL : Nat = 48000;
-        private var saleStartTime : Nat64 = 0;
-        private var saleEndTime : Nat64 = 0;
-        private var icpLedger : SNSToken.Interface = actor (Environment.NNS_LEDGER_CANISTER_ID);
-        private var isSaleActive : Bool = (Nat64.fromNat(Int.abs(Time.now())) >= saleStartTime and Nat64.fromNat(Int.abs(Time.now())) < saleEndTime);
-        private var goal : Nat = ICP_GOAL * Nat.pow(10, Nat8.toNat(8));
-        private type Subaccount = Blob;
-        private var icpExchange : Float = 0.0048; //0.0048 ICP per ICFC
-        private var saleCompleted : Bool = false;
+        private var TOTAL_ICFC_PACKETS : Nat = 1000;
+        private var icfcPacketsRemaining : Nat = 1000;
 
         private var saleParticipants : [T.SaleParticipant] = [];
 
-        public func getGoal() : Nat {
-            return goal;
-        };
+        public func claimICFCPackets(dto : SaleCommands.ParticipateInSale) : async Result.Result<(), T.Error> {
+            if (icfcPacketsRemaining == 0) {
+                return #err(#NoPacketsRemaining);
+            };
 
-        // public func getUserICPBalance() : async Float {
-        //     let icpBalance = await icpLedger.balance();
-        //     return icpBalance;
-        // };
+            // let hasMembership = await hasValidICFCMembership(dto.principalId);
+            let hasMembership = #ok(true);
+            switch (hasMembership) {
+                case (#ok(false)) {
+                    return #err(#NotEligible);
+                };
+                case (#err(_)) {
+                    return #err(#NotEligible);
+                };
+                case (#ok(true)) {
 
-        public func getICPGoal() : Nat {
-            return ICP_GOAL;
-        };
+                    let particapantsBuffer = Buffer.fromArray<T.SaleParticipant>(saleParticipants);
+                    particapantsBuffer.add({
+                        user = Principal.fromText(dto.principalId);
+                        icfc_staked = 10_000 * Nat.pow(10, 8);
+                        time = Nat64.fromNat(Int.abs(Time.now()));
+                    });
+                    saleParticipants := Buffer.toArray(particapantsBuffer);
 
-        public func getICPExchange() : Float {
-            return icpExchange;
-        };
+                    icfcPacketsRemaining := icfcPacketsRemaining - 1;
+                    return #ok(());
 
-        public func getSaleActive() : Bool {
-            return isSaleActive;
-        };
-
-        public func getSaleStartTime() : Nat64 {
-            return saleStartTime;
-        };
-
-        // sale fail funcitons
-        private func return_participants_ICP() : async Result.Result<Nat, Text> {
-            let participants = saleParticipants;
-            saleParticipants := [];
-            let fee = await icpLedger.icrc1_fee();
-            var total = 0;
-            for (participant in Array.vals(participants)) {
-                let transfer_result = await icpLedger.icrc1_transfer({
-                    from_subaccount = ?Account.defaultSubaccount();
-                    to = {
-                        owner = Principal.fromText(Environment.ICFC_SALE_2_CANISTER_ID);
-                        subaccount = ?Account.principalToSubaccount(participant.user);
-                    };
-                    amount = participant.amount - fee;
-                    fee = ?fee;
-                    memo = null;
-                    created_at_time = ?Nat64.fromNat(Int.abs(Time.now()));
-                });
-
-                switch (transfer_result) {
-                    case (#Ok(_)) {
-                        total += participant.amount;
-                    };
-                    case (#Err(err)) {
-                        return #err("Transfer failed: " # debug_show (err));
-                    };
                 };
             };
-            return #ok(total);
+        };
+
+        public func getUserParticipation(dto : SaleQueries.GetUserParticipation) : async Result.Result<DTO.UserParticipationDTO, T.Error> {
+            let user_principal = dto.principalId;
+            let all_participants = List.fromArray(saleParticipants);
+            let user_participants = List.filter<T.SaleParticipant>(
+                all_participants,
+                func(participant : T.SaleParticipant) {
+                    return participant.user == Principal.fromText(user_principal);
+                },
+            );
+            let result : DTO.UserParticipationDTO = {
+                participations = List.toArray(user_participants);
+            };
+            return #ok(result);
+        };
+
+        public func get_progress() : async Result.Result<DTO.SaleProgressDTO, T.Error> {
+            let result : DTO.SaleProgressDTO = {
+                totalPackets = TOTAL_ICFC_PACKETS;
+                remainingPackets = icfcPacketsRemaining;
+            };
+            return #ok(result);
         };
 
         // stable storage getters and setters
-
-        public func setStableSaleCompleted(stableSaleCompleted : Bool) {
-            saleCompleted := stableSaleCompleted;
+        public func getStableICFCPacketsRemaining() : Nat {
+            return icfcPacketsRemaining;
         };
 
-        public func getStableSaleCompleted() : Bool {
-            return saleCompleted;
-        };
-
-        public func setStableSaleStartTime(startTime : Nat64) {
-            saleStartTime := startTime;
-        };
-
-        public func getStableSaleStartTime() : Nat64 {
-            return saleStartTime;
-        };
-
-        public func setStableSaleEndTime(endTime : Nat64) {
-            saleEndTime := endTime;
-        };
-
-        public func getStableSaleEndTime() : Nat64 {
-            return saleEndTime;
-        };
-
-        public func setStableICPGoal(stableICPGoal : Nat) {
-            ICP_GOAL := stableICPGoal;
-            goal := ICP_GOAL * Nat.pow(10, Nat8.toNat(8));
-        };
-
-        public func getStableICPGoal() : Nat {
-            return ICP_GOAL;
-        };
-
-        public func setStableICPExchange(exchange : Float) {
-            icpExchange := exchange;
-        };
-
-        public func getStableICPExchange() : Float {
-            return icpExchange;
-        };
-
-        public func setStableSaleActive(active : Bool) {
-            isSaleActive := active;
-        };
-
-        public func getStableSaleActive() : Bool {
-            return isSaleActive;
-        };
-
-        public func setStableSaleParticipants(participants : [T.SaleParticipant]) {
-            saleParticipants := participants;
+        public func setStableICFCPacketsRemaining(stableICFCPacketsRemaining : Nat) {
+            icfcPacketsRemaining := stableICFCPacketsRemaining;
         };
 
         public func getStableSaleParticipants() : [T.SaleParticipant] {
             return saleParticipants;
+        };
+
+        public func setStableSaleParticipants(participants : [T.SaleParticipant]) {
+            saleParticipants := participants;
         };
 
         private func hasValidICFCMembership(user_principal : Base.PrincipalId) : async Result.Result<Bool, T.Error> {
@@ -184,7 +131,6 @@ module {
                     };
                 };
                 case (#err(_)) {
-
                     return #ok(false);
                 };
             };

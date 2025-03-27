@@ -1,8 +1,7 @@
 module SaleTypes {
     public type SaleParticipant = {
         user : Principal;
-        amount : Nat;
-        icfc_staked : Float;
+        icfc_staked : Nat;
         time : Nat64;
     };
 
@@ -19,6 +18,8 @@ module SaleTypes {
         #CreateGameError;
         #UpdateFailed;
         #AlreadyClaimed;
+        #NoPacketsRemaining;
+        #NotEligible;
     };
 
     public type MembershipType = {
