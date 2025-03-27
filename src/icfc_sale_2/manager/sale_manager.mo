@@ -1,12 +1,12 @@
 import Environment "../../backend/environment";
-import Nat64 "mo:base/Nat64";
-import Int "mo:base/Int";
 import Time "mo:base/Time";
 import Nat "mo:base/Nat";
 import Result "mo:base/Result";
-import Principal "mo:base/Principal";
-import Buffer "mo:base/Buffer";
 import List "mo:base/List";
+import TrieMap "mo:base/TrieMap";
+import Iter "mo:base/Iter";
+import Array "mo:base/Array";
+import Text "mo:base/Text";
 import SaleCommands "../commands/sale_commands";
 import SaleQueries "../queries/sale_queries";
 import Base "mo:waterway-mops/BaseTypes";
@@ -18,32 +18,49 @@ module {
         private var TOTAL_ICFC_PACKETS : Nat = 1000;
         private var icfcPacketsRemaining : Nat = 1000;
 
-        private var saleParticipants : [T.SaleParticipant] = [];
+        private var saleParticipants : TrieMap.TrieMap<Base.PrincipalId, List.List<T.ClaimedRecord>> = TrieMap.TrieMap<Base.PrincipalId, List.List<T.ClaimedRecord>>(
+            Text.equal,
+            Text.hash,
+        );
 
         public func claimICFCPackets(dto : SaleCommands.ParticipateInSale) : async Result.Result<(), T.Error> {
             if (icfcPacketsRemaining == 0) {
                 return #err(#NoPacketsRemaining);
             };
 
+            if (icfcPacketsRemaining < dto.packets){
+                return #err(#InsufficientPacketsRemaining);
+            };
+
             let hasMembership = await hasValidICFCMembership(dto.principalId);
             switch (hasMembership) {
-                case (#ok(false)) {
+                case (#ok(false, _)) {
                     return #err(#NotEligible);
                 };
                 case (#err(_)) {
                     return #err(#NotEligible);
                 };
-                case (#ok(true)) {
+                case (#ok(true, membership)) {
 
-                    let particapantsBuffer = Buffer.fromArray<T.SaleParticipant>(saleParticipants);
-                    particapantsBuffer.add({
-                        user = Principal.fromText(dto.principalId);
-                        icfc_staked = 10_000 * Nat.pow(10, 8);
-                        time = Nat64.fromNat(Int.abs(Time.now()));
-                    });
-                    saleParticipants := Buffer.toArray(particapantsBuffer);
+                    let user_principal = dto.principalId;
+                    let claimedRecord : T.ClaimedRecord = {
+                        claimedOn = Time.now();
+                        packetsClaimed = dto.packets;
+                        membershipType = membership;
+                    };
 
-                    icfcPacketsRemaining := icfcPacketsRemaining - 1;
+                    let user = saleParticipants.get(user_principal);
+                    switch (user) {
+                        case (null) {
+                            saleParticipants.put(user_principal, List.fromArray([claimedRecord]));
+                        };
+                        case (?participations) {
+                            let updatedParticipations = List.append(participations, List.fromArray([claimedRecord]));
+                            saleParticipants.put(user_principal, updatedParticipations);
+                        };
+
+                    };
+                    icfcPacketsRemaining := icfcPacketsRemaining - dto.packets;
                     return #ok(());
 
                 };
@@ -52,17 +69,15 @@ module {
 
         public func getUserParticipation(dto : SaleQueries.GetUserParticipation) : async Result.Result<DTO.UserParticipationDTO, T.Error> {
             let user_principal = dto.principalId;
-            let all_participants = List.fromArray(saleParticipants);
-            let user_participants = List.filter<T.SaleParticipant>(
-                all_participants,
-                func(participant : T.SaleParticipant) {
-                    return participant.user == Principal.fromText(user_principal);
-                },
-            );
-            let result : DTO.UserParticipationDTO = {
-                participations = List.toArray(user_participants);
+            let user = saleParticipants.get(user_principal);
+            switch (user) {
+                case (null) {
+                    return #ok({ participations = [] });
+                };
+                case (?participations) {
+                    return #ok({ participations = List.toArray(participations) });
+                };
             };
-            return #ok(result);
         };
 
         public func get_progress() : async Result.Result<DTO.SaleProgressDTO, T.Error> {
@@ -82,15 +97,26 @@ module {
             icfcPacketsRemaining := stableICFCPacketsRemaining;
         };
 
-        public func getStableSaleParticipants() : [T.SaleParticipant] {
-            return saleParticipants;
+        public func getStableSaleParticipants() : [(Base.PrincipalId, [T.ClaimedRecord])] {
+            var data : [(Base.PrincipalId, [T.ClaimedRecord])] = [];
+            for ((key, value) in saleParticipants.entries()) {
+                data := Array.append(data, [(key, List.toArray(value))]);
+            };
+            return data;
         };
 
-        public func setStableSaleParticipants(participants : [T.SaleParticipant]) {
-            saleParticipants := participants;
+        public func setStableSaleParticipants(participants : [(Base.PrincipalId, [T.ClaimedRecord])]) {
+            let data : TrieMap.TrieMap<Base.PrincipalId, List.List<T.ClaimedRecord>> = TrieMap.TrieMap<Base.PrincipalId, List.List<T.ClaimedRecord>>(
+                Text.equal,
+                Text.hash,
+            );
+            for (users in Iter.fromArray(participants)) {
+                data.put(users.0, List.fromArray(users.1));
+            };
+            saleParticipants := data;
         };
 
-        private func hasValidICFCMembership(user_principal : Base.PrincipalId) : async Result.Result<Bool, T.Error> {
+        private func hasValidICFCMembership(user_principal : Base.PrincipalId) : async Result.Result<(Bool, T.MembershipType), T.Error> {
             let icfc_canister = actor (Environment.BACKEND_CANISTER_ID) : actor {
                 getICFCMembership : SaleCommands.GetICFCMembership -> async Result.Result<SaleQueries.ICFCMembershipDTO, T.Error>;
             };
@@ -106,31 +132,31 @@ module {
 
                     switch (membershipType) {
                         case (#Expired) {
-                            return #ok(false);
+                            return #ok(false, membershipType);
                         };
                         case (#NotClaimed) {
-                            return #ok(false);
+                            return #ok(false, membershipType);
                         };
                         case (#NotEligible) {
-                            return #ok(false);
+                            return #ok(false, membershipType);
                         };
                         case (#Lifetime) {
-                            return #ok(true);
+                            return #ok(true, membershipType);
                         };
                         case (#Monthly) {
-                            return #ok(true);
+                            return #ok(true, membershipType);
                         };
                         case (#Seasonal) {
-                            return #ok(true);
+                            return #ok(true, membershipType);
                         };
                         case (#Founding) {
-                            return #ok(true);
+                            return #ok(true, membershipType);
                         };
 
                     };
                 };
                 case (#err(_)) {
-                    return #ok(false);
+                    return #err(#NotEligible);
                 };
             };
 

@@ -18,16 +18,17 @@ actor class Self() = this {
 
     private stable var stable_icfcPacketsRemaining : Nat = 1000;
 
-    private stable var stable_saleParticipants : [T.SaleParticipant] = [];
+    private stable var stable_saleParticipants : [(Base.PrincipalId, [T.ClaimedRecord])] = [];
 
     public shared query func getAppStatus() : async Result.Result<DTO.AppStatusDTO, T.Error> {
         return #ok(appStatus);
     };
 
-    public shared ({ caller }) func claimICFCPackets() : async Result.Result<(), T.Error> {
+    public shared ({ caller }) func claimICFCPackets(command : SaleCommands.CalimICFCPackets) : async Result.Result<(), T.Error> {
         assert not Principal.isAnonymous(caller);
         let dto : SaleCommands.ParticipateInSale = {
             principalId = Principal.toText(caller);
+            packets = command.packets;
         };
         return await saleManager.claimICFCPackets(dto);
     };

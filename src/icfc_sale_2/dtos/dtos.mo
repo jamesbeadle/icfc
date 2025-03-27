@@ -18,6 +18,6 @@ module DTOs {
     };
 
     public type UserParticipationDTO = {
-        participations : [T.SaleParticipant];
+        participations : [T.ClaimedRecord];
     };
 };

@@ -7,6 +7,10 @@ module = {
 
     public type ParticipateInSale = {
         principalId : Base.PrincipalId;
+        packets: Nat;
+    };
+    public type CalimICFCPackets = {
+        packets: Nat;
     };
 
 };

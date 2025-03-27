@@ -1,8 +1,8 @@
 module SaleTypes {
-    public type SaleParticipant = {
-        user : Principal;
-        icfc_staked : Nat;
-        time : Nat64;
+    public type ClaimedRecord = {
+        packetsClaimed : Nat;
+        claimedOn : Int;
+        membershipType : MembershipType;
     };
 
     public type Error = {
@@ -20,6 +20,7 @@ module SaleTypes {
         #AlreadyClaimed;
         #NoPacketsRemaining;
         #NotEligible;
+        #InsufficientPacketsRemaining;
     };
 
     public type MembershipType = {
