@@ -1,3 +1,5 @@
+import T "../sale_types";
+
 module DTOs {
     public type AppStatusDTO = {
         onHold : Bool;
@@ -10,12 +12,12 @@ module DTOs {
         stringTime : Text;
     };
 
-    public type SaleGoalDTO = {
-        goal : Nat;
-        currentProgress : Nat;
+    public type SaleProgressDTO = {
+        totalPackets : Nat;
+        remainingPackets : Nat;
     };
 
-    public type ChargeMembershipDTO = {
-
+    public type UserParticipationDTO = {
+        participations : [T.SaleParticipant];
     };
 };
