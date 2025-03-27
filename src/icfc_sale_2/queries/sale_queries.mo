@@ -15,4 +15,8 @@ module {
     public type GetUserParticipation = {
         principalId : Base.PrincipalId;
     };
+
+    public type GetICFCDistributions = {
+        principalId : Base.PrincipalId;
+    };
 };
