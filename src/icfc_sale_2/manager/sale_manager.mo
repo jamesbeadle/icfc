@@ -25,8 +25,7 @@ module {
                 return #err(#NoPacketsRemaining);
             };
 
-            // let hasMembership = await hasValidICFCMembership(dto.principalId);
-            let hasMembership = #ok(true);
+            let hasMembership = await hasValidICFCMembership(dto.principalId);
             switch (hasMembership) {
                 case (#ok(false)) {
                     return #err(#NotEligible);
