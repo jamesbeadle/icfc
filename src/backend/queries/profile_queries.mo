@@ -28,6 +28,14 @@ module ProfileQueries {
         offset : Nat;
     };
 
+    public type GetClaimedMemberships = {
+        principalId : Base.PrincipalId;
+        offset : Nat;
+    };
+    public type ProfilePictureDTO = {
+        profilePicture : ?Blob;
+    };
+
     public type Profiles = {
         profiles : [ProfileSummary];
     };
@@ -50,11 +58,9 @@ module ProfileQueries {
         userMembershipEligibility : T.EligibleMembership;
     };
 
-    // public type ICFCMembershipDTO = {
-    //     membershipType : T.MembershipType;
-    //     membershipClaims : [T.MembershipClaim];
-    //     membershipExpiryTime : Int;
-    // };
+    public type ClaimedMembershipsDTO = {
+        claimedMemberships : [T.MembershipClaim];
+    };
 
     public type UsernameAvailable = Bool;
 

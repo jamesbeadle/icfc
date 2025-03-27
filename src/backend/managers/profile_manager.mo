@@ -31,20 +31,47 @@ module {
 
         //Getters
 
-        public func getProfilePicture(principalId : Base.PrincipalId) : async ?Blob {
+        public func getProfilePicture(principalId : Base.PrincipalId) : async Result.Result<ProfileQueries.ProfilePictureDTO, T.Error> {
             let existingProfileCanisterId = profileCanisterIndex.get(principalId);
             switch (existingProfileCanisterId) {
                 case (?foundCanisterId) {
 
                     let profile_canister = actor (foundCanisterId) : actor {
-                        getProfilePicture : (principalId : Base.PrincipalId) -> async ?Blob;
+                        getProfile : (dto : ProfileCommands.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, T.Error>;
                     };
+                    let dto : ProfileCommands.GetProfile = {
+                        principalId = principalId;
+                    };
+                    let profile = await profile_canister.getProfile(dto);
 
-                    let profile = await profile_canister.getProfilePicture(principalId);
-                    return profile;
+                    switch (profile) {
+                        case (#ok(profileDTO)) {
+                            return #ok({
+                                profilePicture = profileDTO.profilePicture;
+                            });
+                        };
+                        case (#err(_)) {
+                            return #err(#NotFound);
+                        };
+                    };
                 };
                 case (null) {
-                    return null;
+                    return #err(#NotFound);
+                };
+            };
+        };
+
+        public func getClaimedMembership(dto : ProfileQueries.GetClaimedMemberships) : async Result.Result<ProfileQueries.ClaimedMembershipsDTO, T.Error> {
+            let existingProfileCanisterId = profileCanisterIndex.get(dto.principalId);
+            switch (existingProfileCanisterId) {
+                case (?foundCanisterId) {
+                    let profile_canister = actor (foundCanisterId) : actor {
+                        getClaimedMembership : (dto : ProfileQueries.GetClaimedMemberships) -> async Result.Result<ProfileQueries.ClaimedMembershipsDTO, T.Error>;
+                    };
+                    return await profile_canister.getClaimedMembership(dto);
+                };
+                case (null) {
+                    return #err(#NotFound);
                 };
             };
         };

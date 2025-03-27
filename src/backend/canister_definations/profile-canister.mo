@@ -11,8 +11,6 @@ import ProfileQueries "../queries/profile_queries";
 import Environment "../environment";
 import ProfileCommands "../commands/profile_commands";
 import Utils "../utils/utils";
-import SNSManager "../managers/sns_manager";
-import SNSGovernance "../sns-wrappers/governance";
 
 actor class _ProfileCanister() {
     private stable var stable_profile_group_indexes : [(Base.PrincipalId, Nat8)] = [];
@@ -35,6 +33,8 @@ actor class _ProfileCanister() {
     private stable var MAX_PROFILES_PER_CANISTER : Nat = 12000;
     private stable var canisterFull = false;
 
+    private let MEMBERSHIPS_ROW_COUNT_LIMIT = 20;
+
     //Public endpoints
 
     public shared ({ caller }) func getProfile(dto : ProfileCommands.GetProfile) : async Result.Result<ProfileQueries.ProfileDTO, T.Error> {
@@ -54,8 +54,8 @@ actor class _ProfileCanister() {
                 let profile = findProfile(foundGroupIndex, dto.principalId);
                 switch (profile) {
                     case (?foundProfile) {
-                       
-                        let recent_5_membership_claims = List.take<T.MembershipClaim>(List.reverse(List.fromArray(foundProfile.membershipClaims)),5);
+
+                        let recent_5_membership_claims = List.take<T.MembershipClaim>(List.reverse(List.fromArray(foundProfile.membershipClaims)), 5);
                         let membershipArray = List.toArray(recent_5_membership_claims);
 
                         let dto : ProfileQueries.ProfileDTO = {
@@ -75,6 +75,40 @@ actor class _ProfileCanister() {
                             nationalityId = foundProfile.nationalityId;
                         };
                         return #ok(dto);
+                    };
+                    case (null) {
+                        return #err(#NotFound);
+                    };
+                };
+            };
+        };
+    };
+
+    public shared ({ caller }) func getClaimedMembership(dto : ProfileQueries.GetClaimedMemberships) : async Result.Result<ProfileQueries.ClaimedMembershipsDTO, T.Error> {
+        assert not Principal.isAnonymous(caller);
+        let backendPrincipalId = Principal.toText(caller);
+        assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
+
+        var groupIndex : ?Nat8 = null;
+        for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
+            if (profileGroupIndex.0 == dto.principalId) {
+                groupIndex := ?profileGroupIndex.1;
+            };
+        };
+        switch (groupIndex) {
+            case (null) { return #err(#NotFound) };
+            case (?foundGroupIndex) {
+                let profile = findProfile(foundGroupIndex, dto.principalId);
+                switch (profile) {
+                    case (?foundProfile) {
+                        let allMembershipClaims = List.fromArray(foundProfile.membershipClaims);
+                        let droppedEntries = List.drop<T.MembershipClaim>(allMembershipClaims, dto.offset);
+                        let paginatedEntires = List.take<T.MembershipClaim>(droppedEntries, MEMBERSHIPS_ROW_COUNT_LIMIT);
+
+                        let claimedMembershipsDTO : ProfileQueries.ClaimedMembershipsDTO = {
+                            claimedMemberships = List.toArray(paginatedEntires);
+                        };
+                        return #ok(claimedMembershipsDTO);
                     };
                     case (null) {
                         return #err(#NotFound);
