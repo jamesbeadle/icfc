@@ -84,5 +84,6 @@ module ProfileCommands {
     public type UpdateICFCProfile = {
         subAppUserPrincipalId : Base.PrincipalId;
         subApp : T.SubApp;
+        membershipType : T.MembershipType;
     };
 };
