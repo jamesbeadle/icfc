@@ -60,19 +60,15 @@ export type Error =
   | { NeuronAlreadyUsed: null }
   | { OutOfRange: null }
   | { AlreadyLinked: null }
+  | { FailedInterCanisterCall: null }
   | { PaymentError: null }
   | { CanisterFull: null }
   | { InEligible: null };
 export interface Followees {
   followees: Array<NeuronId>;
 }
-export interface GetICFCMembership {
+export interface GetICFCProfile {
   principalId: PrincipalId;
-}
-export interface ICFCMembershipDTO {
-  membershipClaims: Array<MembershipClaim>;
-  membershipType: MembershipType;
-  membershipExpiryTime: bigint;
 }
 export interface IsUsernameValid {
   username: string;
@@ -136,17 +132,16 @@ export type Result = { ok: null } | { err: Error };
 export type Result_1 = { ok: UserNeuronsDTO } | { err: Error };
 export type Result_2 = { ok: TokenBalances } | { err: Error };
 export type Result_3 = { ok: ProfileDTO } | { err: Error };
-export type Result_4 = { ok: ICFCMembershipDTO } | { err: Error };
-export type Result_5 = { ok: Array<CountryDTO> } | { err: Error };
-export type Result_6 = { ok: AppStatusDTO } | { err: Error };
-export type Result_7 = { ok: MembershipClaim } | { err: Error };
+export type Result_4 = { ok: Array<CountryDTO> } | { err: Error };
+export type Result_5 = { ok: AppStatusDTO } | { err: Error };
+export type Result_6 = { ok: MembershipClaim } | { err: Error };
 export interface Self {
   addSubApp: ActorMethod<[AddSubApp], Result>;
-  claimMembership: ActorMethod<[], Result_7>;
+  claimMembership: ActorMethod<[], Result_6>;
   createProfile: ActorMethod<[CreateProfile], Result>;
-  getAppStatus: ActorMethod<[], Result_6>;
-  getCountries: ActorMethod<[], Result_5>;
-  getICFCMembership: ActorMethod<[GetICFCMembership], Result_4>;
+  getAppStatus: ActorMethod<[], Result_5>;
+  getCountries: ActorMethod<[], Result_4>;
+  getICFCProfile: ActorMethod<[GetICFCProfile], Result_3>;
   getProfile: ActorMethod<[], Result_3>;
   getTokenBalances: ActorMethod<[], Result_2>;
   getUserNeurons: ActorMethod<[], Result_1>;

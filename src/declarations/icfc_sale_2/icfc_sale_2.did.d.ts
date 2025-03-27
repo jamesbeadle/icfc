@@ -19,9 +19,12 @@ export type Error =
   | { UpdateFailed: null }
   | { OutOfRange: null }
   | { PaymentError: null };
-export type Result = { ok: AppStatusDTO } | { err: Error };
+export type PrincipalId = string;
+export type Result = { ok: PrincipalId } | { err: string };
+export type Result_1 = { ok: AppStatusDTO } | { err: Error };
 export interface Self {
-  getAppStatus: ActorMethod<[], Result>;
+  getAppStatus: ActorMethod<[], Result_1>;
+  getPrinciapl: ActorMethod<[], Result>;
 }
 export interface _SERVICE extends Self {}
 export declare const idlFactory: IDL.InterfaceFactory;

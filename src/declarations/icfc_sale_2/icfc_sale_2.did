@@ -1,12 +1,19 @@
 type Self = 
  service {
-   getAppStatus: () -> (Result) query;
+   getAppStatus: () -> (Result_1) query;
+   getPrinciapl: () -> (Result);
  };
-type Result = 
+type Result_1 = 
  variant {
    err: Error;
    ok: AppStatusDTO;
  };
+type Result = 
+ variant {
+   err: text;
+   ok: PrincipalId;
+ };
+type PrincipalId = text;
 type Error = 
  variant {
    AlreadyClaimed;

@@ -161,6 +161,12 @@ actor class Self() = this {
     return await profileManager.getProfile(dto);
   };
 
+  public shared ({ caller }) func getICFCProfileSummary(dto : ProfileCommands.GetICFCProfile) : async Result.Result<ProfileQueries.ICFCProfileSummary, T.Error> {
+    assert not Principal.isAnonymous(caller);
+    assert Utils.isSubApp(Principal.toText(caller));
+    return await profileManager.getICFCProfileSummary(dto);
+  };
+
   public shared query ({ caller }) func getCountries() : async Result.Result<[AppQueries.CountryDTO], T.Error> {
     assert not Principal.isAnonymous(caller);
     return #ok(Countries.countries);

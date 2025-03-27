@@ -17,9 +17,12 @@ export const idlFactory = ({ IDL }) => {
     OutOfRange: IDL.Null,
     PaymentError: IDL.Null,
   });
-  const Result = IDL.Variant({ ok: AppStatusDTO, err: Error });
+  const Result_1 = IDL.Variant({ ok: AppStatusDTO, err: Error });
+  const PrincipalId = IDL.Text;
+  const Result = IDL.Variant({ ok: PrincipalId, err: IDL.Text });
   const Self = IDL.Service({
-    getAppStatus: IDL.Func([], [Result], ["query"]),
+    getAppStatus: IDL.Func([], [Result_1], ["query"]),
+    getPrinciapl: IDL.Func([], [Result], []),
   });
   return Self;
 };

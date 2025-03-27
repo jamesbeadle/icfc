@@ -21,6 +21,21 @@ module ProfileQueries {
         nationalityId : ?Base.CountryId;
     };
 
+    public type ICFCProfileSummary = {
+        principalId : Base.PrincipalId;
+        username : Text;
+        displayName : Text;
+        membershipType : T.MembershipType;
+        membershipClaim : T.MembershipClaim;
+        createdOn : Int;
+        profilePicture : ?Blob;
+        termsAgreed : Bool;
+        membershipExpiryTime : Int;
+        favouriteLeagueId : ?FootballTypes.LeagueId;
+        favouriteClubId : ?FootballTypes.ClubId;
+        nationalityId : ?Base.CountryId;
+    };
+
     public type ListProfiles = {
         searchTerm : Text;
         totalEntries : Nat;

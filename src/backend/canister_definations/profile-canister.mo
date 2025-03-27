@@ -84,6 +84,53 @@ actor class _ProfileCanister() {
         };
     };
 
+    public shared ({ caller }) func getProfileSummary(dto : ProfileCommands.GetProfile) : async Result.Result<ProfileQueries.ICFCProfileSummary, T.Error> {
+        assert not Principal.isAnonymous(caller);
+        let backendPrincipalId = Principal.toText(caller);
+        assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
+
+        var groupIndex : ?Nat8 = null;
+        for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
+            if (profileGroupIndex.0 == dto.principalId) {
+                groupIndex := ?profileGroupIndex.1;
+            };
+        };
+        switch (groupIndex) {
+            case (null) { return #err(#NotFound) };
+            case (?foundGroupIndex) {
+                let profile = findProfile(foundGroupIndex, dto.principalId);
+                switch (profile) {
+                    case (?foundProfile) {
+
+                        let latest_membership_claims = List.take<T.MembershipClaim>(List.reverse(List.fromArray(foundProfile.membershipClaims)), 1);
+                        let latestMembershipClaim = List.toArray(latest_membership_claims)[0];
+
+                        let dto : ProfileQueries.ICFCProfileSummary = {
+                            principalId = foundProfile.principalId;
+                            username = foundProfile.username;
+                            profilePicture = foundProfile.profilePicture;
+                            displayName = foundProfile.displayName;
+                            termsAgreed = foundProfile.termsAgreed;
+                            appPrincipalIds = foundProfile.appPrincipalIds;
+                            podcastIds = foundProfile.podcastIds;
+                            membershipType = foundProfile.membershipType;
+                            membershipClaim = latestMembershipClaim;
+                            createdOn = foundProfile.createdOn;
+                            membershipExpiryTime = foundProfile.membershipExpiryTime;
+                            favouriteLeagueId = foundProfile.favouriteLeagueId;
+                            favouriteClubId = foundProfile.favouriteClubId;
+                            nationalityId = foundProfile.nationalityId;
+                        };
+                        return #ok(dto);
+                    };
+                    case (null) {
+                        return #err(#NotFound);
+                    };
+                };
+            };
+        };
+    };
+
     public shared ({ caller }) func getClaimedMembership(dto : ProfileQueries.GetClaimedMemberships) : async Result.Result<ProfileQueries.ClaimedMembershipsDTO, T.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);

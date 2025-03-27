@@ -98,6 +98,24 @@ module {
             };
         };
 
+        public func getICFCProfileSummary(dto : ProfileCommands.GetICFCProfile) : async Result.Result<ProfileQueries.ICFCProfileSummary, T.Error> {
+            let existingProfileCanisterId = profileCanisterIndex.get(dto.principalId);
+            switch (existingProfileCanisterId) {
+                case (?foundCanisterId) {
+
+                    let profile_canister = actor (foundCanisterId) : actor {
+                        getICFCProfileSummary : (dto : ProfileCommands.GetICFCProfile) -> async Result.Result<ProfileQueries.ICFCProfileSummary, T.Error>;
+                    };
+
+                    let profile = await profile_canister.getICFCProfileSummary(dto);
+                    return profile;
+                };
+                case (null) {
+                    return #err(#NotFound);
+                };
+            };
+        };
+
         // Update Functions
         public func createProfile(principalId : Base.PrincipalId, dto : ProfileCommands.CreateProfile, membership : T.EligibleMembership) : async Result.Result<(), T.Error> {
 
