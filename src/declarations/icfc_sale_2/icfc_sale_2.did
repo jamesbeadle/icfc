@@ -1,34 +1,71 @@
+type UserParticipationDTO = record {participations: vec ClaimedRecord;};
 type Self = 
  service {
-   getAppStatus: () -> (Result_1) query;
-   getPrinciapl: () -> (Result);
+   claimICFCPackets: (CalimICFCPackets) -> (Result_3);
+   getAppStatus: () -> (Result_2) query;
+   getUserParticipation: () -> (Result_1);
+   get_progress: () -> (Result);
  };
-type Result_1 = 
+type SaleProgressDTO = 
+ record {
+   remainingPackets: nat;
+   totalPackets: nat;
+ };
+type Result_3 = 
+ variant {
+   err: Error;
+   ok;
+ };
+type Result_2 = 
  variant {
    err: Error;
    ok: AppStatusDTO;
  };
+type Result_1 = 
+ variant {
+   err: Error;
+   ok: UserParticipationDTO;
+ };
 type Result = 
  variant {
-   err: text;
-   ok: PrincipalId;
+   err: Error;
+   ok: SaleProgressDTO;
  };
-type PrincipalId = text;
+type MembershipType = 
+ variant {
+   Expired;
+   Founding;
+   Lifetime;
+   Monthly;
+   NotClaimed;
+   NotEligible;
+   Seasonal;
+ };
 type Error = 
  variant {
    AlreadyClaimed;
    AlreadyExists;
    CreateGameError;
    DecodeError;
+   InsufficientPacketsRemaining;
    InvalidData;
+   NoPacketsRemaining;
    NotAllowed;
    NotAuthorized;
+   NotEligible;
    NotEnoughFunds;
    NotFound;
    OutOfRange;
    PaymentError;
    UpdateFailed;
  };
+type ClaimedRecord = 
+ record {
+   claimedOn: int;
+   membershipType: MembershipType;
+   packetsClaimed: nat;
+ };
+type CalimICFCPackets = record {packets: nat;};
 type AppStatusDTO = 
  record {
    onHold: bool;

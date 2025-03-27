@@ -55,11 +55,12 @@ type SubApp =
 type Self = 
  service {
    addSubApp: (AddSubApp) -> (Result);
-   claimMembership: () -> (Result_6);
+   claimMembership: () -> (Result_7);
    createProfile: (CreateProfile) -> (Result);
-   getAppStatus: () -> (Result_5) query;
-   getCountries: () -> (Result_4) query;
+   getAppStatus: () -> (Result_6) query;
+   getCountries: () -> (Result_5) query;
    getICFCProfile: (GetICFCProfile) -> (Result_3);
+   getICFCProfileSummary: (GetICFCProfile) -> (Result_4);
    getProfile: () -> (Result_3);
    getTokenBalances: () -> (Result_2);
    getUserNeurons: () -> (Result_1);
@@ -73,20 +74,25 @@ type Self =
    updateUsername: (UpdateUserName) -> (Result);
    verifySubApp: (VerifySubApp) -> (Result);
  };
-type Result_6 = 
+type Result_7 = 
  variant {
    err: Error;
    ok: MembershipClaim;
  };
-type Result_5 = 
+type Result_6 = 
  variant {
    err: Error;
    ok: AppStatusDTO;
  };
-type Result_4 = 
+type Result_5 = 
  variant {
    err: Error;
    ok: vec CountryDTO;
+ };
+type Result_4 = 
+ variant {
+   err: Error;
+   ok: ICFCProfileSummary;
  };
 type Result_3 = 
  variant {
@@ -174,6 +180,21 @@ type MembershipClaim =
  };
 type LeagueId = nat16;
 type IsUsernameValid = record {username: text;};
+type ICFCProfileSummary = 
+ record {
+   createdOn: int;
+   displayName: text;
+   favouriteClubId: opt ClubId;
+   favouriteLeagueId: opt LeagueId;
+   membershipClaim: MembershipClaim;
+   membershipExpiryTime: int;
+   membershipType: MembershipType;
+   nationalityId: opt CountryId;
+   principalId: PrincipalId;
+   profilePicture: opt blob;
+   termsAgreed: bool;
+   username: text;
+ };
 type GetICFCProfile = record {principalId: PrincipalId;};
 type Followees = record {followees: vec NeuronId;};
 type Error = 
