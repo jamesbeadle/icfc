@@ -5,6 +5,7 @@ import Iter "mo:base/Iter";
 import Time "mo:base/Time";
 import Array "mo:base/Array";
 import Buffer "mo:base/Buffer";
+import List "mo:base/List";
 import T "../icfc_types";
 import ProfileQueries "../queries/profile_queries";
 import Environment "../environment";
@@ -53,6 +54,10 @@ actor class _ProfileCanister() {
                 let profile = findProfile(foundGroupIndex, dto.principalId);
                 switch (profile) {
                     case (?foundProfile) {
+                       
+                        let recent_5_membership_claims = List.take<T.MembershipClaim>(List.reverse(List.fromArray(foundProfile.membershipClaims)),5);
+                        let membershipArray = List.toArray(recent_5_membership_claims);
+
                         let dto : ProfileQueries.ProfileDTO = {
                             principalId = foundProfile.principalId;
                             username = foundProfile.username;
@@ -62,7 +67,7 @@ actor class _ProfileCanister() {
                             appPrincipalIds = foundProfile.appPrincipalIds;
                             podcastIds = foundProfile.podcastIds;
                             membershipType = foundProfile.membershipType;
-                            membershipClaims = foundProfile.membershipClaims;
+                            membershipClaims = membershipArray;
                             createdOn = foundProfile.createdOn;
                             membershipExpiryTime = foundProfile.membershipExpiryTime;
                             favouriteLeagueId = foundProfile.favouriteLeagueId;
@@ -79,7 +84,7 @@ actor class _ProfileCanister() {
         };
     };
 
-    public shared ({ caller }) func createProfile(profilePrincipalId : Base.PrincipalId, dto : ProfileCommands.CreateProfile, membership: T.EligibleMembership) : async Result.Result<(), T.Error> {
+    public shared ({ caller }) func createProfile(profilePrincipalId : Base.PrincipalId, dto : ProfileCommands.CreateProfile, membership : T.EligibleMembership) : async Result.Result<(), T.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
         assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
@@ -107,7 +112,7 @@ actor class _ProfileCanister() {
             podcastIds = [];
             membershipType = membership.membershipType;
             membershipClaims = [{
-                claimedOn = Time.now(); 
+                claimedOn = Time.now();
                 expiresOn = ?Utils.getMembershipExpirationDate(membership.membershipType);
                 membershipType = membership.membershipType;
             }];

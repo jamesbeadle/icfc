@@ -236,6 +236,7 @@ module {
                                                 let profile : ProfileQueries.ProfileDTO = existingProfile;
                                                 for ((subApp, subAppPrincipal) in profile.appPrincipalIds.vals()) {
                                                     let _ = notifyAppsofProfileUpdate({
+                                                        membershipType = profile.membershipType;
                                                         subApp = subApp;
                                                         subAppUserPrincipalId = subAppPrincipal;
                                                     });
@@ -275,6 +276,7 @@ module {
                                                     let profile : ProfileQueries.ProfileDTO = newProfile;
                                                     for ((subApp, subAppPrincipal) in profile.appPrincipalIds.vals()) {
                                                         let _ = notifyAppsofProfileUpdate({
+                                                            membershipType = profile.membershipType;
                                                             subApp = subApp;
                                                             subAppUserPrincipalId = subAppPrincipal;
                                                         });
@@ -326,6 +328,7 @@ module {
                                         let profile : ProfileQueries.ProfileDTO = existingProfile;
                                         for ((subApp, subAppPrincipal) in profile.appPrincipalIds.vals()) {
                                             let _ = notifyAppsofProfileUpdate({
+                                                membershipType = profile.membershipType;
                                                 subApp = subApp;
                                                 subAppUserPrincipalId = subAppPrincipal;
                                             });
@@ -374,6 +377,7 @@ module {
                                     let profile : ProfileQueries.ProfileDTO = existingProfile;
                                     for ((subApp, subAppPrincipal) in profile.appPrincipalIds.vals()) {
                                         let _ = notifyAppsofProfileUpdate({
+                                            membershipType = profile.membershipType;
                                             subApp = subApp;
                                             subAppUserPrincipalId = subAppPrincipal;
                                         });
@@ -452,6 +456,7 @@ module {
                                     let profile : ProfileQueries.ProfileDTO = existingProfile;
                                     for ((subApp, subAppPrincipal) in profile.appPrincipalIds.vals()) {
                                         let _ = notifyAppsofProfileUpdate({
+                                            membershipType = profile.membershipType;
                                             subApp = subApp;
                                             subAppUserPrincipalId = subAppPrincipal;
                                         });
@@ -586,6 +591,7 @@ module {
                                     let profile : ProfileQueries.ProfileDTO = existingProfile;
                                     for ((subApp, subAppPrincipal) in profile.appPrincipalIds.vals()) {
                                         let _ = notifyAppsofProfileUpdate({
+                                            membershipType = profile.membershipType;
                                             subApp = subApp;
                                             subAppUserPrincipalId = subAppPrincipal;
                                         });
