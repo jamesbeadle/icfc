@@ -48,15 +48,8 @@
 
   onMount(async () => {
     try{
-      //countries = await countryStore.getCountries();
-      countries = [
-        { id: 1, name: "England", code: "ENG" },
-        { id: 2, name: "Spain", code: "ESP" },
-        { id: 3, name: "Germany", code: "GER" },
-        { id: 4, name: "France", code: "FRA" }
-      ];
-      //leagues = await leagueStore.getLeagues();
-
+      countries = await countryStore.getCountries();
+      leagues = await leagueStore.getLeagues();
       await loadData();
     } catch {
       toasts.addToast({type: 'error', message: 'Failed to load data.'});
