@@ -83,7 +83,6 @@ const initAuthStore = (): AuthStore => {
 					identityProvider,
 					windowOpenerFeatures: popupCenter({ width: AUTH_POPUP_WIDTH, height: AUTH_POPUP_HEIGHT })
         });
-        console.log("AUTH SIGNED IN", authClient);
       }),
 
     signOut: async () => {

@@ -5,10 +5,11 @@
     export let username: string;
     export let displayName: string;
     export let store: typeof userStore;
+    export let usernameAvailable: boolean;
 
     let isCheckingUsername = false;
     let usernameError = "";
-    let usernameAvailable = false;
+    
     let usernameTimeout: NodeJS.Timeout;
 
     async function checkUsername() {

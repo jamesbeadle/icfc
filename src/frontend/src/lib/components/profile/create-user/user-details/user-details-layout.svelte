@@ -16,6 +16,7 @@
     export let favouriteClubId: ClubId | null;
     
     export let username: string;
+    export let usernameAvailable: boolean;
     export let displayName: string;
     export let store: typeof userStore;
 </script>
@@ -23,18 +24,18 @@
 <p class="mb-8 text-lg text-white cta-text">User Details</p>
 <div class="flex flex-col gap-8 md:flex-row md:items-start">
     <div class="w-full md:w-1/4">
-        <ProfilePicture {file} />
+        <ProfilePicture bind:file />
     </div>
     
     <div class="flex flex-col w-full space-y-8 base:space-y-14 md:w-3/4">
-        <GetNames {username} {displayName} {store} />
+        <GetNames bind:username bind:usernameAvailable bind:displayName {store} />
         <GetFootballInfo 
             {countries} 
             {leagues} 
             {clubs} 
-            {nationalityId} 
-            {favouriteLeagueId} 
-            {favouriteClubId} 
+            bind:nationalityId 
+            bind:favouriteLeagueId 
+            bind:favouriteClubId 
         />
     </div>
 </div>
