@@ -11,9 +11,10 @@ export interface CalimICFCPackets {
 }
 export interface ClaimedRecord {
   packetsClaimed: bigint;
+  claimId: bigint;
   claimedOn: bigint;
-  membershipType: MembershipType;
 }
+export type DistributionStatus = { Completed: null } | { Pending: null };
 export type Error =
   | { DecodeError: null }
   | { NotAllowed: null }
@@ -30,28 +31,32 @@ export type Error =
   | { OutOfRange: null }
   | { PaymentError: null }
   | { InsufficientPacketsRemaining: null };
-export type MembershipType =
-  | { Founding: null }
-  | { NotClaimed: null }
-  | { Seasonal: null }
-  | { Lifetime: null }
-  | { Monthly: null }
-  | { NotEligible: null }
-  | { Expired: null };
-export type Result = { ok: SaleProgressDTO } | { err: Error };
+export interface ICFCDistribution {
+  time: Time;
+  claimId: bigint;
+  installment: bigint;
+  distributionStatus: DistributionStatus;
+  amount: bigint;
+  principalId: PrincipalId;
+}
+export type PrincipalId = string;
+export type Result = { ok: Array<ICFCDistribution> } | { err: Error };
 export type Result_1 = { ok: UserParticipationDTO } | { err: Error };
-export type Result_2 = { ok: AppStatusDTO } | { err: Error };
-export type Result_3 = { ok: null } | { err: Error };
+export type Result_2 = { ok: SaleProgressDTO } | { err: Error };
+export type Result_3 = { ok: AppStatusDTO } | { err: Error };
+export type Result_4 = { ok: null } | { err: Error };
 export interface SaleProgressDTO {
   remainingPackets: bigint;
   totalPackets: bigint;
 }
 export interface Self {
-  claimICFCPackets: ActorMethod<[CalimICFCPackets], Result_3>;
-  getAppStatus: ActorMethod<[], Result_2>;
+  claimICFCPackets: ActorMethod<[CalimICFCPackets], Result_4>;
+  getAppStatus: ActorMethod<[], Result_3>;
+  getProgress: ActorMethod<[], Result_2>;
   getUserParticipation: ActorMethod<[], Result_1>;
-  get_progress: ActorMethod<[], Result>;
+  getUsersICFCDistributions: ActorMethod<[], Result>;
 }
+export type Time = bigint;
 export interface UserParticipationDTO {
   participations: Array<ClaimedRecord>;
 }

@@ -1,25 +1,32 @@
 type UserParticipationDTO = record {participations: vec ClaimedRecord;};
+type Time = int;
 type Self = 
  service {
-   claimICFCPackets: (CalimICFCPackets) -> (Result_3);
-   getAppStatus: () -> (Result_2) query;
+   claimICFCPackets: (CalimICFCPackets) -> (Result_4);
+   getAppStatus: () -> (Result_3) query;
+   getProgress: () -> (Result_2);
    getUserParticipation: () -> (Result_1);
-   get_progress: () -> (Result);
+   getUsersICFCDistributions: () -> (Result);
  };
 type SaleProgressDTO = 
  record {
    remainingPackets: nat;
    totalPackets: nat;
  };
-type Result_3 = 
+type Result_4 = 
  variant {
    err: Error;
    ok;
  };
-type Result_2 = 
+type Result_3 = 
  variant {
    err: Error;
    ok: AppStatusDTO;
+ };
+type Result_2 = 
+ variant {
+   err: Error;
+   ok: SaleProgressDTO;
  };
 type Result_1 = 
  variant {
@@ -29,17 +36,17 @@ type Result_1 =
 type Result = 
  variant {
    err: Error;
-   ok: SaleProgressDTO;
+   ok: vec ICFCDistribution;
  };
-type MembershipType = 
- variant {
-   Expired;
-   Founding;
-   Lifetime;
-   Monthly;
-   NotClaimed;
-   NotEligible;
-   Seasonal;
+type PrincipalId = text;
+type ICFCDistribution = 
+ record {
+   amount: nat;
+   claimId: nat;
+   distributionStatus: DistributionStatus;
+   installment: nat;
+   principalId: PrincipalId;
+   time: Time;
  };
 type Error = 
  variant {
@@ -59,10 +66,15 @@ type Error =
    PaymentError;
    UpdateFailed;
  };
+type DistributionStatus = 
+ variant {
+   Completed;
+   Pending;
+ };
 type ClaimedRecord = 
  record {
+   claimId: int;
    claimedOn: int;
-   membershipType: MembershipType;
    packetsClaimed: nat;
  };
 type CalimICFCPackets = record {packets: nat;};
