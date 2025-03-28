@@ -9,10 +9,9 @@ import Timer "mo:base/Timer";
 import Iter "mo:base/Iter";
 import T "icfc_types";
 import Environment "environment";
-import DTOs "./dtos/dtos";
 import ProfileManager "managers/profile_manager";
 import ProfileCommands "commands/profile_commands";
-import PodcastManager "managers/podcast_manager";
+import FootballChannelManager "managers/football_channel_manager";
 import ProfileQueries "queries/profile_queries";
 import SNSManager "managers/sns_manager";
 import Utils "utils/utils";
@@ -25,7 +24,7 @@ import SNSToken "./sns-wrappers/ledger";
 actor class Self() = this {
 
   private let profileManager = ProfileManager.ProfileManager();
-  private let podcastChannelManager = PodcastManager.PodcastManager();
+  private let footballChannelManager = FootballChannelManager.FootballChannelManager();
   private let snsManager = SNSManager.SNSManager();
 
   private var appStatus : Base.AppStatus = {
@@ -33,7 +32,7 @@ actor class Self() = this {
     version = "0.0.1";
   };
 
-  public shared query func getAppStatus() : async Result.Result<DTOs.AppStatusDTO, T.Error> {
+  public shared query func getAppStatus() : async Result.Result<AppQueries.AppStatus, T.Error> {
     return #ok(appStatus);
   };
 
@@ -180,9 +179,9 @@ actor class Self() = this {
   private stable var stable_total_profile : Nat = 0;
   private stable var stable_neurons_used_for_membership : [(Blob, Base.PrincipalId)] = [];
 
-  private stable var stable_podcast_channel_canister_index : [(T.PodcastChannelId, Base.CanisterId)] = [];
+  private stable var stable_podcast_channel_canister_index : [(T.FootballChannelId, Base.CanisterId)] = [];
   private stable var stable_active_podcast_channel_canister_id : Base.CanisterId = "";
-  private stable var stable_podcast_channel_names : [(T.PodcastChannelId, Text)] = [];
+  private stable var stable_podcast_channel_names : [(T.FootballChannelId, Text)] = [];
   private stable var stable_unique_podcast_channel_canister_ids : [Base.CanisterId] = [];
   private stable var stable_total_podcast_channels : Nat = 0;
   private stable var stable_next_podcast_channel_id : Nat = 0;
@@ -193,7 +192,7 @@ actor class Self() = this {
 
   system func preupgrade() {
     backupProfileData();
-    backupPodcastChannelData();
+    backupFootballChannelData();
 
     // stop membership timer
     if (stable_membership_timer_id != 0) {
@@ -205,7 +204,7 @@ actor class Self() = this {
     ignore Timer.setTimer<system>(#nanoseconds(Int.abs(1)), postUpgradeCallback);
     /*
     setProfileData();
-    setPodcastChannelData();
+    setFootballChannelData();
     stable_membership_timer_id := Timer.recurringTimer<system>(#seconds(86_400), checkMembership);
     */
   };
@@ -229,13 +228,13 @@ actor class Self() = this {
 
   };
 
-  private func backupPodcastChannelData() {
-    stable_podcast_channel_canister_index := podcastChannelManager.getStableCanisterIndex();
-    stable_active_podcast_channel_canister_id := podcastChannelManager.getStableActiveCanisterId();
-    stable_podcast_channel_names := podcastChannelManager.getStablePodcastChannelNames();
-    stable_unique_podcast_channel_canister_ids := podcastChannelManager.getStableUniqueCanisterIds();
-    stable_total_podcast_channels := podcastChannelManager.getStableTotalPodcastChannels();
-    stable_next_podcast_channel_id := podcastChannelManager.getStableNextPodcastChannelId();
+  private func backupFootballChannelData() {
+    stable_podcast_channel_canister_index := footballChannelManager.getStableCanisterIndex();
+    stable_active_podcast_channel_canister_id := footballChannelManager.getStableActiveCanisterId();
+    stable_podcast_channel_names := footballChannelManager.getStableFootballChannelNames();
+    stable_unique_podcast_channel_canister_ids := footballChannelManager.getStableUniqueCanisterIds();
+    stable_total_podcast_channels := footballChannelManager.getStableTotalFootballChannels();
+    stable_next_podcast_channel_id := footballChannelManager.getStableNextFootballChannelId();
 
   };
 
@@ -248,13 +247,13 @@ actor class Self() = this {
     profileManager.setStableNeuronsUsedforMembership(stable_neurons_used_for_membership);
   };
 
-  private func setPodcastChannelData() {
-    podcastChannelManager.setStableCanisterIndex(stable_podcast_channel_canister_index);
-    podcastChannelManager.setStableActiveCanisterId(stable_active_podcast_channel_canister_id);
-    podcastChannelManager.setStablePodcastChannelNames(stable_podcast_channel_names);
-    podcastChannelManager.setStableUniqueCanisterIds(stable_unique_podcast_channel_canister_ids);
-    podcastChannelManager.setStableTotalPodcastChannels(stable_total_podcast_channels);
-    podcastChannelManager.setStableNextPodcastChannelId(stable_next_podcast_channel_id);
+  private func setFootballChannelData() {
+    footballChannelManager.setStableCanisterIndex(stable_podcast_channel_canister_index);
+    footballChannelManager.setStableActiveCanisterId(stable_active_podcast_channel_canister_id);
+    footballChannelManager.setStableFootballChannelNames(stable_podcast_channel_names);
+    footballChannelManager.setStableUniqueCanisterIds(stable_unique_podcast_channel_canister_ids);
+    footballChannelManager.setStableTotalFootballChannels(stable_total_podcast_channels);
+    footballChannelManager.setStableNextFootballChannelId(stable_next_podcast_channel_id);
   };
 
   private func updateProfileCanisterWasms() : async () {

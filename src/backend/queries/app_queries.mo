@@ -2,6 +2,12 @@ import Base "mo:waterway-mops/BaseTypes";
 import T "../icfc_types";
 
 module AppQueries {
+
+    public type AppStatus = {
+        onHold : Bool;
+        version : Text;
+    };
+
     public type ProfileDTO = {
         principalId: Base.PrincipalId;
         username: Text;

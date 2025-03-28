@@ -7,7 +7,7 @@ module ICFCTypes {
 
   public type ClubId = Nat16;
   public type PlayerId = Nat16;
-  public type PodcastChannelId = Nat;
+  public type FootballChannelId = Nat;
 
   public type Profile = {
     principalId : Base.PrincipalId;
@@ -26,8 +26,8 @@ module ICFCTypes {
     nationalityId : ?Base.CountryId;
   };
 
-  public type PodcastChannel = {
-    id : PodcastChannelId;
+  public type FootballChannel = {
+    id : FootballChannelId;
     name : Text;
     createdBy : Base.PrincipalId;
     createdOn : Int;
