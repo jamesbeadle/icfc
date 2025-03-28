@@ -1,9 +1,8 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import Layout from "../Layout.svelte";
     import { appStore } from "$lib/stores/app-store";
     import { toasts } from "$lib/stores/toasts-store";
-    import type { TokenBalances } from "../../../../declarations/backend/backend.did";
+    import type { TokenBalances } from "../../../../../declarations/backend/backend.did";
     import IcfcCoinIcon from "$lib/icons/ICFCCoinIcon.svelte";
     import { formatTokenBalance } from "$lib/utils/helpers";
     import IcpCoinIcon from "$lib/icons/ICPCoinIcon.svelte";
@@ -29,12 +28,11 @@
     });
 
 </script>
-<Layout>
     {#if isLoading}
         <LocalSpinner />
     {:else}
         <div class="flex flex-col space-y-4">
-            <p class="cta-text text-xl">Token Balances</p>
+            <p class="text-xl cta-text">Token Balances</p>
             <p class="flex flex-row items-center">
                 <IcfcCoinIcon className="w-6 mx-2" /> {formatTokenBalance(tokenBalances?.icfcBalance ?? 0n)} ICFC
             </p>
@@ -49,5 +47,3 @@
             </p>
         </div>
     {/if}
-
-</Layout>

@@ -2,8 +2,7 @@
     import { onMount } from "svelte";
     import { saleStore } from "$lib/stores/sale-store";
     import { getCountdownTime } from "$lib/utils/helpers";
-    
-    import Layout from "../Layout.svelte";
+
     import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
     import ICFCCoinIcon from "$lib/icons/ICFCCoinIcon.svelte";
     import FundingProgress from "$lib/components/sale/funding-progress.svelte";
@@ -42,8 +41,6 @@
         saleTimeRemaining = getCountdownTime(Number(timeRemaining));
     }
 </script>
-
-<Layout>
 
     <div class="relative min-h-screen">
         <div class="absolute inset-0 z-0">
@@ -88,4 +85,3 @@
             </div>
         </div>
     </div>
-</Layout>

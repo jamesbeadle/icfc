@@ -3,6 +3,7 @@ import { ActorFactory } from "../utils/ActorFactory";
 import { isError } from "../utils/helpers";
 import { writable } from "svelte/store";
 import { UserService } from "../services/user-service";
+import { userIdCreatedStore } from "./user-control-store";
 import type {
   ProfileDTO,
   CreateProfile,
@@ -176,6 +177,8 @@ function createUserStore() {
 
     let profileData = getProfileResponse.ok;
     set(profileData);
+
+    userIdCreatedStore.set({ data: profileData.principal, certified: true});
   }
 
   async function getProfile(): Promise<ProfileDTO | undefined> {

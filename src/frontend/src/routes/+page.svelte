@@ -1,9 +1,16 @@
 <script lang="ts">
     import Apps from "$lib/components/shared/apps.svelte";
-   import Layout from "./Layout.svelte";
-    
+    import LandingPage from "$lib/components/landing/landing-page.svelte";
+
+    import { authSignedInStore } from "$lib/derived/auth.derived";
 </script>
 
-<Layout>
+<svelte:head>
+    <link rel="preload" href="/background.jpg" as="image" />
+</svelte:head>
+
+{#if $authSignedInStore}    
     <Apps />
-</Layout>
+{:else}
+    <LandingPage />
+{/if}
