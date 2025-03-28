@@ -18,9 +18,6 @@
         <DropdownSelect
             options={countries.sort((a, b) => a.name.localeCompare(b.name)).map((country: CountryDTO) => ({ id: country.id, label: country.name }))}
             bind:value={nationalityId}
-            onChange={(value: string | number) => {
-                nationalityId = Number(value);
-            }}
         />
     </div>
     <div class="space-y-2">
@@ -29,9 +26,6 @@
         <DropdownSelect
             options={leagues.map(league => ({ id: league.id, label: league.name }))}
             bind:value={favouriteLeagueId}
-            onChange={(value: string | number) => {
-            favouriteLeagueId = Number(value);
-            }}
             scrollOnOpen={true}
         />
     </div>
@@ -41,9 +35,6 @@
         <DropdownSelect
             options={clubs.sort((a, b) => a.friendlyName.localeCompare(b.friendlyName)).map(club => ({ id: club.id, label: club.friendlyName }))}
             bind:value={favouriteClubId}
-            onChange={(value: string | number) => {
-            favouriteClubId = Number(value);
-            }}
             scrollOnOpen={true}
             disabled={favouriteLeagueId == null || favouriteLeagueId == 0}
         />

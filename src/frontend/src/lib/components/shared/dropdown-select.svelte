@@ -10,7 +10,7 @@
     export let options: { id: any; label: string }[];
     export let placeholder = "Select...";
     export let compact = false;
-    export let onChange: (value: any) => void;
+    export let onChange: ((value: any) => void) | undefined = undefined;
     export let allOptionText: string | undefined = undefined;
     export let scrollOnOpen = false;
     export let disabled = false;
@@ -50,7 +50,11 @@
 
     function selectOption(optionId: any, e: MouseEvent) {
         e.stopPropagation();
-        onChange(optionId);
+        if (onChange) {
+            onChange(optionId);
+        } else {
+            value = optionId;
+        }
         isDropdownOpen = false;
     }
 

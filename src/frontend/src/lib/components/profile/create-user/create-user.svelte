@@ -178,7 +178,6 @@
     if(!clubsResult){ return }
     clubs = clubsResult;
   }
-
 </script>
 
 {#if isLoading}
@@ -189,7 +188,7 @@
 
       <CreateUserHeader />
 
-      <UserDetailsLayout {file} {countries} {leagues} {clubs} {nationalityId} {favouriteLeagueId} {favouriteClubId} {username} {displayName} store={userStore} />
+      <UserDetailsLayout bind:file {countries} {leagues} {clubs} bind:nationalityId bind:favouriteLeagueId bind:favouriteClubId bind:username bind:usernameAvailable bind:displayName store={userStore} />
 
       <div class="flex flex-col space-y-4">
         <p class="text-lg text-white cta-text">Neuron Based Membership</p>
