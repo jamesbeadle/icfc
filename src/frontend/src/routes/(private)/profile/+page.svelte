@@ -1,9 +1,8 @@
 <script lang="ts">
     import { userStore } from "$lib/stores/user-store";
     import { onMount } from "svelte";
-    import type { ProfileDTO } from "../../../../declarations/backend/backend.did";
+    import type { ProfileDTO } from "../../../../../declarations/backend/backend.did";
     
-    import Layout from "../Layout.svelte";
     import { toasts } from "$lib/stores/toasts-store";
     import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
     import ProfileDetails from "$lib/components/profile/profile-details.svelte";
@@ -36,15 +35,14 @@
     });
 </script>
 
-<Layout>
     {#if isLoading}
-        <div class="flex justify-center items-center h-screen">
+        <div class="flex items-center justify-center h-screen">
             <LocalSpinner />
         </div>
     {:else if profile}
-        <div class="min-h-screen bg-BrandBlack flex items-center justify-center p-4 xxs:p-6">
-            <div class="bg-BrandGrayShade2 rounded-xl shadow-lg w-full mx-4 md:mx-8 p-6 xxs:p-8 space-y-6">
-                <div class="flex flex-col xxs:flex-row justify-between items-center gap-4">
+        <div class="flex items-center justify-center min-h-screen p-4 bg-BrandBlack xxs:p-6">
+            <div class="w-full p-6 mx-4 space-y-6 shadow-lg bg-BrandGrayShade2 rounded-xl md:mx-8 xxs:p-8">
+                <div class="flex flex-col items-center justify-between gap-4 xxs:flex-row">
                     <h1 class="text-3xl cta-text">ICFC Profile</h1>
                 </div>
 
@@ -108,8 +106,7 @@
             </div>
         </div>
     {:else}
-        <div class="flex justify-center items-center h-screen text-white">
+        <div class="flex items-center justify-center h-screen text-white">
             No profile data available
         </div>
     {/if}
-</Layout>

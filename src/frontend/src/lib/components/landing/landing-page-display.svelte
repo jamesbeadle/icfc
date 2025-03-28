@@ -1,8 +1,8 @@
 <script lang="ts">
     import IcpLogo from "$lib/icons/ICPLogo.svelte";
     import LogoIcon from "$lib/icons/LogoIcon.svelte";
-    
-    export let handleLoginClick: () => void;
+    import { signIn } from "$lib/services/auth.services";
+    import { isBusy } from '$lib/stores/busy-store';
 </script>
 
 <div class="relative flex flex-col items-center justify-center w-full md:min-h-screen">
@@ -22,14 +22,17 @@
         <div class="mx-2 space-y-4">
             <button 
                 class="flex items-center justify-center w-full py-2 rounded lg:mx-0 bg-BrandGrayShade1 hover:bg-BrandGrayShade3"
-                on:click={handleLoginClick}
+                onclick={async () => await signIn({})} disabled={$isBusy}
             >
                 <span class="flex items-center justify-center mr-2"><IcpLogo/></span> 
                 <span>Internet Identity</span>
             </button>
             <div class="mt-6 text-xs text-center">
                 <p class="mt-6 text-sm text-center text-white">
-                    Have questions? <a href="/whitepaper">Read our Whitepaper</a>
+                    Have questions? Read our <a href="/whitepaper" class="hover:underline">Whitepaper</a>
+                </p>
+                <p class="text-sm text-center text-white">
+                    See our <a href="/sale-preview" class="hover:underline">Sale Status</a>
                 </p>
             </div>
         </div>

@@ -6,49 +6,44 @@
   import { leagueStore } from "$lib/stores/league-store";
   import { membershipStore } from "$lib/stores/membership-store";
   import { toasts } from "$lib/stores/toasts-store";
+  import { getFileExtensionFromFile, isPrincipalValid, sortByHighestNeuron } from "$lib/utils/helpers";
   
-  import type { CreateProfile, EligibleMembership, Neuron, PrincipalId, SubApp } from "../../../../../declarations/backend/backend.did";
-  import type { LeagueId, ClubId, CountryId, ClubDTO, CountryDTO, FootballLeagueDTO } from "../../../../../external_declarations/data_canister/data_canister.did";
+  import type { CreateProfile, EligibleMembership, Neuron, PrincipalId, SubApp } from "../../../../../../declarations/backend/backend.did";
+  import type { LeagueId, ClubId, CountryId, ClubDTO, CountryDTO, FootballLeagueDTO } from "../../../../../../external_declarations/data_canister/data_canister.did";
   
-  import LocalSpinner from "../shared/local-spinner.svelte";
-  import AvailableMembership from "../membership/available-membership.svelte";
-  import LogoIcon from "$lib/icons/LogoIcon.svelte";
-  import CopyPrincipal from "./copy-principal.svelte";
-  import DropdownSelect from "../shared/dropdown-select.svelte";
-  import { getFileExtensionFromFile, isPrincipalValid, isUsernameValid, sortByHighestNeuron } from "$lib/utils/helpers";
-    
+  import LocalSpinner from "../../shared/local-spinner.svelte";
+  import AvailableMembership from "../../membership/available-membership.svelte";
+  import CopyPrincipal from "../copy-principal.svelte";
+  import CreateUserHeader from "./create-user-header.svelte";
+  import UserDetailsLayout from "./user-details/user-details-layout.svelte";
+
   let isLoading = true;
   let isSubmitDisabled = true;
-  let isCheckingUsername = false;
-  let usernameAvailable = false;
-  let usernameError = "";
-  let loadingNeurons = false;
   
+  let usernameAvailable = false;
   let username = "";
   let displayName = "";
-  let favouriteLeagueId: LeagueId | null = null;
-  let favouriteClubId: ClubId | null = null;
-  let nationalityId: CountryId | null = null;
+  
   let openFplPrincipalId = '';
   let footballGodPrincipalId = '';
   let transferKingsPrincipalId = '';
   let jeffBetsPrincipalId = '';
   let openWslPrincipalId = '';
   
+  let loadingNeurons = false;
   let neurons: Neuron[] = [];
   let maxStakedICFC = 0n;
+
   let clubs: ClubDTO[] = [];
   let countries: CountryDTO[] = [];
   let leagues: FootballLeagueDTO[] = [];
+  let favouriteLeagueId: LeagueId | null = null;
+  let favouriteClubId: ClubId | null = null;
+  let nationalityId: CountryId | null = null;
+
+  let file: File | null = null;
   
   let userMembershipEligibility: EligibleMembership | null = null;
-  
-  let usernameTimeout: NodeJS.Timeout;
-
-  let profileSrc = '/profile_placeholder.png';
-  let file: File | null = null;
-  let fileInput: HTMLInputElement;
-
   $: isSubmitDisabled = !username || !usernameAvailable;
 
   onMount(async () => {
@@ -86,31 +81,6 @@
         console.log("maxStakedICFC: ", maxStakedICFC);
     }
   }
-
-  async function checkUsername() {
-    isCheckingUsername = true;
-    try {
-      if(!isUsernameValid(username)){
-        usernameError = "Username must be between 5 and 20 characters.";
-      }
-      const available = await userStore.isUsernameAvailable(username);
-      usernameAvailable = available;
-      usernameError = available ? "" : "Username is already taken";
-    } catch (error) {
-      console.error("Error checking username:", error);
-      usernameError = "Error checking username availability";
-    } finally {
-      isCheckingUsername = false;
-    }
-  } 
-  
-  function handleUsernameInput() {
-    clearTimeout(usernameTimeout);
-    usernameAvailable = false;
-    if (username.length >= 5) {
-      usernameTimeout = setTimeout(checkUsername, 500);
-    }
-  } 
 
   async function createProfile() {
     isLoading = true;
@@ -211,27 +181,6 @@
     clubs = clubsResult;
   }
 
-  function clickFileInput() {
-      fileInput.click();
-  } 
-
-  function handleFileChange(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files[0]) {
-      file = input.files[0];
-      if (file.size > 1000 * 1024) {
-        toasts.addToast({ 
-          type: "error", 
-          message: "Profile image too large. The maximum size is 1MB." 
-        });
-        file = null;
-        profileSrc = '/profile_placeholder.png';
-        return;
-      }
-      profileSrc = URL.createObjectURL(file);
-    }
-  }
-
 </script>
 
 {#if isLoading}
@@ -240,130 +189,9 @@
   <div class="px-4 py-6 mx-auto page-wrapper max-w-7xl">
     <div class="flex flex-col space-y-6">
 
-      <p class="flex flex-row space-y-1 text-4xl cta-text">
-        Welcome to the 
-        <span class="flex flex-row items-center">
-          <LogoIcon className='w-8 mx-2' />
-          ICFC
-        </span>
-      </p>
+      <CreateUserHeader />
 
-      <div class="border-t horizontal-divider border-BrandGrayShade3"></div>
-      
-      <p class="text-lg text-BrandGrayShade5">
-        The ICFC is the world's first, fully decentralised, fan owned football ecosystem. To become a member you will need to become an owner, we believe our 'Own to Use' model is the future access model for decentralised services. 
-      </p>
-
-      <div class="border-t horizontal-divider border-BrandGrayShade3"></div>
-
-      <div class="flex flex-col space-y-4">
-        <p class="text-lg text-white cta-text">User Details</p>
-        
-        <div class="flex flex-col gap-6 md:flex-row">
-          <div class="flex flex-col w-full space-y-2 md:w-1/5">
-            <p class="form-title">Profile Picture</p>
-            <p class="form-hint">Max size 1mb</p>
-            
-            <img 
-              src={profileSrc} 
-              alt="Profile" 
-              class="object-cover w-full h-48 rounded-lg profile-picture"
-            />
-            <button 
-              class="brand-button"
-              on:click={clickFileInput}
-            >
-              Upload Photo
-            </button>
-            <input
-              type="file"
-              id="profile-image"
-              accept="image/*"
-              bind:this={fileInput}
-              on:change={handleFileChange}
-              class="hidden"
-            />
-          </div>
-
-          <div class="flex flex-col w-full space-y-6 md:w-4/5">
-            <div class="flex flex-col gap-4 md:flex-row">
-              <div class="flex flex-col w-full space-y-1 md:w-1/2">
-                <p class="form-title">Username</p>
-                <p class="form-hint">5-20 characters, letters & numbers only. <span class="text-xs">(Required)</span></p>
-                <input
-                  type="text"
-                  bind:value={username}
-                  on:input={handleUsernameInput}
-                  class="brand-input"
-                  placeholder="Enter username"
-                />
-                {#if username.length > 0}
-                  <div class="text-sm">
-                    {#if isCheckingUsername}
-                      <p class="mt-2 text-BrandGrayShade2">Checking username availability...</p>
-                    {:else if usernameError}
-                      <p class="mt-2 text-BrandRed">{usernameError}</p>
-                    {:else if usernameAvailable}
-                      <p class="mt-2 text-BrandSuccess">Username is available!</p>
-                    {/if}
-                  </div>
-                {/if}
-              </div>
-              <div class="flex flex-col w-full space-y-1 md:w-1/2">
-                <p class="form-title">Display Name</p>
-                <p class="form-hint">5-20 characters, letters & numbers only.</p>
-                <input
-                  type="text"
-                  bind:value={displayName}
-                  placeholder="Enter display name"
-                  class="brand-input"
-                />
-              </div>
-            </div>
-
-            <div class="flex flex-col gap-4 md:flex-row">
-              <div class="flex flex-col w-full space-y-1 md:w-1/3">
-                <p class="form-title">Nationality</p>
-                <p class="form-hint">Select to participate in nationwide football competitions.</p>
-                <DropdownSelect
-                  options={countries.sort((a, b) => a.name.localeCompare(b.name)).map((country: CountryDTO) => ({ id: country.id, label: country.name }))}
-                  value={nationalityId}
-                  onChange={(value: string | number) => {
-                    nationalityId = Number(value);
-                  }}
-                />
-              </div>
-              <div class="flex flex-col w-full space-y-1 md:w-1/3">
-                <p class="form-title">Your Favourite League</p>
-                <p class="form-hint">Select to find your favourite club.</p>
-                <DropdownSelect
-                  options={leagues.map(league => ({ id: league.id, label: league.name }))}
-                  value={favouriteLeagueId}
-                  onChange={(value: string | number) => {
-                    favouriteLeagueId = Number(value);
-                  }}
-                  scrollOnOpen={true}
-                />
-              </div>
-              <div class="flex flex-col w-full space-y-1 md:w-1/3">
-                <p class="form-title">Your Favourite Club</p>
-                <p class="form-hint">Select to enable club based rewards.</p>
-                <DropdownSelect
-                  options={clubs.sort((a, b) => a.friendlyName.localeCompare(b.friendlyName)).map(club => ({ id: club.id, label: club.friendlyName }))}
-                  value={favouriteClubId}
-                  onChange={(value: string | number) => {
-                    favouriteClubId = Number(value);
-                  }}
-                  scrollOnOpen={true}
-                  disabled={favouriteLeagueId == null || favouriteLeagueId == 0}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="border-t horizontal-divider border-BrandGrayShade3"></div>
+      <UserDetailsLayout {file} {countries} {leagues} {clubs} {nationalityId} {favouriteLeagueId} {favouriteClubId} {username} {displayName} store={userStore} />
 
       <div class="flex flex-col space-y-4">
         <p class="text-lg text-white cta-text">Neuron Based Membership</p>

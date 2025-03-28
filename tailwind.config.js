@@ -61,6 +61,7 @@ export default {
         BrandBlue: "#1979F2",
         BrandBlueComp: "#20205F",
         BrandBlack: "#0A0300",
+        BrandBlackShade1: "#1A1A1D",
         BrandRed: "#F2194F",
         BrandGray: "#2F2F2F",
         BrandGrayShade1: "#484848",

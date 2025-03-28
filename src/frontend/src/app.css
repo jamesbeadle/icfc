@@ -28,7 +28,7 @@
 .brand-button {
   @apply p-3 text-lg text-center text-white rounded-lg cta-text bg-BrandBlueComp hover:bg-BrandInfo;
   &:disabled {
-    @apply text-black bg-BrandGrayShade4 hover:bg-BrandGrayShade4 hover:bg-BrandGrayShade4;
+    @apply text-black bg-BrandGrayShade4 hover:bg-BrandGrayShade4;
   }
 }
 
@@ -49,15 +49,15 @@
 }
 
 .form-title {
-  @apply text-sm text-BrandGrayShade4 mb-3;
+  @apply mb-3 text-sm text-BrandGrayShade4;
 }
 
 .form-hint {
-  @apply text-xxs text-BrandGrayShade3 mb-4;
+  @apply mb-4 text-xs text-BrandGrayShade3;
 }
 
 .brand-input {
-  @apply bg-BrandGrayShade5 text-black border border-BrandGrayShade3 rounded-lg p-4 focus:outline-none focus:border-BrandBlue;
+  @apply p-4 text-black border rounded-lg bg-BrandGrayShade5 border-BrandGrayShade3 focus:outline-none focus:border-BrandBlue;
 }
 
 .bg-frontend-update {
@@ -152,7 +152,7 @@
 }
 
 .small-header {
-  @apply text-lg cta-text text-white;
+  @apply text-lg text-white cta-text;
 }
 
 .section-header {
@@ -172,11 +172,11 @@
 }
 
 .already-claimed-membership-badge {
-  @apply px-4 py-2 bg-BrandSuccess text-black text-center items-center rounded cta-text text-sm;
+  @apply items-center px-4 py-2 text-sm text-center text-black rounded bg-BrandSuccess cta-text;
 }
 
 .auto-claimed-membership-badge {
-  @apply px-4 py-2 bg-BrandBlue text-white text-center items-center rounded cta-text text-sm;
+  @apply items-center px-4 py-2 text-sm text-center text-white rounded bg-BrandBlue cta-text;
 }
 
 .small-brand-button {
@@ -184,7 +184,7 @@
 }
 
 .nns-button {
-  @apply px-4 py-2 text-xxs text-center text-white rounded cta-text bg-BrandPurple hover:bg-BrandInfo;
+  @apply px-4 py-2 text-center text-white rounded text-xxs cta-text bg-BrandPurple hover:bg-BrandInfo;
 }
 
 .profile-wrapper-monthly {

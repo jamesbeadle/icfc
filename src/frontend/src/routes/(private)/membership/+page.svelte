@@ -1,5 +1,4 @@
 <script lang="ts">
-    import Layout from '../Layout.svelte';
     import MembershipDetailsModal from '$lib/components/membership/membership-details-modal.svelte';
     import HowToModalAddICFC from '$lib/components/membership/how-to-addICFC-modal.svelte';
     import HowToModalStakeICFC from '$lib/components/membership/how-to-stakeICFC-modal.svelte';
@@ -34,7 +33,6 @@
     }
 </script>
 
-<Layout>
     <div class="flex flex-col w-full p-8 space-y-4">
         <h1 class="flex w-full brand-title">ICFC Membership</h1>
         <div class="flex w-full">
@@ -49,9 +47,8 @@
             Stake ICFC tokens for max time to unlock exclusive membership benefits
         </p>
 
-        <NeuronList />
+        <NeuronList neurons={neurons} />
     </div>
-</Layout>
 
 {#if showMembershipDetailsModal}
     <MembershipDetailsModal 
