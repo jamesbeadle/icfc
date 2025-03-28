@@ -1,5 +1,6 @@
 import Result "mo:base/Result";
 import Principal "mo:base/Principal";
+import Timer "mo:base/Timer";
 import T "./sale_types";
 import DTO "./dtos/dtos";
 import Base "mo:waterway-mops/BaseTypes";
@@ -19,6 +20,7 @@ actor class Self() = this {
     private stable var stable_icfcPacketsRemaining : Nat = 1000;
 
     private stable var stable_saleParticipants : [(Base.PrincipalId, [T.ClaimedRecord])] = [];
+    private stable var stable_icfcDistributions : [T.ICFCDistribution] = [];
 
     public shared query func getAppStatus() : async Result.Result<DTO.AppStatusDTO, T.Error> {
         return #ok(appStatus);
@@ -41,8 +43,16 @@ actor class Self() = this {
         return await saleManager.getUserParticipation(dto);
     };
 
-    public shared func get_progress() : async Result.Result<DTO.SaleProgressDTO, T.Error> {
-        return await saleManager.get_progress();
+    public shared ({ caller }) func getUsersICFCDistributions() : async Result.Result<[T.ICFCDistribution], T.Error> {
+        assert not Principal.isAnonymous(caller);
+        let dto : SaleQueries.GetICFCDistributions = {
+            principalId = Principal.toText(caller);
+        };
+        return await saleManager.getUsersICFCDistributions(dto);
+    };
+
+    public shared func getProgress() : async Result.Result<DTO.SaleProgressDTO, T.Error> {
+        return await saleManager.getProgress();
     };
 
     // backup and restore stable storage
@@ -52,17 +62,24 @@ actor class Self() = this {
 
     system func postupgrade() {
         restoreStableData();
-
+        ignore Timer.setTimer<system>(
+            #nanoseconds(1),
+            func() : async () {
+                await saleManager.restoreDistributionTimers();
+            },
+        );
     };
 
     private func backUpStableData() {
         stable_icfcPacketsRemaining := saleManager.getStableICFCPacketsRemaining();
         stable_saleParticipants := saleManager.getStableSaleParticipants();
+        stable_icfcDistributions := saleManager.getStableICFCDistributions();
     };
 
     private func restoreStableData() {
         saleManager.setStableICFCPacketsRemaining(stable_icfcPacketsRemaining);
         saleManager.setStableSaleParticipants(stable_saleParticipants);
+        saleManager.setStableICFCDistributions(stable_icfcDistributions);
     };
 
 };
