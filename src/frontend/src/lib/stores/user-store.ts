@@ -178,7 +178,7 @@ function createUserStore() {
     let profileData = getProfileResponse.ok;
     set(profileData);
 
-    userIdCreatedStore.set({ data: profileData.principal, certified: true});
+    userIdCreatedStore.set({ data: profileData.principal, certified: true });
   }
 
   async function getProfile(): Promise<ProfileDTO | undefined> {

@@ -32,7 +32,6 @@
     let profileSrc = '/profile_placeholder.png';
     
     onMount(async () => {
-        console.log(profile)
         principalId = profile.principalId;
         username = profile.username;
         joinedDate = getDateFromBigInt(Number(profile.createdOn));

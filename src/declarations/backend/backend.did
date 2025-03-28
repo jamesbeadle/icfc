@@ -82,7 +82,7 @@ type Result_7 =
 type Result_6 = 
  variant {
    err: Error;
-   ok: AppStatusDTO;
+   ok: AppStatus;
  };
 type Result_5 = 
  variant {
@@ -258,7 +258,7 @@ type CountryDTO =
    name: text;
  };
 type ClubId = nat16;
-type AppStatusDTO = 
+type AppStatus = 
  record {
    onHold: bool;
    version: text;

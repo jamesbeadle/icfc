@@ -15,7 +15,6 @@
     let activeTab = $state(0);
 
     onMount(async () => {
-        console.log("profile on mount");
         try {
             const profileResult = await userStore.getProfile();
             if (!profileResult) {

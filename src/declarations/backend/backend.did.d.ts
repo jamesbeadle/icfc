@@ -10,7 +10,7 @@ export interface AddSubApp {
   subApp: SubApp;
   subAppUserPrincipalId: PrincipalId;
 }
-export interface AppStatusDTO {
+export interface AppStatus {
   version: string;
   onHold: boolean;
 }
@@ -148,7 +148,7 @@ export type Result_2 = { ok: TokenBalances } | { err: Error };
 export type Result_3 = { ok: ProfileDTO } | { err: Error };
 export type Result_4 = { ok: ICFCProfileSummary } | { err: Error };
 export type Result_5 = { ok: Array<CountryDTO> } | { err: Error };
-export type Result_6 = { ok: AppStatusDTO } | { err: Error };
+export type Result_6 = { ok: AppStatus } | { err: Error };
 export type Result_7 = { ok: MembershipClaim } | { err: Error };
 export interface Self {
   addSubApp: ActorMethod<[AddSubApp], Result>;

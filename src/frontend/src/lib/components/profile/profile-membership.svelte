@@ -46,16 +46,11 @@
     }
 
     async function getNeurons() {
-        console.log("Getting neurons for profile membership");
         let neuronsResult = await membershipStore.getUserNeurons();
-        console.log("neuronsResult: ", neuronsResult);
         if (neuronsResult) {
             neurons = neuronsResult.userNeurons.sort(sortByHighestNeuron);
-            console.log("Sorted neurons: ", neurons);
             userMembershipEligibility = neuronsResult.userMembershipEligibility;
-            console.log("userMembershipEligibility: ", userMembershipEligibility);
             maxStakedICFC = neuronsResult.totalMaxStaked;
-            console.log("maxStakedICFC: ", maxStakedICFC);
         }
     }
     

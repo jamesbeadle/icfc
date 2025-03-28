@@ -16,7 +16,6 @@
     onMount(async() => {
         try{
             let balances = await appStore.getTokenBalances();
-            console.log(balances)
             if(balances){
                 tokenBalances = balances;
             }

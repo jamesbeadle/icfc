@@ -61,11 +61,8 @@ export const idlFactory = ({ IDL }) => {
     favouriteLeagueId: IDL.Opt(LeagueId),
     nationalityId: IDL.Opt(CountryId),
   });
-  const AppStatusDTO = IDL.Record({
-    version: IDL.Text,
-    onHold: IDL.Bool,
-  });
-  const Result_6 = IDL.Variant({ ok: AppStatusDTO, err: Error });
+  const AppStatus = IDL.Record({ version: IDL.Text, onHold: IDL.Bool });
+  const Result_6 = IDL.Variant({ ok: AppStatus, err: Error });
   const CountryDTO = IDL.Record({
     id: CountryId,
     code: IDL.Text,

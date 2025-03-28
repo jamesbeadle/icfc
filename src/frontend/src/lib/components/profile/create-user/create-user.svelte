@@ -69,9 +69,7 @@
   }
 
   async function getNeurons() {
-    console.log("Getting neurons for create user");
     let neuronsResult = await membershipStore.getUserNeurons();
-    console.log("neuronsResult: ", neuronsResult);
     if (neuronsResult) {
         neurons = neuronsResult.userNeurons.sort(sortByHighestNeuron);
         console.log("Sorted neurons: ", neurons);
