@@ -48,62 +48,8 @@
 
   onMount(async () => {
     try{
-      //countries = await countryStore.getCountries();
-      countries = [
-        { id: 1, name: "England", code: "ENG" },
-        { id: 2, name: "Spain", code: "ESP" },
-        { id: 3, name: "Germany", code: "GER" },
-        { id: 4, name: "France", code: "FRA" }
-      ];
-      
-      //leagues = await leagueStore.getLeagues();
-      leagues = [
-        { 
-          id: 1, 
-          name: "Premier League",
-          logo: new Uint8Array([]), // Empty logo for testing
-          teamCount: 20,
-          relatedGender: { Male: null },
-          countryId: 1,
-          abbreviation: "PL",
-          governingBody: "The FA",
-          formed: BigInt(1992)
-        },
-        { 
-          id: 2, 
-          name: "La Liga",
-          logo: new Uint8Array([]),
-          teamCount: 20,
-          relatedGender: { Male: null },
-          countryId: 2,
-          abbreviation: "LaLiga",
-          governingBody: "RFEF",
-          formed: BigInt(1929)
-        },
-        { 
-          id: 3, 
-          name: "Bundesliga",
-          logo: new Uint8Array([]),
-          teamCount: 18,
-          relatedGender: { Male: null },
-          countryId: 3,
-          abbreviation: "BL",
-          governingBody: "DFB",
-          formed: BigInt(1963)
-        },
-        { 
-          id: 4, 
-          name: "Ligue 1",
-          logo: new Uint8Array([]),
-          teamCount: 20,
-          relatedGender: { Male: null },
-          countryId: 4,
-          abbreviation: "L1",
-          governingBody: "FFF",
-          formed: BigInt(1932)
-        }
-      ];
-
+      countries = await countryStore.getCountries();
+      leagues = await leagueStore.getLeagues();
       await loadData();
     } catch {
       toasts.addToast({type: 'error', message: 'Failed to load data.'});
@@ -123,46 +69,17 @@
   }
 
   async function getNeurons() {
-    // Dummy neuron data for testing
-    neurons = [
-        {
-            id: [],
-            staked_maturity_e8s_equivalent: [BigInt(100000000)],
-            permissions: [],
-            maturity_e8s_equivalent: BigInt(50000000),
-            cached_neuron_stake_e8s: BigInt(1000000000), // 10 ICFC
-            created_timestamp_seconds: BigInt(1677649200), // March 1, 2023
-            source_nns_neuron_id: [BigInt(12345)],
-            auto_stake_maturity: [true],
-            aging_since_timestamp_seconds: BigInt(1677649200),
-            dissolve_state: [{ DissolveDelaySeconds: BigInt(63072000) }], // 2 years
-            voting_power_percentage_multiplier: BigInt(100),
-            vesting_period_seconds: [BigInt(31536000)], // 1 year
-            disburse_maturity_in_progress: [],
-            followees: [],
-            neuron_fees_e8s: BigInt(0)
-        },
-        {
-            id: [],
-            staked_maturity_e8s_equivalent: [BigInt(200000000)],
-            permissions: [],
-            maturity_e8s_equivalent: BigInt(75000000),
-            cached_neuron_stake_e8s: BigInt(2000000000), // 20 ICFC
-            created_timestamp_seconds: BigInt(1672531200), // Jan 1, 2023
-            source_nns_neuron_id: [BigInt(67890)],
-            auto_stake_maturity: [true],
-            aging_since_timestamp_seconds: BigInt(1672531200),
-            dissolve_state: [{ DissolveDelaySeconds: BigInt(31536000) }], // 1 year
-            voting_power_percentage_multiplier: BigInt(100),
-            vesting_period_seconds: [BigInt(15768000)], // 6 months
-            disburse_maturity_in_progress: [],
-            followees: [],
-            neuron_fees_e8s: BigInt(0)
-        }
-    ];
-
-    userMembershipEligibility = { membershipType: { Seasonal: null }, eligibleNeuronIds: [] };
-    maxStakedICFC = BigInt(3000000000000); // 30 ICFC total
+    console.log("Getting neurons for create user");
+    let neuronsResult = await membershipStore.getUserNeurons();
+    console.log("neuronsResult: ", neuronsResult);
+    if (neuronsResult) {
+        neurons = neuronsResult.userNeurons.sort(sortByHighestNeuron);
+        console.log("Sorted neurons: ", neurons);
+        userMembershipEligibility = neuronsResult.userMembershipEligibility;
+        console.log("userMembershipEligibility: ", userMembershipEligibility);
+        maxStakedICFC = neuronsResult.totalMaxStaked;
+        console.log("maxStakedICFC: ", maxStakedICFC);
+    }
   }
 
   async function createProfile() {
@@ -259,111 +176,9 @@
   }
 
   async function getClubs() {
-    // let clubsResult = await clubStore.getClubs(favouriteLeagueId!);
-    // if(!clubsResult){ return }
-    // clubs = clubsResult;
-
-    // Dummy clubs based on the selected league
-    switch(favouriteLeagueId) {
-        case 1: // Premier League
-            clubs = [
-                { 
-                    id: 1,
-                    name: "Manchester United Football Club",
-                    friendlyName: "Man United",
-                    abbreviatedName: "MUN",
-                    primaryColourHex: "#DA291C",
-                    secondaryColourHex: "#FBE122",
-                    thirdColourHex: "#000000",
-                    shirtType: { Filled: null }
-                },
-                {
-                    id: 2,
-                    name: "Liverpool Football Club",
-                    friendlyName: "Liverpool",
-                    abbreviatedName: "LIV",
-                    primaryColourHex: "#C8102E",
-                    secondaryColourHex: "#F6EB61",
-                    thirdColourHex: "#FFFFFF",
-                    shirtType: { Filled: null }
-                }
-            ];
-            break;
-        case 2: // La Liga
-            clubs = [
-                {
-                    id: 3,
-                    name: "Real Madrid Club de Fútbol",
-                    friendlyName: "Real Madrid",
-                    abbreviatedName: "RMA",
-                    primaryColourHex: "#FFFFFF",
-                    secondaryColourHex: "#FEB83D",
-                    thirdColourHex: "#000000",
-                    shirtType: { Filled: null }
-                },
-                {
-                    id: 4,
-                    name: "Fútbol Club Barcelona",
-                    friendlyName: "Barcelona",
-                    abbreviatedName: "BAR",
-                    primaryColourHex: "#A50044",
-                    secondaryColourHex: "#004D98",
-                    thirdColourHex: "#FFED02",
-                    shirtType: { Filled: null }
-                }
-            ];
-            break;
-        case 3: // Bundesliga
-            clubs = [
-                {
-                    id: 5,
-                    name: "FC Bayern München",
-                    friendlyName: "Bayern Munich",
-                    abbreviatedName: "BAY",
-                    primaryColourHex: "#DC052D",
-                    secondaryColourHex: "#0066B2",
-                    thirdColourHex: "#FFFFFF",
-                    shirtType: { Filled: null }
-                },
-                {
-                    id: 6,
-                    name: "Borussia Dortmund",
-                    friendlyName: "Dortmund",
-                    abbreviatedName: "DOR",
-                    primaryColourHex: "#FDE100",
-                    secondaryColourHex: "#000000",
-                    thirdColourHex: "#FFFFFF",
-                    shirtType: { Filled: null }
-                }
-            ];
-            break;
-        case 4: // Ligue 1
-            clubs = [
-                {
-                    id: 7,
-                    name: "Paris Saint-Germain FC",
-                    friendlyName: "PSG",
-                    abbreviatedName: "PSG",
-                    primaryColourHex: "#004170",
-                    secondaryColourHex: "#DA291C",
-                    thirdColourHex: "#FFFFFF",
-                    shirtType: { Striped: null }
-                },
-                {
-                    id: 8,
-                    name: "Olympique de Marseille",
-                    friendlyName: "Marseille",
-                    abbreviatedName: "MAR",
-                    primaryColourHex: "#0B63AF",
-                    secondaryColourHex: "#FFFFFF",
-                    thirdColourHex: "#DBA111",
-                    shirtType: { Filled: null }
-                }
-            ];
-            break;
-        default:
-            clubs = [];
-    }
+    let clubsResult = await clubStore.getClubs(favouriteLeagueId!);
+    if(!clubsResult){ return }
+    clubs = clubsResult;
   }
 </script>
 
