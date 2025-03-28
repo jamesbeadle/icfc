@@ -70,6 +70,7 @@ actor class Self() = this {
   };
 
   //Profile Commands
+  
   public shared ({ caller }) func createProfile(dto : ProfileCommands.CreateProfile) : async Result.Result<(), T.Error> {
     assert not Principal.isAnonymous(caller);
     let principalId = Principal.toText(caller);

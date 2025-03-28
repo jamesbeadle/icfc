@@ -19,6 +19,7 @@ import Iter "mo:base/Iter";
 import Time "mo:base/Time";
 import SNSManager "sns_manager";
 import SNSGovernance "../sns-wrappers/governance";
+import BaseUtilities "../utils/base_utilities";
 
 module {
     public class ProfileManager() {
@@ -225,7 +226,7 @@ module {
                 return #err(#TooLong);
             };
 
-            let lowerCaseNewUsername = Utils.toLowercase(dto.username);
+            let lowerCaseNewUsername = BaseUtilities.toLowercase(dto.username);
             var currentOwner : ?Base.PrincipalId = findUsernamePrincipalId(lowerCaseNewUsername);
 
             switch (currentOwner) {
@@ -735,8 +736,8 @@ module {
         public func isUsernameTaken(username : Text, principalId : Text) : Bool {
             for (managerUsername in usernames.entries()) {
 
-                let lowerCaseUsername = Utils.toLowercase(username);
-                let existingUsername = Utils.toLowercase(managerUsername.1);
+                let lowerCaseUsername = BaseUtilities.toLowercase(username);
+                let existingUsername = BaseUtilities.toLowercase(managerUsername.1);
 
                 if (lowerCaseUsername == existingUsername and managerUsername.0 != principalId) {
                     return true;
@@ -748,8 +749,8 @@ module {
 
         private func findUsernamePrincipalId(username : Text) : ?Base.PrincipalId {
             for (profileUsername in usernames.entries()) {
-                let lowerCaseUsername = Utils.toLowercase(username);
-                let existingUsername = Utils.toLowercase(profileUsername.1);
+                let lowerCaseUsername = BaseUtilities.toLowercase(username);
+                let existingUsername = BaseUtilities.toLowercase(profileUsername.1);
 
                 if (lowerCaseUsername == existingUsername) {
                     return ?profileUsername.0;
@@ -831,7 +832,7 @@ module {
 
             let IC : Management.Management = actor (Environment.Default);
             let principal = ?Principal.fromText(Environment.BACKEND_CANISTER_ID);
-            let _ = await Utils.updateCanister_(canister, principal, IC);
+            let _ = await BaseUtilities.updateCanister_(canister, principal, IC);
         };
 
         private func storeCanisterId(canisterId : Text) {

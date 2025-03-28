@@ -1,7 +1,7 @@
 import Base "mo:waterway-mops/BaseTypes";
 import FootballTypes "mo:waterway-mops/FootballTypes";
 import Blob "mo:base/Blob";
-//import ckBTCLedger "canister:ckbtc_ledger";
+//import ckBTCLedger "canister:ckbtc_ledger"; // TODO Use for ckBTC sale Q3 2025
 
 module ICFCTypes {
 
