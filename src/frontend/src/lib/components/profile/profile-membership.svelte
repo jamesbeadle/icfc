@@ -8,6 +8,7 @@
     import LocalSpinner from "../shared/local-spinner.svelte";
     import AvailableMembership from "../membership/available-membership.svelte";
     import MembershipCard from "../membership/membership-card.svelte";
+    import MembershipDetails from "../membership/membership-details.svelte";
     
     export let profile: ProfileDTO;
     let isLoading = true;
@@ -101,8 +102,12 @@
       {#if neurons.length > 0}
         <div class="flex flex-col space-y-4">
 
-          <AvailableMembership {neurons} {refreshNeurons} availableMembership={userMembershipEligibility?.membershipType!} {maxStakedICFC} />
+        
+        
+            <AvailableMembership {neurons} {refreshNeurons} availableMembership={userMembershipEligibility?.membershipType!} {maxStakedICFC} />
 
+            <MembershipDetails />
+        
             <div class="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-4">
                 {#each membershipLevels as level, index}
                     <div class="w-full">
