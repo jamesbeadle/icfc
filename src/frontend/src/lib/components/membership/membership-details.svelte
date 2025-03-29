@@ -59,7 +59,7 @@
             freeBets: 10,
             freeBetsFrequency: 'per month',
             benefits: [
-                'ICFC lifetime membership profile display',
+                'ICFC Founding membership profile display',
                 'Access to the ICFC tokenised football ecosystem',
                 '10 free OpenFPL private league per season for up to 100 users.',
                 '10 free OpenWSL private league per season for up to 100 users.',
