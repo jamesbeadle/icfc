@@ -1,15 +1,11 @@
-import Base "mo:waterway-mops/BaseTypes";
 import FootballTypes "mo:waterway-mops/FootballTypes";
+import Ids "mo:waterway-mops/Ids";
 import T "../icfc_types";
 import SNSGovernance "../sns-wrappers/governance";
 
 module ProfileQueries {
-    public type GetProfile = {
-        principalId : Base.PrincipalId;
-    };
-
     public type ProfileDTO = {
-        principalId : Base.PrincipalId;
+        principalId : Ids.PrincipalId;
         username : Text;
         displayName : Text;
         membershipType : T.MembershipType;
@@ -17,12 +13,27 @@ module ProfileQueries {
         createdOn : Int;
         profilePicture : ?Blob;
         termsAgreed : Bool;
-        appPrincipalIds : [(T.SubApp, Base.PrincipalId)];
-        podcastIds : [Base.PrincipalId];
+        appPrincipalIds : [(T.SubApp, Ids.PrincipalId)];
+        podcastIds : [Ids.PrincipalId];
         membershipExpiryTime : Int;
         favouriteLeagueId : ?FootballTypes.LeagueId;
         favouriteClubId : ?FootballTypes.ClubId;
-        nationalityId : ?Base.CountryId;
+        nationalityId : ?Ids.CountryId;
+    };
+
+    public type ICFCProfileSummary = {
+        principalId : Ids.PrincipalId;
+        username : Text;
+        displayName : Text;
+        membershipType : T.MembershipType;
+        membershipClaim : T.MembershipClaim;
+        createdOn : Int;
+        profilePicture : ?Blob;
+        termsAgreed : Bool;
+        membershipExpiryTime : Int;
+        favouriteLeagueId : ?FootballTypes.LeagueId;
+        favouriteClubId : ?FootballTypes.ClubId;
+        nationalityId : ?Ids.CountryId;
     };
 
     public type ListProfiles = {
@@ -32,12 +43,20 @@ module ProfileQueries {
         offset : Nat;
     };
 
+    public type GetClaimedMemberships = {
+        principalId : Ids.PrincipalId;
+        offset : Nat;
+    };
+    public type ProfilePictureDTO = {
+        profilePicture : ?Blob;
+    };
+
     public type Profiles = {
         profiles : [ProfileSummary];
     };
 
     public type ProfileSummary = {
-        profilePrincipalId : Base.PrincipalId;
+        profilePrincipalId : Ids.PrincipalId;
         userName : Text;
         userPicture : ?Blob;
         userPictureExtension : Text;
@@ -45,7 +64,7 @@ module ProfileQueries {
 
     public type IsUsernameAvailable = {
         username : Text;
-        principalId : Base.PrincipalId;
+        principalId : Ids.PrincipalId;
     };
 
     public type UserNeuronsDTO = {
@@ -54,10 +73,8 @@ module ProfileQueries {
         userMembershipEligibility : T.EligibleMembership;
     };
 
-    public type ICFCMembershipDTO = {
-        membershipType : T.MembershipType;
-        membershipClaims : [T.MembershipClaim];
-        membershipExpiryTime : Int;
+    public type ClaimedMembershipsDTO = {
+        claimedMemberships : [T.MembershipClaim];
     };
 
     public type UsernameAvailable = Bool;

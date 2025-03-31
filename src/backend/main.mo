@@ -1,38 +1,38 @@
-import Base "mo:waterway-mops/BaseTypes";
-import Result "mo:base/Result";
-import Array "mo:base/Array";
-import Principal "mo:base/Principal";
-import Nat "mo:base/Nat";
-import Time "mo:base/Time";
-import Option "mo:base/Option";
-import Text "mo:base/Text";
-import Nat64 "mo:base/Nat64";
-import Int "mo:base/Int";
+
+/* ----- Mops Packages ----- */
 import Blob "mo:base/Blob";
-import Nat8 "mo:base/Nat8";
-import Timer "mo:base/Timer";
+import Int "mo:base/Int";
 import Iter "mo:base/Iter";
-import Debug "mo:base/Debug";
-import T "icfc_types";
-import Environment "environment";
-import DTOs "./dtos/dtos";
-import ProfileManager "managers/profile_manager";
-import ProfileCommands "commands/profile_commands";
-import PodcastManager "managers/podcast_manager";
-import ProfileQueries "queries/profile_queries";
-import SNSManager "managers/sns_manager";
-import Utils "utils/utils";
-import Management "utils/management";
+import Nat "mo:base/Nat";
+import Principal "mo:base/Principal";
+import Result "mo:base/Result";
+import Text "mo:base/Text";
+import Timer "mo:base/Timer";
+
+/* ----- Canister Definition Files ----- */
+
 import ProfileCanister "canister_definations/profile-canister";
+
+
+/* ----- Queries ----- */
 import AppQueries "queries/app_queries";
-import Countries "utils/countries";
-import SNSToken "./sns-wrappers/ledger";
-import Account "lib/Account";
+import ProfileQueries "queries/profile_queries";
+
+
+/* ----- Commands ----- */
+import ProfileCommands "commands/profile_commands";
+
+
+/* ----- Managers ----- */
+
+import ProfileManager "managers/profile_manager";
+import FootballChannelManager "managers/football_channel_manager";
+import SNSManager "managers/sns_manager";
 
 actor class Self() = this {
 
   private let profileManager = ProfileManager.ProfileManager();
-  private let podcastChannelManager = PodcastManager.PodcastManager();
+  private let footballChannelManager = FootballChannelManager.FootballChannelManager();
   private let snsManager = SNSManager.SNSManager();
 
   private var appStatus : Base.AppStatus = {
@@ -40,7 +40,7 @@ actor class Self() = this {
     version = "0.0.1";
   };
 
-  public shared query func getAppStatus() : async Result.Result<DTOs.AppStatusDTO, T.Error> {
+  public shared query func getAppStatus() : async Result.Result<AppQueries.AppStatus, T.Error> {
     return #ok(appStatus);
   };
 
@@ -48,7 +48,7 @@ actor class Self() = this {
 
   public shared ({ caller }) func getProfile() : async Result.Result<ProfileQueries.ProfileDTO, T.Error> {
     assert not Principal.isAnonymous(caller);
-    let dto : ProfileQueries.GetProfile = {
+    let dto : ProfileCommands.GetProfile = {
       principalId = Principal.toText(caller);
     };
     return await profileManager.getProfile(dto);
@@ -78,10 +78,15 @@ actor class Self() = this {
   };
 
   //Profile Commands
+  
   public shared ({ caller }) func createProfile(dto : ProfileCommands.CreateProfile) : async Result.Result<(), T.Error> {
     assert not Principal.isAnonymous(caller);
     let principalId = Principal.toText(caller);
-    return await profileManager.createProfile(principalId, dto);
+
+    let neurons = await snsManager.getUsersNeurons(caller);
+    let userEligibility : T.EligibleMembership = Utils.getMembershipType(neurons);
+
+    return await profileManager.createProfile(principalId, dto, userEligibility);
   };
 
   public shared ({ caller }) func claimMembership() : async Result.Result<(T.MembershipClaim), T.Error> {
@@ -104,7 +109,8 @@ actor class Self() = this {
 
   public shared ({ caller }) func verifySubApp(dto : ProfileCommands.VerifySubApp) : async Result.Result<(), T.Error> {
     assert not Principal.isAnonymous(caller);
-    return await profileManager.verifySubApp(Principal.toText(caller), dto);
+    assert Utils.isSubApp(Principal.toText(caller));
+    return await profileManager.verifySubApp(dto);
   };
 
   public shared ({ caller }) func updateUsername(dto : ProfileCommands.UpdateUserName) : async Result.Result<(), T.Error> {
@@ -157,9 +163,16 @@ actor class Self() = this {
     })
   };
 
-  public shared ({ caller }) func getICFCMembership(dto : ProfileCommands.GetICFCMembership) : async Result.Result<ProfileQueries.ICFCMembershipDTO, T.Error> {
+  public shared ({ caller }) func getICFCProfile(dto : ProfileCommands.GetICFCProfile) : async Result.Result<ProfileQueries.ProfileDTO, T.Error> {
     assert not Principal.isAnonymous(caller);
-    return await profileManager.getICFCMembership(Principal.toText(caller), dto);
+    assert Utils.isSubApp(Principal.toText(caller));
+    return await profileManager.getProfile(dto);
+  };
+
+  public shared ({ caller }) func getICFCProfileSummary(dto : ProfileCommands.GetICFCProfile) : async Result.Result<ProfileQueries.ICFCProfileSummary, T.Error> {
+    assert not Principal.isAnonymous(caller);
+    assert Utils.isSubApp(Principal.toText(caller));
+    return await profileManager.getICFCProfileSummary(dto);
   };
 
   public shared query ({ caller }) func getCountries() : async Result.Result<[AppQueries.CountryDTO], T.Error> {
@@ -175,9 +188,9 @@ actor class Self() = this {
   private stable var stable_total_profile : Nat = 0;
   private stable var stable_neurons_used_for_membership : [(Blob, Base.PrincipalId)] = [];
 
-  private stable var stable_podcast_channel_canister_index : [(T.PodcastChannelId, Base.CanisterId)] = [];
+  private stable var stable_podcast_channel_canister_index : [(T.FootballChannelId, Base.CanisterId)] = [];
   private stable var stable_active_podcast_channel_canister_id : Base.CanisterId = "";
-  private stable var stable_podcast_channel_names : [(T.PodcastChannelId, Text)] = [];
+  private stable var stable_podcast_channel_names : [(T.FootballChannelId, Text)] = [];
   private stable var stable_unique_podcast_channel_canister_ids : [Base.CanisterId] = [];
   private stable var stable_total_podcast_channels : Nat = 0;
   private stable var stable_next_podcast_channel_id : Nat = 0;
@@ -188,7 +201,7 @@ actor class Self() = this {
 
   system func preupgrade() {
     backupProfileData();
-    backupPodcastChannelData();
+    backupFootballChannelData();
 
     // stop membership timer
     if (stable_membership_timer_id != 0) {
@@ -197,18 +210,20 @@ actor class Self() = this {
   };
 
   system func postupgrade() {
-    setProfileData();
-    setPodcastChannelData();
-    stable_membership_timer_id := Timer.recurringTimer<system>(#seconds(86_400), checkMembership);
     ignore Timer.setTimer<system>(#nanoseconds(Int.abs(1)), postUpgradeCallback);
+    /*
+    setProfileData();
+    setFootballChannelData();
+    stable_membership_timer_id := Timer.recurringTimer<system>(#seconds(86_400), checkMembership);
+    */
   };
 
   private func postUpgradeCallback() : async () {
     await updateProfileCanisterWasms();
+    /*
     profileManager.setStableCanisterIndex([]);
     profileManager.setStableUsernames([]);
     profileManager.setStableTotalProfiles(0);
-    /*
     */
   };
 
@@ -222,13 +237,13 @@ actor class Self() = this {
 
   };
 
-  private func backupPodcastChannelData() {
-    stable_podcast_channel_canister_index := podcastChannelManager.getStableCanisterIndex();
-    stable_active_podcast_channel_canister_id := podcastChannelManager.getStableActiveCanisterId();
-    stable_podcast_channel_names := podcastChannelManager.getStablePodcastChannelNames();
-    stable_unique_podcast_channel_canister_ids := podcastChannelManager.getStableUniqueCanisterIds();
-    stable_total_podcast_channels := podcastChannelManager.getStableTotalPodcastChannels();
-    stable_next_podcast_channel_id := podcastChannelManager.getStableNextPodcastChannelId();
+  private func backupFootballChannelData() {
+    stable_podcast_channel_canister_index := footballChannelManager.getStableCanisterIndex();
+    stable_active_podcast_channel_canister_id := footballChannelManager.getStableActiveCanisterId();
+    stable_podcast_channel_names := footballChannelManager.getStableFootballChannelNames();
+    stable_unique_podcast_channel_canister_ids := footballChannelManager.getStableUniqueCanisterIds();
+    stable_total_podcast_channels := footballChannelManager.getStableTotalFootballChannels();
+    stable_next_podcast_channel_id := footballChannelManager.getStableNextFootballChannelId();
 
   };
 
@@ -241,13 +256,13 @@ actor class Self() = this {
     profileManager.setStableNeuronsUsedforMembership(stable_neurons_used_for_membership);
   };
 
-  private func setPodcastChannelData() {
-    podcastChannelManager.setStableCanisterIndex(stable_podcast_channel_canister_index);
-    podcastChannelManager.setStableActiveCanisterId(stable_active_podcast_channel_canister_id);
-    podcastChannelManager.setStablePodcastChannelNames(stable_podcast_channel_names);
-    podcastChannelManager.setStableUniqueCanisterIds(stable_unique_podcast_channel_canister_ids);
-    podcastChannelManager.setStableTotalPodcastChannels(stable_total_podcast_channels);
-    podcastChannelManager.setStableNextPodcastChannelId(stable_next_podcast_channel_id);
+  private func setFootballChannelData() {
+    footballChannelManager.setStableCanisterIndex(stable_podcast_channel_canister_index);
+    footballChannelManager.setStableActiveCanisterId(stable_active_podcast_channel_canister_id);
+    footballChannelManager.setStableFootballChannelNames(stable_podcast_channel_names);
+    footballChannelManager.setStableUniqueCanisterIds(stable_unique_podcast_channel_canister_ids);
+    footballChannelManager.setStableTotalFootballChannels(stable_total_podcast_channels);
+    footballChannelManager.setStableNextFootballChannelId(stable_next_podcast_channel_id);
   };
 
   private func updateProfileCanisterWasms() : async () {
@@ -271,231 +286,6 @@ actor class Self() = this {
     await profileManager.checkMemberships();
   };
 
-  /* Below is code related to a second sale */
+  // call_backs for 
 
-  // private let podcast
-
-  private var saleStartTime : Nat64 = Environment.SALE_START;
-  private var saleEndTime : Nat64 = Environment.SALE_END;
-
-  private stable var saleParticipants : [T.SaleParticipant] = [];
-
-  private var min_goal : Nat = Environment.CKBTC_MIN_GOAL * Nat.pow(10, Nat8.toNat(8));
-  private var max_goal : Nat = Environment.CKBTC_MAX_GOAL * Nat.pow(10, Nat8.toNat(8));
-  private var isSaleActive : Bool = (Nat64.fromNat(Int.abs(Time.now())) >= saleStartTime and Nat64.fromNat(Int.abs(Time.now())) < saleEndTime);
-  private stable var ckBTCRaised : Nat = 0;
-
-  private type Subaccount = Blob;
-  private var icfcExchange : Nat = 400; //400 ckSatoshis per ICFC
-
-  /*
-  private func caller_allowed(caller : Principal) : Bool {
-    let foundCaller = Array.find<Base.PrincipalId>(
-      Environment.ADMIN_PRINCIPALS,
-      func(canisterId : Base.CanisterId) : Bool {
-        Principal.toText(caller) == canisterId;
-      },
-    );
-    return Option.isSome(foundCaller);
-  };
-  */
-
-  // SNS Sale ckBTC Functions
-  /*
-  private func return_participants_ckBTC() : async Result.Result<Nat, Text> {
-    let participants = saleParticipants;
-    saleParticipants := [];
-    let fee = await ckBTCLedger.icrc1_fee();
-    var total = 0;
-    for (participant in Array.vals(participants)) {
-      let transfer_result = await ckBTCLedger.icrc1_transfer({
-        from_subaccount = ?Account.defaultSubaccount();
-        to = {
-          owner = Principal.fromActor(this);
-          subaccount = ?Account.principalToSubaccount(participant.user);
-        };
-        amount = participant.amount - fee;
-        fee = ?fee;
-        memo = null;
-        created_at_time = ?Nat64.fromNat(Int.abs(Time.now()));
-      });
-
-      switch (transfer_result) {
-        case (#Ok(_)) {
-          total += participant.amount;
-        };
-        case (#Err(err)) {
-          return #err("Transfer failed: " # debug_show (err));
-        };
-      };
-    };
-    return #ok(total);
-  };
-
-  private func end_sale() : async () {
-    let saleProgress = ckBTCRaised;
-    let decimal = await ckBTCLedger.icrc1_decimals();
-
-    let totalRaised = saleProgress / Nat.pow(10, Nat8.toNat(decimal));
-
-    if (totalRaised < 50) {
-      // min goal not reached
-      let _ = await return_participants_ckBTC();
-      return;
-    };
-  };
-
-  if (Nat64.fromNat(Int.abs(Time.now())) < saleStartTime) {
-    let duration : Nat64 = saleStartTime - Nat64.fromNat(Int.abs(Time.now()));
-    ignore Timer.setTimer<system>(
-      #nanoseconds(Nat64.toNat(duration)),
-      func() : async () {
-        isSaleActive := true;
-      },
-    );
-  };
-
-  if (Nat64.fromNat(Int.abs(Time.now())) < saleEndTime) {
-    let duration : Nat64 = saleEndTime - Nat64.fromNat(Int.abs(Time.now()));
-    ignore Timer.setTimer<system>(
-      #nanoseconds(Nat64.toNat(duration)),
-      func() : async () {
-        await end_sale();
-        isSaleActive := false;
-      },
-    );
-  };
-
-  public shared ({ caller }) func participate(amount : Nat) : async Result.Result<(), Text> {
-    assert not Principal.isAnonymous(caller);
-
-    let now = Nat64.fromNat(Int.abs(Time.now()));
-    if (now < saleStartTime or now >= saleEndTime) {
-      return #err("Sale is not active");
-    };
-
-    let current_balance = await ckBTCLedger.icrc1_balance_of({
-      owner = Principal.fromActor(this);
-      subaccount = null;
-    });
-
-    if (current_balance >= max_goal) {
-      return #err("Goal already reached");
-    };
-
-    if (current_balance + amount > max_goal) {
-      return #err("Contribution would exceed the goal");
-    };
-
-    let fee = await ckBTCLedger.icrc1_fee();
-
-    if (amount < fee) {
-      return #err("Amount is less than fee");
-    };
-
-    let transfer_result = await ckBTCLedger.icrc1_transfer({
-      from_subaccount = ?Account.principalToSubaccount(caller);
-      to = {
-        owner = Principal.fromActor(this);
-        subaccount = ?Account.defaultSubaccount();
-      };
-      amount = amount - fee;
-      fee = ?fee;
-      memo = null;
-      created_at_time = ?Nat64.fromNat(Int.abs(Time.now()));
-    });
-
-    let icfc_staked = amount / icfcExchange;
-
-    switch (transfer_result) {
-      case (#Ok(_)) {
-        ckBTCRaised += amount;
-        let particapantsBuffer = Buffer.fromArray<T.SaleParticipant>(saleParticipants);
-        particapantsBuffer.add({
-          user = caller;
-          amount = amount;
-          icfc_staked = icfc_staked;
-          time = Nat64.fromNat(Int.abs(Time.now()));
-        });
-        saleParticipants := Buffer.toArray(particapantsBuffer);
-        return #ok(());
-      };
-      case (#Err(err)) {
-        return #err("Transfer failed: " # debug_show (err));
-      };
-    };
-  };
-
-  public query func get_goal() : async Result.Result<DTOs.SaleGoalDTO, Text> {
-    let result : DTOs.SaleGoalDTO = {
-      minGoal = min_goal;
-      maxGoal = max_goal;
-      currentProgress = ckBTCRaised;
-    };
-    return #ok(result);
-  };
-
-  public shared ({ caller }) func get_user_ckBTC_balance() : async Nat {
-    assert not Principal.isAnonymous(caller);
-    await ckBTCLedger.icrc1_balance_of({
-      owner = Principal.fromActor(this);
-      subaccount = ?Account.principalToSubaccount(caller);
-    });
-  };
-
-  public shared ({ caller }) func get_user_sale_contribution() : async [T.SaleParticipant] {
-    assert not Principal.isAnonymous(caller);
-
-    let foundParticipants = Array.filter(
-      saleParticipants,
-      func(participant : T.SaleParticipant) : Bool {
-        participant.user == caller;
-      },
-    );
-    return foundParticipants;
-
-  };
-
-  public shared ({ caller }) func get_sale_participants() : async [T.SaleParticipant] {
-    assert caller_allowed(caller);
-    return saleParticipants;
-  };
-
-  public shared func get_sale_countdown() : async Result.Result<DTOs.SaleCountDownDTO, Text> {
-    let now = Nat64.fromNat(Int.abs(Time.now()));
-    if (now < saleStartTime) {
-      let timeRemaining = saleStartTime - now;
-      let (days, hours, minutes, seconds) = await Utils.convertNanoToTime(timeRemaining);
-
-      let result : DTOs.SaleCountDownDTO = {
-        status = "upcoming";
-        timeRemaining = timeRemaining;
-        stringTime = Nat.toText(days) # " days, " # Nat.toText(hours) # " hours, " # Nat.toText(minutes) # " minutes, " # Nat.toText(seconds) # " seconds";
-      };
-      return #ok(result);
-
-    } else if (now < saleEndTime) {
-      let timeRemaining = saleEndTime - now;
-      let (days, hours, minutes, seconds) = await Utils.convertNanoToTime(timeRemaining);
-
-      let result : DTOs.SaleCountDownDTO = {
-        status = "active";
-        timeRemaining = timeRemaining;
-        stringTime = Nat.toText(days) # " days, " # Nat.toText(hours) # " hours, " # Nat.toText(minutes) # " minutes, " # Nat.toText(seconds) # " seconds";
-      };
-      return #ok(result);
-
-    } else {
-      let result : DTOs.SaleCountDownDTO = {
-        status = "ended";
-        timeRemaining = 0;
-        stringTime = "Sale has ended";
-      };
-      return #ok(result);
-    };
-
-  };
-  */
-
-  // public shared ({caller}) func create_podcast_group()
 };

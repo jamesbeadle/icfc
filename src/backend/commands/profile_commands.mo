@@ -1,86 +1,89 @@
-import Base "mo:waterway-mops/BaseTypes";
 import FootballTypes "mo:waterway-mops/FootballTypes";
+import Ids "mo:waterway-mops/Ids";
 import T "../icfc_types";
 
 module ProfileCommands {
+    public type GetProfile = {
+        principalId : Ids.PrincipalId;
+    };
 
     public type CreateProfile = {
         username : Text;
         profilePicture : ?Blob;
         displayName : Text;
-        appPrincipalIds : [(T.SubApp, Base.PrincipalId)];
+        appPrincipalIds : [(T.SubApp, Ids.PrincipalId)];
         favouriteLeagueId : ?FootballTypes.LeagueId;
         favouriteClubId : ?FootballTypes.ClubId;
-        nationalityId : ?Base.CountryId;
+        nationalityId : ?Ids.CountryId;
     };
 
     public type UpdateUserName = {
-        principalId : Base.PrincipalId;
+        principalId : Ids.PrincipalId;
         username : Text;
     };
 
     public type UpdateDisplayName = {
-        principalId : Base.PrincipalId;
+        principalId : Ids.PrincipalId;
         displayName : Text;
     };
 
     public type UpdateFavouriteClub = {
-        principalId : Base.PrincipalId;
+        principalId : Ids.PrincipalId;
         favouriteLeagueId : FootballTypes.LeagueId;
         favouriteClubId : FootballTypes.ClubId;
     };
 
     public type UpdateNationality = {
-        principalId : Base.PrincipalId;
-        nationalityId : Base.CountryId;
+        principalId : Ids.PrincipalId;
+        nationalityId : Ids.CountryId;
     };
 
     public type UpdateProfilePicture = {
-        principalId : Base.PrincipalId;
+        principalId : Ids.PrincipalId;
         profilePicture : ?Blob;
     };
 
     public type DeleteProfile = {
-        principalId : Base.PrincipalId;
+        principalId : Ids.PrincipalId;
         confirm : Bool;
     };
 
     public type UpdateMembership = {
-        principalId : Base.PrincipalId;
+        principalId : Ids.PrincipalId;
         membershipType : T.MembershipType;
     };
 
     public type ClaimMembership = {
-        principalId : Base.PrincipalId;
+        principalId : Ids.PrincipalId;
     };
 
     public type AddSubApp = {
-        subAppUserPrincipalId : Base.PrincipalId;
+        subAppUserPrincipalId : Ids.PrincipalId;
         subApp : T.SubApp;
     };
 
-    public type GetICFCMembership = {
-        principalId : Base.PrincipalId;
-
+    public type GetICFCProfile = {
+        principalId : Ids.PrincipalId;
     };
 
     public type RemoveSubApp = {
         subApp : T.SubApp;
-        userPrincipalId : Base.PrincipalId;
+        userPrincipalId : Ids.PrincipalId;
     };
     public type VerifySubApp = {
-        subAppUserPrincipalId : Base.PrincipalId;
+        subAppUserPrincipalId : Ids.PrincipalId;
         subApp : T.SubApp;
-        icfcPrincipalId : Base.PrincipalId;
+        icfcPrincipalId : Ids.PrincipalId;
     };
 
     public type NotifyAppofLink = {
-        subAppUserPrincipalId : Base.PrincipalId;
+        subAppUserPrincipalId : Ids.PrincipalId;
         subApp : T.SubApp;
-        icfcPrincipalId : Base.PrincipalId;
+        icfcPrincipalId : Ids.PrincipalId;
     };
     public type UpdateICFCProfile = {
-        subAppUserPrincipalId : Base.PrincipalId;
+        subAppUserPrincipalId : Ids.PrincipalId;
         subApp : T.SubApp;
+        membershipType : T.MembershipType;
     };
 };

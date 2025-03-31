@@ -9,22 +9,29 @@ import { isNullish, fromNullable } from "@dfinity/utils";
 import type { OptionIdentity } from "$lib/types/identity";
 import type { ProfileDTO } from "../../../../declarations/backend/backend.did";
 
-export type InitUserProfileResult = { result: 'skip' | 'success' | 'error' };
+export type InitUserProfileResult = { result: "skip" | "success" | "error" };
 
-export const initUserProfile = async ({ identity }: { identity: OptionIdentity }): Promise<InitUserProfileResult> => {
-  if (!identity) return { result: 'skip' };
+export const initUserProfile = async ({
+  identity,
+}: {
+  identity: OptionIdentity;
+}): Promise<InitUserProfileResult> => {
+  if (!identity) return { result: "skip" };
 
   try {
     const profile = await userStore.getProfile();
     if (profile) {
       userIdCreatedStore.set({ data: profile.principalId, certified: true });
-      return { result: 'success' };
+      return { result: "success" };
     }
-    return { result: 'skip' };
+    return { result: "skip" };
   } catch (err) {
-    toasts.addToast({ message: 'Error initializing user profile', type: 'error' });
-    console.error('initUserProfile error', err);
+    toasts.addToast({
+      message: "Error initializing user profile",
+      type: "error",
+    });
+    console.error("initUserProfile error", err);
     await initErrorSignOut();
-    return { result: 'error' };
+    return { result: "error" };
   }
 };

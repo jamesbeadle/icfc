@@ -5,6 +5,7 @@ import Iter "mo:base/Iter";
 import Time "mo:base/Time";
 import Array "mo:base/Array";
 import Buffer "mo:base/Buffer";
+import List "mo:base/List";
 import T "../icfc_types";
 import ProfileQueries "../queries/profile_queries";
 import Environment "../environment";
@@ -32,9 +33,11 @@ actor class _ProfileCanister() {
     private stable var MAX_PROFILES_PER_CANISTER : Nat = 12000;
     private stable var canisterFull = false;
 
+    private let MEMBERSHIPS_ROW_COUNT_LIMIT = 20;
+
     //Public endpoints
 
-    public shared ({ caller }) func getProfile(dto : ProfileQueries.GetProfile) : async Result.Result<ProfileQueries.ProfileDTO, T.Error> {
+    public shared ({ caller }) func getProfile(dto : ProfileCommands.GetProfile) : async Result.Result<ProfileQueries.ProfileDTO, T.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
         assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
@@ -51,6 +54,10 @@ actor class _ProfileCanister() {
                 let profile = findProfile(foundGroupIndex, dto.principalId);
                 switch (profile) {
                     case (?foundProfile) {
+
+                        let recent_5_membership_claims = List.take<T.MembershipClaim>(List.reverse(List.fromArray(foundProfile.membershipClaims)), 5);
+                        let membershipArray = List.toArray(recent_5_membership_claims);
+
                         let dto : ProfileQueries.ProfileDTO = {
                             principalId = foundProfile.principalId;
                             username = foundProfile.username;
@@ -60,7 +67,7 @@ actor class _ProfileCanister() {
                             appPrincipalIds = foundProfile.appPrincipalIds;
                             podcastIds = foundProfile.podcastIds;
                             membershipType = foundProfile.membershipType;
-                            membershipClaims = foundProfile.membershipClaims;
+                            membershipClaims = membershipArray;
                             createdOn = foundProfile.createdOn;
                             membershipExpiryTime = foundProfile.membershipExpiryTime;
                             favouriteLeagueId = foundProfile.favouriteLeagueId;
@@ -77,7 +84,7 @@ actor class _ProfileCanister() {
         };
     };
 
-    public shared ({ caller }) func getICFCMembership(dto : ProfileCommands.GetICFCMembership) : async Result.Result<ProfileQueries.ICFCMembershipDTO, T.Error> {
+    public shared ({ caller }) func getProfileSummary(dto : ProfileCommands.GetProfile) : async Result.Result<ProfileQueries.ICFCProfileSummary, T.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
         assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
@@ -94,10 +101,25 @@ actor class _ProfileCanister() {
                 let profile = findProfile(foundGroupIndex, dto.principalId);
                 switch (profile) {
                     case (?foundProfile) {
-                        let dto : ProfileQueries.ICFCMembershipDTO = {
+
+                        let latest_membership_claims = List.take<T.MembershipClaim>(List.reverse(List.fromArray(foundProfile.membershipClaims)), 1);
+                        let latestMembershipClaim = List.toArray(latest_membership_claims)[0];
+
+                        let dto : ProfileQueries.ICFCProfileSummary = {
+                            principalId = foundProfile.principalId;
+                            username = foundProfile.username;
+                            profilePicture = foundProfile.profilePicture;
+                            displayName = foundProfile.displayName;
+                            termsAgreed = foundProfile.termsAgreed;
+                            appPrincipalIds = foundProfile.appPrincipalIds;
+                            podcastIds = foundProfile.podcastIds;
                             membershipType = foundProfile.membershipType;
-                            membershipClaims = foundProfile.membershipClaims;
+                            membershipClaim = latestMembershipClaim;
+                            createdOn = foundProfile.createdOn;
                             membershipExpiryTime = foundProfile.membershipExpiryTime;
+                            favouriteLeagueId = foundProfile.favouriteLeagueId;
+                            favouriteClubId = foundProfile.favouriteClubId;
+                            nationalityId = foundProfile.nationalityId;
                         };
                         return #ok(dto);
                     };
@@ -109,7 +131,41 @@ actor class _ProfileCanister() {
         };
     };
 
-    public shared ({ caller }) func createProfile(profilePrincipalId : Base.PrincipalId, dto : ProfileCommands.CreateProfile) : async Result.Result<(), T.Error> {
+    public shared ({ caller }) func getClaimedMembership(dto : ProfileQueries.GetClaimedMemberships) : async Result.Result<ProfileQueries.ClaimedMembershipsDTO, T.Error> {
+        assert not Principal.isAnonymous(caller);
+        let backendPrincipalId = Principal.toText(caller);
+        assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
+
+        var groupIndex : ?Nat8 = null;
+        for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
+            if (profileGroupIndex.0 == dto.principalId) {
+                groupIndex := ?profileGroupIndex.1;
+            };
+        };
+        switch (groupIndex) {
+            case (null) { return #err(#NotFound) };
+            case (?foundGroupIndex) {
+                let profile = findProfile(foundGroupIndex, dto.principalId);
+                switch (profile) {
+                    case (?foundProfile) {
+                        let allMembershipClaims = List.fromArray(foundProfile.membershipClaims);
+                        let droppedEntries = List.drop<T.MembershipClaim>(allMembershipClaims, dto.offset);
+                        let paginatedEntires = List.take<T.MembershipClaim>(droppedEntries, MEMBERSHIPS_ROW_COUNT_LIMIT);
+
+                        let claimedMembershipsDTO : ProfileQueries.ClaimedMembershipsDTO = {
+                            claimedMemberships = List.toArray(paginatedEntires);
+                        };
+                        return #ok(claimedMembershipsDTO);
+                    };
+                    case (null) {
+                        return #err(#NotFound);
+                    };
+                };
+            };
+        };
+    };
+
+    public shared ({ caller }) func createProfile(profilePrincipalId : Base.PrincipalId, dto : ProfileCommands.CreateProfile, membership : T.EligibleMembership) : async Result.Result<(), T.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
         assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
@@ -135,8 +191,12 @@ actor class _ProfileCanister() {
             termsAgreed = false;
             appPrincipalIds = dto.appPrincipalIds;
             podcastIds = [];
-            membershipType = #NotClaimed;
-            membershipClaims = [];
+            membershipType = membership.membershipType;
+            membershipClaims = [{
+                claimedOn = Time.now();
+                expiresOn = ?Utils.getMembershipExpirationDate(membership.membershipType);
+                membershipType = membership.membershipType;
+            }];
             createdOn = Time.now();
             membershipExpiryTime = 0;
             favouriteLeagueId = dto.favouriteLeagueId;
@@ -144,7 +204,9 @@ actor class _ProfileCanister() {
             nationalityId = dto.nationalityId;
         };
 
-        addProfile(newProfile);
+        let _ = addProfile(newProfile);
+
+        return #ok();
 
     };
 
@@ -181,7 +243,7 @@ actor class _ProfileCanister() {
                             favouriteClubId = foundProfile.favouriteClubId;
                             nationalityId = foundProfile.nationalityId;
                         };
-                        saveProfile(foundGroupIndex, updatedProfile);
+                        await saveProfile(foundGroupIndex, updatedProfile);
                     };
                     case (null) {
                         return #err(#NotFound);
@@ -224,7 +286,7 @@ actor class _ProfileCanister() {
                             favouriteClubId = foundProfile.favouriteClubId;
                             nationalityId = foundProfile.nationalityId;
                         };
-                        saveProfile(foundGroupIndex, updatedProfile);
+                        await saveProfile(foundGroupIndex, updatedProfile);
                     };
                     case (null) {
                         return #err(#NotFound);
@@ -267,7 +329,7 @@ actor class _ProfileCanister() {
                             favouriteClubId = foundProfile.favouriteClubId;
                             nationalityId = ?dto.nationalityId;
                         };
-                        saveProfile(foundGroupIndex, updatedProfile);
+                        await saveProfile(foundGroupIndex, updatedProfile);
                     };
                     case (null) {
                         return #err(#NotFound);
@@ -310,7 +372,7 @@ actor class _ProfileCanister() {
                             favouriteClubId = ?dto.favouriteClubId;
                             nationalityId = foundProfile.nationalityId;
                         };
-                        saveProfile(foundGroupIndex, updatedProfile);
+                        await saveProfile(foundGroupIndex, updatedProfile);
                     };
                     case (null) {
                         return #err(#NotFound);
@@ -385,7 +447,7 @@ actor class _ProfileCanister() {
                             favouriteClubId = foundProfile.favouriteClubId;
                             nationalityId = foundProfile.nationalityId;
                         };
-                        saveProfile(foundGroupIndex, updatedProfile);
+                        await saveProfile(foundGroupIndex, updatedProfile);
                     };
                     case (null) {
                         return #err(#NotFound);
@@ -436,7 +498,7 @@ actor class _ProfileCanister() {
                             favouriteClubId = foundProfile.favouriteClubId;
                             nationalityId = foundProfile.nationalityId;
                         };
-                        saveProfile(foundGroupIndex, updatedProfile);
+                        await saveProfile(foundGroupIndex, updatedProfile);
                     };
                     case (null) {
                         return #err(#NotFound);
@@ -479,7 +541,7 @@ actor class _ProfileCanister() {
                             favouriteClubId = foundProfile.favouriteClubId;
                             nationalityId = foundProfile.nationalityId;
                         };
-                        saveProfile(foundGroupIndex, updatedProfile);
+                        await saveProfile(foundGroupIndex, updatedProfile);
                     };
                     case (null) {
                         return #err(#NotFound);
@@ -540,7 +602,7 @@ actor class _ProfileCanister() {
                             nationalityId = foundProfile.nationalityId;
                         };
 
-                        let res = saveProfile(foundGroupIndex, updatedProfile);
+                        let res = await saveProfile(foundGroupIndex, updatedProfile);
                         switch (res) {
                             case (#err(error)) { return #err(error) };
                             case (#ok) { return #ok(newClaim) };
@@ -691,7 +753,7 @@ actor class _ProfileCanister() {
                             nationalityId = foundProfile.nationalityId;
                         };
 
-                        let res = saveProfile(foundGroupIndex, updatedProfile);
+                        let res = await saveProfile(foundGroupIndex, updatedProfile);
                         switch (res) {
                             case (#err(_)) { return };
                             case (#ok) {
@@ -905,7 +967,7 @@ actor class _ProfileCanister() {
         return #ok();
     };
 
-    private func saveProfile(profileGroupIndex : Nat8, updatedProfile : T.Profile) : Result.Result<(), T.Error> {
+    private func saveProfile(profileGroupIndex : Nat8, updatedProfile : T.Profile) : async Result.Result<(), T.Error> {
         switch (profileGroupIndex) {
             case 0 {
                 profileGroup1 := Array.map<T.Profile, T.Profile>(
@@ -1055,8 +1117,10 @@ actor class _ProfileCanister() {
                 return #err(#NotFound);
             };
         };
+
         return #ok();
     };
+
     private func getProfileCountInGroup(groupIndex : Nat8) : Nat {
         switch (groupIndex) {
             case 0 {
@@ -1104,10 +1168,10 @@ actor class _ProfileCanister() {
     system func preupgrade() {};
 
     system func postupgrade() {
+        /*
         stable_profile_group_indexes := [];
         profileGroup1 := [];
         totalProfiles := 0;
-        /*
         */
     };
 };

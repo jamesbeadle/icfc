@@ -8,7 +8,7 @@
     import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
     import TabContainer from "$lib/components/shared/tab-container.svelte";
     import ProfileDetails from "$lib/components/profile/profile-details.svelte";
-    import ProfileMembership from "$lib/components/profile/profile-membership.svelte";;
+    import ProfileMembership from "$lib/components/profile/profile-membership.svelte";
     import ProfileLinkedApps from "$lib/components/profile/profile-linked-apps.svelte";
     import UpdateRequiredDetailsModal from "$lib/components/profile/update-modals/update-required-details-modal.svelte";
     

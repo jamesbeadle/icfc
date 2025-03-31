@@ -81,9 +81,9 @@
 
                 <ul class="space-y-4 mini:space-y-6 md:space-y-4 lg:space-y-6">
                     {#each tier.benefits as benefit}
-                        <li class="flex items-start gap-3">
+                        <li class="flex items-start gap-1">
                             <BulletPointIcon className="w-4 h-4 mt-[0.4rem] flex-shrink-0" color="#E8E8E8" />
-                            <span class="text-base leading-normal break-words whitespace-normal mini:text-lg md:text-base 2xl:text-xl">{benefit}</span>
+                            <span class="text-sm leading-normal break-words whitespace-normal">{benefit}</span>
                         </li>
                     {/each}
                 </ul>

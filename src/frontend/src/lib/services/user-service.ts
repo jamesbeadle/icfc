@@ -10,7 +10,7 @@ import type {
 //TODO: CHANGE TO PROFILEDTO when backend is updated
 export class UserService {
   constructor() {}
-  
+
   async createProfile(dto: CreateProfile): Promise<any> {
     try {
       const identityActor = await ActorFactory.createIdentityActor(

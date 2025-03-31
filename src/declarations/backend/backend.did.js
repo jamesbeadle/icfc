@@ -28,6 +28,7 @@ export const idlFactory = ({ IDL }) => {
     NeuronAlreadyUsed: IDL.Null,
     OutOfRange: IDL.Null,
     AlreadyLinked: IDL.Null,
+    FailedInterCanisterCall: IDL.Null,
     PaymentError: IDL.Null,
     CanisterFull: IDL.Null,
     InEligible: IDL.Null,
@@ -60,24 +61,15 @@ export const idlFactory = ({ IDL }) => {
     favouriteLeagueId: IDL.Opt(LeagueId),
     nationalityId: IDL.Opt(CountryId),
   });
-  const AppStatusDTO = IDL.Record({
-    version: IDL.Text,
-    onHold: IDL.Bool,
-  });
-  const Result_6 = IDL.Variant({ ok: AppStatusDTO, err: Error });
+  const AppStatus = IDL.Record({ version: IDL.Text, onHold: IDL.Bool });
+  const Result_6 = IDL.Variant({ ok: AppStatus, err: Error });
   const CountryDTO = IDL.Record({
     id: CountryId,
     code: IDL.Text,
     name: IDL.Text,
   });
   const Result_5 = IDL.Variant({ ok: IDL.Vec(CountryDTO), err: Error });
-  const GetICFCMembership = IDL.Record({ principalId: PrincipalId });
-  const ICFCMembershipDTO = IDL.Record({
-    membershipClaims: IDL.Vec(MembershipClaim),
-    membershipType: MembershipType,
-    membershipExpiryTime: IDL.Int,
-  });
-  const Result_4 = IDL.Variant({ ok: ICFCMembershipDTO, err: Error });
+  const GetICFCProfile = IDL.Record({ principalId: PrincipalId });
   const ProfileDTO = IDL.Record({
     username: IDL.Text,
     displayName: IDL.Text,
@@ -95,6 +87,21 @@ export const idlFactory = ({ IDL }) => {
     principalId: PrincipalId,
   });
   const Result_3 = IDL.Variant({ ok: ProfileDTO, err: Error });
+  const ICFCProfileSummary = IDL.Record({
+    username: IDL.Text,
+    displayName: IDL.Text,
+    membershipClaim: MembershipClaim,
+    createdOn: IDL.Int,
+    favouriteClubId: IDL.Opt(ClubId),
+    profilePicture: IDL.Opt(IDL.Vec(IDL.Nat8)),
+    membershipType: MembershipType,
+    termsAgreed: IDL.Bool,
+    membershipExpiryTime: IDL.Int,
+    favouriteLeagueId: IDL.Opt(LeagueId),
+    nationalityId: IDL.Opt(CountryId),
+    principalId: PrincipalId,
+  });
+  const Result_4 = IDL.Variant({ ok: ICFCProfileSummary, err: Error });
   const TokenBalances = IDL.Record({
     icgcBalance: IDL.Nat,
     icfcBalance: IDL.Nat,
@@ -183,7 +190,8 @@ export const idlFactory = ({ IDL }) => {
     createProfile: IDL.Func([CreateProfile], [Result], []),
     getAppStatus: IDL.Func([], [Result_6], ["query"]),
     getCountries: IDL.Func([], [Result_5], ["query"]),
-    getICFCMembership: IDL.Func([GetICFCMembership], [Result_4], []),
+    getICFCProfile: IDL.Func([GetICFCProfile], [Result_3], []),
+    getICFCProfileSummary: IDL.Func([GetICFCProfile], [Result_4], []),
     getProfile: IDL.Func([], [Result_3], []),
     getTokenBalances: IDL.Func([], [Result_2], []),
     getUserNeurons: IDL.Func([], [Result_1], []),

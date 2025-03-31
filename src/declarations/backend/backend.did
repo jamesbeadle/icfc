@@ -59,7 +59,8 @@ type Self =
    createProfile: (CreateProfile) -> (Result);
    getAppStatus: () -> (Result_6) query;
    getCountries: () -> (Result_5) query;
-   getICFCMembership: (GetICFCMembership) -> (Result_4);
+   getICFCProfile: (GetICFCProfile) -> (Result_3);
+   getICFCProfileSummary: (GetICFCProfile) -> (Result_4);
    getProfile: () -> (Result_3);
    getTokenBalances: () -> (Result_2);
    getUserNeurons: () -> (Result_1);
@@ -81,7 +82,7 @@ type Result_7 =
 type Result_6 = 
  variant {
    err: Error;
-   ok: AppStatusDTO;
+   ok: AppStatus;
  };
 type Result_5 = 
  variant {
@@ -91,7 +92,7 @@ type Result_5 =
 type Result_4 = 
  variant {
    err: Error;
-   ok: ICFCMembershipDTO;
+   ok: ICFCProfileSummary;
  };
 type Result_3 = 
  variant {
@@ -179,13 +180,22 @@ type MembershipClaim =
  };
 type LeagueId = nat16;
 type IsUsernameValid = record {username: text;};
-type ICFCMembershipDTO = 
+type ICFCProfileSummary = 
  record {
-   membershipClaims: vec MembershipClaim;
+   createdOn: int;
+   displayName: text;
+   favouriteClubId: opt ClubId;
+   favouriteLeagueId: opt LeagueId;
+   membershipClaim: MembershipClaim;
    membershipExpiryTime: int;
    membershipType: MembershipType;
+   nationalityId: opt CountryId;
+   principalId: PrincipalId;
+   profilePicture: opt blob;
+   termsAgreed: bool;
+   username: text;
  };
-type GetICFCMembership = record {principalId: PrincipalId;};
+type GetICFCProfile = record {principalId: PrincipalId;};
 type Followees = record {followees: vec NeuronId;};
 type Error = 
  variant {
@@ -195,6 +205,7 @@ type Error =
    CanisterFull;
    CreateGameError;
    DecodeError;
+   FailedInterCanisterCall;
    InEligible;
    InvalidData;
    InvalidProfilePicture;
@@ -247,7 +258,7 @@ type CountryDTO =
    name: text;
  };
 type ClubId = nat16;
-type AppStatusDTO = 
+type AppStatus = 
  record {
    onHold: bool;
    version: text;

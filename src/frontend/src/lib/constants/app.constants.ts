@@ -19,4 +19,5 @@ export const HOURS_IN_DAY = 24;
 export const DAYS_IN_NON_LEAP_YEAR = 365;
 
 export const MAX_CACHED_LEAGUES = 3;
-export const INTERNET_IDENTITY_CANISTER_ID = 'http://localhost:8080/?canisterId=qhbym-qaaaa-aaaaa-aaafq-cai#authorize';
+export const INTERNET_IDENTITY_CANISTER_ID =
+  "http://localhost:8080/?canisterId=qhbym-qaaaa-aaaaa-aaafq-cai#authorize";

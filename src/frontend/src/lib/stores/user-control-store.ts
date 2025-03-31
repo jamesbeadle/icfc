@@ -6,10 +6,3 @@ import { initUncreatedStore } from "$lib/stores/user-notcreated-store";
 export const userIdCreatedStore = initCreatedStore<UserId | string>();
 
 export const userIdUncreatedStore = initUncreatedStore<CreateProfile>();
-
-
-
-
-
-
-

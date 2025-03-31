@@ -6,5 +6,5 @@ export const authSignedInStore: Readable<boolean> = derived(
 );
 export const authNotSignedInStore: Readable<boolean> = derived(
   authSignedInStore,
-  ($authSignedInStore) => !$authSignedInStore
+  ($authSignedInStore) => !$authSignedInStore,
 );

@@ -4,7 +4,6 @@ import { isNullish } from "@dfinity/utils";
 import { busy } from "$lib/stores/busy-store";
 import { toasts, type Toast } from "$lib/stores/toasts-store";
 
-
 export const signIn = async (
   params: AuthSignInParams,
 ): Promise<{ success: "ok" | "cancelled" | "error"; err?: unknown }> => {
@@ -18,8 +17,8 @@ export const signIn = async (
     }
 
     toasts.addToast({
-      message: 'Error Signing In',
-      type: 'error',
+      message: "Error Signing In",
+      type: "error",
     });
 
     return { success: "error", err };
@@ -30,45 +29,44 @@ export const signIn = async (
 
 export const signOut = (): Promise<void> => logout({});
 
-export const initErrorSignOut = async () => 
+export const initErrorSignOut = async () =>
   await logout({
     msg: {
-      message: "You have been signed out because there was an error initalizing your profile.",
-      type: 'error',
-    }
+      message:
+        "You have been signed out because there was an error initalizing your profile.",
+      type: "error",
+    },
   });
 
-export const idleSignOut = async () => 
+export const idleSignOut = async () =>
   await logout({
     msg: {
       message: "You have been logged out because your session has expired.",
-      type: 'info'
+      type: "info",
     },
-    clearStorages: false
+    clearStorages: false,
   });
 
-  const logout = async ({
-    msg = undefined,
-    clearStorages = true
-  }: {
-    msg?: Omit<Toast, "id">;
-    clearStorages?: boolean;
-  }) => {
+const logout = async ({
+  msg = undefined,
+  clearStorages = true,
+}: {
+  msg?: Omit<Toast, "id">;
+  clearStorages?: boolean;
+}) => {
+  busy.start();
 
-    busy.start();
-
-    if (clearStorages) {
-      await Promise.all([
+  if (clearStorages) {
+    await Promise.all([
       //TODO: clear storages
-      ]);
-    }
+    ]);
+  }
 
+  await authStore.signOut();
 
-    await authStore.signOut();
-
-    if (msg) {
-      toasts.addToast(msg);
-    }
+  if (msg) {
+    toasts.addToast(msg);
+  }
 
   // Auth: Delegation and identity are cleared from indexedDB by agent-js so, we do not need to clear these
 
@@ -95,7 +93,8 @@ export const displayAndCleanLogoutMsg = () => {
   if (isNullish(msg)) {
     return;
   }
-  const level: Toast['type'] = (urlParams.get(PARAM_LEVEL) as Toast['type'] | null) ?? 'info';
+  const level: Toast["type"] =
+    (urlParams.get(PARAM_LEVEL) as Toast["type"] | null) ?? "info";
 
   toasts.addToast({
     message: msg,

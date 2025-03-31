@@ -3,9 +3,13 @@ import {
   AUTH_POPUP_HEIGHT,
   AUTH_POPUP_WIDTH,
   DEV,
-  INTERNET_IDENTITY_CANISTER_ID
+  INTERNET_IDENTITY_CANISTER_ID,
 } from "../constants/app.constants";
-import { SignInError, SignInInitError, SignInUserInterruptError } from '$lib/types/errors';
+import {
+  SignInError,
+  SignInInitError,
+  SignInUserInterruptError,
+} from "$lib/types/errors";
 import type { OptionIdentity } from "../types/identity";
 import { createAuthClient } from "../utils/auth.utils";
 import { popupCenter } from "../utils/window.utils";
@@ -58,14 +62,14 @@ const initAuthStore = (): AuthStore => {
       // eslint-disable-next-line no-async-promise-executor
       new Promise<void>(async (resolve, reject) => {
         if (isNullish(authClient)) {
-				  reject(new SignInInitError());
-					return;
-				}
+          reject(new SignInInitError());
+          return;
+        }
         //authClient = authClient ?? (await createAuthClient());
         //const identityProvider = domain;
         const identityProvider = DEV
-      ? INTERNET_IDENTITY_CANISTER_ID
-      : `https://identity.${domain ?? 'internetcomputer.org'}`;
+          ? INTERNET_IDENTITY_CANISTER_ID
+          : `https://identity.${domain ?? "internetcomputer.org"}`;
         await authClient?.login({
           maxTimeToLive: AUTH_MAX_TIME_TO_LIVE,
           onSuccess: () => {
@@ -73,15 +77,18 @@ const initAuthStore = (): AuthStore => {
             resolve();
           },
           onError: (error?: string) => {
-						if (error === ERROR_USER_INTERRUPT) {
-							reject(new SignInUserInterruptError(error));
-							return;
-						}
+            if (error === ERROR_USER_INTERRUPT) {
+              reject(new SignInUserInterruptError(error));
+              return;
+            }
 
-						reject(new SignInError(error));
-					},
-					identityProvider,
-					windowOpenerFeatures: popupCenter({ width: AUTH_POPUP_WIDTH, height: AUTH_POPUP_HEIGHT })
+            reject(new SignInError(error));
+          },
+          identityProvider,
+          windowOpenerFeatures: popupCenter({
+            width: AUTH_POPUP_WIDTH,
+            height: AUTH_POPUP_HEIGHT,
+          }),
         });
       }),
 
