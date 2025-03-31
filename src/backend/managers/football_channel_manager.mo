@@ -1,3 +1,9 @@
+
+
+//TODO Should come from mops
+import Management "../cleanup/management";
+import BaseUtilities "../cleanup/base_utilities";
+
 import TrieMap "mo:base/TrieMap";
 import List "mo:base/List";
 import Option "mo:base/Option";
@@ -7,22 +13,20 @@ import Iter "mo:base/Iter";
 import Text "mo:base/Text";
 import Principal "mo:base/Principal";
 import T "../icfc_types";
-import Base "mo:waterway-mops/BaseTypes";
+import Ids "mo:waterway-mops/Ids";
 import FootballChannelQueries "../queries/football_channel_queries";
 import FootballChannelCommands "../commands/football_channel_commands";
-import Management "../utils/management";
 import FootballChannelsCanister "../canister_definations/football-channels-canister";
 import Environment "../environment";
 import Cycles "mo:base/ExperimentalCycles";
-import BaseUtilities "../utils/base_utilities";
 
 module {
     public class FootballChannelManager() {
 
-        private var footballChannelCanisterIndex : TrieMap.TrieMap<T.FootballChannelId, Base.CanisterId> = TrieMap.TrieMap<T.FootballChannelId, Base.CanisterId>(BaseUtilities.eqNat, BaseUtilities.hashNat);
-        private var activeCanisterId : Base.CanisterId = "";
+        private var footballChannelCanisterIndex : TrieMap.TrieMap<T.FootballChannelId, Ids.CanisterId> = TrieMap.TrieMap<T.FootballChannelId, Ids.CanisterId>(BaseUtilities.eqNat, BaseUtilities.hashNat);
+        private var activeCanisterId : Ids.CanisterId = "";
         private var footballChannelNames : TrieMap.TrieMap<T.FootballChannelId, Text> = TrieMap.TrieMap<T.FootballChannelId, Text>(BaseUtilities.eqNat, BaseUtilities.hashNat);
-        private var uniqueFootballChannelCanisterIds : List.List<Base.CanisterId> = List.nil();
+        private var uniqueFootballChannelCanisterIds : List.List<Ids.CanisterId> = List.nil();
         private var totalFootballChannels : Nat = 0;
         private var nextFootballChannelId : T.FootballChannelId = 1;
 
@@ -360,12 +364,12 @@ module {
 
         //stable storage getters and setters
 
-        public func getStableCanisterIndex() : [(T.FootballChannelId, Base.CanisterId)] {
+        public func getStableCanisterIndex() : [(T.FootballChannelId, Ids.CanisterId)] {
             return Iter.toArray(footballChannelCanisterIndex.entries());
         };
 
-        public func setStableCanisterIndex(stable_football_channel_canister_index : [(T.FootballChannelId, Base.CanisterId)]) {
-            let canisterIds : TrieMap.TrieMap<T.FootballChannelId, Base.CanisterId> = TrieMap.TrieMap<T.FootballChannelId, Base.CanisterId>(BaseUtilities.eqNat, BaseUtilities.hashNat);
+        public func setStableCanisterIndex(stable_football_channel_canister_index : [(T.FootballChannelId, Ids.CanisterId)]) {
+            let canisterIds : TrieMap.TrieMap<T.FootballChannelId, Ids.CanisterId> = TrieMap.TrieMap<T.FootballChannelId, Ids.CanisterId>(BaseUtilities.eqNat, BaseUtilities.hashNat);
 
             for (canisterId in Iter.fromArray(stable_football_channel_canister_index)) {
                 canisterIds.put(canisterId);
@@ -373,11 +377,11 @@ module {
             footballChannelCanisterIndex := canisterIds;
         };
 
-        public func getStableActiveCanisterId() : Base.CanisterId {
+        public func getStableActiveCanisterId() : Ids.CanisterId {
             return activeCanisterId;
         };
 
-        public func setStableActiveCanisterId(stable_active_canister_id : Base.CanisterId) {
+        public func setStableActiveCanisterId(stable_active_canister_id : Ids.CanisterId) {
             activeCanisterId := stable_active_canister_id;
         };
 
@@ -386,7 +390,7 @@ module {
         };
 
         public func setStableFootballChannelNames(stable_channel_names : [(T.FootballChannelId, Text)]) : () {
-            let football_channel_map : TrieMap.TrieMap<T.FootballChannelId, Base.CanisterId> = TrieMap.TrieMap<T.FootballChannelId, Base.CanisterId>(BaseUtilities.eqNat, BaseUtilities.hashNat);
+            let football_channel_map : TrieMap.TrieMap<T.FootballChannelId, Ids.CanisterId> = TrieMap.TrieMap<T.FootballChannelId, Ids.CanisterId>(BaseUtilities.eqNat, BaseUtilities.hashNat);
 
             for (channelName in Iter.fromArray(stable_channel_names)) {
                 football_channel_map.put(channelName);
@@ -394,12 +398,12 @@ module {
             footballChannelNames := football_channel_map;
         };
 
-        public func getStableUniqueCanisterIds() : [Base.CanisterId] {
+        public func getStableUniqueCanisterIds() : [Ids.CanisterId] {
             return List.toArray(uniqueFootballChannelCanisterIds);
         };
 
-        public func setStableUniqueCanisterIds(stable_unique_canister_ids : [Base.CanisterId]) : () {
-            let canisterIdBuffer = Buffer.fromArray<Base.CanisterId>([]);
+        public func setStableUniqueCanisterIds(stable_unique_canister_ids : [Ids.CanisterId]) : () {
+            let canisterIdBuffer = Buffer.fromArray<Ids.CanisterId>([]);
 
             for (canisterId in Iter.fromArray(stable_unique_canister_ids)) {
                 canisterIdBuffer.add(canisterId);
@@ -445,7 +449,7 @@ module {
 
             await new_canister.updateNextId(nextId);
 
-            let uniqueCanisterIdBuffer = Buffer.fromArray<Base.CanisterId>(List.toArray(uniqueFootballChannelCanisterIds));
+            let uniqueCanisterIdBuffer = Buffer.fromArray<Ids.CanisterId>(List.toArray(uniqueFootballChannelCanisterIds));
             uniqueCanisterIdBuffer.add(canisterId);
             uniqueFootballChannelCanisterIds := List.fromArray(Buffer.toArray(uniqueCanisterIdBuffer));
             activeCanisterId := canisterId;

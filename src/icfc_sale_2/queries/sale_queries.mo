@@ -1,5 +1,5 @@
 import T "../sale_types";
-import Base "mo:waterway-mops/BaseTypes";
+import Ids "mo:waterway-mops/Ids";
 
 module {
     public type ICFCMembershipDTO = {
@@ -9,14 +9,14 @@ module {
     };
 
     public type GetICPBalance = {
-        principalId : Base.PrincipalId;
+        principalId : Ids.PrincipalId;
     };
 
     public type GetUserParticipation = {
-        principalId : Base.PrincipalId;
+        principalId : Ids.PrincipalId;
     };
 
     public type GetICFCDistributions = {
-        principalId : Base.PrincipalId;
+        principalId : Ids.PrincipalId;
     };
 };

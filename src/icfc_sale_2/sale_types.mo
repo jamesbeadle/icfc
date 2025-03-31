@@ -1,4 +1,4 @@
-import Base "mo:waterway-mops/BaseTypes";
+import Ids "mo:waterway-mops/Ids";
 import Time "mo:base/Time";
 module SaleTypes {
     type Subaccount = Blob;
@@ -29,7 +29,7 @@ module SaleTypes {
     };
 
     public type ICFCDistribution = {
-        principalId : Base.PrincipalId;
+        principalId : Ids.PrincipalId;
         amount : Nat;
         time : Time.Time;
         claimId : Nat;

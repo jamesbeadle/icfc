@@ -5,7 +5,7 @@ import Float "mo:base/Float";
 import Time "mo:base/Time";
 import Int "mo:base/Int";
 import Array "mo:base/Array";
-import Base "mo:waterway-mops/BaseTypes";
+import Ids "mo:waterway-mops/Ids";
 import T "../icfc_types";
 import SNSGovernance "../sns-wrappers/governance";
 import Environment "../environment";
@@ -175,7 +175,7 @@ module Utils {
         };
     };
 
-    public func isSubApp(caller : Base.PrincipalId) : Bool {
+    public func isSubApp(caller : Ids.PrincipalId) : Bool {
         let allowed = [
             Environment.FOOTBALL_GOD_BACKEND_CANISTER_ID,
             Environment.OPENFPL_BACKEND_CANISTER_ID,

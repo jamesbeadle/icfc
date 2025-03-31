@@ -9,7 +9,7 @@ import Array "mo:base/Array";
 import Text "mo:base/Text";
 import SaleCommands "../commands/sale_commands";
 import SaleQueries "../queries/sale_queries";
-import Base "mo:waterway-mops/BaseTypes";
+import Ids "mo:waterway-mops/Ids";
 import T "../sale_types";
 import DTO "../dtos/dtos";
 import Timer "mo:base/Timer";
@@ -26,7 +26,7 @@ module {
         private var TOTAL_ICFC_PACKETS : Nat = 1000;
         private var icfcPacketsRemaining : Nat = 1000;
 
-        private var saleParticipants : TrieMap.TrieMap<Base.PrincipalId, List.List<T.ClaimedRecord>> = TrieMap.TrieMap<Base.PrincipalId, List.List<T.ClaimedRecord>>(
+        private var saleParticipants : TrieMap.TrieMap<Ids.PrincipalId, List.List<T.ClaimedRecord>> = TrieMap.TrieMap<Ids.PrincipalId, List.List<T.ClaimedRecord>>(
             Text.equal,
             Text.hash,
         );
@@ -112,16 +112,16 @@ module {
             icfcPacketsRemaining := stableICFCPacketsRemaining;
         };
 
-        public func getStableSaleParticipants() : [(Base.PrincipalId, [T.ClaimedRecord])] {
-            var data : [(Base.PrincipalId, [T.ClaimedRecord])] = [];
+        public func getStableSaleParticipants() : [(Ids.PrincipalId, [T.ClaimedRecord])] {
+            var data : [(Ids.PrincipalId, [T.ClaimedRecord])] = [];
             for ((key, value) in saleParticipants.entries()) {
                 data := Array.append(data, [(key, List.toArray(value))]);
             };
             return data;
         };
 
-        public func setStableSaleParticipants(participants : [(Base.PrincipalId, [T.ClaimedRecord])]) {
-            let data : TrieMap.TrieMap<Base.PrincipalId, List.List<T.ClaimedRecord>> = TrieMap.TrieMap<Base.PrincipalId, List.List<T.ClaimedRecord>>(
+        public func setStableSaleParticipants(participants : [(Ids.PrincipalId, [T.ClaimedRecord])]) {
+            let data : TrieMap.TrieMap<Ids.PrincipalId, List.List<T.ClaimedRecord>> = TrieMap.TrieMap<Ids.PrincipalId, List.List<T.ClaimedRecord>>(
                 Text.equal,
                 Text.hash,
             );
@@ -195,7 +195,7 @@ module {
 
         };
 
-        private func scheduleDistribution(principal : Base.PrincipalId, packets : Nat, claimId : Nat) : async () {
+        private func scheduleDistribution(principal : Ids.PrincipalId, packets : Nat, claimId : Nat) : async () {
             let totalTokens = packets * 10000;
             let installmentAmount = totalTokens / 6;
             let now = Time.now();
@@ -254,7 +254,7 @@ module {
             };
         };
 
-        private func distributeTokens(principal : Base.PrincipalId, amount : Nat) : async Result.Result<(), T.TransferError> {
+        private func distributeTokens(principal : Ids.PrincipalId, amount : Nat) : async Result.Result<(), T.TransferError> {
 
             let icfc_ledger : SNSToken.Interface = actor (Environment.SNS_LEDGER_CANISTER_ID);
             let transfer_fee = await icfc_ledger.icrc1_fee();

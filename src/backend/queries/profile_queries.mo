@@ -1,11 +1,11 @@
-import Base "mo:waterway-mops/BaseTypes";
 import FootballTypes "mo:waterway-mops/FootballTypes";
+import Ids "mo:waterway-mops/Ids";
 import T "../icfc_types";
 import SNSGovernance "../sns-wrappers/governance";
 
 module ProfileQueries {
     public type ProfileDTO = {
-        principalId : Base.PrincipalId;
+        principalId : Ids.PrincipalId;
         username : Text;
         displayName : Text;
         membershipType : T.MembershipType;
@@ -13,16 +13,16 @@ module ProfileQueries {
         createdOn : Int;
         profilePicture : ?Blob;
         termsAgreed : Bool;
-        appPrincipalIds : [(T.SubApp, Base.PrincipalId)];
-        podcastIds : [Base.PrincipalId];
+        appPrincipalIds : [(T.SubApp, Ids.PrincipalId)];
+        podcastIds : [Ids.PrincipalId];
         membershipExpiryTime : Int;
         favouriteLeagueId : ?FootballTypes.LeagueId;
         favouriteClubId : ?FootballTypes.ClubId;
-        nationalityId : ?Base.CountryId;
+        nationalityId : ?Ids.CountryId;
     };
 
     public type ICFCProfileSummary = {
-        principalId : Base.PrincipalId;
+        principalId : Ids.PrincipalId;
         username : Text;
         displayName : Text;
         membershipType : T.MembershipType;
@@ -33,7 +33,7 @@ module ProfileQueries {
         membershipExpiryTime : Int;
         favouriteLeagueId : ?FootballTypes.LeagueId;
         favouriteClubId : ?FootballTypes.ClubId;
-        nationalityId : ?Base.CountryId;
+        nationalityId : ?Ids.CountryId;
     };
 
     public type ListProfiles = {
@@ -44,7 +44,7 @@ module ProfileQueries {
     };
 
     public type GetClaimedMemberships = {
-        principalId : Base.PrincipalId;
+        principalId : Ids.PrincipalId;
         offset : Nat;
     };
     public type ProfilePictureDTO = {
@@ -56,7 +56,7 @@ module ProfileQueries {
     };
 
     public type ProfileSummary = {
-        profilePrincipalId : Base.PrincipalId;
+        profilePrincipalId : Ids.PrincipalId;
         userName : Text;
         userPicture : ?Blob;
         userPictureExtension : Text;
@@ -64,7 +64,7 @@ module ProfileQueries {
 
     public type IsUsernameAvailable = {
         username : Text;
-        principalId : Base.PrincipalId;
+        principalId : Ids.PrincipalId;
     };
 
     public type UserNeuronsDTO = {

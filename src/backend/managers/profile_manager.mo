@@ -11,7 +11,7 @@ import Buffer "mo:base/Buffer";
 import ProfileQueries "../queries/profile_queries";
 import ProfileCommands "../commands/profile_commands";
 import Utils "../utils/utils";
-import Management "../utils/management";
+import Management "../cleanup/management";
 import ProfileCanister "../canister_definations/profile-canister";
 import Environment "../environment";
 import Cycles "mo:base/ExperimentalCycles";
@@ -19,7 +19,7 @@ import Iter "mo:base/Iter";
 import Time "mo:base/Time";
 import SNSManager "sns_manager";
 import SNSGovernance "../sns-wrappers/governance";
-import BaseUtilities "../utils/base_utilities";
+import BaseUtilities "../cleanup/base_utilities";
 
 module {
     public class ProfileManager() {

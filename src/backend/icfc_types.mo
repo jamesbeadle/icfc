@@ -1,16 +1,14 @@
-import Base "mo:waterway-mops/BaseTypes";
 import FootballTypes "mo:waterway-mops/FootballTypes";
+import Ids "mo:waterway-mops/Ids";
 import Blob "mo:base/Blob";
 //import ckBTCLedger "canister:ckbtc_ledger"; // TODO Use for ckBTC sale Q3 2025
 
 module ICFCTypes {
 
-  public type ClubId = Nat16;
-  public type PlayerId = Nat16;
   public type FootballChannelId = Nat;
 
   public type Profile = {
-    principalId : Base.PrincipalId;
+    principalId : Ids.PrincipalId;
     username : Text;
     displayName : Text;
     membershipType : MembershipType;
@@ -19,17 +17,17 @@ module ICFCTypes {
     createdOn : Int;
     profilePicture : ?Blob;
     termsAgreed : Bool;
-    appPrincipalIds : [(SubApp, Base.PrincipalId)];
-    podcastIds : [Base.PrincipalId];
+    appPrincipalIds : [(SubApp, Ids.PrincipalId)];
+    podcastIds : [Ids.PrincipalId];
     favouriteLeagueId : ?FootballTypes.LeagueId;
     favouriteClubId : ?FootballTypes.ClubId;
-    nationalityId : ?Base.CountryId;
+    nationalityId : ?Ids.CountryId;
   };
 
   public type FootballChannel = {
     id : FootballChannelId;
     name : Text;
-    createdBy : Base.PrincipalId;
+    createdBy : Ids.PrincipalId;
     createdOn : Int;
     channelImage : ?Blob;
     channelImageExtension : Text;
@@ -90,7 +88,7 @@ module ICFCTypes {
   };
 
   public type Club = {
-    id : ClubId;
+    id : FootballTypes.ClubId;
     name : Text;
   };
 
