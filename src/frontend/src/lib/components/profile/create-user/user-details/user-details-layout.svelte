@@ -21,22 +21,15 @@
     export let store: typeof userStore;
 </script>
 
-<p class="mb-8 text-lg text-white cta-text">User Details</p>
-<div class="flex flex-col gap-8 md:flex-row md:items-start">
+<p class="mb-8 text-xl text-white cta-text">User Details</p>
+<div class="flex flex-col gap-8 p-6 border rounded-lg border-BrandGrayShade3 md:flex-row md:items-start">
     <div class="w-full md:w-1/4">
         <ProfilePicture bind:file />
     </div>
     
     <div class="flex flex-col w-full space-y-8 base:space-y-14 md:w-3/4">
         <GetNames bind:username bind:usernameAvailable bind:displayName {store} />
-        <GetFootballInfo 
-            {countries} 
-            {leagues} 
-            {clubs} 
-            bind:nationalityId 
-            bind:favouriteLeagueId 
-            bind:favouriteClubId 
-        />
+        <GetFootballInfo {countries} {leagues} {clubs} bind:nationalityId bind:favouriteLeagueId bind:favouriteClubId />
     </div>
 </div>
 <div class="mt-8 border-t border-BrandGrayShade3"></div>

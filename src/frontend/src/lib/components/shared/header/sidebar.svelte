@@ -1,15 +1,16 @@
 <script lang="ts">
-  import { authStore } from "$lib/stores/auth-store";
+  import { signOut } from "$lib/services/auth.services";
+  import { goto } from "$app/navigation";
   
   export let isMenuOpen: boolean;
   export let toggleMenu: () => void;
   
   let menuRef: HTMLDivElement;
 
-  const signOut = async () => {
-    await authStore.signOut();
-    toggleMenu();
-  };
+  async function handleDisconnect(){
+    await signOut();
+    goto('/', { replaceState: true });
+  }
 
 </script>
 <div 
@@ -27,18 +28,18 @@
     </svg>
   </button>
 
-  <nav class="h-full px-6 pt-16 text-lg text-white bg-BrandBlue cta-text">
+  <nav class="h-full px-6 pt-16 text-lg text-white bg-BrandBlueComp cta-text">
     <ul class="space-y-4">
-      <li><a class="hover:text-BrandInfo" href="/" on:click={toggleMenu}>Home</a></li>
-      <li><a class="hover:text-BrandInfo" href="/apps" on:click={toggleMenu}>Apps</a></li>
-      <li><a class="hover:text-BrandInfo" href="/profile" on:click={toggleMenu}>Profile</a></li>
-      <li><a class="hover:text-BrandInfo" href="/membership" on:click={toggleMenu}>Membership</a></li>
-      <li><a class="hover:text-BrandInfo" href="/channels" on:click={toggleMenu}>Channels</a></li>
-      <li><a class="hover:text-BrandInfo" href="/shop" on:click={toggleMenu}>Shop</a></li>
-      <li><a class="hover:text-BrandInfo" href="/whitepaper" on:click={toggleMenu}>Whitepaper</a></li>
-      <li><a class="hover:text-BrandInfo" href="/sale" on:click={toggleMenu}>Decentralisation Sale 2</a></li>
-      <li><a class="hover:text-BrandInfo" href="/tokens" on:click={toggleMenu}>Token Balances</a></li>
-      <li><a class="hover:text-BrandInfo" href="/" on:click={signOut}>Sign Out</a></li>
+      <li><a class="hover:text-BrandBlue" href="/" on:click={toggleMenu}>Home</a></li>
+      <li><a class="hover:text-BrandBlue" href="/apps" on:click={toggleMenu}>Apps</a></li>
+      <li><a class="hover:text-BrandBlue" href="/profile" on:click={toggleMenu}>Profile</a></li>
+      <li><a class="hover:text-BrandBlue" href="/membership" on:click={toggleMenu}>Membership</a></li>
+      <li><a class="hover:text-BrandBlue" href="/channels" on:click={toggleMenu}>Channels</a></li>
+      <li><a class="hover:text-BrandBlue" href="/shop" on:click={toggleMenu}>Shop</a></li>
+      <li><a class="hover:text-BrandBlue" href="/whitepaper" on:click={toggleMenu}>Whitepaper</a></li>
+      <li><a class="hover:text-BrandBlue" href="/sale" on:click={toggleMenu}>Decentralisation Sale 2</a></li>
+      <li><a class="hover:text-BrandBlue" href="/tokens" on:click={toggleMenu}>Token Balances</a></li>
+      <li><a class="hover:text-BrandBlue" href="/" on:click={handleDisconnect}>Sign Out</a></li>
     </ul>
   </nav>
 </div>

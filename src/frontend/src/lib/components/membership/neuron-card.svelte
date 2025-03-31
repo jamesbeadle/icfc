@@ -12,9 +12,9 @@
 
     const backgroundProperties = {
         opacity: "opacity-[0.10]",
-        size: "w-[130%] h-[130%]",
-        frontPosition: "-bottom-1 -right-24",
-        backPosition: "-bottom-1 -left-[12.5rem]"
+        size: "w-[110%] h-[110%]",
+        frontPosition: "-bottom-1 -right-32",
+        backPosition: "-bottom-1 -left-[10rem]"
     };
 
     let isFlipped = false;
@@ -29,8 +29,8 @@
     {isFlipped} 
     onFlip={handleFlip} 
     id={neuron.id}
-    frontClasses="bg-BrandBlueComp text-white overflow-hidden"
-    backClasses="bg-BrandBlueComp text-white overflow-hidden"
+    frontClasses="bg-BrandBlueComp text-white overflow-hidden border border-BrandGrayShade3/50"
+    backClasses="bg-BrandBlueComp text-white overflow-hidden border border-BrandGrayShade3/50"
 >
     <div slot="front" class="flex flex-col h-full">
         <div class="flex items-center justify-between">
