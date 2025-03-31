@@ -38,9 +38,9 @@
     }
 </script>
 
-<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-    <div class="space-y-5">
-        <p class="form-title">Username</p>
+<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+    <div class="space-y-6">
+        <p class="form-title">Username <span class="text-red-500">*</span></p>
         <p class="form-hint">
             5-20 characters, letters & numbers only. 
         </p>
@@ -64,8 +64,8 @@
         {/if}
     </div>
     
-    <div class="space-y-5">
-        <p class="form-title">Display Name</p>
+    <div class="space-y-6">
+        <p class="form-title">Display Name <span class="text-red-500">*</span></p>
         <p class="form-hint ">
             5-20 characters, letters & numbers only
         </p>

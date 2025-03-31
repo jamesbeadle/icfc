@@ -6,13 +6,15 @@
   import { isBusy } from '$lib/stores/busy-store';
   import { handleKeyPress } from '$lib/utils/keyboard.utils';
   import { onMount, onDestroy } from 'svelte';
+  import CloseIcon from '$lib/icons/CloseIcon.svelte';
   
   interface Props {
     onClose: () => void;
+    title?: string;
     children: Snippet;
   }
 
-  let { children, onClose }: Props = $props();
+  let { children, onClose, title }: Props = $props();
   let visible = $state(true);
 
   const close = () => {
@@ -56,9 +58,20 @@
         class="relative w-[95%] sm:w-[90%] md:w-[85%] lg:w-[80%] max-w-[1400px] mx-auto p-4 sm:p-6"
       >
         <div 
-          class="bg-ModalBackground border border-ModalBorder rounded-lg relative overflow-y-auto max-h-[90vh] px-6 py-6 sm:px-8 sm:py-6 drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)] transform-style-preserve-3d"
+          class="bg-ModalBackground border border-ModalBorder rounded-lg relative h-[60vh] drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)] transform-style-preserve-3d flex flex-col"
         >
-          <div class="min-h-[300px] flex flex-col justify-center">
+          <div class="flex-none px-6 py-6 border-b sm:px-8 sm:py-6 border-white/10">
+            <div class="flex items-center justify-between">
+              <h3 class="text-2xl text-white cta-text md:text-3xl">{title}</h3>
+              <button 
+                onclick={onClose}
+                class="p-2 transition-colors duration-300 rounded-lg hover:bg-white/10"
+              >
+                <CloseIcon className="w-6 h-6" fill="white" />
+              </button>
+            </div>
+          </div>
+          <div class="flex-1 px-6 py-6 overflow-y-auto sm:px-8 sm:py-6">
             {@render children()}
           </div>
         </div>

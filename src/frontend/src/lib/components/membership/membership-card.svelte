@@ -15,8 +15,8 @@
 
     const backgroundProperties = {
         opacity: "opacity-[0.10]",
-        size: "w-[130%] h-[130%]",
-        frontPosition: "-bottom-1 -right-24",
+        size: "w-[110%] h-[110%]",
+        frontPosition: "-bottom-1 -right-32",
         backPosition: "-bottom-1 -left-[12.5rem]"
     };
     
@@ -58,30 +58,30 @@
     id={membership.key} 
     isModal={false} 
     disableFlip={true}
-    frontClasses="bg-BrandBlueComp text-white"
-    backClasses="bg-BrandBlueComp text-white"
+    frontClasses="bg-BrandBlueComp text-white border border-BrandGrayShade3/50"
+    backClasses="bg-BrandBlueComp text-white border border-white"
 >
         
-    <div slot="front" class="flex flex-col h-full">
+    <div slot="front" class="flex flex-col h-full ">
         <div class="flex items-center justify-between">
-            <ICFCCoinIcon className="w-12 h-12" />
-            <div class="flex items-center justify-center bg-white rounded p-2">
+            <div class="flex items-center justify-center ">
                 {#if membership.type == "Monthly"}
-                    <MonthlyMembershipIcon className="w-8" />
+                    <MonthlyMembershipIcon className="w-11" fill="white" />
                 {/if}
     
                 {#if membership.type == "Seasonal"}
-                    <SeasonalMembershipIcon className="w-8" />
+                    <SeasonalMembershipIcon className="w-11" fill="white" />
                 {/if}
     
                 {#if membership.type == "Lifetime"}
-                    <LifetimeMembershipIcon className="w-8" />
+                    <LifetimeMembershipIcon className="w-11" fill="white" />
                 {/if}
     
                 {#if membership.type == "Founding"}
-                    <FoundingMembershipIcon className="w-8" />
+                    <FoundingMembershipIcon className="w-11" fill="white" />
                 {/if}
             </div>
+            <ICFCCoinIcon className="w-10 h-10" />
         </div>
 
         <div class="absolute transform {backgroundProperties.frontPosition} {backgroundProperties.opacity}">
@@ -89,30 +89,30 @@
         </div>
 
         <div class="relative z-10 mt-auto space-y-2">
-            <p class="text-lg opacity-75">{membership.type}</p>
+            <p class="text-lg opacity-75 cta-text">{membership.type}</p>
             <h3 class="text-xl">{membership.tokensRequired.toLocaleString()} ICFC</h3>
             {#if status === "Already Claimed"}
-                <div class="already-claimed-membership-badge w-full">
+                <div class="w-full already-claimed-membership-badge">
                     {status}
                 </div>
             {:else if status === "Auto-Claimed"}
-                <div class="auto-claimed-membership-badge w-full">
+                <div class="w-full auto-claimed-membership-badge">
                     {status}
                 </div>
             {:else if status === "Claim" || status === "Upgrade"}
                 <button 
                     on:click={claimMembership}
-                    class="small-brand-button  w-full"
+                    class="w-full small-brand-button"
                 >
                     {status}
                 </button>
             {:else if needsMoreTokens}
                 <button 
-                        on:click={loadNNS}
-                        class="nns-button w-full"
-                    >
-                        Stake {(membership.tokensRequired - totalStakedICFC).toLocaleString()} ICFC via NNS
-                    </button>
+                    on:click={loadNNS}
+                    class="w-full nns-button"
+                >
+                    Stake {(membership.tokensRequired - totalStakedICFC).toLocaleString()} ICFC via NNS
+                </button>
             {/if}
         </div>
     </div>
