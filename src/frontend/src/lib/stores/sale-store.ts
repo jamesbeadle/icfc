@@ -1,52 +1,30 @@
 import { writable } from "svelte/store";
 import { SaleService } from "../services/sale-service";
-import type {
-  SaleGoalDTO,
-  SaleCountDownDTO,
-} from "../../../../declarations/backend/backend.did";
+import type { SaleProgressDTO, UserParticipationDTO, ICFCDistribution } from "../../../../declarations/icfc_sale_2/icfc_sale_2.did";
 
 function createSaleStore() {
-  const { subscribe } = writable<{
-    goal: SaleGoalDTO | null;
-    countdown: SaleCountDownDTO | null;
-    userBalance: bigint | null;
-  }>({
-    goal: null,
-    countdown: null,
-    userBalance: null,
-  });
 
-  function convertToCkBTC(value: bigint): bigint {
-    return value / BigInt(10 ** 8);
+  async function getProgress(): Promise<SaleProgressDTO | undefined> {
+    return new SaleService().getProgress();
   }
 
-  async function getGoal() {
-    const goal = await new SaleService().getGoal();
-    goal.currentProgress = convertToCkBTC(BigInt(goal.currentProgress));
-    goal.maxGoal = convertToCkBTC(BigInt(goal.maxGoal));
-    goal.minGoal = convertToCkBTC(BigInt(goal.minGoal));
-    return goal;
+  async function getUserParticipation(): Promise<UserParticipationDTO | undefined> {
+    return new SaleService().getUserParticipation();
   }
 
-  async function getSaleCountdown() {
-    return new SaleService().getSaleCountdown();
+  async function getUsersICFCDistributions(): Promise<ICFCDistribution[] | undefined> {
+    return new SaleService().getUsersICFCDistributions();
   }
 
-  async function getUserBalance() {
-    return new SaleService().getUserBalance();
-  }
-
-  async function particpate(amount: bigint) {
-    let satoshiAmount = amount * BigInt(10 ** 8);
-    return new SaleService().particpate(satoshiAmount);
+  async function claimICFCPackets(numberOfPackets: number): Promise<boolean> {
+    return new SaleService().claimICFCPackets(numberOfPackets);
   }
 
   return {
-    subscribe,
-    getGoal,
-    getSaleCountdown,
-    getUserBalance,
-    particpate,
+    getProgress,
+    getUserParticipation,
+    getUsersICFCDistributions,
+    claimICFCPackets,
   };
 }
 

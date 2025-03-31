@@ -1,87 +1,78 @@
 import { ActorFactory } from "$lib/utils/ActorFactory";
 import { isError } from "$lib/utils/helpers";
 import { authStore } from "$lib/stores/auth-store";
-import type {
-  SaleGoalDTO,
-  SaleCountDownDTO,
-} from "../../../../declarations/backend/backend.did";
+import type { SaleProgressDTO, UserParticipationDTO, ICFCDistribution } from "../../../../declarations/icfc_sale_2/icfc_sale_2.did";
 
-export interface SaleCountdown {
-  status: string;
-  stringTime: string;
-  timeRemaining: bigint;
-}
-
-type Result<T> = { ok: T } | { err: any };
 
 export class SaleService {
   constructor() {}
 
-  async getGoal(): Promise<SaleGoalDTO> {
+  async getProgress(): Promise<SaleProgressDTO | undefined> {
     try {
-      const identityActor = await ActorFactory.createIdentityActor(
+      const identityActor: any = await ActorFactory.createSaleCanisterIdentityActor(
         authStore,
-        process.env.BACKEND_CANISTER_ID ?? "",
+        process.env.CANISTER_ID_ICFC_SALE_2 ?? "",
       );
-      const result = await identityActor.get_goal();
+      const result = await identityActor.getProgress();
       if (isError(result)) {
-        throw new Error("Failed to get goal");
-      }
-      return result;
-    } catch (error) {
-      console.error("Error fetching goal:", error);
-      throw error;
-    }
-  }
-
-  async getSaleCountdown(): Promise<SaleCountDownDTO> {
-    try {
-      const identityActor = await ActorFactory.createIdentityActor(
-        authStore,
-        process.env.BACKEND_CANISTER_ID ?? "",
-      );
-      const result = await identityActor.get_sale_countdown();
-      if (isError(result)) {
-        throw new Error("Failed to get sale countdown");
-      }
-      return result;
-    } catch (error) {
-      console.error("Error fetching sale countdown:", error);
-      throw error;
-    }
-  }
-
-  async getUserBalance(): Promise<bigint> {
-    try {
-      const identityActor = await ActorFactory.createIdentityActor(
-        authStore,
-        process.env.CANISTER_ID_BACKEND ?? "",
-      );
-      const result = (await identityActor.get_user_balance()) as Result<bigint>;
-      if ("err" in result) {
-        throw new Error("Failed to get user balance");
+        throw new Error("Failed to get progress");
       }
       return result.ok;
     } catch (error) {
-      console.error("Error fetching user balance:", error);
+      console.error("Error fetching progress:", error);
       throw error;
     }
   }
 
-  async particpate(amount: bigint): Promise<void> {
+  async getUserParticipation(): Promise<UserParticipationDTO | undefined> {
     try {
-      const identityActor = await ActorFactory.createIdentityActor(
+      const identityActor: any = await ActorFactory.createSaleCanisterIdentityActor(
         authStore,
-        process.env.CANISTER_ID_BACKEND ?? "",
+        process.env.CANISTER_ID_ICFC_SALE_2 ?? "",
       );
-      const adjustedAmount = amount * BigInt(10 ** 8);
-      const result = await identityActor.participate(adjustedAmount);
+      const result = await identityActor.getUserParticipation();
       if (isError(result)) {
-        throw new Error("Failed to participate");
+        throw new Error("Failed to get user participation");
       }
+      return result.ok;
     } catch (error) {
-      console.error("Error participating in sale:", error);
+      console.error("Error fetching user participation:", error);
       throw error;
+    }
+  }
+
+  async getUsersICFCDistributions(): Promise<ICFCDistribution[] | undefined> {
+    try {
+      const identityActor: any = await ActorFactory.createSaleCanisterIdentityActor(
+        authStore,
+        process.env.CANISTER_ID_ICFC_SALE_2 ?? "",
+      );
+      const result = await identityActor.getUsersICFCDistributions();
+      if (isError(result)) {
+        throw new Error("Failed to get users ICFC distributions");
+      }
+      return result.ok;
+    } catch (error) {
+      console.error("Error fetching users ICFC distributions:", error);
+      throw error;
+    }
+  }
+
+  async claimICFCPackets(numberOfPackets: number): Promise<boolean> {
+    try {
+      const identityActor: any = await ActorFactory.createSaleCanisterIdentityActor(
+        authStore,
+        process.env.CANISTER_ID_ICFC_SALE_2 ?? "",
+      );
+      const result = await identityActor.claimICFCPackets({ packets: numberOfPackets });
+      if (isError(result)) {
+        console.error("Error claiming packets:", result.err);
+        return false;
+      }
+      return true;
+    } catch (error) {
+      console.error("Error claiming packets:", error);
+      return false;
     }
   }
 }
