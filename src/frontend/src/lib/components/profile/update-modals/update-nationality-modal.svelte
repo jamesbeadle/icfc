@@ -42,7 +42,7 @@
         isLoading = true;
         try {
             let dto: UpdateNationality =  {
-                countryId: newNationalityId,
+                nationalityId: newNationalityId,
                 principalId
             }
             await userStore.updateNationality(dto);
@@ -68,20 +68,26 @@
 
 
 {#if visible}
-    <Modal onClose={cancelModal}>
+    <Modal onClose={cancelModal} title="Update National Team">
         {#if isLoading}
             <LocalSpinner />
         {:else}
-            <div class="flex flex-col space-y-1 w-full md:w-1/3">
-                <p class="form-title">Nationality</p>
+            <div class="flex flex-col p-4 space-y-2">
+                <p class="form-title">National Team</p>
                 <p class="form-hint">Select to participate in nationwide football competitions.</p>
                 <DropdownSelect
-                options={countries.sort((a, b) => a.name.localeCompare(b.name)).map((country: CountryDTO) => ({ id: country.id, label: country.name }))}
-                value={nationalityId}
-                onChange={(value: string | number) => {
-                    nationalityId = Number(value);
-                }}
+                    options={countries.sort((a, b) => a.name.localeCompare(b.name)).map((country: CountryDTO) => ({ id: country.id, label: country.name }))}
+                    value={nationalityId}
+                    onChange={(value: string | number) => {
+                        nationalityId = Number(value);
+                    }}
                 />
+                <button
+                    class="w-full brand-button"
+                    disabled={isSubmitDisabled}
+                >
+                    Update National Team
+                </button>
             </div>
         {/if}
     </Modal>

@@ -73,42 +73,38 @@
     };
 </script>
 
-
-
 {#if visible}
-    <Modal onClose={cancelModal}>
+    <Modal onClose={cancelModal} title="Update Favourite League & Club">
         {#if isLoading}
             <LocalSpinner />
         {:else}
-            <div class="flex flex-col space-y-6">
-                <h2 class="text-2xl text-white cta-text">Update Favourite Club</h2>
-                <form on:submit={handleSubmit}>
-                    
-              <div class="flex flex-col space-y-1 w-full md:w-1/3">
-                <p class="form-title">Your Favourite League</p>
-                <p class="form-hint">Select to find your favourite club.</p>
-                <DropdownSelect
-                  options={leagues.map(league => ({ id: league.id, label: league.name }))}
-                  value={favouriteLeagueId}
-                  onChange={(value: string | number) => {
-                    favouriteLeagueId = Number(value);
-                  }}
-                  scrollOnOpen={true}
-                />
-              </div>
-              <div class="flex flex-col space-y-1 w-full md:w-1/3">
-                <p class="form-title">Your Favourite Club</p>
-                <p class="form-hint">Select to enable club based rewards.</p>
-                <DropdownSelect
-                  options={clubs.sort((a, b) => a.friendlyName.localeCompare(b.friendlyName)).map(club => ({ id: club.id, label: club.friendlyName }))}
-                  value={favouriteClubId}
-                  onChange={(value: string | number) => {
-                    favouriteClubId = Number(value);
-                  }}
-                  scrollOnOpen={true}
-                  disabled={favouriteLeagueId == null || favouriteLeagueId == 0}
-                />
-              </div>
+            <div class="flex flex-col p-4 space-y-4 md:justify-between md:flex-row md:space-y-0">
+                <form class="flex flex-col w-full space-y-4" on:submit={handleSubmit}>
+                    <div class="flex flex-col space-y-2">
+                        <p class="form-title">Your Favourite League</p>
+                        <p class="form-hint">Select to find your favourite club.</p>
+                        <DropdownSelect
+                        options={leagues.map(league => ({ id: league.id, label: league.name }))}
+                        value={favouriteLeagueId}
+                        onChange={(value: string | number) => {
+                            favouriteLeagueId = Number(value);
+                        }}
+                        scrollOnOpen={true}
+                        />
+                    </div>
+                    <div class="flex flex-col w-full space-y-2">
+                        <p class="form-title">Your Favourite Club</p>
+                        <p class="form-hint">Select to enable club based rewards.</p>
+                        <DropdownSelect
+                        options={clubs.sort((a, b) => a.friendlyName.localeCompare(b.friendlyName)).map(club => ({ id: club.id, label: club.friendlyName }))}
+                        value={favouriteClubId}
+                        onChange={(value: string | number) => {
+                            favouriteClubId = Number(value);
+                        }}
+                        scrollOnOpen={true}
+                        disabled={favouriteLeagueId == null || favouriteLeagueId == 0}
+                        />
+                    </div>
                     <div class="flex flex-row items-center py-3 space-x-4">
                         <button
                             class="px-4 py-2 default-button fpl-cancel-btn"
@@ -121,7 +117,7 @@
                         <button
                             class="px-4 py-2 default-button"
                             class:bg-BrandGrayShade3={isSubmitDisabled}
-                            class:bg-BrandPurple={!isSubmitDisabled}
+                            class:brand-button={!isSubmitDisabled}
                             type="submit"
                             disabled={isSubmitDisabled}
                         >

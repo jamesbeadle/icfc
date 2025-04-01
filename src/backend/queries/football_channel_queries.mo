@@ -1,10 +1,10 @@
 import T "../icfc_types";
-import Base "mo:waterway-mops/BaseTypes";
+import Ids "mo:waterway-mops/Ids";
 
 module FootballChannelQueries {
 
     public type GetFootballChannels = {
-        principalId : Base.PrincipalId;
+        principalId : Ids.PrincipalId;
         page : Nat;
         searchTerm : Text;
 
@@ -44,12 +44,12 @@ module FootballChannelQueries {
     };
 
     public type IsChannelOwner = {
-        principalId : Base.PrincipalId;
+        principalId : Ids.PrincipalId;
         channelId : T.FootballChannelId;
     };
 
     public type IsSubscribed = {
-        principalId : Base.PrincipalId;
+        principalId : Ids.PrincipalId;
         channelId : T.FootballChannelId;
     };
 

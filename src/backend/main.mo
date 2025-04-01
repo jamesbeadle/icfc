@@ -1,25 +1,33 @@
-import Base "mo:waterway-mops/BaseTypes";
-import Result "mo:base/Result";
-import Principal "mo:base/Principal";
-import Nat "mo:base/Nat";
-import Text "mo:base/Text";
-import Int "mo:base/Int";
+
+/* ----- Mops Packages ----- */
 import Blob "mo:base/Blob";
-import Timer "mo:base/Timer";
+import Int "mo:base/Int";
 import Iter "mo:base/Iter";
-import T "icfc_types";
-import Environment "environment";
-import ProfileManager "managers/profile_manager";
-import ProfileCommands "commands/profile_commands";
-import FootballChannelManager "managers/football_channel_manager";
-import ProfileQueries "queries/profile_queries";
-import SNSManager "managers/sns_manager";
-import Utils "utils/utils";
-import Management "utils/management";
+import Nat "mo:base/Nat";
+import Principal "mo:base/Principal";
+import Result "mo:base/Result";
+import Text "mo:base/Text";
+import Timer "mo:base/Timer";
+
+/* ----- Canister Definition Files ----- */
+
 import ProfileCanister "canister_definations/profile-canister";
+
+
+/* ----- Queries ----- */
 import AppQueries "queries/app_queries";
-import Countries "utils/countries";
-import SNSToken "./sns-wrappers/ledger";
+import ProfileQueries "queries/profile_queries";
+
+
+/* ----- Commands ----- */
+import ProfileCommands "commands/profile_commands";
+
+
+/* ----- Managers ----- */
+
+import ProfileManager "managers/profile_manager";
+import FootballChannelManager "managers/football_channel_manager";
+import SNSManager "managers/sns_manager";
 
 actor class Self() = this {
 

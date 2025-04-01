@@ -4,6 +4,7 @@ import Timer "mo:base/Timer";
 import T "./sale_types";
 import DTO "./dtos/dtos";
 import Base "mo:waterway-mops/BaseTypes";
+import Ids "mo:waterway-mops/Ids";
 import SaleManager "manager/sale_manager";
 import SaleCommands "commands/sale_commands";
 import SaleQueries "queries/sale_queries";
@@ -19,7 +20,7 @@ actor class Self() = this {
 
     private stable var stable_icfcPacketsRemaining : Nat = 1000;
 
-    private stable var stable_saleParticipants : [(Base.PrincipalId, [T.ClaimedRecord])] = [];
+    private stable var stable_saleParticipants : [(Ids.PrincipalId, [T.ClaimedRecord])] = [];
     private stable var stable_icfcDistributions : [T.ICFCDistribution] = [];
 
     public shared query func getAppStatus() : async Result.Result<DTO.AppStatusDTO, T.Error> {

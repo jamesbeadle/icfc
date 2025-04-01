@@ -1,10 +1,10 @@
 <script lang="ts">
     import { onMount, onDestroy } from "svelte";
-    import ArrowUp from "$lib/icons/ArrowUpIcon.svelte";
-    import ArrowDown from "$lib/icons/ArrowDownIcon.svelte";
-    import Checkmark from "$lib/icons/CheckmarkIcon.svelte";
     import { activeDropdownId } from "$lib/stores/dropdown-store";
-
+    import CheckmarkIcon from "$lib/icons/CheckmarkIcon.svelte";
+    import ArrowUpIcon from "$lib/icons/ArrowUpIcon.svelte";
+    import ArrowDownIcon from "$lib/icons/ArrowDownIcon.svelte";
+    import SearchIcon from "$lib/icons/SearchIcon.svelte";
 
     export let value: any;
     export let options: { id: any; label: string }[];
@@ -13,11 +13,13 @@
     export let onChange: ((value: any) => void) | undefined = undefined;
     export let allOptionText: string | undefined = undefined;
     export let scrollOnOpen = false;
+    export let searchOn = false;
     export let disabled = false;
 
     const dropdownId = Math.random().toString(36).substring(7);
     let isDropdownOpen = false;
     let dropdownElement: HTMLDivElement;
+    let searchTerm = '';
 
     activeDropdownId.subscribe((id) => {
         if (id !== dropdownId) {
@@ -26,9 +28,14 @@
     });
 
     $: allOptions = allOptionText 
-        ? [{ id: 0, label: `All ${allOptionText}` }, ...options]
+        ? [{ id: BigInt(0), label: `All ${allOptionText}` }, ...options]
         : options;
     $: selectedOption = allOptions.find(opt => opt.id === value);
+    $: filteredOptions = searchOn 
+        ? allOptions.filter(opt => 
+            opt.label.toLowerCase().includes(searchTerm.toLowerCase())
+          )
+        : allOptions;
 
     function toggleDropdown(e: MouseEvent) {
         e.stopPropagation();
@@ -64,6 +71,22 @@
         }
     }
 
+    function clickOutside(node: HTMLElement, callback: () => void) {
+        const handleClick = (event: MouseEvent) => {
+            if (node && !node.contains(event.target as Node)) {
+                callback();
+            }
+        };
+        
+        document.addEventListener('click', handleClick, true);
+        
+        return {
+            destroy() {
+                document.removeEventListener('click', handleClick, true);
+            }
+        };
+    }
+
     onMount(() => {
         if (typeof window !== 'undefined') {
             document.addEventListener('click', handleClickOutside);
@@ -77,38 +100,61 @@
     });
 </script>
 
-<div class="relative w-full mt-1 md:px-0" bind:this={dropdownElement}>
+<div class="relative w-full" bind:this={dropdownElement} use:clickOutside={() => isDropdownOpen = false}>
     <button
         {disabled}
-        class="flex items-center justify-between w-full rounded-lg {compact ? 'p-3 bg-BrandGray  hover:bg-BrandGray/50' : 'px-2 py-3 hover:bg-BrandGray'}"
+        class="flex items-center justify-between w-full rounded-lg border border-BrandGrayShade3 hover:border-BrandBlueComp  focus:border-BrandBlueComp focus:ring-1 focus:ring-BrandBlueComp/30 {compact ? ' bg-BrandGray/5  hover:bg-BrandGray/10' : 'px-2 py-3 bg-BrandBlack hover:bg-BrandBlack/50'}"
         on:click={e => toggleDropdown(e)}
     >
-        <span class="text-white">{selectedOption?.label ?? placeholder}</span>
+        <span class="truncate {!selectedOption ? 'text-BrandGrayShade2' : 'text-BrandDarkGray'}">
+            {selectedOption?.label ?? placeholder}
+        </span>
         <span class="w-4 h-4">
             {#if isDropdownOpen}
-                <ArrowUp fill="white" />
+                <ArrowUpIcon fill="white" />
             {:else}
-                <ArrowDown fill="white" />
+                <ArrowDownIcon fill="white" />
             {/if}
         </span>
     </button>
     
     {#if isDropdownOpen}
-        <ul class="absolute z-50 py-1 mt-1 rounded-lg shadow-lg w-[calc(100%-2rem)] max-h-[200px] overflow-y-auto scrollbar-thin {compact ? 'bg-BrandBlack' : 'bg-BrandGray'}">
-            {#each allOptions as option}
-                <li class="mb-1">
-                    <button 
-                        {disabled}
-                        class={`w-full px-4 py-2 text-left rounded-lg flex items-center justify-between ${value === option.id ? "text-white" : "text-BrandGrayShade2 hover:text-white hover:bg-BrandPurple"}`}
-                        on:click={e => selectOption(option.id, e)}
-                    >
-                        {option.label}
-                        {#if value === option.id}
-                            <Checkmark className="w-4 h-4" />
-                        {/if}
-                    </button>
-                </li>
-            {/each}
+        <ul 
+            class="absolute z-50 py-1 mt-1 rounded-lg overflow-hidden shadow-lg w-[calc(100%-2rem)] max-h-[240px] overflow-y-auto scrollbar-thin border border-BrandGrayShade3"
+            role="listbox"
+            tabindex="-1"
+        >
+            {#if searchOn}
+                <div class="sticky top-0 z-[100] p-3 bg-BrandBlack border-b border-BrandGrayShade3">
+                    <div class="relative flex items-center justify-between px-3 py-2 space-x-2 border rounded border-BrandGrayShade3">
+                        <SearchIcon className="w-4 h-4" fill="white" />
+                        <input
+                            type="text"
+                            bind:value={searchTerm}
+                            placeholder="Search..."
+                            class="w-full text-white outline-none bg-BrandBlack placeholder:text-BrandGrayShade2"
+                        />
+                       
+                    </div>
+                </div>
+            {/if}
+            
+            <div class={searchOn ? "pt-1" : ""}>
+                {#each filteredOptions as option, index (option.id)}
+                    <li>
+                        <button
+                            {disabled}
+                            class={`w-full px-4 py-2 text-left transition-colors duration-150 flex items-center justify-between ${value === option.id ? "text-white bg-BrandBlueComp/50" : "text-BrandGrayShade2 hover:text-white bg-BrandBlack hover:bg-BrandBlueComp"}`}
+                            on:click={e => selectOption(option.id, e)}
+                        >
+                            <span class="truncate">{option.label}</span>
+                            {#if value === option.id}
+                                <CheckmarkIcon className="w-4 h-4" />
+                            {/if}
+                        </button>
+                    </li>
+                {/each}
+            </div>
         </ul>
     {/if}
 </div> 

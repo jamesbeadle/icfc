@@ -1,72 +1,36 @@
 <script lang="ts">
-    import MembershipDetailsModal from '$lib/components/membership/membership-details-modal.svelte';
-    import HowToModalAddICFC from '$lib/components/membership/how-to-addICFC-modal.svelte';
-    import HowToModalStakeICFC from '$lib/components/membership/how-to-stakeICFC-modal.svelte';
-    import NeuronList from '$lib/components/membership/neuron-list.svelte';
+    import type { ProfileDTO } from '../../../../../declarations/backend/backend.did';
+    import { onMount } from 'svelte';
+    import { userStore } from '$lib/stores/user-store';
+    import { toasts } from '$lib/stores/toasts-store';
+    import LocalSpinner from '$lib/components/shared/local-spinner.svelte';
+    import ProfileMembership from '$lib/components/profile/profile-membership.svelte';
 
-    let showMembershipDetailsModal = false;
-    let showHowToStakeICFCModal = false;
-    let showHowToAddICFCModal = false;
-    
-    function openMembershipDetailsModal() {
-        showMembershipDetailsModal = true;
-    }
+    let profile = $state<ProfileDTO | null>(null);
+    let isLoading = $state(true);
 
-    function closeMembershipDetailsModal() {
-        showMembershipDetailsModal = false;
-    }
-
-    function openHowToStakeICFCModal() {
-        showHowToStakeICFCModal = true;
-    }
-
-    function closeHowToStakeICFCModal() {
-        showHowToStakeICFCModal = false;
-    }
-
-    function openHowToAddICFCModal() {
-        showHowToAddICFCModal = true;
-    }
-
-    function closeHowToAddICFCModal() {
-        showHowToAddICFCModal = false;
-    }
+    onMount(async () => {
+        try {
+            const profileResult = await userStore.getProfile();
+            if (!profileResult) {
+                toasts.addToast({ type: 'error', message: 'No profile found.' });
+                return;
+            }
+            
+            profile = profileResult;
+        } catch (error) {
+            toasts.addToast({ type: 'error', message: 'Error fetching user profile.' });
+            console.error('Profile fetch error:', error);
+        } finally {
+            isLoading = false;
+        }
+    });
 </script>
 
-    <div class="flex flex-col w-full p-8 space-y-4">
-        <h1 class="flex w-full brand-title">ICFC Membership</h1>
-        <div class="flex w-full">
-            <button 
-                class="brand-info-button"
-                on:click={openMembershipDetailsModal}
-            >
-            Membership Levels
-            </button>
-        </div>
-        <p class="brand-sub-title">
-            Stake ICFC tokens for max time to unlock exclusive membership benefits
-        </p>
-
-        <NeuronList neurons={neurons} />
+{#if isLoading && !profile}
+    <LocalSpinner />
+{:else}
+    <div class="flex flex-col w-full p-2">
+        <ProfileMembership profile={profile!} />
     </div>
-
-{#if showMembershipDetailsModal}
-    <MembershipDetailsModal 
-        showModal={showMembershipDetailsModal}
-        onClose={closeMembershipDetailsModal}
-    />
-{/if}
-
-{#if showHowToStakeICFCModal}
-    <HowToModalStakeICFC
-        showModal={showHowToStakeICFCModal}
-        onClose={closeHowToStakeICFCModal}
-    />
-{/if}
-
-{#if showHowToAddICFCModal}
-    <HowToModalAddICFC
-        showModal={showHowToAddICFCModal}
-        onClose={closeHowToAddICFCModal}
-    />
 {/if}

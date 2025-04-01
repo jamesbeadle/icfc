@@ -32,6 +32,10 @@
   }
 }
 
+.status {
+  @apply inline-block px-3 py-1 text-sm bg-white rounded-full shadow-md text-BrandGray;
+}
+
 .brand-button-disabled {
   @apply p-3 text-lg text-center text-black rounded-lg cta-text bg-BrandGrayShade4;
 }
@@ -49,15 +53,19 @@
 }
 
 .form-title {
-  @apply mb-3 text-sm text-BrandGrayShade4;
+  @apply mb-3 text-lg text-BrandGrayShade4;
 }
 
 .form-hint {
-  @apply mb-4 text-xs text-BrandGrayShade3;
+  @apply mb-4 text-sm leading-tight text-BrandGrayShade3;
 }
 
 .brand-input {
-  @apply p-4 text-black border rounded-lg bg-BrandGrayShade5 border-BrandGrayShade3 focus:outline-none focus:border-BrandBlue;
+  @apply p-4 text-white border rounded-lg placeholder:text-BrandGrayShade2 bg-BrandBlack border-BrandGrayShade3 hover:border-BrandBlueComp focus:border-BrandBlueComp focus:ring-1 focus:ring-BrandBlueComp/30 focus-visible:outline-none;
+}
+
+.brand-input-profile {
+  @apply p-4 text-white border rounded-lg placeholder:text-BrandGrayShade2 bg-BrandBlack/50 border-BrandGrayShade3 hover:border-BrandBlue focus:border-BrandBlue focus:ring-1 focus:ring-BrandBlue/30 focus-visible:outline-none;
 }
 
 .bg-frontend-update {
@@ -184,7 +192,7 @@
 }
 
 .nns-button {
-  @apply px-4 py-2 text-center text-white rounded text-xxs cta-text bg-BrandPurple hover:bg-BrandInfo;
+  @apply px-4 py-2 text-center text-white rounded text-xxs cta-text bg-FootballGodBackground hover:bg-BrandInfo;
 }
 
 .profile-wrapper-monthly {
@@ -201,4 +209,13 @@
 
 .profile-wrapper-founding {
   @apply bg-BrandGray;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: rgba(0,0,0,0.2);
+  border-radius: 3px;
 }

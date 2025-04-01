@@ -2,7 +2,7 @@
     import LogoIcon from "$lib/icons/LogoIcon.svelte";
 </script>
 
-<p class="flex flex-row space-y-1 text-4xl cta-text">
+<p class="flex flex-col space-y-1 text-4xl mini:flex-row cta-text">
     Welcome to the 
     <span class="flex flex-row items-center">
         <LogoIcon className='w-8 mx-2' />

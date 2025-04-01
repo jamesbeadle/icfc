@@ -1,11 +1,11 @@
 
 import T "../icfc_types";
-import Base "mo:waterway-mops/BaseTypes";
+import Ids "mo:waterway-mops/Ids";
 
 module FootballChannelCommands {
 
     public type CreateFootballChannel = {
-        createdById: Base.PrincipalId;
+        createdById: Ids.PrincipalId;
         name: Text;
     };
 
@@ -24,13 +24,13 @@ module FootballChannelCommands {
     };
 
     public type SubscribeToFootballChannel = {
-        principalId: Base.PrincipalId;
+        principalId: Ids.PrincipalId;
         channelId: T.FootballChannelId;
 
     };
 
     public type UnsubscribeFromFootballChannel = {
-        principalId: Base.PrincipalId;
+        principalId: Ids.PrincipalId;
         channelId: T.FootballChannelId;
 
     };

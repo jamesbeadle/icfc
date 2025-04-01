@@ -2,145 +2,159 @@
     import { onMount } from "svelte";
     import { getDateFromBigInt, getImageURL } from "$lib/utils/helpers";
     import type { ProfileDTO } from "../../../../../declarations/backend/backend.did";
+    import { countryStore } from "$lib/stores/country-store";
+    import { leagueStore } from "$lib/stores/league-store";
+    import { clubStore } from "$lib/stores/club-store";
+    import type { ClubDTO, CountryDTO, FootballLeagueDTO } from "../../../../../external_declarations/data_canister/data_canister.did";
+    import { toasts } from "$lib/stores/toasts-store";
+    
+    import CopyPrincipal from "./copy-principal.svelte";
+    import LocalSpinner from "../shared/local-spinner.svelte";
     import UpdateFavouriteClubModal from "./update-modals/update-favourite-club-modal.svelte";
     import UpdateNationalityModal from "./update-modals/update-nationality-modal.svelte";
-    import UpdateProfilePictureModal from "./update-modals/update-profile-picture-modal.svelte";
-    import UdpateDisplayNameModal from "./update-modals/update-display-name-modal.svelte";
-    import UpdateUsernameModal from "./update-modals/update-username-modal.svelte";
-    import { countryStore } from "$lib/stores/country-store";
-    import type { ClubDTO, CountryDTO, FootballLeagueDTO } from "../../../../../external_declarations/data_canister/data_canister.did";
-    import CopyPrincipal from "./copy-principal.svelte";
   
     export let profile: ProfileDTO;
 
-    let showUpdateUsernameModal: boolean = false;
-    let showUpdateDisplayNameModal: boolean = false;
-    let showUpdateProfilePictureModal: boolean = false; 
+    let isLoading = false;
+
     let showUpdateFavouriteClubModal: boolean = false;
     let showUpdateNationalityModal: boolean = false;
     let clubs: ClubDTO[] = [];
     let countries: CountryDTO[] = [];
     let leagues: FootballLeagueDTO[] = [];
 
-    let username = "";
-    let displayName = "";
     let joinedDate = "";
     let principalId = "";
     let favouriteLeagueId = 0;
     let favouriteClubId = 0;
     let nationalityId = 0;
-    let profileSrc = '/profile_placeholder.png';
     
     onMount(async () => {
+      try{
+        isLoading = true;
         principalId = profile.principalId;
-        username = profile.username;
         joinedDate = getDateFromBigInt(Number(profile.createdOn));
-        profileSrc = getImageURL(profile.profilePicture);
         countries = await countryStore.getCountries();
+        leagues = await leagueStore.getLeagues();
+        favouriteLeagueId = profile?.favouriteLeagueId[0] ?? 0;
+        clubs = await clubStore.getClubs(favouriteLeagueId);
+        favouriteClubId = profile?.favouriteClubId[0] ?? 0;
+        nationalityId = profile?.nationalityId[0] ?? 0;
+      } catch (error) {
+        console.error("Error fetching profile details:", error);
+        toasts.addToast({
+          message: "Error fetching profile details",
+          type: "error",
+        });
+      } finally {
+        isLoading = false;
+      }
     });
-  
+
+    function getCountryName(countryId: number): string {
+        const country = countries.find(x => x.id === countryId);
+        return country?.name ?? 'Not found';
+    }
+
+    function getLeagueName(leagueId: number): string {
+        const league = leagues.find(x => x.id === leagueId);
+        return league?.name ?? 'Not found';
+    }
+
+    function getClubName(clubId: number): string {
+        const club = clubs.find(x => x.id === clubId);
+        return club?.name ?? 'Not found';
+    }
 </script>
   
+{#if isLoading}
+  <LocalSpinner />
+{:else}
+  <div class="p-4 space-y-6 text-white">
+    <div>
+        <h2 class="text-2xl text-white cta-text">PROFILE DETAILS</h2>
+      <p class="text-sm text-BrandGrayShade3">Joined: {joinedDate}</p>
+  </div>
 
-<div class="flex flex-col p-8 space-y-4">
-    <p class="cta-text text-lg text-white">ICFC Profile Details</p>
+  <div class="flex flex-row items-center">
+    <h2 class="text-lg text-white cta-text">Principal ID:</h2>
+    <CopyPrincipal bgColor="bg-BrandBlueComp" borderColor="border-none" />
+  </div>
 
-    <p>Joined: {joinedDate}</p>
-
-    <CopyPrincipal />
-
-    <div class="flex flex-col md:flex-row">
-      <div class="w-full md:w-1/6 flex flex-col">
-        <p class="form-title">Profile Picture</p>
-        <p class="form-hint">Max size 1mb</p>
-        <img 
-          src={profileSrc} 
-          alt="Profile" 
-          class="profile-picture w-full h-48 object-cover rounded-lg"
-        />
+  <h2 class="text-lg text-white cta-text">Football Preferences: </h2>
+  <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+    <div class="p-3 border rounded-lg border-BrandGrayShade3">
+      <div class="flex items-start justify-between">
+        <div class="space-y-2">
+              <h3 class="text-lg text-white">Nationality</h3>
+              <p class="form-hint">Participate in competitions</p>
+              <p class="mt-1 text-sm font-medium text-white">
+                  {getCountryName(nationalityId)}
+              </p>
+        </div>
+          <button
+            on:click={() => showUpdateNationalityModal = true}
+            class="px-3 py-1 text-sm text-white border border-white rounded-md hover:border-BrandBlue/80" 
+          >
+            Edit
+          </button>
       </div>
-      <div class="w-full md:w-5/6 flex flex-col md:flex-row">
-
-        <div class="flex flex-col md:flex-row">
-        
-          <div class="flex flex-col space-y-1 w-full md:w-1/2">
-            <p class="form-title">Username</p>
-            <p class="form-hint">5-20 characters, letters & numbers only. <span class="text-xs">(Required)</span></p>
-            <p>{username}</p>
-          </div>
-          <div class="flex flex-col space-y-1 w-full md:w-1/2">
-            <p class="form-title">Display Name</p>
-            <p class="form-hint">5-20 characters, letters & numbers only.</p>
-            <p>{displayName}</p>
-          </div>
-
-        </div>
-        <div class="flex flex-col md:flex-row">
-          <div class="flex flex-col space-y-1 w-full md:w-1/2">
-            <p class="form-title">Your Favourite League</p>
-            <p class="form-hint">Select to find your favourite club.</p>
-            <p>{leagues.find(x => x.id == favouriteLeagueId) }</p>
-          </div>
-          <div class="flex flex-col space-y-1 w-full md:w-1/2">
-            <p class="form-title">Your Favourite Club</p>
-            <p class="form-hint">Select to enable club based rewards.</p>
-            <p>{clubs.find(x => x.id == favouriteClubId) }</p>
-          </div>
-
-        </div>
-        <div class="flex flex-col md:flex-row">
-          <div class="flex flex-col space-y-1 w-full md:w-1/2">
-            <p class="form-title">Nationality</p>
-            <p class="form-hint">Select to participate in nationwide football competitions.</p>
-            <p>{countries.find(x => x.id == nationalityId) }</p>
-          </div>
-        </div>
-
-      </div>
-
     </div>
 
+    <div class="p-3 border rounded-lg border-BrandGrayShade3">
+      <div class="flex items-start justify-between">
+        <div class="space-y-2">
+          <h3 class="text-lg text-white">Favourite League</h3>
+          <p class="form-hint">Find your favourite club</p>
+          <p class="mt-1 text-sm font-medium text-white">
+              {getLeagueName(favouriteLeagueId)}
+          </p>
+        </div>
+        <button
+          on:click={() => showUpdateFavouriteClubModal = true}
+          class="px-3 py-1 text-sm text-white border border-white rounded-md hover:border-BrandBlue/80"
+        >
+          Edit
+        </button>
+      </div>
+    </div>
+
+    <div class="p-3 border rounded-lg border-BrandGrayShade3">
+      <div class="flex items-start justify-between">
+        <div class="space-y-2">
+          <h3 class="text-lg text-white">Favourite Club</h3>
+          <p class="form-hint">Enable club rewards</p>
+          <p class="mt-1 text-sm font-medium text-white">
+              {getClubName(favouriteClubId)}
+          </p>
+        </div>
+        <button
+            on:click={() => showUpdateFavouriteClubModal = true}
+            class="px-3 py-1 text-sm text-white border border-white rounded-md hover:border-BrandBlue/80"
+        >
+            Edit
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
-
-  {#if showUpdateUsernameModal}
-    <UpdateUsernameModal
-        {principalId}
-        {username}
-        bind:visible={showUpdateUsernameModal}
-    />
-  {/if}
-
-  {#if showUpdateDisplayNameModal}
-    <UdpateDisplayNameModal 
-        {principalId}
-        {displayName}
-        bind:visible={showUpdateDisplayNameModal} 
-    />
-  {/if}
+{/if}
 
 
-  {#if showUpdateProfilePictureModal}
-    <UpdateProfilePictureModal 
-        {principalId}
-        {profileSrc}
-        bind:visible={showUpdateProfilePictureModal} 
-    />
-  {/if}
 
-  {#if showUpdateNationalityModal}
-    <UpdateNationalityModal 
-        {principalId}
-        {nationalityId}
-        bind:visible={showUpdateNationalityModal} 
-    />
+{#if showUpdateNationalityModal}
+  <UpdateNationalityModal 
+      {principalId}
+      {nationalityId}
+      bind:visible={showUpdateNationalityModal} 
+  />
+{/if}
 
-  {/if}
-
-  {#if showUpdateFavouriteClubModal}
-    <UpdateFavouriteClubModal
-        {principalId}
-        {favouriteLeagueId}
-        {favouriteClubId}
-        bind:visible={showUpdateFavouriteClubModal} 
-    />
-  {/if}
+{#if showUpdateFavouriteClubModal}
+  <UpdateFavouriteClubModal
+      {principalId}
+      {favouriteLeagueId}
+      {favouriteClubId}
+      bind:visible={showUpdateFavouriteClubModal} 
+  />
+{/if}
