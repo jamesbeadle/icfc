@@ -5,8 +5,7 @@
     import { toasts } from "$lib/stores/toasts-store";
     import { userStore } from "$lib/stores/user-store";
     import { onMount } from "svelte";
-    import type { PrincipalId, UpdateFavouriteClub } from "../../../../../../declarations/backend/backend.did";
-    import type { ClubDTO, ClubId, FootballLeagueDTO, LeagueId } from "../../../../../../external_declarations/data_canister/data_canister.did";
+    import type { Club, ClubId, League, LeagueId, PrincipalId, UpdateFavouriteClub } from "../../../../../../declarations/backend/backend.did";
     import { clubStore } from "$lib/stores/club-store";
     import { leagueStore } from "$lib/stores/league-store";
 
@@ -19,9 +18,8 @@
     let isLoading = false;
     let newFavouriteLeagueId = favouriteLeagueId;
     let newFavouriteClubId = favouriteClubId;
-    let clubs: ClubDTO[] = [];
-    let leagues: FootballLeagueDTO[] = [];
-
+    let clubs: Club[] = [];
+    let leagues: League[] = [];
 
     onMount(async () => {
         try{

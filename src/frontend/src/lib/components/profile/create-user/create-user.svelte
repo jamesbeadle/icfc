@@ -10,7 +10,7 @@
   import { toasts } from "$lib/stores/toasts-store";
   import { getFileExtensionFromFile, isPrincipalValid, sortByHighestNeuron } from "$lib/utils/helpers";
   
-  import type { CreateProfile, EligibleMembership, Neuron, PrincipalId, SubApp, UserNeuronsDTO, LeagueId, ClubId, CountryId, CountryDTO} from "../../../../../../declarations/backend/backend.did";
+  import type { CreateProfile, EligibleMembership, Neuron, PrincipalId, SubApp, LeagueId, ClubId, CountryId, Club, Country, League} from "../../../../../../declarations/backend/backend.did";
 
   import LocalSpinner from "../../shared/local-spinner.svelte";
   import AvailableMembership from "../../membership/available-membership.svelte";
@@ -32,7 +32,7 @@
   let maxStakedICFC = 0n;
 
   let clubs: Club[] = [];
-  let countries: CountryDTO[] = [];
+  let countries: Country[] = [];
   let leagues: League[] = [];
   let favouriteLeagueId: LeagueId | null = null;
   let favouriteClubId: ClubId | null = null;

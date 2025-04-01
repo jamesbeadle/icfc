@@ -1,10 +1,10 @@
 <script lang="ts">
     import DropdownSelect from "$lib/components/shared/dropdown-select.svelte";
-    import type { CountryDTO, FootballLeagueDTO, ClubDTO, CountryId, LeagueId, ClubId } from "../../../../../../../external_declarations/data_canister/data_canister.did";
-
-    export let countries: CountryDTO[];
-    export let leagues: FootballLeagueDTO[];
-    export let clubs: ClubDTO[];
+    import type { Club, ClubId, Country, CountryId, League, LeagueId } from "../../../../../../../declarations/backend/backend.did";
+    
+    export let countries: Country[];
+    export let leagues: League[];
+    export let clubs: Club[];
     export let nationalityId: CountryId | null;
     export let favouriteLeagueId: LeagueId | null;
     export let favouriteClubId: ClubId | null;
@@ -16,7 +16,7 @@
         <p class="form-title">National Team <span class="text-xs text-BrandGrayShade3">(Optional)</span></p>
         <p class="form-hint min-h-[40px]">Select to participate in nationwide football competitions.</p>
         <DropdownSelect
-            options={countries.sort((a, b) => a.name.localeCompare(b.name)).map((country: CountryDTO) => ({ id: country.id, label: country.name }))}
+            options={countries.sort((a, b) => a.name.localeCompare(b.name)).map((country: Country) => ({ id: country.id, label: country.name }))}
             bind:value={nationalityId}
             searchOn={true}
         />
