@@ -12,7 +12,6 @@ import T "../icfc_types";
 import ProfileQueries "../queries/profile_queries";
 import Environment "../environment";
 import ProfileCommands "../commands/profile_commands";
-import Enums "mo:waterway-mops/Enums";
 import Utilities "../utilities/utilities";
 
 actor class _ProfileCanister() {
@@ -123,6 +122,7 @@ actor class _ProfileCanister() {
                             favouriteLeagueId = foundProfile.favouriteLeagueId;
                             favouriteClubId = foundProfile.favouriteClubId;
                             nationalityId = foundProfile.nationalityId;
+                            membershipClaims = foundProfile.membershipClaims;
                         };
                         return #ok(dto);
                     };

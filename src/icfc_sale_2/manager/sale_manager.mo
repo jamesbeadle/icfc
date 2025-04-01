@@ -19,6 +19,7 @@ import Principal "mo:base/Principal";
 import Nat64 "mo:base/Nat64";
 import SNSToken "../sns-wrappers/ledger";
 import SaleUtilities "../utils/sale-utilities";
+import Account "../lib/Account";
 
 module {
     public class SaleManager() {
