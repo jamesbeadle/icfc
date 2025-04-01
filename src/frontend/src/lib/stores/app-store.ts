@@ -1,6 +1,6 @@
 import { isError } from "../utils/helpers";
 import type {
-  AppStatusDTO,
+  AppStatus,
   TokenBalances,
 } from "../../../../declarations/backend/backend.did";
 import { AppService } from "$lib/services/app-service";
@@ -13,7 +13,7 @@ function createAppStore() {
       throw new Error("Error fetching app status");
     }
 
-    let status: AppStatusDTO = res!;
+    let status: AppStatus = res!;
 
     let localVersion = localStorage.getItem("version");
     if (!localVersion) {
@@ -39,7 +39,7 @@ function createAppStore() {
       throw new Error("Error fetching app status");
     }
 
-    let status: AppStatusDTO = res!;
+    let status: AppStatus = res!;
     localStorage.setItem("version", status.version);
     window.location.replace(`${window.location.pathname}?v=${status.version}`);
   }

@@ -11,7 +11,7 @@
   import { getFileExtensionFromFile, isPrincipalValid, sortByHighestNeuron } from "$lib/utils/helpers";
   import { busy } from "$lib/stores/busy-store";
   
-  import type { CreateProfile, EligibleMembership, Neuron, PrincipalId, SubApp, UserNeuronsDTO, LeagueId, ClubId, CountryId, Country, League, Club} from "../../../../../../declarations/backend/backend.did";
+  import type { CreateProfile, EligibleMembership, Neuron, PrincipalId, SubApp, LeagueId, ClubId, CountryId, Club, Country, League} from "../../../../../../declarations/backend/backend.did";
 
   import LocalSpinner from "../../shared/local-spinner.svelte";
   import AvailableMembership from "../../membership/available-membership.svelte";

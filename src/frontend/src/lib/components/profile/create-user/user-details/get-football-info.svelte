@@ -1,6 +1,8 @@
 <script lang="ts">
     import DropdownSelect from "$lib/components/shared/dropdown-select.svelte";
-    import type { Country, League, Club, CountryId, LeagueId, ClubId } from "../../../../../../../declarations/backend/backend.did";
+
+    import type { Club, ClubId, Country, CountryId, League, LeagueId } from "../../../../../../../declarations/backend/backend.did";
+    
     export let countries: Country[];
     export let leagues: League[];
     export let clubs: Club[];
