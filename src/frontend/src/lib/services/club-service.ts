@@ -2,9 +2,9 @@ import { authStore } from "$lib/stores/auth-store";
 import { toasts } from "$lib/stores/toasts-store";
 import { ActorFactory } from "$lib/utils/ActorFactory";
 import type {
-  ClubDTO,
+  Club,
   LeagueId,
-} from "../../../../external_declarations/data_canister/data_canister.did";
+} from "../../../../declarations/backend/backend.did";
 import { isError } from "../utils/helpers";
 
 export class ClubService {
@@ -12,7 +12,7 @@ export class ClubService {
 
   constructor() {}
 
-  async getClubs(leagueId: LeagueId): Promise<ClubDTO[] | undefined> {
+  async getClubs(leagueId: LeagueId): Promise<Club[] | undefined> {
     try {
       const identityActor: any =
         await ActorFactory.createDataCanisterIdentityActor(
