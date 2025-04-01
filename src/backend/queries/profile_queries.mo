@@ -2,6 +2,7 @@ import Ids "mo:waterway-mops/Ids";
 import FootballIds "mo:waterway-mops/football/FootballIds";
 import IcfcEnums "mo:waterway-mops/ICFCEnums";
 import T "../icfc_types";
+import SNSGovernance "mo:waterway-mops/sns-wrappers/governance";
 
 module ProfileQueries {
     public type ProfileDTO = {
