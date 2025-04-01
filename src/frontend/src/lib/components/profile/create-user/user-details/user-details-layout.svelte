@@ -1,6 +1,5 @@
 <script lang="ts">
     import { userStore } from "$lib/stores/user-store";
- 
     import ProfilePicture from "./profile-picture.svelte";
     import GetFootballInfo from "./get-football-info.svelte";
     import GetNames from "./get-names.svelte";
