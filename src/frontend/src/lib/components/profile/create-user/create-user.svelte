@@ -1,17 +1,13 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { userStore } from "$lib/stores/user-store";
-  import { clubStore } from "$lib/stores/club-store";
   import { countryStore } from "$lib/stores/country-store";
   import { leagueStore } from "$lib/stores/league-store";
-  import { userIdCreatedStore } from "$lib/stores/user-control-store";
-  import { authStore } from "$lib/stores/auth-store";
   import { membershipStore } from "$lib/stores/membership-store";
   import { toasts } from "$lib/stores/toasts-store";
   import { getFileExtensionFromFile, isPrincipalValid, sortByHighestNeuron } from "$lib/utils/helpers";
-  import { busy } from "$lib/stores/busy-store";
   
-  import type { CreateProfile, EligibleMembership, Neuron, PrincipalId, SubApp, LeagueId, ClubId, CountryId, Club, Country, League} from "../../../../../../declarations/backend/backend.did";
+  import type { CreateProfile, EligibleMembership, Neuron, PrincipalId, SubApp, LeagueId, ClubId, CountryId, Country, League} from "../../../../../../declarations/backend/backend.did";
 
   import LocalSpinner from "../../shared/local-spinner.svelte";
   import AvailableMembership from "../../membership/available-membership.svelte";
@@ -32,7 +28,6 @@
   let neurons: Neuron[] = [];
   let maxStakedICFC = 0n;
 
-  let clubs: Club[] = [];
   let countries: Country[] = [];
   let leagues: League[] = [];
   let favouriteLeagueId: LeagueId | null = null;
@@ -46,13 +41,11 @@
 
   onMount(async () => {
     try{
-      console.log("Create User Component:");
       await loadData();
-      console.log("Loaded data");
       countries = await countryStore.getCountries();
-      console.log("Loaded countries", countries);
+      countryStore.setCountries(countries);
       leagues = await leagueStore.getLeagues();
-      console.log("Loaded leagues", leagues);
+      leagueStore.setLeagues(leagues);
     } catch {
         toasts.addToast({type: 'error', message: 'Failed to load data.'});
         leagues = [];
@@ -136,7 +129,6 @@
       }
 
       await userStore.sync();
-      userIdCreatedStore.set({ data: $authStore.identity?.getPrincipal().toString() ?? "", certified: true});
       toasts.addToast({type: 'success', message: 'Profile successfully created'});
       //window.location.href = "/";
     } catch (error) {
@@ -146,7 +138,6 @@
       isLoading = false;
     }
   }
-
 
   async function refreshNeurons() {
     try{
@@ -158,30 +149,6 @@
       loadingNeurons = false;
     }
   }
-
-  $: if (!isLoading && favouriteLeagueId && favouriteLeagueId > 0) {
-    getClubs();
-  } else {
-    clubs = [];
-  }
-
-  async function getClubs() {
-    try {
-        busy.start();
-        const clubsResult = await clubStore.getClubs(favouriteLeagueId!);
-        if (clubsResult) {
-            clubs = clubsResult;
-        } else {
-            clubs = [];
-        }
-    } catch (error) {
-        console.error("Error fetching clubs:", error);
-        toasts.addToast({ type: 'error', message: 'Failed to load clubs' });
-        clubs = [];
-    } finally {
-        busy.stop();
-    }
-  }
 </script>
 
 {#if isLoading}
@@ -189,7 +156,7 @@
 {:else}
   <div class="flex flex-col mx-auto space-y-6 page-wrapper">
       <CreateUserHeader />
-      <UserDetailsLayout bind:file {countries} {leagues} {clubs} bind:nationalityId bind:favouriteLeagueId bind:favouriteClubId bind:username bind:usernameAvailable bind:displayName store={userStore} />
+      <UserDetailsLayout bind:file bind:nationalityId bind:favouriteLeagueId bind:favouriteClubId bind:username bind:usernameAvailable bind:displayName store={userStore} />
 
       <div class="flex flex-col space-y-6">
         <p class="text-lg text-white cta-text">Neuron Based Membership</p>

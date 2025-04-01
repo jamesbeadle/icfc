@@ -37,13 +37,6 @@
           )
         : allOptions;
 
-    $: {
-        console.log("Dropdown Select Component:");
-        console.log("Dropdown options changed:", options);
-        console.log("All options:", allOptions);
-        console.log("Filtered options:", filteredOptions);
-    }
-
     function toggleDropdown(e: MouseEvent) {
         e.stopPropagation();
         isDropdownOpen = !isDropdownOpen;
