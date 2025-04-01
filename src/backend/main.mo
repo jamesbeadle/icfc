@@ -8,6 +8,9 @@ import Principal "mo:base/Principal";
 import Result "mo:base/Result";
 import Text "mo:base/Text";
 import Timer "mo:base/Timer";
+import BaseTypes "mo:waterway-mops/BaseTypes";
+import Enums "mo:waterway-mops/Enums";
+import ICFCTypes "./ICFCTypes";
 
 /* ----- Canister Definition Files ----- */
 
@@ -35,18 +38,18 @@ actor class Self() = this {
   private let footballChannelManager = FootballChannelManager.FootballChannelManager();
   private let snsManager = SNSManager.SNSManager();
 
-  private var appStatus : Base.AppStatus = {
+  private var appStatus : BaseTypes.AppStatus = {
     onHold = false;
     version = "0.0.1";
   };
 
-  public shared query func getAppStatus() : async Result.Result<AppQueries.AppStatus, T.Error> {
+  public shared query func getAppStatus() : async Result.Result<AppQueries.AppStatus, Enums.Error> {
     return #ok(appStatus);
   };
 
   //Profile Queries
 
-  public shared ({ caller }) func getProfile() : async Result.Result<ProfileQueries.ProfileDTO, T.Error> {
+  public shared ({ caller }) func getProfile() : async Result.Result<ProfileQueries.ProfileDTO, Enums.Error> {
     assert not Principal.isAnonymous(caller);
     let dto : ProfileCommands.GetProfile = {
       principalId = Principal.toText(caller);
@@ -61,7 +64,7 @@ actor class Self() = this {
     return usernameValid and not usernameTaken;
   };
 
-  public shared ({ caller }) func getUserNeurons() : async Result.Result<ProfileQueries.UserNeuronsDTO, T.Error> {
+  public shared ({ caller }) func getUserNeurons() : async Result.Result<ProfileQueries.UserNeuronsDTO, Enums.Error> {
     assert not Principal.isAnonymous(caller);
 
     let neurons = await snsManager.getUsersNeurons(caller);
@@ -79,7 +82,7 @@ actor class Self() = this {
 
   //Profile Commands
 
-  public shared ({ caller }) func createProfile(dto : ProfileCommands.CreateProfile) : async Result.Result<(), T.Error> {
+  public shared ({ caller }) func createProfile(dto : ProfileCommands.CreateProfile) : async Result.Result<(), Enums.Error> {
     assert not Principal.isAnonymous(caller);
     let principalId = Principal.toText(caller);
 
@@ -89,7 +92,7 @@ actor class Self() = this {
     return await profileManager.createProfile(principalId, dto, userEligibility);
   };
 
-  public shared ({ caller }) func claimMembership() : async Result.Result<(T.MembershipClaim), T.Error> {
+  public shared ({ caller }) func claimMembership() : async Result.Result<(ICFCTypes.MembershipClaim), Enums.Error> {
     assert not Principal.isAnonymous(caller);
     let dto : ProfileCommands.ClaimMembership = {
       principalId = Principal.toText(caller);
@@ -97,53 +100,53 @@ actor class Self() = this {
     return await profileManager.claimMembership(dto);
   };
 
-  public shared ({ caller }) func addSubApp(dto : ProfileCommands.AddSubApp) : async Result.Result<(), T.Error> {
+  public shared ({ caller }) func addSubApp(dto : ProfileCommands.AddSubApp) : async Result.Result<(), Enums.Error> {
     assert not Principal.isAnonymous(caller);
     return await profileManager.addSubApp(Principal.toText(caller), dto);
   };
 
-  public shared ({ caller }) func removeSubApp(subApp : T.SubApp) : async Result.Result<(), T.Error> {
+  public shared ({ caller }) func removeSubApp(subApp : T.SubApp) : async Result.Result<(), Enums.Error> {
     assert not Principal.isAnonymous(caller);
     return await profileManager.removeSubApp(Principal.toText(caller), subApp);
   };
 
-  public shared ({ caller }) func verifySubApp(dto : ProfileCommands.VerifySubApp) : async Result.Result<(), T.Error> {
+  public shared ({ caller }) func verifySubApp(dto : ProfileCommands.VerifySubApp) : async Result.Result<(), Enums.Error> {
     assert not Principal.isAnonymous(caller);
     assert Utils.isSubApp(Principal.toText(caller));
     return await profileManager.verifySubApp(dto);
   };
 
-  public shared ({ caller }) func updateUsername(dto : ProfileCommands.UpdateUserName) : async Result.Result<(), T.Error> {
+  public shared ({ caller }) func updateUsername(dto : ProfileCommands.UpdateUserName) : async Result.Result<(), Enums.Error> {
     assert not Principal.isAnonymous(caller);
     assert dto.principalId == Principal.toText(caller);
     return await profileManager.updateUsername(dto);
   };
 
-  public shared ({ caller }) func updateDisplayName(dto : ProfileCommands.UpdateDisplayName) : async Result.Result<(), T.Error> {
+  public shared ({ caller }) func updateDisplayName(dto : ProfileCommands.UpdateDisplayName) : async Result.Result<(), Enums.Error> {
     assert not Principal.isAnonymous(caller);
     assert dto.principalId == Principal.toText(caller);
     return await profileManager.updateDisplayName(dto);
   };
 
-  public shared ({ caller }) func updateNationality(dto : ProfileCommands.UpdateNationality) : async Result.Result<(), T.Error> {
+  public shared ({ caller }) func updateNationality(dto : ProfileCommands.UpdateNationality) : async Result.Result<(), Enums.Error> {
     assert not Principal.isAnonymous(caller);
     assert dto.principalId == Principal.toText(caller);
     return await profileManager.updateNationality(dto);
   };
 
-  public shared ({ caller }) func updateFavouriteClub(dto : ProfileCommands.UpdateFavouriteClub) : async Result.Result<(), T.Error> {
+  public shared ({ caller }) func updateFavouriteClub(dto : ProfileCommands.UpdateFavouriteClub) : async Result.Result<(), Enums.Error> {
     assert not Principal.isAnonymous(caller);
     assert dto.principalId == Principal.toText(caller);
     return await profileManager.updateFavouriteClub(dto);
   };
 
-  public shared ({ caller }) func updateProfilePicture(dto : ProfileCommands.UpdateProfilePicture) : async Result.Result<(), T.Error> {
+  public shared ({ caller }) func updateProfilePicture(dto : ProfileCommands.UpdateProfilePicture) : async Result.Result<(), Enums.Error> {
     assert not Principal.isAnonymous(caller);
     assert dto.principalId == Principal.toText(caller);
     return await profileManager.updateProfilePicture(dto);
   };
 
-  public shared ({ caller }) func getTokenBalances() : async Result.Result<AppQueries.TokenBalances, T.Error> {
+  public shared ({ caller }) func getTokenBalances() : async Result.Result<AppQueries.TokenBalances, Enums.Error> {
     assert not Principal.isAnonymous(caller);
 
     let icfc_ledger : SNSToken.Interface = actor (Environment.SNS_LEDGER_CANISTER_ID);
@@ -171,13 +174,13 @@ actor class Self() = this {
     });
   };
 
-  public shared ({ caller }) func getICFCProfile(dto : ProfileCommands.GetICFCProfile) : async Result.Result<ProfileQueries.ProfileDTO, T.Error> {
+  public shared ({ caller }) func getICFCProfile(dto : ProfileCommands.GetICFCProfile) : async Result.Result<ProfileQueries.ProfileDTO, Enums.Error> {
     assert not Principal.isAnonymous(caller);
     assert Utils.isSubApp(Principal.toText(caller));
     return await profileManager.getProfile(dto);
   };
 
-  public shared ({ caller }) func getICFCProfileSummary(dto : ProfileCommands.GetICFCProfile) : async Result.Result<ProfileQueries.ICFCProfileSummary, T.Error> {
+  public shared ({ caller }) func getICFCProfileSummary(dto : ProfileCommands.GetICFCProfile) : async Result.Result<ProfileQueries.ICFCProfileSummary, Enums.Error> {
     assert not Principal.isAnonymous(caller);
     assert Utils.isSubApp(Principal.toText(caller));
     return await profileManager.getICFCProfileSummary(dto);
@@ -329,7 +332,7 @@ actor class Self() = this {
   };
 
   //functions for WWL backend to communicate
-  // public shared ({ caller }) getCanistersInfo() : async Result.Result<ProfileQueries.CanisterInfo, T.Error> {
+  // public shared ({ caller }) getCanistersInfo() : async Result.Result<ProfileQueries.CanisterInfo, Enums.Error> {
     // assert not Principal.isAnonymous(caller);
     // let canisterId = Principal.toText(caller);
     // let canisterInfo = profileManager.getCanisterInfo(canisterId);
