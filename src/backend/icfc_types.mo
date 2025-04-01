@@ -1,4 +1,4 @@
-import FootballTypes "mo:waterway-mops/FootballTypes";
+import FootballIds "mo:waterway-mops/football/FootballIds";
 import Ids "mo:waterway-mops/Ids";
 import Blob "mo:base/Blob";
 //import ckBTCLedger "canister:ckbtc_ledger"; // TODO Use for ckBTC sale Q3 2025
@@ -19,8 +19,8 @@ module ICFCTypes {
     termsAgreed : Bool;
     appPrincipalIds : [(SubApp, Ids.PrincipalId)];
     podcastIds : [Ids.PrincipalId];
-    favouriteLeagueId : ?FootballTypes.LeagueId;
-    favouriteClubId : ?FootballTypes.ClubId;
+    favouriteLeagueId : ?FootballIds.LeagueId;
+    favouriteClubId : ?FootballIds.ClubId;
     nationalityId : ?Ids.CountryId;
   };
 
@@ -52,7 +52,6 @@ module ICFCTypes {
     #TransferKings;
     #FootballGod;
   };
-
 
   public type CanisterType = {
     #Static;
@@ -94,7 +93,7 @@ module ICFCTypes {
   };
 
   public type Club = {
-    id : FootballTypes.ClubId;
+    id : FootballIds.ClubId;
     name : Text;
   };
 
