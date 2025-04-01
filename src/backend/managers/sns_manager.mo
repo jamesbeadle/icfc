@@ -1,4 +1,3 @@
-
 import SNSGovernance "mo:waterway-mops/sns-wrappers/governance";
 import Principal "mo:base/Principal";
 import CanisterIds "mo:waterway-mops/CanisterIds";
@@ -6,7 +5,7 @@ import CanisterIds "mo:waterway-mops/CanisterIds";
 module {
     public class SNSManager() {
         public func getUsersNeurons(userPrincipalId : Principal) : async [SNSGovernance.Neuron] {
-              var governance = actor (CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID) : actor {
+            var governance = actor (CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID) : actor {
                 list_neurons : shared query SNSGovernance.ListNeurons -> async SNSGovernance.ListNeuronsResponse;
             };
 
