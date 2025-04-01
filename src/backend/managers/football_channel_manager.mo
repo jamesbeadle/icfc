@@ -1,9 +1,3 @@
-
-
-//TODO Should come from mops
-import Management "../cleanup/management";
-import BaseUtilities "../cleanup/base_utilities";
-
 import TrieMap "mo:base/TrieMap";
 import List "mo:base/List";
 import Option "mo:base/Option";
@@ -16,11 +10,13 @@ import T "../icfc_types";
 import Ids "mo:waterway-mops/Ids";
 import Enums "mo:waterway-mops/Enums";
 import CanisterIds "mo:waterway-mops/CanisterIds";
+import BaseUtilities "mo:waterway-mops/BaseUtilities";
 import FootballChannelQueries "../queries/football_channel_queries";
 import FootballChannelCommands "../commands/football_channel_commands";
 import FootballChannelsCanister "../canister_definations/football-channels-canister";
-import Environment "../environment";
 import Cycles "mo:base/ExperimentalCycles";
+import Management "mo:waterway-mops/Management";
+import CanisterUtilities "mo:waterway-mops/CanisterUtilities";
 
 module {
     public class FootballChannelManager() {
@@ -436,7 +432,7 @@ module {
             let canister = await FootballChannelsCanister._FootballChannelsCanister();
             let IC : Management.Management = actor (CanisterIds.Default);
             let principal = ?Principal.fromText(CanisterIds.ICFC_BACKEND_CANISTER_ID);
-            let _ = await BaseUtilities.updateCanister_(canister, principal, IC);
+            let _ = await CanisterUtilities.updateCanister_(canister, principal, IC);
 
             let canister_principal = Principal.fromActor(canister);
             let canisterId = Principal.toText(canister_principal);

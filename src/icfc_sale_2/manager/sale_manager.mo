@@ -17,8 +17,9 @@ import Debug "mo:base/Debug";
 import Int "mo:base/Int";
 import Principal "mo:base/Principal";
 import Nat64 "mo:base/Nat64";
-import SNSToken "../sns-wrappers/ledger";
-import SaleUtilities "../utils/sale-utilities";
+import SNSLedger "mo:waterway-mops/def/Ledger";
+import SaleUtilities "../utilities/sale-utilities";
+import Account "mo:waterway-mops/Account";
 
 module {
     public class SaleManager() {
@@ -151,14 +152,14 @@ module {
                             let res = await distributeTokens(distribution.principalId, distribution.amount);
                             switch (res) {
                                 case (#ok(_)) {
-                                    
+
                                     let updatedDistributions = Array.filter<T.ICFCDistribution>(
                                         icfcDistributions,
                                         func(entry : T.ICFCDistribution) : Bool {
                                             entry != distribution;
                                         },
                                     );
-                                    
+
                                     let updatedDistribution : T.ICFCDistribution = {
                                         principalId = distribution.principalId;
                                         amount = distribution.amount;
@@ -167,7 +168,7 @@ module {
                                         installment = distribution.installment;
                                         distributionStatus = #Completed;
                                     };
-                                    
+
                                     icfcDistributions := Array.append(updatedDistributions, [updatedDistribution]);
                                     icfcDistributions := updatedDistributions;
                                 };
@@ -255,7 +256,7 @@ module {
 
         private func distributeTokens(principal : Ids.PrincipalId, amount : Nat) : async Result.Result<(), T.TransferError> {
 
-            let icfc_ledger : SNSToken.Interface = actor (CanisterIds.ICFC_SNS_LEDGER_CANISTER_ID);
+            let icfc_ledger : SNSLedger.Interface = actor (CanisterIds.ICFC_SNS_LEDGER_CANISTER_ID);
             let transfer_fee = await icfc_ledger.icrc1_fee();
 
             let e8s_amount = amount * 100_000_000;
@@ -281,7 +282,6 @@ module {
                 };
             };
         }
-
 
     };
 };
