@@ -21,12 +21,6 @@ module AppQueries {
         appPrincipalIds: [(Text, Ids.PrincipalId)];
     };
 
-    public type Country = {
-        id : Ids.CountryId;
-        name : Text;
-        code : Text;
-    };
-
     public type TokenBalances = {
         icpBalance : Nat;
         icfcBalance : Nat;
