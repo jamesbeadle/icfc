@@ -58,6 +58,7 @@ module ProfileCommands {
     };
 
     public type AddSubApp = {
+        principalId : Ids.PrincipalId;
         subAppUserPrincipalId : Ids.PrincipalId;
         subApp : T.SubApp;
     };

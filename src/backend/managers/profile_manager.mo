@@ -205,10 +205,14 @@ module {
                     let profile_canister = actor (foundCanisterId) : actor {
                         updateAppPrincipalIds : (dto : ProfileCommands.AddSubApp) -> async Result.Result<(), T.Error>;
                     };
-                    let res = await profile_canister.updateAppPrincipalIds({
+                    let dto : ProfileCommands.AddSubApp = {
+                        principalId = verifySubAppRecord.icfcPrincipalId;
                         subApp = verifySubAppRecord.subApp;
                         subAppUserPrincipalId = verifySubAppRecord.subAppUserPrincipalId;
-                    });
+                    };
+                    let res = await profile_canister.updateAppPrincipalIds(
+                        dto
+                    );
 
                     return res;
                 };
