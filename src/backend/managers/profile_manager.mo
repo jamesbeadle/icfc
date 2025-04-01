@@ -10,33 +10,38 @@ import Principal "mo:base/Principal";
 import Buffer "mo:base/Buffer";
 import ProfileQueries "../queries/profile_queries";
 import ProfileCommands "../commands/profile_commands";
-import Utils "../utils/utils";
 import ProfileCanister "../canister_definations/profile-canister";
-import Environment "../environment";
+import CanisterIds "mo:waterway-mops/CanisterIds";
 import Cycles "mo:base/ExperimentalCycles";
 import Iter "mo:base/Iter";
 import Time "mo:base/Time";
 import SNSManager "sns_manager";
 import SNSGovernance "mo:waterway-mops/sns-wrappers/governance";
+import Ids "mo:waterway-mops/Ids";
+import Enums "mo:waterway-mops/Enums";
+import BaseUtilities "mo:waterway-mops/BaseUtilities";
+import Management "mo:waterway-mops/Management";
+import CanisterUtilities "mo:waterway-mops/CanisterUtilities";
+import Utilities "../utilities/utilities";
 
 module {
     public class ProfileManager() {
-        private var profileCanisterIndex : TrieMap.TrieMap<Base.PrincipalId, Base.CanisterId> = TrieMap.TrieMap<Base.PrincipalId, Base.CanisterId>(Text.equal, Text.hash);
-        private var activeCanisterId : Base.CanisterId = "";
-        private var usernames : TrieMap.TrieMap<Base.PrincipalId, Text> = TrieMap.TrieMap<Base.PrincipalId, Text>(Text.equal, Text.hash);
-        private var uniqueProfileCanisterIds : List.List<Base.CanisterId> = List.nil();
+        private var profileCanisterIndex : TrieMap.TrieMap<Ids.PrincipalId, Ids.CanisterId> = TrieMap.TrieMap<Ids.PrincipalId, Ids.CanisterId>(Text.equal, Text.hash);
+        private var activeCanisterId : Ids.CanisterId = "";
+        private var usernames : TrieMap.TrieMap<Ids.PrincipalId, Text> = TrieMap.TrieMap<Ids.PrincipalId, Text>(Text.equal, Text.hash);
+        private var uniqueProfileCanisterIds : List.List<Ids.CanisterId> = List.nil();
         private var totalProfiles : Nat = 0;
-        private var neuronsUsedforMembership : TrieMap.TrieMap<Blob, Base.PrincipalId> = TrieMap.TrieMap<Blob, Base.PrincipalId>(Blob.equal, Blob.hash);
+        private var neuronsUsedforMembership : TrieMap.TrieMap<Blob, Ids.PrincipalId> = TrieMap.TrieMap<Blob, Ids.PrincipalId>(Blob.equal, Blob.hash);
 
         //Getters
 
-        public func getProfilePicture(principalId : Base.PrincipalId) : async Result.Result<ProfileQueries.ProfilePictureDTO, T.Error> {
+        public func getProfilePicture(principalId : Ids.PrincipalId) : async Result.Result<ProfileQueries.ProfilePictureDTO, Enums.Error> {
             let existingProfileCanisterId = profileCanisterIndex.get(principalId);
             switch (existingProfileCanisterId) {
                 case (?foundCanisterId) {
 
                     let profile_canister = actor (foundCanisterId) : actor {
-                        getProfile : (dto : ProfileCommands.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, T.Error>;
+                        getProfile : (dto : ProfileCommands.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, Enums.Error>;
                     };
                     let dto : ProfileCommands.GetProfile = {
                         principalId = principalId;
@@ -60,12 +65,12 @@ module {
             };
         };
 
-        public func getClaimedMembership(dto : ProfileQueries.GetClaimedMemberships) : async Result.Result<ProfileQueries.ClaimedMembershipsDTO, T.Error> {
+        public func getClaimedMembership(dto : ProfileQueries.GetClaimedMemberships) : async Result.Result<ProfileQueries.ClaimedMembershipsDTO, Enums.Error> {
             let existingProfileCanisterId = profileCanisterIndex.get(dto.principalId);
             switch (existingProfileCanisterId) {
                 case (?foundCanisterId) {
                     let profile_canister = actor (foundCanisterId) : actor {
-                        getClaimedMembership : (dto : ProfileQueries.GetClaimedMemberships) -> async Result.Result<ProfileQueries.ClaimedMembershipsDTO, T.Error>;
+                        getClaimedMembership : (dto : ProfileQueries.GetClaimedMemberships) -> async Result.Result<ProfileQueries.ClaimedMembershipsDTO, Enums.Error>;
                     };
                     return await profile_canister.getClaimedMembership(dto);
                 };
@@ -79,13 +84,13 @@ module {
             return not isUsernameTaken(dto.username, dto.principalId);
         };
 
-        public func getProfile(dto : ProfileCommands.GetProfile) : async Result.Result<ProfileQueries.ProfileDTO, T.Error> {
+        public func getProfile(dto : ProfileCommands.GetProfile) : async Result.Result<ProfileQueries.ProfileDTO, Enums.Error> {
             let existingProfileCanisterId = profileCanisterIndex.get(dto.principalId);
             switch (existingProfileCanisterId) {
                 case (?foundCanisterId) {
 
                     let profile_canister = actor (foundCanisterId) : actor {
-                        getProfile : (dto : ProfileCommands.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, T.Error>;
+                        getProfile : (dto : ProfileCommands.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, Enums.Error>;
                     };
 
                     let profile = await profile_canister.getProfile(dto);
@@ -97,13 +102,13 @@ module {
             };
         };
 
-        public func getICFCProfileSummary(dto : ProfileCommands.GetICFCProfile) : async Result.Result<ProfileQueries.ICFCProfileSummary, T.Error> {
+        public func getICFCProfileSummary(dto : ProfileCommands.GetICFCProfile) : async Result.Result<ProfileQueries.ICFCProfileSummary, Enums.Error> {
             let existingProfileCanisterId = profileCanisterIndex.get(dto.principalId);
             switch (existingProfileCanisterId) {
                 case (?foundCanisterId) {
 
                     let profile_canister = actor (foundCanisterId) : actor {
-                        getICFCProfileSummary : (dto : ProfileCommands.GetICFCProfile) -> async Result.Result<ProfileQueries.ICFCProfileSummary, T.Error>;
+                        getICFCProfileSummary : (dto : ProfileCommands.GetICFCProfile) -> async Result.Result<ProfileQueries.ICFCProfileSummary, Enums.Error>;
                     };
 
                     let profile = await profile_canister.getICFCProfileSummary(dto);
@@ -116,7 +121,7 @@ module {
         };
 
         // Update Functions
-        public func createProfile(principalId : Base.PrincipalId, dto : ProfileCommands.CreateProfile, membership : T.EligibleMembership) : async Result.Result<(), T.Error> {
+        public func createProfile(principalId : Ids.PrincipalId, dto : ProfileCommands.CreateProfile, membership : T.EligibleMembership) : async Result.Result<(), Enums.Error> {
 
             if (Text.size(dto.username) < 5 or Text.size(dto.username) > 20) {
                 return #err(#TooLong);
@@ -139,7 +144,7 @@ module {
 
                     var profile_canister = actor (activeCanisterId) : actor {
                         isCanisterFull : () -> async Bool;
-                        createProfile : (principalId : Base.PrincipalId, dto : ProfileCommands.CreateProfile, membership : T.EligibleMembership) -> async Result.Result<(), T.Error>;
+                        createProfile : (principalId : Ids.PrincipalId, dto : ProfileCommands.CreateProfile, membership : T.EligibleMembership) -> async Result.Result<(), Enums.Error>;
                     };
 
                     let isCanisterFull = await profile_canister.isCanisterFull();
@@ -148,7 +153,7 @@ module {
                         await createNewCanister();
                         profile_canister := actor (activeCanisterId) : actor {
                             isCanisterFull : () -> async Bool;
-                            createProfile : (principalId : Base.PrincipalId, dto : ProfileCommands.CreateProfile, membership : T.EligibleMembership) -> async Result.Result<(), T.Error>;
+                            createProfile : (principalId : Ids.PrincipalId, dto : ProfileCommands.CreateProfile, membership : T.EligibleMembership) -> async Result.Result<(), Enums.Error>;
                         };
                     };
 
@@ -159,7 +164,7 @@ module {
             };
         };
 
-        public func addSubApp(principalId : Base.PrincipalId, subAppRecord : ProfileCommands.AddSubApp) : async Result.Result<(), T.Error> {
+        public func addSubApp(principalId : Ids.PrincipalId, subAppRecord : ProfileCommands.AddSubApp) : async Result.Result<(), Enums.Error> {
 
             let existingProfileCanisterId = profileCanisterIndex.get(principalId);
             switch (existingProfileCanisterId) {
@@ -178,12 +183,12 @@ module {
             };
         };
 
-        public func removeSubApp(principalId : Base.PrincipalId, subApp : T.SubApp) : async Result.Result<(), T.Error> {
+        public func removeSubApp(principalId : Ids.PrincipalId, subApp : T.SubApp) : async Result.Result<(), Enums.Error> {
             let existingProfileCanisterId = profileCanisterIndex.get(principalId);
             switch (existingProfileCanisterId) {
                 case (?foundCanisterId) {
                     let profile_canister = actor (foundCanisterId) : actor {
-                        removeSubApp : (dto : ProfileCommands.RemoveSubApp) -> async Result.Result<(), T.Error>;
+                        removeSubApp : (dto : ProfileCommands.RemoveSubApp) -> async Result.Result<(), Enums.Error>;
                     };
 
                     let dtoRecord : ProfileCommands.RemoveSubApp = {
@@ -198,12 +203,12 @@ module {
             };
         };
 
-        public func verifySubApp(verifySubAppRecord : ProfileCommands.VerifySubApp) : async Result.Result<(), T.Error> {
+        public func verifySubApp(verifySubAppRecord : ProfileCommands.VerifySubApp) : async Result.Result<(), Enums.Error> {
             let existingProfileCanisterId = profileCanisterIndex.get(verifySubAppRecord.icfcPrincipalId);
             switch (existingProfileCanisterId) {
                 case (?foundCanisterId) {
                     let profile_canister = actor (foundCanisterId) : actor {
-                        updateAppPrincipalIds : (dto : ProfileCommands.AddSubApp) -> async Result.Result<(), T.Error>;
+                        updateAppPrincipalIds : (dto : ProfileCommands.AddSubApp) -> async Result.Result<(), Enums.Error>;
                     };
                     let dto : ProfileCommands.AddSubApp = {
                         principalId = verifySubAppRecord.icfcPrincipalId;
@@ -223,13 +228,13 @@ module {
 
         };
 
-        public func updateUsername(dto : ProfileCommands.UpdateUserName) : async Result.Result<(), T.Error> {
+        public func updateUsername(dto : ProfileCommands.UpdateUserName) : async Result.Result<(), Enums.Error> {
             if (Text.size(dto.username) < 5 or Text.size(dto.username) > 20) {
                 return #err(#TooLong);
             };
 
             let lowerCaseNewUsername = BaseUtilities.toLowercase(dto.username);
-            var currentOwner : ?Base.PrincipalId = findUsernamePrincipalId(lowerCaseNewUsername);
+            var currentOwner : ?Ids.PrincipalId = findUsernamePrincipalId(lowerCaseNewUsername);
 
             switch (currentOwner) {
                 case (?existingOwner) {
@@ -260,8 +265,8 @@ module {
                                 switch (currentCanisterId) {
                                     case (?foundCanisterId) {
                                         let profile_canister = actor (foundCanisterId) : actor {
-                                            updateUsername : (dto : ProfileCommands.UpdateUserName) -> async Result.Result<(), T.Error>;
-                                            getProfile : (dto : ProfileCommands.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, T.Error>;
+                                            updateUsername : (dto : ProfileCommands.UpdateUserName) -> async Result.Result<(), Enums.Error>;
+                                            getProfile : (dto : ProfileCommands.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, Enums.Error>;
                                         };
 
                                         let updateOldUser = await profile_canister.updateUsername({
@@ -307,8 +312,8 @@ module {
                                 switch (requesterCanisterId) {
                                     case (?foundCanisterId) {
                                         let profile_canister = actor (foundCanisterId) : actor {
-                                            updateUsername : (dto : ProfileCommands.UpdateUserName) -> async Result.Result<(), T.Error>;
-                                            getProfile : (dto : ProfileCommands.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, T.Error>;
+                                            updateUsername : (dto : ProfileCommands.UpdateUserName) -> async Result.Result<(), Enums.Error>;
+                                            getProfile : (dto : ProfileCommands.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, Enums.Error>;
                                         };
 
                                         let updateNewUser = await profile_canister.updateUsername(dto);
@@ -359,8 +364,8 @@ module {
                     switch (existingProfileCanisterId) {
                         case (?foundCanisterId) {
                             let profile_canister = actor (foundCanisterId) : actor {
-                                updateUsername : (dto : ProfileCommands.UpdateUserName) -> async Result.Result<(), T.Error>;
-                                getProfile : (dto : ProfileCommands.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, T.Error>;
+                                updateUsername : (dto : ProfileCommands.UpdateUserName) -> async Result.Result<(), Enums.Error>;
+                                getProfile : (dto : ProfileCommands.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, Enums.Error>;
                             };
 
                             let updateResult = await profile_canister.updateUsername(dto);
@@ -400,7 +405,7 @@ module {
             };
         };
 
-        public func updateDisplayName(dto : ProfileCommands.UpdateDisplayName) : async Result.Result<(), T.Error> {
+        public func updateDisplayName(dto : ProfileCommands.UpdateDisplayName) : async Result.Result<(), Enums.Error> {
 
             if (Text.size(dto.displayName) < 1 or Text.size(dto.displayName) > 20) {
                 return #err(#TooLong);
@@ -410,8 +415,8 @@ module {
             switch (existingProfileCanisterId) {
                 case (?foundCanisterId) {
                     let profile_canister = actor (foundCanisterId) : actor {
-                        updateDisplayname : (dto : ProfileCommands.UpdateDisplayName) -> async Result.Result<(), T.Error>;
-                        getProfile : (dto : ProfileCommands.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, T.Error>;
+                        updateDisplayname : (dto : ProfileCommands.UpdateDisplayName) -> async Result.Result<(), Enums.Error>;
+                        getProfile : (dto : ProfileCommands.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, Enums.Error>;
                     };
                     let res = await profile_canister.updateDisplayname(dto);
                     switch (res) {
@@ -449,12 +454,12 @@ module {
             };
         };
 
-        public func updateNationality(dto : ProfileCommands.UpdateNationality) : async Result.Result<(), T.Error> {
+        public func updateNationality(dto : ProfileCommands.UpdateNationality) : async Result.Result<(), Enums.Error> {
             let existingProfileCanisterId = profileCanisterIndex.get(dto.principalId);
             switch (existingProfileCanisterId) {
                 case (?foundCanisterId) {
                     let profile_canister = actor (foundCanisterId) : actor {
-                        updateNationality : (dto : ProfileCommands.UpdateNationality) -> async Result.Result<(), T.Error>;
+                        updateNationality : (dto : ProfileCommands.UpdateNationality) -> async Result.Result<(), Enums.Error>;
                     };
                     return await profile_canister.updateNationality(dto);
                 };
@@ -464,12 +469,12 @@ module {
             };
         };
 
-        public func updateFavouriteClub(dto : ProfileCommands.UpdateFavouriteClub) : async Result.Result<(), T.Error> {
+        public func updateFavouriteClub(dto : ProfileCommands.UpdateFavouriteClub) : async Result.Result<(), Enums.Error> {
             let existingProfileCanisterId = profileCanisterIndex.get(dto.principalId);
             switch (existingProfileCanisterId) {
                 case (?foundCanisterId) {
                     let profile_canister = actor (foundCanisterId) : actor {
-                        updateFavouriteClub : (dto : ProfileCommands.UpdateFavouriteClub) -> async Result.Result<(), T.Error>;
+                        updateFavouriteClub : (dto : ProfileCommands.UpdateFavouriteClub) -> async Result.Result<(), Enums.Error>;
                     };
                     return await profile_canister.updateFavouriteClub(dto);
                 };
@@ -479,7 +484,7 @@ module {
             };
         };
 
-        public func updateProfilePicture(dto : ProfileCommands.UpdateProfilePicture) : async Result.Result<(), T.Error> {
+        public func updateProfilePicture(dto : ProfileCommands.UpdateProfilePicture) : async Result.Result<(), Enums.Error> {
             let validProfilePicture = isProfilePictureValid(dto.profilePicture);
             if (not validProfilePicture) {
                 return #err(#InvalidProfilePicture);
@@ -489,8 +494,8 @@ module {
             switch (existingProfileCanisterId) {
                 case (?foundCanisterId) {
                     let profile_canister = actor (foundCanisterId) : actor {
-                        updateProfilePicture : (dto : ProfileCommands.UpdateProfilePicture) -> async Result.Result<(), T.Error>;
-                        getProfile : (dto : ProfileCommands.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, T.Error>;
+                        updateProfilePicture : (dto : ProfileCommands.UpdateProfilePicture) -> async Result.Result<(), Enums.Error>;
+                        getProfile : (dto : ProfileCommands.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, Enums.Error>;
                     };
                     let res = await profile_canister.updateProfilePicture(dto);
                     switch (res) {
@@ -530,12 +535,12 @@ module {
             return #err(#NotFound);
         };
 
-        public func claimMembership(dto : ProfileCommands.ClaimMembership) : async Result.Result<(T.MembershipClaim), T.Error> {
+        public func claimMembership(dto : ProfileCommands.ClaimMembership) : async Result.Result<(T.MembershipClaim), Enums.Error> {
             let existingProfileCanisterId = profileCanisterIndex.get(dto.principalId);
             switch (existingProfileCanisterId) {
                 case (?foundCanisterId) {
                     let profile_canister = actor (foundCanisterId) : actor {
-                        getProfile : (dto : ProfileCommands.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, T.Error>;
+                        getProfile : (dto : ProfileCommands.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, Enums.Error>;
                     };
 
                     let profile = await profile_canister.getProfile(dto);
@@ -546,7 +551,7 @@ module {
 
                             let snsManager = SNSManager.SNSManager();
                             let userNeurons : [SNSGovernance.Neuron] = await snsManager.getUsersNeurons(Principal.fromText(dto.principalId));
-                            let eligibleMembership : T.EligibleMembership = Utils.getMembershipType(userNeurons);
+                            let eligibleMembership : T.EligibleMembership = Utilities.getMembershipType(userNeurons);
 
                             let isNeuronsValid = validNeurons(eligibleMembership.eligibleNeuronIds, dto.principalId);
                             if (not isNeuronsValid) {
@@ -559,7 +564,7 @@ module {
                                         return #err(#InEligible);
                                     };
 
-                                    let canUpgrade : Bool = Utils.canUpgradeMembership(currentMembership, newMembershipType);
+                                    let canUpgrade : Bool = Utilities.canUpgradeMembership(currentMembership, newMembershipType);
 
                                     if (not canUpgrade) {
                                         switch (currentMembership) {
@@ -618,13 +623,13 @@ module {
             };
         };
 
-        public func updateMembership(dto : ProfileCommands.UpdateMembership) : async Result.Result<(T.MembershipClaim), T.Error> {
+        public func updateMembership(dto : ProfileCommands.UpdateMembership) : async Result.Result<(T.MembershipClaim), Enums.Error> {
             let existingProfileCanisterId = profileCanisterIndex.get(dto.principalId);
             switch (existingProfileCanisterId) {
                 case (?foundCanisterId) {
                     let profile_canister = actor (foundCanisterId) : actor {
-                        updateMembership : (dto : ProfileCommands.UpdateMembership) -> async Result.Result<(T.MembershipClaim), T.Error>;
-                        getProfile : (dto : ProfileCommands.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, T.Error>;
+                        updateMembership : (dto : ProfileCommands.UpdateMembership) -> async Result.Result<(T.MembershipClaim), Enums.Error>;
+                        getProfile : (dto : ProfileCommands.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, Enums.Error>;
                     };
                     let res = await profile_canister.updateMembership(dto);
 
@@ -664,70 +669,70 @@ module {
         };
 
         // private functions
-        private func notifyAppsofLink(dto : ProfileCommands.NotifyAppofLink) : async Result.Result<(), T.Error> {
+        private func notifyAppsofLink(dto : ProfileCommands.NotifyAppofLink) : async Result.Result<(), Enums.Error> {
             switch (dto.subApp) {
                 case (#OpenFPL) {
-                    let openFPLCanister = actor (Environment.OPENFPL_BACKEND_CANISTER_ID) : actor {
-                        notifyAppLink : (dto : ProfileCommands.NotifyAppofLink) -> async Result.Result<(), T.Error>;
+                    let openFPLCanister = actor (CanisterIds.OPENFPL_BACKEND_CANISTER_ID) : actor {
+                        notifyAppLink : (dto : ProfileCommands.NotifyAppofLink) -> async Result.Result<(), Enums.Error>;
                     };
                     return await openFPLCanister.notifyAppLink(dto);
                 };
                 case (#OpenWSL) {
-                    let openWSLCanister = actor (Environment.OPENWSL_BACKEND_CANISTER_ID) : actor {
-                        notifyAppLink : (dto : ProfileCommands.NotifyAppofLink) -> async Result.Result<(), T.Error>;
+                    let openWSLCanister = actor (CanisterIds.OPENWSL_BACKEND_CANISTER_ID) : actor {
+                        notifyAppLink : (dto : ProfileCommands.NotifyAppofLink) -> async Result.Result<(), Enums.Error>;
                     };
                     return await openWSLCanister.notifyAppLink(dto);
                 };
                 case (#JeffBets) {
-                    let jeffBetsCanister = actor (Environment.JEFF_BETS_BACKEND_CANISTER_ID) : actor {
-                        notifyAppLink : (dto : ProfileCommands.NotifyAppofLink) -> async Result.Result<(), T.Error>;
+                    let jeffBetsCanister = actor (CanisterIds.JEFF_BETS_BACKEND_CANISTER_ID) : actor {
+                        notifyAppLink : (dto : ProfileCommands.NotifyAppofLink) -> async Result.Result<(), Enums.Error>;
                     };
                     return await jeffBetsCanister.notifyAppLink(dto);
                 };
                 case (#TransferKings) {
-                    let transferKingsCanister = actor (Environment.TRANSFER_KINGS_CANISTER_ID) : actor {
-                        notifyAppLink : (dto : ProfileCommands.NotifyAppofLink) -> async Result.Result<(), T.Error>;
+                    let transferKingsCanister = actor (CanisterIds.TRANSFER_KINGS_BACKEND_CANISTER_ID) : actor {
+                        notifyAppLink : (dto : ProfileCommands.NotifyAppofLink) -> async Result.Result<(), Enums.Error>;
                     };
                     return await transferKingsCanister.notifyAppLink(dto);
                 };
                 case (#FootballGod) {
-                    let footballGodCanister = actor (Environment.FOOTBALL_GOD_BACKEND_CANISTER_ID) : actor {
-                        notifyAppLink : (dto : ProfileCommands.NotifyAppofLink) -> async Result.Result<(), T.Error>;
+                    let footballGodCanister = actor (CanisterIds.FOOTBALL_GOD_BACKEND_CANISTER_ID) : actor {
+                        notifyAppLink : (dto : ProfileCommands.NotifyAppofLink) -> async Result.Result<(), Enums.Error>;
                     };
                     return await footballGodCanister.notifyAppLink(dto);
                 };
             };
 
         };
-        private func notifyAppsofProfileUpdate(dto : ProfileCommands.UpdateICFCProfile) : async Result.Result<(), T.Error> {
+        private func notifyAppsofProfileUpdate(dto : ProfileCommands.UpdateICFCProfile) : async Result.Result<(), Enums.Error> {
             switch (dto.subApp) {
                 case (#OpenFPL) {
-                    let openFPLCanister = actor (Environment.OPENFPL_BACKEND_CANISTER_ID) : actor {
-                        noitifyAppofICFCHashUpdate(dto : ProfileCommands.UpdateICFCProfile) : async Result.Result<(), T.Error>;
+                    let openFPLCanister = actor (CanisterIds.OPENFPL_BACKEND_CANISTER_ID) : actor {
+                        noitifyAppofICFCHashUpdate(dto : ProfileCommands.UpdateICFCProfile) : async Result.Result<(), Enums.Error>;
                     };
                     return await openFPLCanister.noitifyAppofICFCHashUpdate(dto);
                 };
                 case (#OpenWSL) {
-                    let openWSLCanister = actor (Environment.OPENWSL_BACKEND_CANISTER_ID) : actor {
-                        noitifyAppofICFCHashUpdate(dto : ProfileCommands.UpdateICFCProfile) : async Result.Result<(), T.Error>;
+                    let openWSLCanister = actor (CanisterIds.OPENWSL_BACKEND_CANISTER_ID) : actor {
+                        noitifyAppofICFCHashUpdate(dto : ProfileCommands.UpdateICFCProfile) : async Result.Result<(), Enums.Error>;
                     };
                     return await openWSLCanister.noitifyAppofICFCHashUpdate(dto);
                 };
                 case (#JeffBets) {
-                    let jeffBetsCanister = actor (Environment.JEFF_BETS_BACKEND_CANISTER_ID) : actor {
-                        noitifyAppofICFCHashUpdate(dto : ProfileCommands.UpdateICFCProfile) : async Result.Result<(), T.Error>;
+                    let jeffBetsCanister = actor (CanisterIds.JEFF_BETS_BACKEND_CANISTER_ID) : actor {
+                        noitifyAppofICFCHashUpdate(dto : ProfileCommands.UpdateICFCProfile) : async Result.Result<(), Enums.Error>;
                     };
                     return await jeffBetsCanister.noitifyAppofICFCHashUpdate(dto);
                 };
                 case (#TransferKings) {
-                    let transferKingsCanister = actor (Environment.TRANSFER_KINGS_CANISTER_ID) : actor {
-                        noitifyAppofICFCHashUpdate(dto : ProfileCommands.UpdateICFCProfile) : async Result.Result<(), T.Error>;
+                    let transferKingsCanister = actor (CanisterIds.TRANSFER_KINGS_BACKEND_CANISTER_ID) : actor {
+                        noitifyAppofICFCHashUpdate(dto : ProfileCommands.UpdateICFCProfile) : async Result.Result<(), Enums.Error>;
                     };
                     return await transferKingsCanister.noitifyAppofICFCHashUpdate(dto);
                 };
                 case (#FootballGod) {
-                    let footballGodCanister = actor (Environment.FOOTBALL_GOD_BACKEND_CANISTER_ID) : actor {
-                        noitifyAppofICFCHashUpdate(dto : ProfileCommands.UpdateICFCProfile) : async Result.Result<(), T.Error>;
+                    let footballGodCanister = actor (CanisterIds.FOOTBALL_GOD_BACKEND_CANISTER_ID) : actor {
+                        noitifyAppofICFCHashUpdate(dto : ProfileCommands.UpdateICFCProfile) : async Result.Result<(), Enums.Error>;
                     };
                     return await footballGodCanister.noitifyAppofICFCHashUpdate(dto);
                 };
@@ -749,7 +754,7 @@ module {
             return false;
         };
 
-        private func findUsernamePrincipalId(username : Text) : ?Base.PrincipalId {
+        private func findUsernamePrincipalId(username : Text) : ?Ids.PrincipalId {
             for (profileUsername in usernames.entries()) {
                 let lowerCaseUsername = BaseUtilities.toLowercase(username);
                 let existingUsername = BaseUtilities.toLowercase(profileUsername.1);
@@ -800,7 +805,7 @@ module {
             };
         };
 
-        private func generateUniqueUsername(principalId : Base.PrincipalId) : Text {
+        private func generateUniqueUsername(principalId : Ids.PrincipalId) : Text {
             let randomSuffix = Text.toArray(principalId);
             var truncatedSuffix = "";
             for (i in Iter.range(0, 5)) {
@@ -832,18 +837,18 @@ module {
                 return;
             };
 
-            let IC : Management.Management = actor (Environment.Default);
-            let principal = ?Principal.fromText(Environment.BACKEND_CANISTER_ID);
-            let _ = await BaseUtilities.updateCanister_(canister, principal, IC);
+            let IC : Management.Management = actor (CanisterIds.Default);
+            let principal = ?Principal.fromText(CanisterIds.ICFC_BACKEND_CANISTER_ID);
+            let _ = await CanisterUtilities.updateCanister_(canister, principal, IC);
         };
 
         private func storeCanisterId(canisterId : Text) {
-            let uniqueCanisterIdBuffer = Buffer.fromArray<Base.CanisterId>(List.toArray(uniqueProfileCanisterIds));
+            let uniqueCanisterIdBuffer = Buffer.fromArray<Ids.CanisterId>(List.toArray(uniqueProfileCanisterIds));
             uniqueCanisterIdBuffer.add(canisterId);
             uniqueProfileCanisterIds := List.fromArray(Buffer.toArray(uniqueCanisterIdBuffer));
         };
 
-        private func validNeurons(neurons : [Blob], newPrinciaplId : Base.PrincipalId) : Bool {
+        private func validNeurons(neurons : [Blob], newPrinciaplId : Ids.PrincipalId) : Bool {
             for (neuron in neurons.vals()) {
                 let existingPrincipalId = neuronsUsedforMembership.get(neuron);
                 switch (existingPrincipalId) {
@@ -860,7 +865,7 @@ module {
             return true;
         };
 
-        public func isProfileCanister(callerId : Base.PrincipalId) : Bool {
+        public func isProfileCanister(callerId : Ids.PrincipalId) : Bool {
             for (canister in List.toArray(uniqueProfileCanisterIds).vals()) {
                 if (canister == callerId) {
                     return true;
@@ -870,12 +875,12 @@ module {
         };
 
         // stable storage getters and setters
-        public func getStableCanisterIndex() : [(Base.PrincipalId, Base.CanisterId)] {
+        public func getStableCanisterIndex() : [(Ids.PrincipalId, Ids.CanisterId)] {
             return Iter.toArray(profileCanisterIndex.entries());
         };
 
-        public func setStableCanisterIndex(stable_profile_canister_index : [(Base.PrincipalId, Base.CanisterId)]) {
-            let canisterIds : TrieMap.TrieMap<Base.PrincipalId, Base.CanisterId> = TrieMap.TrieMap<Base.PrincipalId, Base.CanisterId>(Text.equal, Text.hash);
+        public func setStableCanisterIndex(stable_profile_canister_index : [(Ids.PrincipalId, Ids.CanisterId)]) {
+            let canisterIds : TrieMap.TrieMap<Ids.PrincipalId, Ids.CanisterId> = TrieMap.TrieMap<Ids.PrincipalId, Ids.CanisterId>(Text.equal, Text.hash);
 
             for (canisterId in Iter.fromArray(stable_profile_canister_index)) {
                 canisterIds.put(canisterId);
@@ -883,20 +888,20 @@ module {
             profileCanisterIndex := canisterIds;
         };
 
-        public func getStableActiveCanisterId() : Base.CanisterId {
+        public func getStableActiveCanisterId() : Ids.CanisterId {
             return activeCanisterId;
         };
 
-        public func setStableActiveCanisterId(stable_active_canister_id : Base.CanisterId) {
+        public func setStableActiveCanisterId(stable_active_canister_id : Ids.CanisterId) {
             activeCanisterId := stable_active_canister_id;
         };
 
-        public func getStableUsernames() : [(Base.PrincipalId, Text)] {
+        public func getStableUsernames() : [(Ids.PrincipalId, Text)] {
             return Iter.toArray(usernames.entries());
         };
 
-        public func setStableUsernames(stable_usernames : [(Base.PrincipalId, Text)]) : () {
-            let usernames_map : TrieMap.TrieMap<Base.PrincipalId, Base.CanisterId> = TrieMap.TrieMap<Base.PrincipalId, Base.CanisterId>(Text.equal, Text.hash);
+        public func setStableUsernames(stable_usernames : [(Ids.PrincipalId, Text)]) : () {
+            let usernames_map : TrieMap.TrieMap<Ids.PrincipalId, Ids.CanisterId> = TrieMap.TrieMap<Ids.PrincipalId, Ids.CanisterId>(Text.equal, Text.hash);
 
             for (username in Iter.fromArray(stable_usernames)) {
                 usernames_map.put(username);
@@ -904,12 +909,12 @@ module {
             usernames := usernames_map;
         };
 
-        public func getStableUniqueCanisterIds() : [Base.CanisterId] {
+        public func getStableUniqueCanisterIds() : [Ids.CanisterId] {
             return List.toArray(uniqueProfileCanisterIds);
         };
 
-        public func setStableUniqueCanisterIds(stable_unique_canister_ids : [Base.CanisterId]) : () {
-            let canisterIdBuffer = Buffer.fromArray<Base.CanisterId>([]);
+        public func setStableUniqueCanisterIds(stable_unique_canister_ids : [Ids.CanisterId]) : () {
+            let canisterIdBuffer = Buffer.fromArray<Ids.CanisterId>([]);
 
             for (canisterId in Iter.fromArray(stable_unique_canister_ids)) {
                 canisterIdBuffer.add(canisterId);
@@ -925,12 +930,12 @@ module {
             totalProfiles := stable_total_profiles;
         };
 
-        public func getStableNeuronsUsedforMembership() : [(Blob, Base.PrincipalId)] {
+        public func getStableNeuronsUsedforMembership() : [(Blob, Ids.PrincipalId)] {
             return Iter.toArray(neuronsUsedforMembership.entries());
         };
 
-        public func setStableNeuronsUsedforMembership(stable_neurons_used_for_membership : [(Blob, Base.PrincipalId)]) : () {
-            let neuronsUsedMap : TrieMap.TrieMap<Blob, Base.PrincipalId> = TrieMap.TrieMap<Blob, Base.PrincipalId>(Blob.equal, Blob.hash);
+        public func setStableNeuronsUsedforMembership(stable_neurons_used_for_membership : [(Blob, Ids.PrincipalId)]) : () {
+            let neuronsUsedMap : TrieMap.TrieMap<Blob, Ids.PrincipalId> = TrieMap.TrieMap<Blob, Ids.PrincipalId>(Blob.equal, Blob.hash);
 
             for (neuron in Iter.fromArray(stable_neurons_used_for_membership)) {
                 neuronsUsedMap.put(neuron);
@@ -938,7 +943,7 @@ module {
             neuronsUsedforMembership := neuronsUsedMap;
         };
 
-        public func removeNeuronsforExpiredMembership(principalId : Base.PrincipalId) : async () {
+        public func removeNeuronsforExpiredMembership(principalId : Ids.PrincipalId) : async () {
             let existingProfileCanisterId = profileCanisterIndex.get(principalId);
             switch (existingProfileCanisterId) {
                 case (?_) {

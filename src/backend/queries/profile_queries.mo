@@ -84,4 +84,19 @@ module ProfileQueries {
         username : Text;
     };
 
+    public type MembershipType = {
+        #Monthly;
+        #Seasonal;
+        #Lifetime;
+        #Founding;
+        #Expired;
+        #NotClaimed;
+        #NotEligible;
+    };
+
+    public type EligibleMembership = {
+        membershipType : MembershipType;
+        eligibleNeuronIds : [Blob];
+    };
+
 };

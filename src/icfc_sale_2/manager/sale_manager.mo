@@ -20,6 +20,7 @@ import Nat64 "mo:base/Nat64";
 import SNSLedger "mo:waterway-mops/def/Ledger";
 import SaleUtilities "../utilities/sale-utilities";
 import Account "mo:waterway-mops/Account";
+import Enums "mo:waterway-mops/Enums";
 
 module {
     public class SaleManager() {
@@ -32,7 +33,7 @@ module {
         );
         private var icfcDistributions : [T.ICFCDistribution] = [];
 
-        public func claimICFCPackets(dto : SaleCommands.ParticipateInSale) : async Result.Result<(), T.Error> {
+        public func claimICFCPackets(dto : SaleCommands.ParticipateInSale) : async Result.Result<(), Enums.Error> {
             if (icfcPacketsRemaining == 0) {
                 return #err(#NoPacketsRemaining);
             };
@@ -71,7 +72,7 @@ module {
             return #ok(());
         };
 
-        public func getUsersICFCDistributions(dto : SaleQueries.GetICFCDistributions) : async Result.Result<[T.ICFCDistribution], T.Error> {
+        public func getUsersICFCDistributions(dto : SaleQueries.GetICFCDistributions) : async Result.Result<[T.ICFCDistribution], Enums.Error> {
             let allDistributions = icfcDistributions;
             let userDistributions = Array.filter<T.ICFCDistribution>(
                 allDistributions,
@@ -82,7 +83,7 @@ module {
             return #ok(userDistributions);
         };
 
-        public func getUserParticipation(dto : SaleQueries.GetUserParticipation) : async Result.Result<DTO.UserParticipationDTO, T.Error> {
+        public func getUserParticipation(dto : SaleQueries.GetUserParticipation) : async Result.Result<DTO.UserParticipationDTO, Enums.Error> {
             let user_principal = dto.principalId;
             let user = saleParticipants.get(user_principal);
             switch (user) {
@@ -95,7 +96,7 @@ module {
             };
         };
 
-        public func getProgress() : async Result.Result<DTO.SaleProgressDTO, T.Error> {
+        public func getProgress() : async Result.Result<DTO.SaleProgressDTO, Enums.Error> {
             let result : DTO.SaleProgressDTO = {
                 totalPackets = TOTAL_ICFC_PACKETS;
                 remainingPackets = icfcPacketsRemaining;
