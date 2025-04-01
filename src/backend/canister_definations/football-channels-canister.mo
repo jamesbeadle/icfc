@@ -8,7 +8,6 @@ import Array "mo:base/Array";
 import Buffer "mo:base/Buffer";
 import Enums "mo:waterway-mops/Enums";
 import CanisterIds "mo:waterway-mops/CanisterIds";
-import Environment "../environment";
 import FootballChannelCommands "../commands/football_channel_commands";
 
 actor class _FootballChannelsCanister() {

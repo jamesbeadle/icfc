@@ -1,5 +1,4 @@
-import Management "../management";
-import Base "mo:waterway-mops/BaseTypes";
+import Ids "mo:waterway-mops/Ids";
 import T "../icfc_types";
 
 module {
@@ -56,7 +55,7 @@ module {
         };
     };
     public type CanisterDetails = {
-        canister_id : Base.PrincipalId;
+        canister_id : Ids.PrincipalId;
         canister_name : Text;
         canister_type : T.CanisterType;
         canister_info : CanisterInfo;
