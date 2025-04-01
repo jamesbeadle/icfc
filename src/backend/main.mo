@@ -10,7 +10,6 @@ import Text "mo:base/Text";
 import Timer "mo:base/Timer";
 import BaseTypes "mo:waterway-mops/BaseTypes";
 import Enums "mo:waterway-mops/Enums";
-import ICFCTypes "./ICFCTypes";
 
 /* ----- Canister Definition Files ----- */
 
