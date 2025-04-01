@@ -8,7 +8,7 @@ import Array "mo:base/Array";
 import Ids "mo:waterway-mops/Ids";
 import CanisterIds "mo:waterway-mops/CanisterIds";
 import T "../icfc_types";
-import SNSGovernance "../sns-wrappers/governance";
+import SNSGovernance "mo:waterway-mops/sns-wrappers/governance";
 
 module Utilities {
 
@@ -57,7 +57,7 @@ module Utilities {
                                 total_staked += neuron.cached_neuron_stake_e8s;
                                 switch (neuron.id) {
                                     case (?neuronId) {
-                                        eligibleNeuronIds := Array.append(eligibleNeuronIds, [neuronId.id]);
+                                        //eligibleNeuronIds := Array.append(eligibleNeuronIds, [neuronId.id]);
                                     };
                                     case null {};
                                 };

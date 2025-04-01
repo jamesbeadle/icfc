@@ -1,4 +1,5 @@
-import SNSGovernance "../sns-wrappers/governance";
+
+import SNSGovernance "mo:waterway-mops/sns-wrappers/governance";
 import Principal "mo:base/Principal";
 import CanisterIds "mo:waterway-mops/CanisterIds";
 

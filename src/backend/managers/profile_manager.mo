@@ -17,7 +17,7 @@ import Cycles "mo:base/ExperimentalCycles";
 import Iter "mo:base/Iter";
 import Time "mo:base/Time";
 import SNSManager "sns_manager";
-import SNSGovernance "../sns-wrappers/governance";
+import SNSGovernance "mo:waterway-mops/sns-wrappers/governance";
 
 module {
     public class ProfileManager() {
