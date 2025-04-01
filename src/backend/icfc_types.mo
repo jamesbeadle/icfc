@@ -55,6 +55,12 @@ module ICFCTypes {
     #FootballGod;
   };
 
+
+  public type CanisterType = {
+    #Static;
+    #Dynamic;
+  };
+
   public type MembershipClaim = {
     membershipType : MembershipType;
     claimedOn : Int;

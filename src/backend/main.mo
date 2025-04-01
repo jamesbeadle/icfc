@@ -70,7 +70,7 @@ actor class Self() = this {
   };
 
   //Profile Commands
-  
+
   public shared ({ caller }) func createProfile(dto : ProfileCommands.CreateProfile) : async Result.Result<(), T.Error> {
     assert not Principal.isAnonymous(caller);
     let principalId = Principal.toText(caller);
@@ -135,24 +135,32 @@ actor class Self() = this {
     return await profileManager.updateProfilePicture(dto);
   };
 
-  public shared ({ caller }) func getTokenBalances() : async Result.Result<AppQueries.TokenBalances, T.Error>{
+  public shared ({ caller }) func getTokenBalances() : async Result.Result<AppQueries.TokenBalances, T.Error> {
     assert not Principal.isAnonymous(caller);
-    
+
     let icfc_ledger : SNSToken.Interface = actor (Environment.SNS_LEDGER_CANISTER_ID);
     let ckBTC_ledger : SNSToken.Interface = actor (Environment.CKBTC_LEDGER_CANISTER_ID);
     let icp_ledger : SNSToken.Interface = actor (Environment.NNS_LEDGER_CANISTER_ID);
 
+    let icfc_tokens = await icfc_ledger.icrc1_balance_of({
+      owner = Principal.fromText(Environment.BACKEND_CANISTER_ID);
+      subaccount = null;
+    });
+    let ckBTC_tokens = await ckBTC_ledger.icrc1_balance_of({
+      owner = Principal.fromText(Environment.BACKEND_CANISTER_ID);
+      subaccount = null;
+    });
+    let icp_tokens = await icp_ledger.icrc1_balance_of({
+      owner = Principal.fromText(Environment.BACKEND_CANISTER_ID);
+      subaccount = null;
+    });
 
-    let icfc_tokens = await icfc_ledger.icrc1_balance_of({owner = Principal.fromText(Environment.BACKEND_CANISTER_ID); subaccount = null});  
-    let ckBTC_tokens = await ckBTC_ledger.icrc1_balance_of({owner = Principal.fromText(Environment.BACKEND_CANISTER_ID); subaccount = null}); 
-    let icp_tokens = await icp_ledger.icrc1_balance_of({owner = Principal.fromText(Environment.BACKEND_CANISTER_ID); subaccount = null}); 
-    
     return #ok({
       ckBTCBalance = ckBTC_tokens;
       icfcBalance = icfc_tokens;
       icpBalance = icp_tokens;
       icgcBalance = 0; // TODO after ICGC SNS
-    })
+    });
   };
 
   public shared ({ caller }) func getICFCProfile(dto : ProfileCommands.GetICFCProfile) : async Result.Result<ProfileQueries.ProfileDTO, T.Error> {
@@ -278,6 +286,12 @@ actor class Self() = this {
     await profileManager.checkMemberships();
   };
 
-  // call_backs for 
+  //functions for WWL backend to communicate
+  // public shared ({ caller }) getCanistersInfo() : async Result.Result<ProfileQueries.CanisterInfo, T.Error> {
+    // assert not Principal.isAnonymous(caller);
+    // let canisterId = Principal.toText(caller);
+    // let canisterInfo = profileManager.getCanisterInfo(canisterId);
+    // return #ok(canisterInfo);
+  // };
 
 };
