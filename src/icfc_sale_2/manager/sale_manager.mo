@@ -1,4 +1,3 @@
-import Environment "../../backend/environment";
 import Time "mo:base/Time";
 import Nat "mo:base/Nat";
 import Result "mo:base/Result";
@@ -19,8 +18,7 @@ import Int "mo:base/Int";
 import Principal "mo:base/Principal";
 import Nat64 "mo:base/Nat64";
 import SNSToken "../sns-wrappers/ledger";
-import Account "../../backend/lib/Account";
-import Utils "../utils/utils";
+import SaleUtilities "../utils/sale-utilities";
 
 module {
     public class SaleManager() {
@@ -153,14 +151,14 @@ module {
                             let res = await distributeTokens(distribution.principalId, distribution.amount);
                             switch (res) {
                                 case (#ok(_)) {
-                                    //    remove from pending
+                                    
                                     let updatedDistributions = Array.filter<T.ICFCDistribution>(
                                         icfcDistributions,
                                         func(entry : T.ICFCDistribution) : Bool {
                                             entry != distribution;
                                         },
                                     );
-                                    // update status to completed
+                                    
                                     let updatedDistribution : T.ICFCDistribution = {
                                         principalId = distribution.principalId;
                                         amount = distribution.amount;
@@ -169,12 +167,12 @@ module {
                                         installment = distribution.installment;
                                         distributionStatus = #Completed;
                                     };
-                                    // update the list
+                                    
                                     icfcDistributions := Array.append(updatedDistributions, [updatedDistribution]);
                                     icfcDistributions := updatedDistributions;
                                 };
                                 case (#err(err)) {
-                                    Debug.print("Error distributing tokens: " # Utils.variantToText(err));
+                                    Debug.print("Error distributing tokens: " # SaleUtilities.variantToText(err));
                                 };
                             };
                         },
@@ -201,8 +199,8 @@ module {
             let installmentAmount = totalTokens / 6;
             let now = Time.now();
 
-            let threeMonths = Utils.monthToSeconds(3);
-            let sixMonths = Utils.monthToSeconds(6);
+            let threeMonths = SaleUtilities.monthToSeconds(3);
+            let sixMonths = SaleUtilities.monthToSeconds(6);
 
             for (i in Iter.range(0, 5)) {
                 let delay = if (i == 0) threeMonths else (threeMonths + (i * sixMonths));
@@ -246,7 +244,7 @@ module {
                                 icfcDistributions := updatedDistributions;
                             };
                             case (#err(err)) {
-                                Debug.print("Error distributing tokens: " # Utils.variantToText(err));
+                                Debug.print("Error distributing tokens: " # SaleUtilities.variantToText(err));
                             };
 
                         };

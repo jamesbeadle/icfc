@@ -2,7 +2,7 @@ import T "../sale_types";
 import Nat "mo:base/Nat";
 import Nat64 "mo:base/Nat64";
 
-module {
+module SaleUtilities {
     public func variantToText(err : T.TransferError) : Text {
         switch (err) {
             case (#BadBurn(details)) {

@@ -9,9 +9,8 @@ import Ids "mo:waterway-mops/Ids";
 import CanisterIds "mo:waterway-mops/CanisterIds";
 import T "../icfc_types";
 import SNSGovernance "../sns-wrappers/governance";
-import Environment "../environment";
 
-module Utils {
+module Utilities {
 
     public func getMembershipExpirationDate(membershipType : T.MembershipType) : Int {
         let now = Time.now();
