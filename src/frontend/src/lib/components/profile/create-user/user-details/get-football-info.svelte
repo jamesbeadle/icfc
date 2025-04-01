@@ -14,9 +14,18 @@
         favouriteClubId = null;
     }
 
-    $: clubOptions = clubs.length > 0 
+    $: clubOptions = clubs && clubs.length > 0 
         ? clubs.sort((a, b) => a.friendlyName.localeCompare(b.friendlyName))
             .map(club => ({ id: club.id, label: club.friendlyName }))
+        : [];
+
+    $: countryOptions = countries && countries.length > 0 
+        ? countries.sort((a, b) => a.name.localeCompare(b.name))
+            .map((country: Country) => ({ id: country.id, label: country.name }))
+        : [];
+
+    $: leagueOptions = leagues && leagues.length > 0 
+        ? leagues.map(league => ({ id: league.id, label: league.name }))
         : [];
 </script>
 
@@ -25,7 +34,7 @@
         <p class="form-title">National Team <span class="text-xs text-BrandGrayShade3">(Optional)</span></p>
         <p class="form-hint min-h-[40px]">Select to participate in nationwide football competitions.</p>
         <DropdownSelect
-            options={countries.sort((a, b) => a.name.localeCompare(b.name)).map((country: Country) => ({ id: country.id, label: country.name }))}
+            options={countryOptions}
             bind:value={nationalityId}
             searchOn={true}
         />
@@ -34,7 +43,7 @@
         <p class="form-title">Your Favourite League <span class="text-xs text-BrandGrayShade3">(Optional)</span></p>
         <p class="form-hint min-h-[40px]">Select to find your favourite club.</p>
         <DropdownSelect
-            options={leagues.map(league => ({ id: league.id, label: league.name }))}
+            options={leagueOptions}
             bind:value={favouriteLeagueId}
             searchOn={true}
         />
