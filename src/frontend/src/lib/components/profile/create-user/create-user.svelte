@@ -47,8 +47,11 @@
   onMount(async () => {
     try{
       await loadData();
+      console.log("Loaded data");
       countries = await countryStore.getCountries();
+      console.log("Loaded countries", countries);
       leagues = await leagueStore.getLeagues();
+      console.log("Loaded leagues", leagues);
     } catch {
         toasts.addToast({type: 'error', message: 'Failed to load data.'});
         leagues = [];
@@ -157,7 +160,7 @@
 
   $: if (!isLoading && favouriteLeagueId && favouriteLeagueId > 0) {
     getClubs();
-  } else {
+  } else if (clubs.length > 0) {
     clubs = [];
   }
 
@@ -167,8 +170,10 @@
         const clubsResult = await clubStore.getClubs(favouriteLeagueId!);
         if (clubsResult) {
             clubs = clubsResult;
+            console.log("Loaded clubs", clubs);
         } else {
             clubs = [];
+            console.log("No clubs found");
         }
     } catch (error) {
         console.error("Error fetching clubs:", error);
@@ -176,7 +181,7 @@
         clubs = [];
     } finally {
         busy.stop();
-    }
+    } 
   }
 </script>
 
