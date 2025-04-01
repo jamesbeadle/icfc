@@ -26,7 +26,7 @@ module ProfileQueries {
         username : Text;
         displayName : Text;
         membershipType : T.MembershipType;
-        membershipClaim : T.MembershipClaim;
+        membershipClaims : [T.MembershipClaim];
         createdOn : Int;
         profilePicture : ?Blob;
         termsAgreed : Bool;

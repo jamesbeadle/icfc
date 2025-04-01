@@ -1,4 +1,3 @@
-
 import Ids "mo:waterway-mops/Ids";
 import Enums "mo:waterway-mops/Enums";
 import CanisterIds "mo:waterway-mops/CanisterIds";
@@ -13,6 +12,7 @@ import T "../icfc_types";
 import ProfileQueries "../queries/profile_queries";
 import Environment "../environment";
 import ProfileCommands "../commands/profile_commands";
+import Enums "mo:waterway-mops/Enums";
 import Utilities "../utilities/utilities";
 
 actor class _ProfileCanister() {
@@ -392,14 +392,14 @@ actor class _ProfileCanister() {
 
         var groupIndex : ?Nat8 = null;
         for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
-            if (profileGroupIndex.0 == dto.subAppUserPrincipalId) {
+            if (profileGroupIndex.0 == dto.principalId) {
                 groupIndex := ?profileGroupIndex.1;
             };
         };
         switch (groupIndex) {
             case (null) { return #err(#NotFound) };
             case (?foundGroupIndex) {
-                let profile = findProfile(foundGroupIndex, dto.subAppUserPrincipalId);
+                let profile = findProfile(foundGroupIndex, dto.principalId);
                 switch (profile) {
                     case (?foundProfile) {
 

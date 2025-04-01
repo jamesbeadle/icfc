@@ -11,7 +11,6 @@ import Buffer "mo:base/Buffer";
 import ProfileQueries "../queries/profile_queries";
 import ProfileCommands "../commands/profile_commands";
 import Utils "../utils/utils";
-import Management "../cleanup/management";
 import ProfileCanister "../canister_definations/profile-canister";
 import Environment "../environment";
 import Cycles "mo:base/ExperimentalCycles";
@@ -19,7 +18,6 @@ import Iter "mo:base/Iter";
 import Time "mo:base/Time";
 import SNSManager "sns_manager";
 import SNSGovernance "../sns-wrappers/governance";
-import BaseUtilities "../cleanup/base_utilities";
 
 module {
     public class ProfileManager() {
@@ -207,10 +205,14 @@ module {
                     let profile_canister = actor (foundCanisterId) : actor {
                         updateAppPrincipalIds : (dto : ProfileCommands.AddSubApp) -> async Result.Result<(), T.Error>;
                     };
-                    let res = await profile_canister.updateAppPrincipalIds({
+                    let dto : ProfileCommands.AddSubApp = {
+                        principalId = verifySubAppRecord.icfcPrincipalId;
                         subApp = verifySubAppRecord.subApp;
                         subAppUserPrincipalId = verifySubAppRecord.subAppUserPrincipalId;
-                    });
+                    };
+                    let res = await profile_canister.updateAppPrincipalIds(
+                        dto
+                    );
 
                     return res;
                 };
@@ -701,33 +703,33 @@ module {
             switch (dto.subApp) {
                 case (#OpenFPL) {
                     let openFPLCanister = actor (Environment.OPENFPL_BACKEND_CANISTER_ID) : actor {
-                        noitifyAppofICFCProfileUpdate(dto : ProfileCommands.UpdateICFCProfile) : async Result.Result<(), T.Error>;
+                        noitifyAppofICFCHashUpdate(dto : ProfileCommands.UpdateICFCProfile) : async Result.Result<(), T.Error>;
                     };
-                    return await openFPLCanister.noitifyAppofICFCProfileUpdate(dto);
+                    return await openFPLCanister.noitifyAppofICFCHashUpdate(dto);
                 };
                 case (#OpenWSL) {
                     let openWSLCanister = actor (Environment.OPENWSL_BACKEND_CANISTER_ID) : actor {
-                        noitifyAppofICFCProfileUpdate(dto : ProfileCommands.UpdateICFCProfile) : async Result.Result<(), T.Error>;
+                        noitifyAppofICFCHashUpdate(dto : ProfileCommands.UpdateICFCProfile) : async Result.Result<(), T.Error>;
                     };
-                    return await openWSLCanister.noitifyAppofICFCProfileUpdate(dto);
+                    return await openWSLCanister.noitifyAppofICFCHashUpdate(dto);
                 };
                 case (#JeffBets) {
                     let jeffBetsCanister = actor (Environment.JEFF_BETS_BACKEND_CANISTER_ID) : actor {
-                        noitifyAppofICFCProfileUpdate(dto : ProfileCommands.UpdateICFCProfile) : async Result.Result<(), T.Error>;
+                        noitifyAppofICFCHashUpdate(dto : ProfileCommands.UpdateICFCProfile) : async Result.Result<(), T.Error>;
                     };
-                    return await jeffBetsCanister.noitifyAppofICFCProfileUpdate(dto);
+                    return await jeffBetsCanister.noitifyAppofICFCHashUpdate(dto);
                 };
                 case (#TransferKings) {
                     let transferKingsCanister = actor (Environment.TRANSFER_KINGS_CANISTER_ID) : actor {
-                        noitifyAppofICFCProfileUpdate(dto : ProfileCommands.UpdateICFCProfile) : async Result.Result<(), T.Error>;
+                        noitifyAppofICFCHashUpdate(dto : ProfileCommands.UpdateICFCProfile) : async Result.Result<(), T.Error>;
                     };
-                    return await transferKingsCanister.noitifyAppofICFCProfileUpdate(dto);
+                    return await transferKingsCanister.noitifyAppofICFCHashUpdate(dto);
                 };
                 case (#FootballGod) {
                     let footballGodCanister = actor (Environment.FOOTBALL_GOD_BACKEND_CANISTER_ID) : actor {
-                        noitifyAppofICFCProfileUpdate(dto : ProfileCommands.UpdateICFCProfile) : async Result.Result<(), T.Error>;
+                        noitifyAppofICFCHashUpdate(dto : ProfileCommands.UpdateICFCProfile) : async Result.Result<(), T.Error>;
                     };
-                    return await footballGodCanister.noitifyAppofICFCProfileUpdate(dto);
+                    return await footballGodCanister.noitifyAppofICFCHashUpdate(dto);
                 };
             };
 
