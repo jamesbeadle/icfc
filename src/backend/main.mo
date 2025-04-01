@@ -175,10 +175,44 @@ actor class Self() = this {
     return await profileManager.getICFCProfileSummary(dto);
   };
 
-  public shared query ({ caller }) func getCountries() : async Result.Result<[AppQueries.CountryDTO], T.Error> {
+  /* ----- Calls to Data Canister ----- */
+
+  public shared ({ caller }) func getLeagues(dto: LeagueQueries.GetLeagues) : async Result.Result<LeagueQueries.Leagues, Enums.Error> {
     assert not Principal.isAnonymous(caller);
-    return #ok(Countries.countries);
+    // TODO: Check caller is a member
+
+    let data_canister = actor (CanisterIds.ICFC_DATA_CANISTER_ID) : actor {
+      getLeagues : (dto: LeagueQueries.GetLeagues) -> async Result.Result<LeagueQueries.Leagues, Enums.Error>;
+    };
+    let result = await data_canister.getLeagues(dto);
+    return result;
   };
+
+
+
+  public shared ({ caller }) func getClubs(dto: ClubQueries.GetClubs) : async Result.Result<ClubQueries.Clubs, Enums.Error> {
+    assert not Principal.isAnonymous(caller);
+    // TODO: Check caller is a member
+
+    let data_canister = actor (CanisterIds.ICFC_DATA_CANISTER_ID) : actor {
+      getClubs : (dto: ClubQueries.GetClubs) -> async Result.Result<ClubQueries.Clubs, Enums.Error>;
+    };
+    return await data_canister.getClubs(dto);
+  };
+
+
+
+  public shared ({ caller }) func getCountries(dto: AppQueries.GetCountries) : async Result.Result<AppQueries.Countries, Enums.Error> {
+    assert not Principal.isAnonymous(caller);
+    // TODO: Check caller is a member
+
+    let data_canister = actor (CanisterIds.ICFC_DATA_CANISTER_ID) : actor {
+      getCountries : (dto: AppQueries.GetCountries) -> async Result.Result<AppQueries.Countries, Enums.Error>;
+    };
+    return await data_canister.getCountries(dto);
+  };
+
+
 
   // Stable Storage & System Functions:
   private stable var stable_profile_canister_index : [(Base.PrincipalId, Base.CanisterId)] = [];

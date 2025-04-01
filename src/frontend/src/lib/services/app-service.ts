@@ -1,5 +1,5 @@
 import type {
-  AppStatusDTO,
+  AppStatus,
   TokenBalances,
 } from "../../../../declarations/backend/backend.did";
 import { isError } from "../utils/helpers";
@@ -10,7 +10,7 @@ import { authStore } from "$lib/stores/auth-store";
 export class AppService {
   constructor() {}
 
-  async getAppStatus(): Promise<AppStatusDTO | undefined> {
+  async getAppStatus(): Promise<AppStatus | undefined> {
     const identityActor: any = await ActorFactory.createActor(
       backend_canister,
       process.env.BACKEND_CANISTER_ID,
