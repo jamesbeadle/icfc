@@ -1,21 +1,28 @@
 export const idlFactory = ({ IDL }) => {
   const CalimICFCPackets = IDL.Record({ packets: IDL.Nat });
   const Error = IDL.Variant({
+    InvalidProfilePicture: IDL.Null,
     DecodeError: IDL.Null,
+    TooLong: IDL.Null,
     NotAllowed: IDL.Null,
-    NotEnoughFunds: IDL.Null,
+    DuplicateData: IDL.Null,
+    InvalidProperty: IDL.Null,
     NotFound: IDL.Null,
+    IncorrectSetup: IDL.Null,
     AlreadyClaimed: IDL.Null,
     NotAuthorized: IDL.Null,
+    MaxDataExceeded: IDL.Null,
     InvalidData: IDL.Null,
+    SystemOnHold: IDL.Null,
     AlreadyExists: IDL.Null,
     NoPacketsRemaining: IDL.Null,
-    CreateGameError: IDL.Null,
     UpdateFailed: IDL.Null,
-    NotEligible: IDL.Null,
-    OutOfRange: IDL.Null,
-    PaymentError: IDL.Null,
+    CanisterCreateError: IDL.Null,
+    NeuronAlreadyUsed: IDL.Null,
+    FailedInterCanisterCall: IDL.Null,
     InsufficientPacketsRemaining: IDL.Null,
+    InsufficientFunds: IDL.Null,
+    InEligible: IDL.Null,
   });
   const Result_4 = IDL.Variant({ ok: IDL.Null, err: Error });
   const AppStatusDTO = IDL.Record({

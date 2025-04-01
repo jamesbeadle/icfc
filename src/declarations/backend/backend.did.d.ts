@@ -9,16 +9,26 @@ export interface Account {
 export interface AddSubApp {
   subApp: SubApp;
   subAppUserPrincipalId: PrincipalId;
+  principalId: PrincipalId;
 }
 export interface AppStatus {
   version: string;
   onHold: boolean;
 }
-export type ClubId = number;
-export interface CountryDTO {
-  id: CountryId;
-  code: string;
+export interface Club {
+  id: ClubId;
+  secondaryColourHex: string;
   name: string;
+  friendlyName: string;
+  thirdColourHex: string;
+  abbreviatedName: string;
+  shirtType: ShirtType;
+  primaryColourHex: string;
+}
+export type ClubId = number;
+export interface Clubs {
+  clubs: Array<Club>;
+  leagueId: LeagueId;
 }
 export type CountryId = number;
 export interface CreateProfile {
@@ -48,34 +58,41 @@ export type Error =
   | { DecodeError: null }
   | { TooLong: null }
   | { NotAllowed: null }
-  | { NotEnoughFunds: null }
-  | { TooShort: null }
+  | { DuplicateData: null }
+  | { InvalidProperty: null }
   | { NotFound: null }
+  | { IncorrectSetup: null }
   | { AlreadyClaimed: null }
   | { NotAuthorized: null }
+  | { MaxDataExceeded: null }
   | { InvalidData: null }
+  | { SystemOnHold: null }
   | { AlreadyExists: null }
-  | { CreateGameError: null }
+  | { NoPacketsRemaining: null }
   | { UpdateFailed: null }
+  | { CanisterCreateError: null }
   | { NeuronAlreadyUsed: null }
-  | { OutOfRange: null }
-  | { AlreadyLinked: null }
   | { FailedInterCanisterCall: null }
-  | { PaymentError: null }
-  | { CanisterFull: null }
+  | { InsufficientPacketsRemaining: null }
+  | { InsufficientFunds: null }
   | { InEligible: null };
 export interface Followees {
   followees: Array<NeuronId>;
 }
+export type Gender = { Male: null } | { Female: null };
+export interface GetClubs {
+  leagueId: LeagueId;
+}
 export interface GetICFCProfile {
   principalId: PrincipalId;
 }
+export type GetLeagues = {};
 export interface ICFCProfileSummary {
   username: string;
   displayName: string;
-  membershipClaim: MembershipClaim;
   createdOn: bigint;
   favouriteClubId: [] | [ClubId];
+  membershipClaims: Array<MembershipClaim>;
   profilePicture: [] | [Uint8Array | number[]];
   membershipType: MembershipType;
   termsAgreed: boolean;
@@ -87,13 +104,40 @@ export interface ICFCProfileSummary {
 export interface IsUsernameValid {
   username: string;
 }
+export interface League {
+  id: LeagueId;
+  logo: Uint8Array | number[];
+  name: string;
+  teamCount: number;
+  relatedGender: Gender;
+  countryId: CountryId;
+  abbreviation: string;
+  governingBody: string;
+  formed: bigint;
+}
 export type LeagueId = number;
+export interface Leagues {
+  leagues: Array<League>;
+}
 export interface MembershipClaim {
   expiresOn: [] | [bigint];
   claimedOn: bigint;
   membershipType: MembershipType;
 }
+export interface MembershipClaim__1 {
+  expiresOn: [] | [bigint];
+  claimedOn: bigint;
+  membershipType: MembershipType;
+}
 export type MembershipType =
+  | { Founding: null }
+  | { NotClaimed: null }
+  | { Seasonal: null }
+  | { Lifetime: null }
+  | { Monthly: null }
+  | { NotEligible: null }
+  | { Expired: null };
+export type MembershipType__1 =
   | { Founding: null }
   | { NotClaimed: null }
   | { Seasonal: null }
@@ -135,7 +179,7 @@ export interface ProfileDTO {
   membershipClaims: Array<MembershipClaim>;
   appPrincipalIds: Array<[SubApp, PrincipalId]>;
   profilePicture: [] | [Uint8Array | number[]];
-  membershipType: MembershipType;
+  membershipType: MembershipType__1;
   termsAgreed: boolean;
   membershipExpiryTime: bigint;
   favouriteLeagueId: [] | [LeagueId];
@@ -146,24 +190,26 @@ export type Result = { ok: null } | { err: Error };
 export type Result_1 = { ok: UserNeuronsDTO } | { err: Error };
 export type Result_2 = { ok: TokenBalances } | { err: Error };
 export type Result_3 = { ok: ProfileDTO } | { err: Error };
-export type Result_4 = { ok: ICFCProfileSummary } | { err: Error };
-export type Result_5 = { ok: Array<CountryDTO> } | { err: Error };
-export type Result_6 = { ok: AppStatus } | { err: Error };
-export type Result_7 = { ok: MembershipClaim } | { err: Error };
+export type Result_4 = { ok: Leagues } | { err: Error };
+export type Result_5 = { ok: ICFCProfileSummary } | { err: Error };
+export type Result_6 = { ok: Clubs } | { err: Error };
+export type Result_7 = { ok: AppStatus } | { err: Error };
+export type Result_8 = { ok: MembershipClaim__1 } | { err: Error };
 export interface Self {
   addSubApp: ActorMethod<[AddSubApp], Result>;
-  claimMembership: ActorMethod<[], Result_7>;
+  claimMembership: ActorMethod<[], Result_8>;
   createProfile: ActorMethod<[CreateProfile], Result>;
-  getAppStatus: ActorMethod<[], Result_6>;
-  getCountries: ActorMethod<[], Result_5>;
+  getAppStatus: ActorMethod<[], Result_7>;
+  getClubs: ActorMethod<[GetClubs], Result_6>;
   getICFCProfile: ActorMethod<[GetICFCProfile], Result_3>;
-  getICFCProfileSummary: ActorMethod<[GetICFCProfile], Result_4>;
+  getICFCProfileSummary: ActorMethod<[GetICFCProfile], Result_5>;
+  getLeagues: ActorMethod<[GetLeagues], Result_4>;
   getProfile: ActorMethod<[], Result_3>;
   getTokenBalances: ActorMethod<[], Result_2>;
   getUserNeurons: ActorMethod<[], Result_1>;
   isUsernameValid: ActorMethod<[IsUsernameValid], boolean>;
   removeNeuronsforExpiredMembership: ActorMethod<[PrincipalId], undefined>;
-  removeSubApp: ActorMethod<[SubApp], Result>;
+  removeSubApp: ActorMethod<[SubApp__1], Result>;
   updateDisplayName: ActorMethod<[UpdateDisplayName], Result>;
   updateFavouriteClub: ActorMethod<[UpdateFavouriteClub], Result>;
   updateNationality: ActorMethod<[UpdateNationality], Result>;
@@ -171,7 +217,14 @@ export interface Self {
   updateUsername: ActorMethod<[UpdateUserName], Result>;
   verifySubApp: ActorMethod<[VerifySubApp], Result>;
 }
+export type ShirtType = { Filled: null } | { Striped: null };
 export type SubApp =
+  | { OpenFPL: null }
+  | { OpenWSL: null }
+  | { FootballGod: null }
+  | { TransferKings: null }
+  | { JeffBets: null };
+export type SubApp__1 =
   | { OpenFPL: null }
   | { OpenWSL: null }
   | { FootballGod: null }

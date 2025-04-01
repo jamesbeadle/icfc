@@ -16,21 +16,28 @@ export interface ClaimedRecord {
 }
 export type DistributionStatus = { Completed: null } | { Pending: null };
 export type Error =
+  | { InvalidProfilePicture: null }
   | { DecodeError: null }
+  | { TooLong: null }
   | { NotAllowed: null }
-  | { NotEnoughFunds: null }
+  | { DuplicateData: null }
+  | { InvalidProperty: null }
   | { NotFound: null }
+  | { IncorrectSetup: null }
   | { AlreadyClaimed: null }
   | { NotAuthorized: null }
+  | { MaxDataExceeded: null }
   | { InvalidData: null }
+  | { SystemOnHold: null }
   | { AlreadyExists: null }
   | { NoPacketsRemaining: null }
-  | { CreateGameError: null }
   | { UpdateFailed: null }
-  | { NotEligible: null }
-  | { OutOfRange: null }
-  | { PaymentError: null }
-  | { InsufficientPacketsRemaining: null };
+  | { CanisterCreateError: null }
+  | { NeuronAlreadyUsed: null }
+  | { FailedInterCanisterCall: null }
+  | { InsufficientPacketsRemaining: null }
+  | { InsufficientFunds: null }
+  | { InEligible: null };
 export interface ICFCDistribution {
   time: Time;
   claimId: bigint;

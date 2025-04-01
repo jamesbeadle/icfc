@@ -52,18 +52,25 @@ type Error =
  variant {
    AlreadyClaimed;
    AlreadyExists;
-   CreateGameError;
+   CanisterCreateError;
    DecodeError;
+   DuplicateData;
+   FailedInterCanisterCall;
+   InEligible;
+   IncorrectSetup;
+   InsufficientFunds;
    InsufficientPacketsRemaining;
    InvalidData;
+   InvalidProfilePicture;
+   InvalidProperty;
+   MaxDataExceeded;
+   NeuronAlreadyUsed;
    NoPacketsRemaining;
    NotAllowed;
    NotAuthorized;
-   NotEligible;
-   NotEnoughFunds;
    NotFound;
-   OutOfRange;
-   PaymentError;
+   SystemOnHold;
+   TooLong;
    UpdateFailed;
  };
 type DistributionStatus = 

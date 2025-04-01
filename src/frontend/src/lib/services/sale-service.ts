@@ -1,18 +1,22 @@
 import { ActorFactory } from "$lib/utils/ActorFactory";
 import { isError } from "$lib/utils/helpers";
 import { authStore } from "$lib/stores/auth-store";
-import type { SaleProgressDTO, UserParticipationDTO, ICFCDistribution } from "../../../../declarations/icfc_sale_2/icfc_sale_2.did";
-
+import type {
+  SaleProgressDTO,
+  UserParticipationDTO,
+  ICFCDistribution,
+} from "../../../../declarations/icfc_sale_2/icfc_sale_2.did";
 
 export class SaleService {
   constructor() {}
 
   async getProgress(): Promise<SaleProgressDTO | undefined> {
     try {
-      const identityActor: any = await ActorFactory.createSaleCanisterIdentityActor(
-        authStore,
-        process.env.CANISTER_ID_ICFC_SALE_2 ?? "",
-      );
+      const identityActor: any =
+        await ActorFactory.createSaleCanisterIdentityActor(
+          authStore,
+          process.env.CANISTER_ID_ICFC_SALE_2 ?? "",
+        );
       const result = await identityActor.getProgress();
       if (isError(result)) {
         throw new Error("Failed to get progress");
@@ -26,10 +30,11 @@ export class SaleService {
 
   async getUserParticipation(): Promise<UserParticipationDTO | undefined> {
     try {
-      const identityActor: any = await ActorFactory.createSaleCanisterIdentityActor(
-        authStore,
-        process.env.CANISTER_ID_ICFC_SALE_2 ?? "",
-      );
+      const identityActor: any =
+        await ActorFactory.createSaleCanisterIdentityActor(
+          authStore,
+          process.env.CANISTER_ID_ICFC_SALE_2 ?? "",
+        );
       const result = await identityActor.getUserParticipation();
       if (isError(result)) {
         throw new Error("Failed to get user participation");
@@ -43,10 +48,11 @@ export class SaleService {
 
   async getUsersICFCDistributions(): Promise<ICFCDistribution[] | undefined> {
     try {
-      const identityActor: any = await ActorFactory.createSaleCanisterIdentityActor(
-        authStore,
-        process.env.CANISTER_ID_ICFC_SALE_2 ?? "",
-      );
+      const identityActor: any =
+        await ActorFactory.createSaleCanisterIdentityActor(
+          authStore,
+          process.env.CANISTER_ID_ICFC_SALE_2 ?? "",
+        );
       const result = await identityActor.getUsersICFCDistributions();
       if (isError(result)) {
         throw new Error("Failed to get users ICFC distributions");
@@ -60,11 +66,14 @@ export class SaleService {
 
   async claimICFCPackets(numberOfPackets: number): Promise<boolean> {
     try {
-      const identityActor: any = await ActorFactory.createSaleCanisterIdentityActor(
-        authStore,
-        process.env.CANISTER_ID_ICFC_SALE_2 ?? "",
-      );
-      const result = await identityActor.claimICFCPackets({ packets: numberOfPackets });
+      const identityActor: any =
+        await ActorFactory.createSaleCanisterIdentityActor(
+          authStore,
+          process.env.CANISTER_ID_ICFC_SALE_2 ?? "",
+        );
+      const result = await identityActor.claimICFCPackets({
+        packets: numberOfPackets,
+      });
       if (isError(result)) {
         console.error("Error claiming packets:", result.err);
         return false;

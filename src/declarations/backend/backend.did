@@ -44,6 +44,14 @@ type TokenBalances =
    icpBalance: nat;
  };
 type Subaccount = record {subaccount: blob;};
+type SubApp__1 = 
+ variant {
+   FootballGod;
+   JeffBets;
+   OpenFPL;
+   OpenWSL;
+   TransferKings;
+ };
 type SubApp = 
  variant {
    FootballGod;
@@ -52,21 +60,27 @@ type SubApp =
    OpenWSL;
    TransferKings;
  };
+type ShirtType = 
+ variant {
+   Filled;
+   Striped;
+ };
 type Self = 
  service {
    addSubApp: (AddSubApp) -> (Result);
-   claimMembership: () -> (Result_7);
+   claimMembership: () -> (Result_8);
    createProfile: (CreateProfile) -> (Result);
-   getAppStatus: () -> (Result_6) query;
-   getCountries: () -> (Result_5) query;
+   getAppStatus: () -> (Result_7) query;
+   getClubs: (GetClubs) -> (Result_6);
    getICFCProfile: (GetICFCProfile) -> (Result_3);
-   getICFCProfileSummary: (GetICFCProfile) -> (Result_4);
+   getICFCProfileSummary: (GetICFCProfile) -> (Result_5);
+   getLeagues: (GetLeagues) -> (Result_4);
    getProfile: () -> (Result_3);
    getTokenBalances: () -> (Result_2);
    getUserNeurons: () -> (Result_1);
    isUsernameValid: (IsUsernameValid) -> (bool) query;
    removeNeuronsforExpiredMembership: (PrincipalId) -> ();
-   removeSubApp: (SubApp) -> (Result);
+   removeSubApp: (SubApp__1) -> (Result);
    updateDisplayName: (UpdateDisplayName) -> (Result);
    updateFavouriteClub: (UpdateFavouriteClub) -> (Result);
    updateNationality: (UpdateNationality) -> (Result);
@@ -74,25 +88,30 @@ type Self =
    updateUsername: (UpdateUserName) -> (Result);
    verifySubApp: (VerifySubApp) -> (Result);
  };
-type Result_7 = 
+type Result_8 = 
  variant {
    err: Error;
-   ok: MembershipClaim;
+   ok: MembershipClaim__1;
  };
-type Result_6 = 
+type Result_7 = 
  variant {
    err: Error;
    ok: AppStatus;
  };
+type Result_6 = 
+ variant {
+   err: Error;
+   ok: Clubs;
+ };
 type Result_5 = 
  variant {
    err: Error;
-   ok: vec CountryDTO;
+   ok: ICFCProfileSummary;
  };
 type Result_4 = 
  variant {
    err: Error;
-   ok: ICFCProfileSummary;
+   ok: Leagues;
  };
 type Result_3 = 
  variant {
@@ -126,7 +145,7 @@ type ProfileDTO =
    favouriteLeagueId: opt LeagueId;
    membershipClaims: vec MembershipClaim;
    membershipExpiryTime: int;
-   membershipType: MembershipType;
+   membershipType: MembershipType__1;
    nationalityId: opt CountryId;
    podcastIds: vec PrincipalId;
    principalId: PrincipalId;
@@ -162,6 +181,16 @@ type Neuron =
    vesting_period_seconds: opt nat64;
    voting_power_percentage_multiplier: nat64;
  };
+type MembershipType__1 = 
+ variant {
+   Expired;
+   Founding;
+   Lifetime;
+   Monthly;
+   NotClaimed;
+   NotEligible;
+   Seasonal;
+ };
 type MembershipType = 
  variant {
    Expired;
@@ -172,13 +201,32 @@ type MembershipType =
    NotEligible;
    Seasonal;
  };
+type MembershipClaim__1 = 
+ record {
+   claimedOn: int;
+   expiresOn: opt int;
+   membershipType: MembershipType;
+ };
 type MembershipClaim = 
  record {
    claimedOn: int;
    expiresOn: opt int;
    membershipType: MembershipType;
  };
+type Leagues = record {leagues: vec League;};
 type LeagueId = nat16;
+type League = 
+ record {
+   abbreviation: text;
+   countryId: CountryId;
+   formed: int;
+   governingBody: text;
+   id: LeagueId;
+   logo: blob;
+   name: text;
+   relatedGender: Gender;
+   teamCount: nat8;
+ };
 type IsUsernameValid = record {username: text;};
 type ICFCProfileSummary = 
  record {
@@ -186,7 +234,7 @@ type ICFCProfileSummary =
    displayName: text;
    favouriteClubId: opt ClubId;
    favouriteLeagueId: opt LeagueId;
-   membershipClaim: MembershipClaim;
+   membershipClaims: vec MembershipClaim;
    membershipExpiryTime: int;
    membershipType: MembershipType;
    nationalityId: opt CountryId;
@@ -195,29 +243,38 @@ type ICFCProfileSummary =
    termsAgreed: bool;
    username: text;
  };
+type GetLeagues = record {};
 type GetICFCProfile = record {principalId: PrincipalId;};
+type GetClubs = record {leagueId: LeagueId;};
+type Gender = 
+ variant {
+   Female;
+   Male;
+ };
 type Followees = record {followees: vec NeuronId;};
 type Error = 
  variant {
    AlreadyClaimed;
    AlreadyExists;
-   AlreadyLinked;
-   CanisterFull;
-   CreateGameError;
+   CanisterCreateError;
    DecodeError;
+   DuplicateData;
    FailedInterCanisterCall;
    InEligible;
+   IncorrectSetup;
+   InsufficientFunds;
+   InsufficientPacketsRemaining;
    InvalidData;
    InvalidProfilePicture;
+   InvalidProperty;
+   MaxDataExceeded;
    NeuronAlreadyUsed;
+   NoPacketsRemaining;
    NotAllowed;
    NotAuthorized;
-   NotEnoughFunds;
    NotFound;
-   OutOfRange;
-   PaymentError;
+   SystemOnHold;
    TooLong;
-   TooShort;
    UpdateFailed;
  };
 type EligibleMembership = 
@@ -251,13 +308,23 @@ type CreateProfile =
    username: text;
  };
 type CountryId = nat16;
-type CountryDTO = 
+type Clubs = 
  record {
-   code: text;
-   id: CountryId;
-   name: text;
+   clubs: vec Club;
+   leagueId: LeagueId;
  };
 type ClubId = nat16;
+type Club = 
+ record {
+   abbreviatedName: text;
+   friendlyName: text;
+   id: ClubId;
+   name: text;
+   primaryColourHex: text;
+   secondaryColourHex: text;
+   shirtType: ShirtType;
+   thirdColourHex: text;
+ };
 type AppStatus = 
  record {
    onHold: bool;
@@ -265,6 +332,7 @@ type AppStatus =
  };
 type AddSubApp = 
  record {
+   principalId: PrincipalId;
    subApp: SubApp;
    subAppUserPrincipalId: PrincipalId;
  };

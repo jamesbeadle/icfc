@@ -10,27 +10,30 @@ export const idlFactory = ({ IDL }) => {
   const AddSubApp = IDL.Record({
     subApp: SubApp,
     subAppUserPrincipalId: PrincipalId,
+    principalId: PrincipalId,
   });
   const Error = IDL.Variant({
     InvalidProfilePicture: IDL.Null,
     DecodeError: IDL.Null,
     TooLong: IDL.Null,
     NotAllowed: IDL.Null,
-    NotEnoughFunds: IDL.Null,
-    TooShort: IDL.Null,
+    DuplicateData: IDL.Null,
+    InvalidProperty: IDL.Null,
     NotFound: IDL.Null,
+    IncorrectSetup: IDL.Null,
     AlreadyClaimed: IDL.Null,
     NotAuthorized: IDL.Null,
+    MaxDataExceeded: IDL.Null,
     InvalidData: IDL.Null,
+    SystemOnHold: IDL.Null,
     AlreadyExists: IDL.Null,
-    CreateGameError: IDL.Null,
+    NoPacketsRemaining: IDL.Null,
     UpdateFailed: IDL.Null,
+    CanisterCreateError: IDL.Null,
     NeuronAlreadyUsed: IDL.Null,
-    OutOfRange: IDL.Null,
-    AlreadyLinked: IDL.Null,
     FailedInterCanisterCall: IDL.Null,
-    PaymentError: IDL.Null,
-    CanisterFull: IDL.Null,
+    InsufficientPacketsRemaining: IDL.Null,
+    InsufficientFunds: IDL.Null,
     InEligible: IDL.Null,
   });
   const Result = IDL.Variant({ ok: IDL.Null, err: Error });
@@ -43,12 +46,12 @@ export const idlFactory = ({ IDL }) => {
     NotEligible: IDL.Null,
     Expired: IDL.Null,
   });
-  const MembershipClaim = IDL.Record({
+  const MembershipClaim__1 = IDL.Record({
     expiresOn: IDL.Opt(IDL.Int),
     claimedOn: IDL.Int,
     membershipType: MembershipType,
   });
-  const Result_7 = IDL.Variant({ ok: MembershipClaim, err: Error });
+  const Result_8 = IDL.Variant({ ok: MembershipClaim__1, err: Error });
   const ClubId = IDL.Nat16;
   const LeagueId = IDL.Nat16;
   const CountryId = IDL.Nat16;
@@ -62,14 +65,36 @@ export const idlFactory = ({ IDL }) => {
     nationalityId: IDL.Opt(CountryId),
   });
   const AppStatus = IDL.Record({ version: IDL.Text, onHold: IDL.Bool });
-  const Result_6 = IDL.Variant({ ok: AppStatus, err: Error });
-  const CountryDTO = IDL.Record({
-    id: CountryId,
-    code: IDL.Text,
+  const Result_7 = IDL.Variant({ ok: AppStatus, err: Error });
+  const GetClubs = IDL.Record({ leagueId: LeagueId });
+  const ShirtType = IDL.Variant({ Filled: IDL.Null, Striped: IDL.Null });
+  const Club = IDL.Record({
+    id: ClubId,
+    secondaryColourHex: IDL.Text,
     name: IDL.Text,
+    friendlyName: IDL.Text,
+    thirdColourHex: IDL.Text,
+    abbreviatedName: IDL.Text,
+    shirtType: ShirtType,
+    primaryColourHex: IDL.Text,
   });
-  const Result_5 = IDL.Variant({ ok: IDL.Vec(CountryDTO), err: Error });
+  const Clubs = IDL.Record({ clubs: IDL.Vec(Club), leagueId: LeagueId });
+  const Result_6 = IDL.Variant({ ok: Clubs, err: Error });
   const GetICFCProfile = IDL.Record({ principalId: PrincipalId });
+  const MembershipClaim = IDL.Record({
+    expiresOn: IDL.Opt(IDL.Int),
+    claimedOn: IDL.Int,
+    membershipType: MembershipType,
+  });
+  const MembershipType__1 = IDL.Variant({
+    Founding: IDL.Null,
+    NotClaimed: IDL.Null,
+    Seasonal: IDL.Null,
+    Lifetime: IDL.Null,
+    Monthly: IDL.Null,
+    NotEligible: IDL.Null,
+    Expired: IDL.Null,
+  });
   const ProfileDTO = IDL.Record({
     username: IDL.Text,
     displayName: IDL.Text,
@@ -79,7 +104,7 @@ export const idlFactory = ({ IDL }) => {
     membershipClaims: IDL.Vec(MembershipClaim),
     appPrincipalIds: IDL.Vec(IDL.Tuple(SubApp, PrincipalId)),
     profilePicture: IDL.Opt(IDL.Vec(IDL.Nat8)),
-    membershipType: MembershipType,
+    membershipType: MembershipType__1,
     termsAgreed: IDL.Bool,
     membershipExpiryTime: IDL.Int,
     favouriteLeagueId: IDL.Opt(LeagueId),
@@ -90,9 +115,9 @@ export const idlFactory = ({ IDL }) => {
   const ICFCProfileSummary = IDL.Record({
     username: IDL.Text,
     displayName: IDL.Text,
-    membershipClaim: MembershipClaim,
     createdOn: IDL.Int,
     favouriteClubId: IDL.Opt(ClubId),
+    membershipClaims: IDL.Vec(MembershipClaim),
     profilePicture: IDL.Opt(IDL.Vec(IDL.Nat8)),
     membershipType: MembershipType,
     termsAgreed: IDL.Bool,
@@ -101,7 +126,22 @@ export const idlFactory = ({ IDL }) => {
     nationalityId: IDL.Opt(CountryId),
     principalId: PrincipalId,
   });
-  const Result_4 = IDL.Variant({ ok: ICFCProfileSummary, err: Error });
+  const Result_5 = IDL.Variant({ ok: ICFCProfileSummary, err: Error });
+  const GetLeagues = IDL.Record({});
+  const Gender = IDL.Variant({ Male: IDL.Null, Female: IDL.Null });
+  const League = IDL.Record({
+    id: LeagueId,
+    logo: IDL.Vec(IDL.Nat8),
+    name: IDL.Text,
+    teamCount: IDL.Nat8,
+    relatedGender: Gender,
+    countryId: CountryId,
+    abbreviation: IDL.Text,
+    governingBody: IDL.Text,
+    formed: IDL.Int,
+  });
+  const Leagues = IDL.Record({ leagues: IDL.Vec(League) });
+  const Result_4 = IDL.Variant({ ok: Leagues, err: Error });
   const TokenBalances = IDL.Record({
     icgcBalance: IDL.Nat,
     icfcBalance: IDL.Nat,
@@ -158,6 +198,13 @@ export const idlFactory = ({ IDL }) => {
   });
   const Result_1 = IDL.Variant({ ok: UserNeuronsDTO, err: Error });
   const IsUsernameValid = IDL.Record({ username: IDL.Text });
+  const SubApp__1 = IDL.Variant({
+    OpenFPL: IDL.Null,
+    OpenWSL: IDL.Null,
+    FootballGod: IDL.Null,
+    TransferKings: IDL.Null,
+    JeffBets: IDL.Null,
+  });
   const UpdateDisplayName = IDL.Record({
     displayName: IDL.Text,
     principalId: PrincipalId,
@@ -186,18 +233,19 @@ export const idlFactory = ({ IDL }) => {
   });
   const Self = IDL.Service({
     addSubApp: IDL.Func([AddSubApp], [Result], []),
-    claimMembership: IDL.Func([], [Result_7], []),
+    claimMembership: IDL.Func([], [Result_8], []),
     createProfile: IDL.Func([CreateProfile], [Result], []),
-    getAppStatus: IDL.Func([], [Result_6], ["query"]),
-    getCountries: IDL.Func([], [Result_5], ["query"]),
+    getAppStatus: IDL.Func([], [Result_7], ["query"]),
+    getClubs: IDL.Func([GetClubs], [Result_6], []),
     getICFCProfile: IDL.Func([GetICFCProfile], [Result_3], []),
-    getICFCProfileSummary: IDL.Func([GetICFCProfile], [Result_4], []),
+    getICFCProfileSummary: IDL.Func([GetICFCProfile], [Result_5], []),
+    getLeagues: IDL.Func([GetLeagues], [Result_4], []),
     getProfile: IDL.Func([], [Result_3], []),
     getTokenBalances: IDL.Func([], [Result_2], []),
     getUserNeurons: IDL.Func([], [Result_1], []),
     isUsernameValid: IDL.Func([IsUsernameValid], [IDL.Bool], ["query"]),
     removeNeuronsforExpiredMembership: IDL.Func([PrincipalId], [], []),
-    removeSubApp: IDL.Func([SubApp], [Result], []),
+    removeSubApp: IDL.Func([SubApp__1], [Result], []),
     updateDisplayName: IDL.Func([UpdateDisplayName], [Result], []),
     updateFavouriteClub: IDL.Func([UpdateFavouriteClub], [Result], []),
     updateNationality: IDL.Func([UpdateNationality], [Result], []),
