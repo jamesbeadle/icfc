@@ -9,8 +9,9 @@
   import { membershipStore } from "$lib/stores/membership-store";
   import { toasts } from "$lib/stores/toasts-store";
   import { getFileExtensionFromFile, isPrincipalValid, sortByHighestNeuron } from "$lib/utils/helpers";
+  import { busy } from "$lib/stores/busy-store";
   
-  import type { CreateProfile, EligibleMembership, Neuron, PrincipalId, SubApp, UserNeuronsDTO, LeagueId, ClubId, CountryId, CountryDTO} from "../../../../../../declarations/backend/backend.did";
+  import type { CreateProfile, EligibleMembership, Neuron, PrincipalId, SubApp, UserNeuronsDTO, LeagueId, ClubId, CountryId, Country, League, Club} from "../../../../../../declarations/backend/backend.did";
 
   import LocalSpinner from "../../shared/local-spinner.svelte";
   import AvailableMembership from "../../membership/available-membership.svelte";
@@ -32,7 +33,7 @@
   let maxStakedICFC = 0n;
 
   let clubs: Club[] = [];
-  let countries: CountryDTO[] = [];
+  let countries: Country[] = [];
   let leagues: League[] = [];
   let favouriteLeagueId: LeagueId | null = null;
   let favouriteClubId: ClubId | null = null;
@@ -156,12 +157,26 @@
 
   $: if (!isLoading && favouriteLeagueId && favouriteLeagueId > 0) {
     getClubs();
+  } else {
+    clubs = [];
   }
 
   async function getClubs() {
-    let clubsResult = await clubStore.getClubs(favouriteLeagueId!);
-    if(!clubsResult){ return }
-    clubs = clubsResult;
+    try {
+        busy.start();
+        const clubsResult = await clubStore.getClubs(favouriteLeagueId!);
+        if (clubsResult) {
+            clubs = clubsResult;
+        } else {
+            clubs = [];
+        }
+    } catch (error) {
+        console.error("Error fetching clubs:", error);
+        toasts.addToast({ type: 'error', message: 'Failed to load clubs' });
+        clubs = [];
+    } finally {
+        busy.stop();
+    }
   }
 </script>
 

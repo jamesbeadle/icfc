@@ -1,6 +1,6 @@
 <script lang="ts">
     import { userStore } from "$lib/stores/user-store";
-    import type { CountryDTO, FootballLeagueDTO, ClubDTO, CountryId, LeagueId, ClubId } from "../../../../../../../external_declarations/data_canister/data_canister.did";
+    import type { Country, League, Club, CountryId, LeagueId, ClubId } from "../../../../../../../declarations/backend/backend.did";
 
     import ProfilePicture from "./profile-picture.svelte";
     import GetFootballInfo from "./get-football-info.svelte";
@@ -8,9 +8,9 @@
 
     export let file: File | null = null;
     
-    export let countries: CountryDTO[];
-    export let leagues: FootballLeagueDTO[];
-    export let clubs: ClubDTO[];
+    export let countries: Country[];
+    export let leagues: League[];
+    export let clubs: Club[];
     export let nationalityId: CountryId | null;
     export let favouriteLeagueId: LeagueId | null;
     export let favouriteClubId: ClubId | null;
