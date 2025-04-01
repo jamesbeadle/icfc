@@ -1,4 +1,3 @@
-import Base "mo:waterway-mops/BaseTypes";
 import Text "mo:base/Text";
 import T "../icfc_types";
 import TrieMap "mo:base/TrieMap";
@@ -15,6 +14,7 @@ import CanisterIds "mo:waterway-mops/CanisterIds";
 import Cycles "mo:base/ExperimentalCycles";
 import Iter "mo:base/Iter";
 import Time "mo:base/Time";
+import Char "mo:base/Char";
 import SNSManager "sns_manager";
 import SNSGovernance "mo:waterway-mops/sns-wrappers/governance";
 import Ids "mo:waterway-mops/Ids";
@@ -124,7 +124,7 @@ module {
         public func createProfile(principalId : Ids.PrincipalId, dto : ProfileCommands.CreateProfile, membership : T.EligibleMembership) : async Result.Result<(), Enums.Error> {
 
             if (Text.size(dto.username) < 5 or Text.size(dto.username) > 20) {
-                return #err(#TooLong);
+                return #err(#MaxDataExceeded);
             };
 
             let invalidUsername = isUsernameTaken(dto.username, principalId);
@@ -230,7 +230,7 @@ module {
 
         public func updateUsername(dto : ProfileCommands.UpdateUserName) : async Result.Result<(), Enums.Error> {
             if (Text.size(dto.username) < 5 or Text.size(dto.username) > 20) {
-                return #err(#TooLong);
+                return #err(#MaxDataExceeded);
             };
 
             let lowerCaseNewUsername = BaseUtilities.toLowercase(dto.username);
@@ -275,7 +275,7 @@ module {
                                         });
 
                                         if (updateOldUser != #ok) {
-                                            return #err(#UpdateFailed);
+                                            return #err(#InvalidData);
                                         };
 
                                         usernames.put(existingOwner, newRandomUsername);
@@ -342,7 +342,7 @@ module {
 
                                             return #ok;
                                         } else {
-                                            return #err(#UpdateFailed);
+                                            return #err(#InvalidData);
                                         };
                                     };
                                     case (null) {
@@ -350,7 +350,7 @@ module {
                                     };
                                 };
                             } else {
-                                return #err(#AlreadyClaimed);
+                                return #err(#AlreadyExists);
                             };
                         };
                         case (_, _) {
@@ -394,7 +394,7 @@ module {
 
                                 return #ok;
                             } else {
-                                return #err(#UpdateFailed);
+                                return #err(#InvalidData);
                             };
                         };
                         case (null) {
@@ -408,7 +408,7 @@ module {
         public func updateDisplayName(dto : ProfileCommands.UpdateDisplayName) : async Result.Result<(), Enums.Error> {
 
             if (Text.size(dto.displayName) < 1 or Text.size(dto.displayName) > 20) {
-                return #err(#TooLong);
+                return #err(#MaxDataExceeded);
             };
 
             let existingProfileCanisterId = profileCanisterIndex.get(dto.principalId);
@@ -487,7 +487,7 @@ module {
         public func updateProfilePicture(dto : ProfileCommands.UpdateProfilePicture) : async Result.Result<(), Enums.Error> {
             let validProfilePicture = isProfilePictureValid(dto.profilePicture);
             if (not validProfilePicture) {
-                return #err(#InvalidProfilePicture);
+                return #err(#InvalidData);
             };
 
             let existingProfileCanisterId = profileCanisterIndex.get(dto.principalId);
@@ -555,13 +555,13 @@ module {
 
                             let isNeuronsValid = validNeurons(eligibleMembership.eligibleNeuronIds, dto.principalId);
                             if (not isNeuronsValid) {
-                                return #err(#NeuronAlreadyUsed);
+                                return #err(#NotAllowed);
                             };
 
                             switch (eligibleMembership.membershipType) {
                                 case (newMembershipType) {
                                     if (newMembershipType == #NotEligible) {
-                                        return #err(#InEligible);
+                                        return #err(#NotAuthorized);
                                     };
 
                                     let canUpgrade : Bool = Utilities.canUpgradeMembership(currentMembership, newMembershipType);
@@ -577,7 +577,7 @@ module {
                                                         switch (expiresOn) {
                                                             case (?exp) {
                                                                 if (exp > currentTimestamp) {
-                                                                    return #err(#AlreadyClaimed);
+                                                                    return #err(#AlreadyExists);
                                                                 };
                                                             };
                                                             case (null) {};
@@ -588,7 +588,7 @@ module {
                                             };
                                             case (_) {
 
-                                                return #err(#AlreadyClaimed);
+                                                return #err(#AlreadyExists);
                                             };
                                         };
                                     };
@@ -740,11 +740,22 @@ module {
 
         };
 
+        public func toLowercase(t : Text.Text) : Text.Text {
+            func charToLower(c : Char) : Char {
+                if (Char.isUppercase(c)) {
+                    Char.fromNat32(Char.toNat32(c) + 32);
+                } else {
+                    c;
+                };
+            };
+            Text.map(t, charToLower);
+        };
+
         public func isUsernameTaken(username : Text, principalId : Text) : Bool {
             for (managerUsername in usernames.entries()) {
 
-                let lowerCaseUsername = BaseUtilities.toLowercase(username);
-                let existingUsername = BaseUtilities.toLowercase(managerUsername.1);
+                let lowerCaseUsername = toLowercase(username);
+                let existingUsername = toLowercase(managerUsername.1);
 
                 if (lowerCaseUsername == existingUsername and managerUsername.0 != principalId) {
                     return true;
@@ -756,8 +767,8 @@ module {
 
         private func findUsernamePrincipalId(username : Text) : ?Ids.PrincipalId {
             for (profileUsername in usernames.entries()) {
-                let lowerCaseUsername = BaseUtilities.toLowercase(username);
-                let existingUsername = BaseUtilities.toLowercase(profileUsername.1);
+                let lowerCaseUsername = toLowercase(username);
+                let existingUsername = toLowercase(profileUsername.1);
 
                 if (lowerCaseUsername == existingUsername) {
                     return ?profileUsername.0;

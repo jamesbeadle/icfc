@@ -57,7 +57,7 @@ module Utilities {
                                 total_staked += neuron.cached_neuron_stake_e8s;
                                 switch (neuron.id) {
                                     case (?neuronId) {
-                                        //eligibleNeuronIds := Array.append(eligibleNeuronIds, [neuronId.id]);
+                                        eligibleNeuronIds := Array.append(eligibleNeuronIds, [neuronId.id]);
                                     };
                                     case null {};
                                 };

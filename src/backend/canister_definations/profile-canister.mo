@@ -10,7 +10,6 @@ import Buffer "mo:base/Buffer";
 import List "mo:base/List";
 import T "../icfc_types";
 import ProfileQueries "../queries/profile_queries";
-import Environment "../environment";
 import ProfileCommands "../commands/profile_commands";
 import Utilities "../utilities/utilities";
 

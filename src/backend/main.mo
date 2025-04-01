@@ -332,10 +332,10 @@ actor class Self() = this {
 
   //functions for WWL backend to communicate
   // public shared ({ caller }) getCanistersInfo() : async Result.Result<ProfileQueries.CanisterInfo, Enums.Error> {
-  // assert not Principal.isAnonymous(caller);
-  // let canisterId = Principal.toText(caller);
-  // let canisterInfo = profileManager.getCanisterInfo(canisterId);
-  // return #ok(canisterInfo);
+  /* assert not Principal.isAnonymous(caller); */
+  /* let canisterId = Principal.toText(caller); */
+  /* let canisterInfo = profileManager.getCanisterInfo(canisterId); */
+  /* return #ok(canisterInfo); */
   // };
 
 };
