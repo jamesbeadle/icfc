@@ -5,7 +5,7 @@
     
     export let countries: Country[];
     export let leagues: League[];
-    export let clubs: Club[];
+    export let clubs: Club[] | undefined = undefined;
     export let nationalityId: CountryId | null;
     export let favouriteLeagueId: LeagueId | null;
     export let favouriteClubId: ClubId | null;
@@ -14,19 +14,35 @@
         favouriteClubId = null;
     }
 
-    $: clubOptions = clubs && clubs.length > 0 
-        ? clubs.sort((a, b) => a.friendlyName.localeCompare(b.friendlyName))
+    $: countryOptions = Array.isArray(countries) 
+        ? countries
+            .filter(country => country && country.name)
+            .sort((a, b) => a.name.localeCompare(b.name))
+            .map(country => ({ id: country.id, label: country.name }))
+        : [];
+
+    $: leagueOptions = Array.isArray(leagues)
+        ? leagues
+            .filter(league => league && league.name)
+            .map(league => ({ id: league.id, label: league.name }))
+        : [];
+
+    $: clubOptions = Array.isArray(clubs) && clubs.length > 0 
+        ? clubs
+            .filter(club => club && club.friendlyName)
+            .sort((a, b) => a.friendlyName.localeCompare(b.friendlyName))
             .map(club => ({ id: club.id, label: club.friendlyName }))
         : [];
 
-    $: countryOptions = countries && countries.length > 0 
-        ? countries.sort((a, b) => a.name.localeCompare(b.name))
-            .map((country: Country) => ({ id: country.id, label: country.name }))
-        : [];
-
-    $: leagueOptions = leagues && leagues.length > 0 
-        ? leagues.map(league => ({ id: league.id, label: league.name }))
-        : [];
+    $: {
+        console.log("Get Football Info Component:");
+        console.log("Countries received:", countries);
+        console.log("Country options created:", countryOptions);
+        console.log("Leagues received:", leagues);
+        console.log("League options created:", leagueOptions);
+        console.log("Clubs received:", clubs);
+        console.log("Club options created:", clubOptions);
+    }
 </script>
 
 <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
@@ -53,7 +69,7 @@
         <p class="form-hint min-h-[40px]">
             {#if !favouriteLeagueId}
                 Please select a league first
-            {:else if clubs.length === 0}
+            {:else if clubs?.length === 0}
                 Loading clubs...
             {:else}
                 Select to enable club based rewards.
@@ -67,3 +83,5 @@
         />
     </div>
   </div>
+
+

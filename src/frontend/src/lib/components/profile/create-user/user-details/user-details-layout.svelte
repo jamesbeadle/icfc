@@ -18,6 +18,13 @@
     export let usernameAvailable: boolean;
     export let displayName: string;
     export let store: typeof userStore;
+
+    $: {
+        console.log("User Details Layout Component:");
+        console.log("Countries received:", countries);
+        console.log("Leagues received:", leagues);
+        console.log("Clubs received:", clubs);
+    }
 </script>
 
 <p class="mb-8 text-xl text-white cta-text">User Details</p>

@@ -46,9 +46,13 @@
 
   onMount(async () => {
     try{
+      console.log("Create User Component:");
       await loadData();
+      console.log("Loaded data");
       countries = await countryStore.getCountries();
+      console.log("Loaded countries", countries);
       leagues = await leagueStore.getLeagues();
+      console.log("Loaded leagues", leagues);
     } catch {
         toasts.addToast({type: 'error', message: 'Failed to load data.'});
         leagues = [];
