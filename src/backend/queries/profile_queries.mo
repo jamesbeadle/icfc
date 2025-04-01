@@ -1,14 +1,14 @@
 import Ids "mo:waterway-mops/Ids";
 import FootballIds "mo:waterway-mops/football/FootballIds";
+import IcfcEnums "mo:waterway-mops/ICFCEnums";
 import T "../icfc_types";
-import SNSGovernance "../sns-wrappers/governance";
 
 module ProfileQueries {
     public type ProfileDTO = {
         principalId : Ids.PrincipalId;
         username : Text;
         displayName : Text;
-        membershipType : T.MembershipType;
+        membershipType : IcfcEnums.MembershipType;
         membershipClaims : [T.MembershipClaim];
         createdOn : Int;
         profilePicture : ?Blob;

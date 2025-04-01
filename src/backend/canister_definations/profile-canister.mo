@@ -122,6 +122,7 @@ actor class _ProfileCanister() {
                             favouriteLeagueId = foundProfile.favouriteLeagueId;
                             favouriteClubId = foundProfile.favouriteClubId;
                             nationalityId = foundProfile.nationalityId;
+                            membershipClaims = foundProfile.membershipClaims;
                         };
                         return #ok(dto);
                     };
