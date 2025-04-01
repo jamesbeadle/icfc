@@ -1,9 +1,9 @@
 import { writable } from "svelte/store";
 import { CountryService } from "../services/country-service";
-import type { CountryDTO } from "../../../../declarations/backend/backend.did";
+import type { Country } from "../../../../declarations/backend/backend.did";
 
 function createCountryStore() {
-  const { subscribe, set } = writable<CountryDTO[]>([]);
+  const { subscribe, set } = writable<Country[]>([]);
 
   async function getCountries() {
     return new CountryService().getCountries();
@@ -12,7 +12,7 @@ function createCountryStore() {
   return {
     getCountries,
     subscribe,
-    setCountries: (countries: CountryDTO[]) => set(countries),
+    setCountries: (countries: Country[]) => set(countries),
   };
 }
 

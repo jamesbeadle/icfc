@@ -1,11 +1,10 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { getDateFromBigInt, getImageURL } from "$lib/utils/helpers";
-    import type { ProfileDTO } from "../../../../../declarations/backend/backend.did";
+    import type { Club, Country, League, ProfileDTO } from "../../../../../declarations/backend/backend.did";
     import { countryStore } from "$lib/stores/country-store";
     import { leagueStore } from "$lib/stores/league-store";
     import { clubStore } from "$lib/stores/club-store";
-    import type { ClubDTO, CountryDTO, FootballLeagueDTO } from "../../../../../external_declarations/data_canister/data_canister.did";
     import { toasts } from "$lib/stores/toasts-store";
     
     import CopyPrincipal from "./copy-principal.svelte";
@@ -19,9 +18,9 @@
 
     let showUpdateFavouriteClubModal: boolean = false;
     let showUpdateNationalityModal: boolean = false;
-    let clubs: ClubDTO[] = [];
-    let countries: CountryDTO[] = [];
-    let leagues: FootballLeagueDTO[] = [];
+    let clubs: Club[] = [];
+    let countries: Country[] = [];
+    let leagues: League[] = [];
 
     let joinedDate = "";
     let principalId = "";

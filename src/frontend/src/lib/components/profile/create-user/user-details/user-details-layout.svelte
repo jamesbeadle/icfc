@@ -1,10 +1,9 @@
 <script lang="ts">
     import { userStore } from "$lib/stores/user-store";
-    import type { Country, League, Club, CountryId, LeagueId, ClubId } from "../../../../../../../declarations/backend/backend.did";
-
     import ProfilePicture from "./profile-picture.svelte";
     import GetFootballInfo from "./get-football-info.svelte";
     import GetNames from "./get-names.svelte";
+    import type { Club, ClubId, Country, CountryId, League, LeagueId } from "../../../../../../../declarations/backend/backend.did";
 
     export let file: File | null = null;
     

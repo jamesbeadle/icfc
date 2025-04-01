@@ -5,8 +5,8 @@
     import { toasts } from "$lib/stores/toasts-store";
     import { userStore } from "$lib/stores/user-store";
     import { onMount } from "svelte";
-    import type { CountryDTO, CountryId, PrincipalId, UpdateNationality } from "../../../../../../declarations/backend/backend.did";
     import { countryStore } from "$lib/stores/country-store";
+    import type { Country, CountryId, PrincipalId, UpdateNationality } from "../../../../../../declarations/backend/backend.did";
 
 
     export let visible: boolean = false;
@@ -15,7 +15,7 @@
 
     let isLoading = false;
     let newNationalityId = nationalityId;
-    let countries: CountryDTO[] = [];
+    let countries: Country[] = [];
 
 
     onMount(async () => {
@@ -76,7 +76,7 @@
                 <p class="form-title">National Team</p>
                 <p class="form-hint">Select to participate in nationwide football competitions.</p>
                 <DropdownSelect
-                    options={countries.sort((a, b) => a.name.localeCompare(b.name)).map((country: CountryDTO) => ({ id: country.id, label: country.name }))}
+                    options={countries.sort((a, b) => a.name.localeCompare(b.name)).map((country: Country) => ({ id: country.id, label: country.name }))}
                     value={nationalityId}
                     onChange={(value: string | number) => {
                         nationalityId = Number(value);
