@@ -6,6 +6,8 @@ import Iter "mo:base/Iter";
 import Time "mo:base/Time";
 import Array "mo:base/Array";
 import Buffer "mo:base/Buffer";
+import Enums "mo:waterway-mops/Enums";
+import CanisterIds "mo:waterway-mops/CanisterIds";
 import Environment "../environment";
 import FootballChannelCommands "../commands/football_channel_commands";
 
@@ -46,10 +48,10 @@ actor class _FootballChannelsCanister() {
     private stable var footballChannelGroup25 : [T.FootballChannel] = [];
 
     // Public endpoints:
-    public shared ({ caller }) func getFootballChannel(dto : FootballChannelQueries.GetFootballChannel) : async Result.Result<FootballChannelQueries.FootballChannel, T.Error> {
+    public shared ({ caller }) func getFootballChannel(dto : FootballChannelQueries.GetFootballChannel) : async Result.Result<FootballChannelQueries.FootballChannel, Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
-        assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
+        assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
 
         var groupIndex : ?Nat8 = null;
         for (footballChannelGroupIndex in Iter.fromArray(stable_football_channel_group_indexes)) {
@@ -79,25 +81,25 @@ actor class _FootballChannelsCanister() {
     public shared ({ caller }) func getLatestId() : async T.FootballChannelId {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
-        assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
+        assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
         return nextChannelId - 1;
     };
 
     public shared ({ caller }) func updateNextId(nextId : T.FootballChannelId) : async () {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
-        assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
+        assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
 
         nextChannelId := nextId;
     };
 
-    public shared ({ caller }) func createFootballChannel(dto : FootballChannelCommands.CreateFootballChannel) : async Result.Result<(), T.Error> {
+    public shared ({ caller }) func createFootballChannel(dto : FootballChannelCommands.CreateFootballChannel) : async Result.Result<(), Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
-        assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
+        assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
 
         if (totalFootballChannels >= MAX_PODCAST_CHANNELS_PER_CANISTER) {
-            return #err(#CanisterFull);
+            return #err(#MaxDataExceeded);
         };
 
         if (getFootballChannelCountInGroup(activeGroupIndex) >= MAX_PODCAST_CHANNELS_PER_GROUP) {
@@ -105,7 +107,7 @@ actor class _FootballChannelsCanister() {
         };
 
         if (activeGroupIndex > 99) {
-            return #err(#CanisterFull);
+            return #err(#MaxDataExceeded);
         };
 
         let newChannel : T.FootballChannel = {
@@ -122,10 +124,10 @@ actor class _FootballChannelsCanister() {
         return addFootballChannel(activeGroupIndex, newChannel);
     };
 
-    public shared ({ caller }) func updateFootballChannel(dto : FootballChannelCommands.UpdateFootballChannel) : async Result.Result<(), T.Error> {
+    public shared ({ caller }) func updateFootballChannel(dto : FootballChannelCommands.UpdateFootballChannel) : async Result.Result<(), Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
-        assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
+        assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
 
         var groupIndex : ?Nat8 = null;
         for (footballChannelGroupIndex in Iter.fromArray(stable_football_channel_group_indexes)) {
@@ -161,10 +163,10 @@ actor class _FootballChannelsCanister() {
         };
     };
 
-    public shared ({ caller }) func deleteFootballChannel(dto : FootballChannelCommands.DeleteFootballChannel) : async Result.Result<(), T.Error> {
+    public shared ({ caller }) func deleteFootballChannel(dto : FootballChannelCommands.DeleteFootballChannel) : async Result.Result<(), Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
-        assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
+        assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
 
         var groupIndex : ?Nat8 = null;
         for (footballChannelGroupIndex in Iter.fromArray(stable_football_channel_group_indexes)) {
@@ -187,7 +189,7 @@ actor class _FootballChannelsCanister() {
     public shared ({ caller }) func isCanisterFull() : async Bool {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
-        assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
+        assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
         return (totalFootballChannels >= MAX_PODCAST_CHANNELS_PER_CANISTER);
     };
 
@@ -426,7 +428,7 @@ actor class _FootballChannelsCanister() {
         };
     };
 
-    private func addFootballChannel(footballChannelGroupIndex : Nat8, newChannel : T.FootballChannel) : Result.Result<(), T.Error> {
+    private func addFootballChannel(footballChannelGroupIndex : Nat8, newChannel : T.FootballChannel) : Result.Result<(), Enums.Error> {
 
         var footballChannelBuffer = Buffer.fromArray<T.FootballChannel>([]);
         switch (activeGroupIndex) {
@@ -556,7 +558,7 @@ actor class _FootballChannelsCanister() {
                 footballChannelGroup25 := Buffer.toArray(footballChannelBuffer);
             };
             case _ {
-                return #err(#CanisterFull);
+                return #err(#MaxDataExceeded);
             };
         };
 
@@ -565,7 +567,7 @@ actor class _FootballChannelsCanister() {
         return #ok();
     };
 
-    private func saveFootballChannel(groupIndex : Nat8, updatedFootballChannel : T.FootballChannel) : Result.Result<(), T.Error> {
+    private func saveFootballChannel(groupIndex : Nat8, updatedFootballChannel : T.FootballChannel) : Result.Result<(), Enums.Error> {
         switch (groupIndex) {
             case 0 {
                 footballChannelGroup1 := Array.map<T.FootballChannel, T.FootballChannel>(
@@ -875,7 +877,7 @@ actor class _FootballChannelsCanister() {
         return #ok();
     };
 
-    private func removeFootballChannel(groupIndex : Nat8, removeChannelId : T.FootballChannelId) : Result.Result<(), T.Error> {
+    private func removeFootballChannel(groupIndex : Nat8, removeChannelId : T.FootballChannelId) : Result.Result<(), Enums.Error> {
         switch (groupIndex) {
             case 0 {
                 footballChannelGroup1 := Array.filter<T.FootballChannel>(

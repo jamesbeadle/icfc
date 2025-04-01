@@ -6,11 +6,11 @@ import Time "mo:base/Time";
 import Int "mo:base/Int";
 import Array "mo:base/Array";
 import Ids "mo:waterway-mops/Ids";
+import CanisterIds "mo:waterway-mops/CanisterIds";
 import T "../icfc_types";
 import SNSGovernance "../sns-wrappers/governance";
-import Environment "../environment";
 
-module Utils {
+module Utilities {
 
     public func getMembershipExpirationDate(membershipType : T.MembershipType) : Int {
         let now = Time.now();
@@ -177,11 +177,11 @@ module Utils {
 
     public func isSubApp(caller : Ids.PrincipalId) : Bool {
         let allowed = [
-            Environment.FOOTBALL_GOD_BACKEND_CANISTER_ID,
-            Environment.OPENFPL_BACKEND_CANISTER_ID,
-            Environment.OPENWSL_BACKEND_CANISTER_ID,
-            Environment.JEFF_BETS_BACKEND_CANISTER_ID,
-            Environment.TRANSFER_KINGS_CANISTER_ID,
+            CanisterIds.FOOTBALL_GOD_BACKEND_CANISTER_ID,
+            CanisterIds.OPENFPL_BACKEND_CANISTER_ID,
+            CanisterIds.OPENWSL_BACKEND_CANISTER_ID,
+            CanisterIds.JEFF_BETS_BACKEND_CANISTER_ID,
+            CanisterIds.TRANSFER_KINGS_BACKEND_CANISTER_ID,
         ];
         for (principal in allowed.vals()) {
             if (principal == caller) {

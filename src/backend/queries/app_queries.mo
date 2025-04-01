@@ -1,4 +1,4 @@
-import Base "mo:waterway-mops/BaseTypes";
+import Ids "mo:waterway-mops/Ids";
 import T "../icfc_types";
 
 module AppQueries {
@@ -9,7 +9,7 @@ module AppQueries {
     };
 
     public type ProfileDTO = {
-        principalId: Base.PrincipalId;
+        principalId: Ids.PrincipalId;
         username: Text;
         displayName: Text;
         membershipType: T.MembershipType;
@@ -17,12 +17,12 @@ module AppQueries {
         createdOn: Int;
         profilePicture: Blob;
         termsAgreed: Bool;
-        unconfirmedAppPrincipalIds: [(Text, Base.PrincipalId)];
-        appPrincipalIds: [(Text, Base.PrincipalId)];
+        unconfirmedAppPrincipalIds: [(Text, Ids.PrincipalId)];
+        appPrincipalIds: [(Text, Ids.PrincipalId)];
     };
 
     public type CountryDTO = {
-        id : Base.CountryId;
+        id : Ids.CountryId;
         name : Text;
         code : Text;
     };

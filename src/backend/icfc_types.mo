@@ -1,5 +1,5 @@
-import FootballIds "mo:waterway-mops/football/FootballIds";
 import Ids "mo:waterway-mops/Ids";
+import FootballIds "mo:waterway-mops/football/FootballIds";
 import Blob "mo:base/Blob";
 //import ckBTCLedger "canister:ckbtc_ledger"; // TODO Use for ckBTC sale Q3 2025
 
@@ -67,29 +67,6 @@ module ICFCTypes {
   public type EligibleMembership = {
     membershipType : MembershipType;
     eligibleNeuronIds : [Blob];
-  };
-
-  public type Error = {
-    #NotFound;
-    #AlreadyExists;
-    #NotAuthorized;
-    #NotAllowed;
-    #DecodeError;
-    #InvalidData;
-    #CanisterFull;
-    #OutOfRange;
-    #TooLong;
-    #TooShort;
-    #NotEnoughFunds;
-    #PaymentError;
-    #InvalidProfilePicture;
-    #CreateGameError;
-    #UpdateFailed;
-    #AlreadyClaimed;
-    #InEligible;
-    #NeuronAlreadyUsed;
-    #AlreadyLinked;
-    #FailedInterCanisterCall;
   };
 
   public type Club = {

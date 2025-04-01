@@ -1,4 +1,6 @@
-import Base "mo:waterway-mops/BaseTypes";
+import Ids "mo:waterway-mops/Ids";
+import Enums "mo:waterway-mops/Enums";
+import CanisterIds "mo:waterway-mops/CanisterIds";
 import Result "mo:base/Result";
 import Principal "mo:base/Principal";
 import Iter "mo:base/Iter";
@@ -10,11 +12,11 @@ import T "../icfc_types";
 import ProfileQueries "../queries/profile_queries";
 import Environment "../environment";
 import ProfileCommands "../commands/profile_commands";
-import Utils "../utils/utils";
 import Enums "mo:waterway-mops/Enums";
+import Utilities "../utilities/utilities";
 
 actor class _ProfileCanister() {
-    private stable var stable_profile_group_indexes : [(Base.PrincipalId, Nat8)] = [];
+    private stable var stable_profile_group_indexes : [(Ids.PrincipalId, Nat8)] = [];
     private stable var profileGroup1 : [T.Profile] = [];
     private stable var profileGroup2 : [T.Profile] = [];
     private stable var profileGroup3 : [T.Profile] = [];
@@ -41,7 +43,7 @@ actor class _ProfileCanister() {
     public shared ({ caller }) func getProfile(dto : ProfileCommands.GetProfile) : async Result.Result<ProfileQueries.ProfileDTO, Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
-        assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
+        assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
 
         var groupIndex : ?Nat8 = null;
         for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
@@ -88,7 +90,7 @@ actor class _ProfileCanister() {
     public shared ({ caller }) func getProfileSummary(dto : ProfileCommands.GetProfile) : async Result.Result<ProfileQueries.ICFCProfileSummary, Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
-        assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
+        assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
 
         var groupIndex : ?Nat8 = null;
         for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
@@ -135,7 +137,7 @@ actor class _ProfileCanister() {
     public shared ({ caller }) func getClaimedMembership(dto : ProfileQueries.GetClaimedMemberships) : async Result.Result<ProfileQueries.ClaimedMembershipsDTO, Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
-        assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
+        assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
 
         var groupIndex : ?Nat8 = null;
         for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
@@ -166,13 +168,13 @@ actor class _ProfileCanister() {
         };
     };
 
-    public shared ({ caller }) func createProfile(profilePrincipalId : Base.PrincipalId, dto : ProfileCommands.CreateProfile, membership : T.EligibleMembership) : async Result.Result<(), Enums.Error> {
+    public shared ({ caller }) func createProfile(profilePrincipalId : Ids.PrincipalId, dto : ProfileCommands.CreateProfile, membership : T.EligibleMembership) : async Result.Result<(), Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
-        assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
+        assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
 
         if (totalProfiles >= MAX_PROFILES_PER_CANISTER) {
-            return #err(#CanisterFull);
+            return #err(#MaxDataExceeded);
         };
 
         if (getProfileCountInGroup(activeGroupIndex) >= MAX_PROFILES_PER_GROUP) {
@@ -181,7 +183,7 @@ actor class _ProfileCanister() {
 
         if (activeGroupIndex > 11) {
             canisterFull := true;
-            return #err(#CanisterFull);
+            return #err(#MaxDataExceeded);
         };
 
         let newProfile : T.Profile = {
@@ -195,7 +197,7 @@ actor class _ProfileCanister() {
             membershipType = membership.membershipType;
             membershipClaims = [{
                 claimedOn = Time.now();
-                expiresOn = ?Utils.getMembershipExpirationDate(membership.membershipType);
+                expiresOn = ?Utilities.getMembershipExpirationDate(membership.membershipType);
                 membershipType = membership.membershipType;
             }];
             createdOn = Time.now();
@@ -214,7 +216,7 @@ actor class _ProfileCanister() {
     public shared ({ caller }) func updateUsername(dto : ProfileCommands.UpdateUserName) : async Result.Result<(), Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
-        assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
+        assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
 
         var groupIndex : ?Nat8 = null;
         for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
@@ -257,7 +259,7 @@ actor class _ProfileCanister() {
     public shared ({ caller }) func updateDisplayName(dto : ProfileCommands.UpdateDisplayName) : async Result.Result<(), Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
-        assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
+        assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
 
         var groupIndex : ?Nat8 = null;
         for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
@@ -300,7 +302,7 @@ actor class _ProfileCanister() {
     public shared ({ caller }) func updateNationality(dto : ProfileCommands.UpdateNationality) : async Result.Result<(), Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
-        assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
+        assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
 
         var groupIndex : ?Nat8 = null;
         for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
@@ -343,7 +345,7 @@ actor class _ProfileCanister() {
     public shared ({ caller }) func updateFavouriteClub(dto : ProfileCommands.UpdateFavouriteClub) : async Result.Result<(), Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
-        assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
+        assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
 
         var groupIndex : ?Nat8 = null;
         for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
@@ -386,7 +388,7 @@ actor class _ProfileCanister() {
     public shared ({ caller }) func updateAppPrincipalIds(dto : ProfileCommands.AddSubApp) : async Result.Result<(), Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
-        assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
+        assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
 
         var groupIndex : ?Nat8 = null;
         for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
@@ -401,11 +403,11 @@ actor class _ProfileCanister() {
                 switch (profile) {
                     case (?foundProfile) {
 
-                        var appPrincipalIdsBuffer = Buffer.fromArray<(T.SubApp, Base.PrincipalId)>(foundProfile.appPrincipalIds);
+                        var appPrincipalIdsBuffer = Buffer.fromArray<(T.SubApp, Ids.PrincipalId)>(foundProfile.appPrincipalIds);
 
-                        let subAppAlreadyLinked = Array.find<(T.SubApp, Base.PrincipalId)>(
+                        let subAppAlreadyLinked = Array.find<(T.SubApp, Ids.PrincipalId)>(
                             foundProfile.appPrincipalIds,
-                            func(appPrincipalId : (T.SubApp, Base.PrincipalId)) {
+                            func(appPrincipalId : (T.SubApp, Ids.PrincipalId)) {
                                 appPrincipalId.0 == dto.subApp;
                             },
                         );
@@ -415,9 +417,9 @@ actor class _ProfileCanister() {
                             appPrincipalIdsBuffer.add((dto.subApp, dto.subAppUserPrincipalId));
                         } else {
                             // update subapp if already linked
-                            // let updatedAppPrincipalIds = Array.map<(T.SubApp, Base.PrincipalId), (T.SubApp, Base.PrincipalId)>(
+                            // let updatedAppPrincipalIds = Array.map<(T.SubApp, Ids.PrincipalId), (T.SubApp, Ids.PrincipalId)>(
                             //     foundProfile.appPrincipalIds,
-                            //     func(appPrincipalId : (T.SubApp, Base.PrincipalId)) {
+                            //     func(appPrincipalId : (T.SubApp, Ids.PrincipalId)) {
                             //         if (appPrincipalId.0 == dto.subApp) {
                             //             (appPrincipalId.0, dto.subAppUserPrincipalId);
                             //         } else {
@@ -426,7 +428,7 @@ actor class _ProfileCanister() {
                             //     },
                             // );
 
-                            // appPrincipalIdsBuffer := Buffer.fromArray<(T.SubApp, Base.PrincipalId)>(updatedAppPrincipalIds);
+                            // appPrincipalIdsBuffer := Buffer.fromArray<(T.SubApp, Ids.PrincipalId)>(updatedAppPrincipalIds);
 
                             return #err(#AlreadyExists);
 
@@ -461,7 +463,7 @@ actor class _ProfileCanister() {
     public shared ({ caller }) func removeSubApp(dto : ProfileCommands.RemoveSubApp) : async Result.Result<(), Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
-        assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
+        assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
 
         var groupIndex : ?Nat8 = null;
         for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
@@ -476,9 +478,9 @@ actor class _ProfileCanister() {
                 let profile = findProfile(foundGroupIndex, dto.userPrincipalId);
                 switch (profile) {
                     case (?foundProfile) {
-                        let updatedAppPrincipalIds = Array.filter<(T.SubApp, Base.PrincipalId)>(
+                        let updatedAppPrincipalIds = Array.filter<(T.SubApp, Ids.PrincipalId)>(
                             foundProfile.appPrincipalIds,
-                            func(appPrincipalId : (T.SubApp, Base.PrincipalId)) {
+                            func(appPrincipalId : (T.SubApp, Ids.PrincipalId)) {
                                 appPrincipalId.0 != dto.subApp;
                             },
                         );
@@ -512,7 +514,7 @@ actor class _ProfileCanister() {
     public shared ({ caller }) func updateProfilePicture(dto : ProfileCommands.UpdateProfilePicture) : async Result.Result<(), Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
-        assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
+        assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
 
         var groupIndex : ?Nat8 = null;
         for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
@@ -555,7 +557,7 @@ actor class _ProfileCanister() {
     public shared ({ caller }) func updateMembership(dto : ProfileCommands.UpdateMembership) : async Result.Result<(T.MembershipClaim), Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
-        assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
+        assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
 
         var groupIndex : ?Nat8 = null;
         for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
@@ -574,7 +576,7 @@ actor class _ProfileCanister() {
                         let newClaim : T.MembershipClaim = {
                             membershipType = dto.membershipType;
                             claimedOn = Time.now();
-                            expiresOn = ?Utils.getMembershipExpirationDate(dto.membershipType);
+                            expiresOn = ?Utilities.getMembershipExpirationDate(dto.membershipType);
                         };
                         membershipClaimsBuffer.add(newClaim);
                         let updatedMembershipClaims = Buffer.toArray(membershipClaimsBuffer);
@@ -621,14 +623,14 @@ actor class _ProfileCanister() {
     public shared ({ caller }) func isCanisterFull() : async Bool {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
-        assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
+        assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
         return (totalProfiles >= MAX_PROFILES_PER_CANISTER);
     };
 
     public shared ({ caller }) func checkAndExpireMembership() : async () {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
-        assert backendPrincipalId == Environment.BACKEND_CANISTER_ID;
+        assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
 
         for (index in Iter.range(0, 11)) {
             switch (index) {
@@ -721,7 +723,7 @@ actor class _ProfileCanister() {
         };
     };
 
-    private func expireMembership(principalId : Base.PrincipalId) : async () {
+    private func expireMembership(principalId : Ids.PrincipalId) : async () {
 
         var groupIndex : ?Nat8 = null;
         for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
@@ -759,8 +761,8 @@ actor class _ProfileCanister() {
                             case (#err(_)) { return };
                             case (#ok) {
 
-                                var backend = actor (Environment.BACKEND_CANISTER_ID) : actor {
-                                    removeNeuronsforExpiredMembership : shared query Base.PrincipalId -> async ();
+                                var backend = actor (CanisterIds.ICFC_BACKEND_CANISTER_ID) : actor {
+                                    removeNeuronsforExpiredMembership : shared query Ids.PrincipalId -> async ();
                                 };
 
                                 await backend.removeNeuronsforExpiredMembership(principalId);
@@ -776,7 +778,7 @@ actor class _ProfileCanister() {
 
     };
 
-    private func findProfile(profileGroupIndex : Nat8, profilePrincipalId : Base.PrincipalId) : ?T.Profile {
+    private func findProfile(profileGroupIndex : Nat8, profilePrincipalId : Ids.PrincipalId) : ?T.Profile {
         switch (profileGroupIndex) {
             case 0 {
                 let foundProfile = Array.find<T.Profile>(
@@ -962,7 +964,7 @@ actor class _ProfileCanister() {
         };
         totalProfiles += 1;
 
-        let groupIndexBuffer = Buffer.fromArray<(Base.PrincipalId, Nat8)>(stable_profile_group_indexes);
+        let groupIndexBuffer = Buffer.fromArray<(Ids.PrincipalId, Nat8)>(stable_profile_group_indexes);
         groupIndexBuffer.add((newProfile.principalId, activeGroupIndex));
         stable_profile_group_indexes := Buffer.toArray(groupIndexBuffer);
         return #ok();

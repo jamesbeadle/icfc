@@ -10,9 +10,8 @@
   import { toasts } from "$lib/stores/toasts-store";
   import { getFileExtensionFromFile, isPrincipalValid, sortByHighestNeuron } from "$lib/utils/helpers";
   
-  import type { CreateProfile, EligibleMembership, Neuron, PrincipalId, SubApp, UserNeuronsDTO } from "../../../../../../declarations/backend/backend.did";
-  import type { LeagueId, ClubId, CountryId, ClubDTO, CountryDTO, FootballLeagueDTO } from "../../../../../../external_declarations/data_canister/data_canister.did";
-  
+  import type { CreateProfile, EligibleMembership, Neuron, PrincipalId, SubApp, UserNeuronsDTO, LeagueId, ClubId, CountryId, CountryDTO} from "../../../../../../declarations/backend/backend.did";
+
   import LocalSpinner from "../../shared/local-spinner.svelte";
   import AvailableMembership from "../../membership/available-membership.svelte";
   import CopyPrincipal from "../copy-principal.svelte";
@@ -32,9 +31,9 @@
   let neurons: Neuron[] = [];
   let maxStakedICFC = 0n;
 
-  let clubs: ClubDTO[] = [];
+  let clubs: Club[] = [];
   let countries: CountryDTO[] = [];
-  let leagues: FootballLeagueDTO[] = [];
+  let leagues: League[] = [];
   let favouriteLeagueId: LeagueId | null = null;
   let favouriteClubId: ClubId | null = null;
   let nationalityId: CountryId | null = null;
@@ -189,13 +188,14 @@
             </div>
           {/if}
         {/if}
-        <button 
+        
+      </div>
+      <button 
           class="my-8 transition brand-button bg-BrandBlue hover:bg-BrandInfo disabled:bg-BrandGrayShade3" 
           on:click={createProfile} 
           disabled={isSubmitDisabled}
         >
           JOIN ICFC
-        </button>
-      </div>
+      </button>
   </div>
 {/if}

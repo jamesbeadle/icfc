@@ -1,4 +1,3 @@
-import Environment "../../backend/environment";
 import Time "mo:base/Time";
 import Nat "mo:base/Nat";
 import Result "mo:base/Result";
@@ -10,6 +9,7 @@ import Text "mo:base/Text";
 import SaleCommands "../commands/sale_commands";
 import SaleQueries "../queries/sale_queries";
 import Ids "mo:waterway-mops/Ids";
+import CanisterIds "mo:waterway-mops/CanisterIds";
 import T "../sale_types";
 import DTO "../dtos/dtos";
 import Timer "mo:base/Timer";
@@ -18,8 +18,7 @@ import Int "mo:base/Int";
 import Principal "mo:base/Principal";
 import Nat64 "mo:base/Nat64";
 import SNSToken "../sns-wrappers/ledger";
-import Account "../../backend/lib/Account";
-import Utils "../utils/utils";
+import SaleUtilities "../utils/sale-utilities";
 
 module {
     public class SaleManager() {
@@ -152,14 +151,14 @@ module {
                             let res = await distributeTokens(distribution.principalId, distribution.amount);
                             switch (res) {
                                 case (#ok(_)) {
-                                    //    remove from pending
+                                    
                                     let updatedDistributions = Array.filter<T.ICFCDistribution>(
                                         icfcDistributions,
                                         func(entry : T.ICFCDistribution) : Bool {
                                             entry != distribution;
                                         },
                                     );
-                                    // update status to completed
+                                    
                                     let updatedDistribution : T.ICFCDistribution = {
                                         principalId = distribution.principalId;
                                         amount = distribution.amount;
@@ -168,12 +167,12 @@ module {
                                         installment = distribution.installment;
                                         distributionStatus = #Completed;
                                     };
-                                    // update the list
+                                    
                                     icfcDistributions := Array.append(updatedDistributions, [updatedDistribution]);
                                     icfcDistributions := updatedDistributions;
                                 };
                                 case (#err(err)) {
-                                    Debug.print("Error distributing tokens: " # Utils.variantToText(err));
+                                    Debug.print("Error distributing tokens: " # SaleUtilities.variantToText(err));
                                 };
                             };
                         },
@@ -200,8 +199,8 @@ module {
             let installmentAmount = totalTokens / 6;
             let now = Time.now();
 
-            let threeMonths = Utils.monthToSeconds(3);
-            let sixMonths = Utils.monthToSeconds(6);
+            let threeMonths = SaleUtilities.monthToSeconds(3);
+            let sixMonths = SaleUtilities.monthToSeconds(6);
 
             for (i in Iter.range(0, 5)) {
                 let delay = if (i == 0) threeMonths else (threeMonths + (i * sixMonths));
@@ -245,7 +244,7 @@ module {
                                 icfcDistributions := updatedDistributions;
                             };
                             case (#err(err)) {
-                                Debug.print("Error distributing tokens: " # Utils.variantToText(err));
+                                Debug.print("Error distributing tokens: " # SaleUtilities.variantToText(err));
                             };
 
                         };
@@ -256,7 +255,7 @@ module {
 
         private func distributeTokens(principal : Ids.PrincipalId, amount : Nat) : async Result.Result<(), T.TransferError> {
 
-            let icfc_ledger : SNSToken.Interface = actor (Environment.SNS_LEDGER_CANISTER_ID);
+            let icfc_ledger : SNSToken.Interface = actor (CanisterIds.ICFC_SNS_LEDGER_CANISTER_ID);
             let transfer_fee = await icfc_ledger.icrc1_fee();
 
             let e8s_amount = amount * 100_000_000;

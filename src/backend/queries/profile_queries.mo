@@ -1,5 +1,5 @@
-import FootballIds "mo:waterway-mops/football/FootballIds";
 import Ids "mo:waterway-mops/Ids";
+import FootballIds "mo:waterway-mops/football/FootballIds";
 import T "../icfc_types";
 import SNSGovernance "../sns-wrappers/governance";
 

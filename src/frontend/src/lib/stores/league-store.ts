@@ -1,52 +1,20 @@
 import { writable } from "svelte/store";
 import { LeagueService } from "$lib/services/league-service";
 import type {
-  FootballLeagueDTO,
-  LeagueStatus,
-} from "../../../../external_declarations/data_canister/data_canister.did";
+  League,
+} from "../../../../declarations/backend/backend.did";
 
 function createLeagueStore() {
-  const { subscribe, set } = writable<FootballLeagueDTO[]>([]);
-  const { subscribe: subscribeLeagueStatus, set: setLeagueStatus } = writable<
-    LeagueStatus[] | null
-  >(null);
+  const { subscribe, set } = writable<League[]>([]);
 
   async function getLeagues() {
     return new LeagueService().getLeagues();
   }
 
-  async function getLeagueStatus(leagueId: number): Promise<LeagueStatus> {
-    return new LeagueService().getLeagueStatus(leagueId);
-  }
-
-  async function getActiveOrUnplayedGameweek(
-    leagueId: number,
-  ): Promise<number> {
-    let leagueStatus: LeagueStatus | null = null;
-    subscribeLeagueStatus((result) => {
-      if (!result || !result[0]) {
-        throw new Error("Failed to subscribe to league store");
-      }
-      leagueStatus = result[leagueId];
-      if (!leagueStatus) {
-        return 0;
-      }
-      return leagueStatus.activeGameweek === 0
-        ? leagueStatus.unplayedGameweek
-        : leagueStatus.activeGameweek;
-    });
-    return 0;
-  }
-
   return {
     subscribe,
-    setLeagues: (leagues: FootballLeagueDTO[]) => set(leagues),
-    setLeagueStatus: (leagueStatus: LeagueStatus[]) =>
-      setLeagueStatus(leagueStatus),
+    setLeagues: (leagues: League[]) => set(leagues),
     getLeagues,
-    getLeagueStatus,
-    subscribeLeagueStatus,
-    getActiveOrUnplayedGameweek,
   };
 }
 
