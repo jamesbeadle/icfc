@@ -1,5 +1,5 @@
-import FootballTypes "mo:waterway-mops/FootballTypes";
 import Ids "mo:waterway-mops/Ids";
+import FootballIds "mo:waterway-mops/football/FootballIds";
 import T "../icfc_types";
 
 module ProfileCommands {
@@ -12,8 +12,8 @@ module ProfileCommands {
         profilePicture : ?Blob;
         displayName : Text;
         appPrincipalIds : [(T.SubApp, Ids.PrincipalId)];
-        favouriteLeagueId : ?FootballTypes.LeagueId;
-        favouriteClubId : ?FootballTypes.ClubId;
+        favouriteLeagueId : ?FootballIds.LeagueId;
+        favouriteClubId : ?FootballIds.ClubId;
         nationalityId : ?Ids.CountryId;
     };
 
@@ -29,8 +29,8 @@ module ProfileCommands {
 
     public type UpdateFavouriteClub = {
         principalId : Ids.PrincipalId;
-        favouriteLeagueId : FootballTypes.LeagueId;
-        favouriteClubId : FootballTypes.ClubId;
+        favouriteLeagueId : FootballIds.LeagueId;
+        favouriteClubId : FootballIds.ClubId;
     };
 
     public type UpdateNationality = {

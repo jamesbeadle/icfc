@@ -1,5 +1,5 @@
-import FootballTypes "mo:waterway-mops/FootballTypes";
 import Ids "mo:waterway-mops/Ids";
+import FootballIds "mo:waterway-mops/football/FootballIds";
 import Blob "mo:base/Blob";
 //import ckBTCLedger "canister:ckbtc_ledger"; // TODO Use for ckBTC sale Q3 2025
 
@@ -19,8 +19,8 @@ module ICFCTypes {
     termsAgreed : Bool;
     appPrincipalIds : [(SubApp, Ids.PrincipalId)];
     podcastIds : [Ids.PrincipalId];
-    favouriteLeagueId : ?FootballTypes.LeagueId;
-    favouriteClubId : ?FootballTypes.ClubId;
+    favouriteLeagueId : ?FootballIds.LeagueId;
+    favouriteClubId : ?FootballIds.ClubId;
     nationalityId : ?Ids.CountryId;
   };
 
@@ -64,31 +64,8 @@ module ICFCTypes {
     eligibleNeuronIds : [Blob];
   };
 
-  public type Error = {
-    #NotFound;
-    #AlreadyExists;
-    #NotAuthorized;
-    #NotAllowed;
-    #DecodeError;
-    #InvalidData;
-    #CanisterFull;
-    #OutOfRange;
-    #TooLong;
-    #TooShort;
-    #NotEnoughFunds;
-    #PaymentError;
-    #InvalidProfilePicture;
-    #CreateGameError;
-    #UpdateFailed;
-    #AlreadyClaimed;
-    #InEligible;
-    #NeuronAlreadyUsed;
-    #AlreadyLinked;
-    #FailedInterCanisterCall;
-  };
-
   public type Club = {
-    id : FootballTypes.ClubId;
+    id : FootballIds.ClubId;
     name : Text;
   };
 

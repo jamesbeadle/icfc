@@ -1,5 +1,5 @@
-import FootballTypes "mo:waterway-mops/FootballTypes";
 import Ids "mo:waterway-mops/Ids";
+import FootballIds "mo:waterway-mops/football/FootballIds";
 import T "../icfc_types";
 import SNSGovernance "../sns-wrappers/governance";
 
@@ -16,8 +16,8 @@ module ProfileQueries {
         appPrincipalIds : [(T.SubApp, Ids.PrincipalId)];
         podcastIds : [Ids.PrincipalId];
         membershipExpiryTime : Int;
-        favouriteLeagueId : ?FootballTypes.LeagueId;
-        favouriteClubId : ?FootballTypes.ClubId;
+        favouriteLeagueId : ?FootballIds.LeagueId;
+        favouriteClubId : ?FootballIds.ClubId;
         nationalityId : ?Ids.CountryId;
     };
 
@@ -31,8 +31,8 @@ module ProfileQueries {
         profilePicture : ?Blob;
         termsAgreed : Bool;
         membershipExpiryTime : Int;
-        favouriteLeagueId : ?FootballTypes.LeagueId;
-        favouriteClubId : ?FootballTypes.ClubId;
+        favouriteLeagueId : ?FootballIds.LeagueId;
+        favouriteClubId : ?FootballIds.ClubId;
         nationalityId : ?Ids.CountryId;
     };
 

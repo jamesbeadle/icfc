@@ -14,6 +14,8 @@ import Text "mo:base/Text";
 import Principal "mo:base/Principal";
 import T "../icfc_types";
 import Ids "mo:waterway-mops/Ids";
+import Enums "mo:waterway-mops/Enums";
+import CanisterIds "mo:waterway-mops/CanisterIds";
 import FootballChannelQueries "../queries/football_channel_queries";
 import FootballChannelCommands "../commands/football_channel_commands";
 import FootballChannelsCanister "../canister_definations/football-channels-canister";
@@ -35,7 +37,7 @@ module {
             return Option.isSome(channel);
         };
 
-        public func getFootballChannels(dto : FootballChannelQueries.GetFootballChannels) : async Result.Result<FootballChannelQueries.FootballChannels, T.Error> {
+        public func getFootballChannels(dto : FootballChannelQueries.GetFootballChannels) : async Result.Result<FootballChannelQueries.FootballChannels, Enums.Error> {
             let searchTerm = dto.searchTerm;
             let filteredEntries = List.filter<(T.FootballChannelId, Text)>(
                 Iter.toList<(T.FootballChannelId, Text)>(footballChannelNames.entries()),
@@ -67,11 +69,11 @@ module {
             });
         };
 
-        public func getFootballChannel(dto : FootballChannelQueries.GetFootballChannel) : async Result.Result<FootballChannelQueries.FootballChannel, T.Error> {
+        public func getFootballChannel(dto : FootballChannelQueries.GetFootballChannel) : async Result.Result<FootballChannelQueries.FootballChannel, Enums.Error> {
             return await getChannel(dto);
         };
 
-        public func getFootballChannelVideos(dto : FootballChannelQueries.GetFootballChannelVideos) : async Result.Result<FootballChannelQueries.FootballChannelVideos, T.Error> {
+        public func getFootballChannelVideos(dto : FootballChannelQueries.GetFootballChannelVideos) : async Result.Result<FootballChannelQueries.FootballChannelVideos, Enums.Error> {
             let existingChannel = await getChannel({ channelId = dto.channelId });
 
             switch (existingChannel) {
@@ -81,7 +83,7 @@ module {
                     switch (footballChannelCanisterId) {
                         case (?foundCanisterId) {
                             let football_channel_canister = actor (foundCanisterId) : actor {
-                                updateFootballChannel : (dto : FootballChannelQueries.GetFootballChannelVideos) -> async Result.Result<FootballChannelQueries.FootballChannelVideos, T.Error>;
+                                updateFootballChannel : (dto : FootballChannelQueries.GetFootballChannelVideos) -> async Result.Result<FootballChannelQueries.FootballChannelVideos, Enums.Error>;
                             };
                             return await football_channel_canister.updateFootballChannel(dto);
                         };
@@ -93,13 +95,13 @@ module {
             };
         };
 
-        private func getChannel(dto : FootballChannelQueries.GetFootballChannel) : async Result.Result<FootballChannelQueries.FootballChannel, T.Error> {
+        private func getChannel(dto : FootballChannelQueries.GetFootballChannel) : async Result.Result<FootballChannelQueries.FootballChannel, Enums.Error> {
             let existingFootballChannelCanisterId = footballChannelCanisterIndex.get(dto.channelId);
             switch (existingFootballChannelCanisterId) {
                 case (?foundCanisterId) {
 
                     let footballChannel_canister = actor (foundCanisterId) : actor {
-                        getFootballChannel : (dto : FootballChannelQueries.GetFootballChannel) -> async Result.Result<FootballChannelQueries.FootballChannel, T.Error>;
+                        getFootballChannel : (dto : FootballChannelQueries.GetFootballChannel) -> async Result.Result<FootballChannelQueries.FootballChannel, Enums.Error>;
                     };
 
                     return await footballChannel_canister.getFootballChannel({
@@ -112,13 +114,13 @@ module {
             };
         };
 
-        public func getFootballChannelVideo(dto : FootballChannelQueries.GetFootballChannelVideo) : async Result.Result<FootballChannelQueries.FootballChannelVideo, T.Error> {
+        public func getFootballChannelVideo(dto : FootballChannelQueries.GetFootballChannelVideo) : async Result.Result<FootballChannelQueries.FootballChannelVideo, Enums.Error> {
             let existingFootballChannelCanisterId = footballChannelCanisterIndex.get(dto.channelId);
             switch (existingFootballChannelCanisterId) {
                 case (?foundCanisterId) {
 
                     let footballChannel_canister = actor (foundCanisterId) : actor {
-                        getFootballChannelVideo : (dto : FootballChannelQueries.GetFootballChannelVideo) -> async Result.Result<FootballChannelQueries.FootballChannelVideo, T.Error>;
+                        getFootballChannelVideo : (dto : FootballChannelQueries.GetFootballChannelVideo) -> async Result.Result<FootballChannelQueries.FootballChannelVideo, Enums.Error>;
                     };
 
                     return await footballChannel_canister.getFootballChannelVideo({
@@ -149,14 +151,14 @@ module {
             return false;
         };
 
-        public func createFootballChannel(dto : FootballChannelCommands.CreateFootballChannel) : async Result.Result<T.FootballChannelId, T.Error> {
+        public func createFootballChannel(dto : FootballChannelCommands.CreateFootballChannel) : async Result.Result<T.FootballChannelId, Enums.Error> {
 
             if (Text.size(dto.name) > 100) {
-                return #err(#TooLong);
+                return #err(#InvalidProperty);
             };
 
             var football_channel_canister = actor (activeCanisterId) : actor {
-                createFootballChannel : (dto : FootballChannelCommands.CreateFootballChannel) -> async Result.Result<T.FootballChannelId, T.Error>;
+                createFootballChannel : (dto : FootballChannelCommands.CreateFootballChannel) -> async Result.Result<T.FootballChannelId, Enums.Error>;
                 getLatestId : () -> async T.FootballChannelId;
                 isCanisterFull : () -> async Bool;
             };
@@ -165,7 +167,7 @@ module {
                 case "" {
                     await createNewCanister(totalFootballChannels + 1);
                     football_channel_canister := actor (activeCanisterId) : actor {
-                        createFootballChannel : (dto : FootballChannelCommands.CreateFootballChannel) -> async Result.Result<T.FootballChannelId, T.Error>;
+                        createFootballChannel : (dto : FootballChannelCommands.CreateFootballChannel) -> async Result.Result<T.FootballChannelId, Enums.Error>;
                         getLatestId : () -> async T.FootballChannelId;
                         isCanisterFull : () -> async Bool;
                     };
@@ -177,7 +179,7 @@ module {
                         let nextId : T.FootballChannelId = latestId + 1;
                         await createNewCanister(nextId);
                         football_channel_canister := actor (activeCanisterId) : actor {
-                            createFootballChannel : (dto : FootballChannelCommands.CreateFootballChannel) -> async Result.Result<T.FootballChannelId, T.Error>;
+                            createFootballChannel : (dto : FootballChannelCommands.CreateFootballChannel) -> async Result.Result<T.FootballChannelId, Enums.Error>;
                             getLatestId : () -> async T.FootballChannelId;
                             isCanisterFull : () -> async Bool;
                         };
@@ -186,7 +188,7 @@ module {
             };
             return await football_channel_canister.createFootballChannel(dto);
         };
-        public func updateFootballChannel(dto : FootballChannelCommands.UpdateFootballChannel) : async Result.Result<(), T.Error> {
+        public func updateFootballChannel(dto : FootballChannelCommands.UpdateFootballChannel) : async Result.Result<(), Enums.Error> {
             let existingChannel = await getChannel({ channelId = dto.channelId });
 
             switch (existingChannel) {
@@ -196,7 +198,7 @@ module {
                     switch (footballChannelCanisterId) {
                         case (?foundCanisterId) {
                             let football_channel_canister = actor (foundCanisterId) : actor {
-                                updateFootballChannel : (dto : FootballChannelCommands.UpdateFootballChannel) -> async Result.Result<(), T.Error>;
+                                updateFootballChannel : (dto : FootballChannelCommands.UpdateFootballChannel) -> async Result.Result<(), Enums.Error>;
                             };
                             return await football_channel_canister.updateFootballChannel(dto);
                         };
@@ -208,7 +210,7 @@ module {
             };
         };
 
-        public func deleteFootballChannel(dto : FootballChannelCommands.DeleteFootballChannel) : async Result.Result<(), T.Error> {
+        public func deleteFootballChannel(dto : FootballChannelCommands.DeleteFootballChannel) : async Result.Result<(), Enums.Error> {
             let existingChannel = await getChannel({ channelId = dto.channelId });
 
             switch (existingChannel) {
@@ -218,7 +220,7 @@ module {
                     switch (footballChannelCanisterId) {
                         case (?foundCanisterId) {
                             let football_channel_canister = actor (foundCanisterId) : actor {
-                                deleteFootballChannel : (dto : FootballChannelCommands.DeleteFootballChannel) -> async Result.Result<(), T.Error>;
+                                deleteFootballChannel : (dto : FootballChannelCommands.DeleteFootballChannel) -> async Result.Result<(), Enums.Error>;
                             };
                             return await football_channel_canister.deleteFootballChannel(dto);
                         };
@@ -230,7 +232,7 @@ module {
             };
         };
 
-        public func subscribeToFootballChannel(dto : FootballChannelCommands.SubscribeToFootballChannel) : async Result.Result<(), T.Error> {
+        public func subscribeToFootballChannel(dto : FootballChannelCommands.SubscribeToFootballChannel) : async Result.Result<(), Enums.Error> {
             let existingChannel = await getChannel({ channelId = dto.channelId });
 
             switch (existingChannel) {
@@ -240,7 +242,7 @@ module {
                     switch (footballChannelCanisterId) {
                         case (?foundCanisterId) {
                             let football_channel_canister = actor (foundCanisterId) : actor {
-                                subscribeToFootballChannel : (dto : FootballChannelCommands.SubscribeToFootballChannel) -> async Result.Result<(), T.Error>;
+                                subscribeToFootballChannel : (dto : FootballChannelCommands.SubscribeToFootballChannel) -> async Result.Result<(), Enums.Error>;
                             };
                             return await football_channel_canister.subscribeToFootballChannel(dto);
                         };
@@ -252,7 +254,7 @@ module {
             };
         };
 
-        public func unsubscribeFromFootballChannel(dto : FootballChannelCommands.UnsubscribeFromFootballChannel) : async Result.Result<(), T.Error> {
+        public func unsubscribeFromFootballChannel(dto : FootballChannelCommands.UnsubscribeFromFootballChannel) : async Result.Result<(), Enums.Error> {
             let existingChannel = await getChannel({ channelId = dto.channelId });
 
             switch (existingChannel) {
@@ -262,7 +264,7 @@ module {
                     switch (footballChannelCanisterId) {
                         case (?foundCanisterId) {
                             let football_channel_canister = actor (foundCanisterId) : actor {
-                                unsubscribeFromFootballChannel : (dto : FootballChannelCommands.UnsubscribeFromFootballChannel) -> async Result.Result<(), T.Error>;
+                                unsubscribeFromFootballChannel : (dto : FootballChannelCommands.UnsubscribeFromFootballChannel) -> async Result.Result<(), Enums.Error>;
                             };
                             return await football_channel_canister.unsubscribeFromFootballChannel(dto);
                         };
@@ -274,7 +276,7 @@ module {
             };
         };
 
-        public func uploadFootballChannelVideo(dto : FootballChannelCommands.UploadFootballChannelVideo) : async Result.Result<(), T.Error> {
+        public func uploadFootballChannelVideo(dto : FootballChannelCommands.UploadFootballChannelVideo) : async Result.Result<(), Enums.Error> {
             let existingChannel = await getChannel({ channelId = dto.channelId });
 
             switch (existingChannel) {
@@ -284,7 +286,7 @@ module {
                     switch (footballChannelCanisterId) {
                         case (?foundCanisterId) {
                             let football_channel_canister = actor (foundCanisterId) : actor {
-                                uploadFootballChannelVideo : (dto : FootballChannelCommands.UploadFootballChannelVideo) -> async Result.Result<(), T.Error>;
+                                uploadFootballChannelVideo : (dto : FootballChannelCommands.UploadFootballChannelVideo) -> async Result.Result<(), Enums.Error>;
                             };
                             return await football_channel_canister.uploadFootballChannelVideo(dto);
                         };
@@ -296,7 +298,7 @@ module {
             };
         };
 
-        public func updateFootballChannelVideo(dto : FootballChannelCommands.UpdateFootballChannelVideo) : async Result.Result<(), T.Error> {
+        public func updateFootballChannelVideo(dto : FootballChannelCommands.UpdateFootballChannelVideo) : async Result.Result<(), Enums.Error> {
             let existingChannel = await getChannel({ channelId = dto.channelId });
 
             switch (existingChannel) {
@@ -306,7 +308,7 @@ module {
                     switch (footballChannelCanisterId) {
                         case (?foundCanisterId) {
                             let football_channel_canister = actor (foundCanisterId) : actor {
-                                updateFootballChannelVideo : (dto : FootballChannelCommands.UpdateFootballChannelVideo) -> async Result.Result<(), T.Error>;
+                                updateFootballChannelVideo : (dto : FootballChannelCommands.UpdateFootballChannelVideo) -> async Result.Result<(), Enums.Error>;
                             };
                             return await football_channel_canister.updateFootballChannelVideo(dto);
                         };
@@ -318,7 +320,7 @@ module {
             };
         };
 
-        public func removeFootballChannelVideo(dto : FootballChannelCommands.RemoveFootballChannelVideo) : async Result.Result<(), T.Error> {
+        public func removeFootballChannelVideo(dto : FootballChannelCommands.RemoveFootballChannelVideo) : async Result.Result<(), Enums.Error> {
             let existingChannel = await getChannel({ channelId = dto.channelId });
 
             switch (existingChannel) {
@@ -328,7 +330,7 @@ module {
                     switch (footballChannelCanisterId) {
                         case (?foundCanisterId) {
                             let football_channel_canister = actor (foundCanisterId) : actor {
-                                removeFootballChannelVideo : (dto : FootballChannelCommands.RemoveFootballChannelVideo) -> async Result.Result<(), T.Error>;
+                                removeFootballChannelVideo : (dto : FootballChannelCommands.RemoveFootballChannelVideo) -> async Result.Result<(), Enums.Error>;
                             };
                             return await football_channel_canister.removeFootballChannelVideo(dto);
                         };
@@ -432,8 +434,8 @@ module {
         private func createNewCanister(nextId : T.FootballChannelId) : async () {
             Cycles.add<system>(10_000_000_000_000);
             let canister = await FootballChannelsCanister._FootballChannelsCanister();
-            let IC : Management.Management = actor (Environment.Default);
-            let principal = ?Principal.fromText(Environment.BACKEND_CANISTER_ID);
+            let IC : Management.Management = actor (CanisterIds.Default);
+            let principal = ?Principal.fromText(CanisterIds.ICFC_BACKEND_CANISTER_ID);
             let _ = await BaseUtilities.updateCanister_(canister, principal, IC);
 
             let canister_principal = Principal.fromActor(canister);

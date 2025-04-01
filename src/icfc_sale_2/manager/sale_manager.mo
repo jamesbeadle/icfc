@@ -10,6 +10,7 @@ import Text "mo:base/Text";
 import SaleCommands "../commands/sale_commands";
 import SaleQueries "../queries/sale_queries";
 import Ids "mo:waterway-mops/Ids";
+import CanisterIds "mo:waterway-mops/CanisterIds";
 import T "../sale_types";
 import DTO "../dtos/dtos";
 import Timer "mo:base/Timer";
@@ -256,7 +257,7 @@ module {
 
         private func distributeTokens(principal : Ids.PrincipalId, amount : Nat) : async Result.Result<(), T.TransferError> {
 
-            let icfc_ledger : SNSToken.Interface = actor (Environment.SNS_LEDGER_CANISTER_ID);
+            let icfc_ledger : SNSToken.Interface = actor (CanisterIds.ICFC_SNS_LEDGER_CANISTER_ID);
             let transfer_fee = await icfc_ledger.icrc1_fee();
 
             let e8s_amount = amount * 100_000_000;
