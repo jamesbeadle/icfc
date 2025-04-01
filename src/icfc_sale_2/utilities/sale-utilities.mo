@@ -36,9 +36,9 @@ module SaleUtilities {
         month * 30 * 24 * 60 * 60;
     };
 
-    // private func hasValidICFCMembership(user_principal : Base.PrincipalId) : async Result.Result<(Bool, T.MembershipType), T.Error> {
+    // private func hasValidICFCMembership(user_principal : Base.PrincipalId) : async Result.Result<(Bool, T.MembershipType), Enums.Error> {
     //     let icfc_canister = actor (Environment.BACKEND_CANISTER_ID) : actor {
-    //         getICFCMembership : SaleCommands.GetICFCMembership -> async Result.Result<SaleQueries.ICFCMembershipDTO, T.Error>;
+    //         getICFCMembership : SaleCommands.GetICFCMembership -> async Result.Result<SaleQueries.ICFCMembershipDTO, Enums.Error>;
     //     };
 
     //     let icfcMembershipDTO : SaleCommands.GetICFCMembership = {

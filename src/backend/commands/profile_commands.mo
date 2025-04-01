@@ -87,4 +87,33 @@ module ProfileCommands {
         subApp : T.SubApp;
         membershipType : T.MembershipType;
     };
+
+    public type MembershipClaim = {
+        membershipType : T.MembershipType;
+        claimedOn : Int;
+        expiresOn : ?Int;
+    };
+    public type SubApp = {
+        #OpenFPL;
+        #OpenWSL;
+        #JeffBets;
+        #TransferKings;
+        #FootballGod;
+    };
+
+    public type MembershipType = {
+        #Monthly;
+        #Seasonal;
+        #Lifetime;
+        #Founding;
+        #Expired;
+        #NotClaimed;
+        #NotEligible;
+    };
+
+    public type EligibleMembership = {
+        membershipType : MembershipType;
+        eligibleNeuronIds : [Blob];
+    };
+
 };

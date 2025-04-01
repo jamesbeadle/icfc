@@ -5,6 +5,7 @@ import T "./sale_types";
 import DTO "./dtos/dtos";
 import Base "mo:waterway-mops/BaseTypes";
 import Ids "mo:waterway-mops/Ids";
+import Enums "mo:waterway-mops/Enums";
 import SaleManager "manager/sale_manager";
 import SaleCommands "commands/sale_commands";
 import SaleQueries "queries/sale_queries";
@@ -23,11 +24,11 @@ actor class Self() = this {
     private stable var stable_saleParticipants : [(Ids.PrincipalId, [T.ClaimedRecord])] = [];
     private stable var stable_icfcDistributions : [T.ICFCDistribution] = [];
 
-    public shared query func getAppStatus() : async Result.Result<DTO.AppStatusDTO, T.Error> {
+    public shared query func getAppStatus() : async Result.Result<DTO.AppStatusDTO, Enums.Error> {
         return #ok(appStatus);
     };
 
-    public shared ({ caller }) func claimICFCPackets(command : SaleCommands.CalimICFCPackets) : async Result.Result<(), T.Error> {
+    public shared ({ caller }) func claimICFCPackets(command : SaleCommands.CalimICFCPackets) : async Result.Result<(), Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let dto : SaleCommands.ParticipateInSale = {
             principalId = Principal.toText(caller);
@@ -36,7 +37,7 @@ actor class Self() = this {
         return await saleManager.claimICFCPackets(dto);
     };
 
-    public shared ({ caller }) func getUserParticipation() : async Result.Result<DTO.UserParticipationDTO, T.Error> {
+    public shared ({ caller }) func getUserParticipation() : async Result.Result<DTO.UserParticipationDTO, Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let dto : SaleQueries.GetUserParticipation = {
             principalId = Principal.toText(caller);
@@ -44,7 +45,7 @@ actor class Self() = this {
         return await saleManager.getUserParticipation(dto);
     };
 
-    public shared ({ caller }) func getUsersICFCDistributions() : async Result.Result<[T.ICFCDistribution], T.Error> {
+    public shared ({ caller }) func getUsersICFCDistributions() : async Result.Result<[T.ICFCDistribution], Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let dto : SaleQueries.GetICFCDistributions = {
             principalId = Principal.toText(caller);
@@ -52,7 +53,7 @@ actor class Self() = this {
         return await saleManager.getUsersICFCDistributions(dto);
     };
 
-    public shared func getProgress() : async Result.Result<DTO.SaleProgressDTO, T.Error> {
+    public shared func getProgress() : async Result.Result<DTO.SaleProgressDTO, Enums.Error> {
         return await saleManager.getProgress();
     };
 

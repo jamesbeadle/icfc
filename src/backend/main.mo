@@ -1,4 +1,3 @@
-
 /* ----- Mops Packages ----- */
 import Blob "mo:base/Blob";
 import Int "mo:base/Int";
@@ -8,28 +7,35 @@ import Principal "mo:base/Principal";
 import Result "mo:base/Result";
 import Text "mo:base/Text";
 import Timer "mo:base/Timer";
-import BaseTypes "mo:waterway-mops/BaseTypes";
 import Enums "mo:waterway-mops/Enums";
+import BaseTypes "mo:waterway-mops/BaseTypes";
+import LeagueQueries "mo:waterway-mops/queries/football-queries/LeagueQueries";
+import ClubQueries "mo:waterway-mops/queries/football-queries/ClubQueries";
+import Ids "mo:waterway-mops/Ids";
+import SNSToken "mo:waterway-mops/sns-wrappers/ledger";
+import CanisterIds "mo:waterway-mops/CanisterIds";
+import Management "mo:waterway-mops/Management";
 
 /* ----- Canister Definition Files ----- */
 
 import ProfileCanister "canister_definations/profile-canister";
 
-
 /* ----- Queries ----- */
 import AppQueries "queries/app_queries";
 import ProfileQueries "queries/profile_queries";
 
-
 /* ----- Commands ----- */
 import ProfileCommands "commands/profile_commands";
-
 
 /* ----- Managers ----- */
 
 import ProfileManager "managers/profile_manager";
 import FootballChannelManager "managers/football_channel_manager";
 import SNSManager "managers/sns_manager";
+
+/* ----- Environment ----- */
+import Environment "environment";
+import Utilities "utilities/utilities";
 
 actor class Self() = this {
 
@@ -58,7 +64,7 @@ actor class Self() = this {
 
   public shared query ({ caller }) func isUsernameValid(dto : ProfileQueries.IsUsernameValid) : async Bool {
     assert not Principal.isAnonymous(caller);
-    let usernameValid = Utils.isUsernameValid(dto.username);
+    let usernameValid = Utilities.isUsernameValid(dto.username);
     let usernameTaken = profileManager.isUsernameTaken(dto.username, Principal.toText(caller));
     return usernameValid and not usernameTaken;
   };
@@ -67,8 +73,8 @@ actor class Self() = this {
     assert not Principal.isAnonymous(caller);
 
     let neurons = await snsManager.getUsersNeurons(caller);
-    let userEligibility : T.EligibleMembership = Utils.getMembershipType(neurons);
-    let totalMaxStaked = Utils.getTotalMaxStaked(neurons);
+    let userEligibility : ProfileQueries.EligibleMembership = Utilities.getMembershipType(neurons);
+    let totalMaxStaked = Utilities.getTotalMaxStaked(neurons);
 
     let result : ProfileQueries.UserNeuronsDTO = {
       userNeurons = neurons;
@@ -86,12 +92,12 @@ actor class Self() = this {
     let principalId = Principal.toText(caller);
 
     let neurons = await snsManager.getUsersNeurons(caller);
-    let userEligibility : T.EligibleMembership = Utils.getMembershipType(neurons);
+    let userEligibility : ProfileCommands.EligibleMembership = Utilities.getMembershipType(neurons);
 
     return await profileManager.createProfile(principalId, dto, userEligibility);
   };
 
-  public shared ({ caller }) func claimMembership() : async Result.Result<(ICFCTypes.MembershipClaim), Enums.Error> {
+  public shared ({ caller }) func claimMembership() : async Result.Result<(ProfileCommands.MembershipClaim), Enums.Error> {
     assert not Principal.isAnonymous(caller);
     let dto : ProfileCommands.ClaimMembership = {
       principalId = Principal.toText(caller);
@@ -104,14 +110,14 @@ actor class Self() = this {
     return await profileManager.addSubApp(Principal.toText(caller), dto);
   };
 
-  public shared ({ caller }) func removeSubApp(subApp : T.SubApp) : async Result.Result<(), Enums.Error> {
+  public shared ({ caller }) func removeSubApp(subApp : ProfileCommands.SubApp) : async Result.Result<(), Enums.Error> {
     assert not Principal.isAnonymous(caller);
     return await profileManager.removeSubApp(Principal.toText(caller), subApp);
   };
 
   public shared ({ caller }) func verifySubApp(dto : ProfileCommands.VerifySubApp) : async Result.Result<(), Enums.Error> {
     assert not Principal.isAnonymous(caller);
-    assert Utils.isSubApp(Principal.toText(caller));
+    assert Utilities.isSubApp(Principal.toText(caller));
     return await profileManager.verifySubApp(dto);
   };
 
@@ -148,20 +154,20 @@ actor class Self() = this {
   public shared ({ caller }) func getTokenBalances() : async Result.Result<AppQueries.TokenBalances, Enums.Error> {
     assert not Principal.isAnonymous(caller);
 
-    let icfc_ledger : SNSToken.Interface = actor (Environment.SNS_LEDGER_CANISTER_ID);
+    let icfc_ledger : SNSToken.Interface = actor (CanisterIds.ICFC_SNS_LEDGER_CANISTER_ID);
     let ckBTC_ledger : SNSToken.Interface = actor (Environment.CKBTC_LEDGER_CANISTER_ID);
-    let icp_ledger : SNSToken.Interface = actor (Environment.NNS_LEDGER_CANISTER_ID);
+    let icp_ledger : SNSToken.Interface = actor (CanisterIds.ICP_COINS_CANISTER_ID);
 
     let icfc_tokens = await icfc_ledger.icrc1_balance_of({
-      owner = Principal.fromText(Environment.BACKEND_CANISTER_ID);
+      owner = Principal.fromText(CanisterIds.ICFC_BACKEND_CANISTER_ID);
       subaccount = null;
     });
     let ckBTC_tokens = await ckBTC_ledger.icrc1_balance_of({
-      owner = Principal.fromText(Environment.BACKEND_CANISTER_ID);
+      owner = Principal.fromText(CanisterIds.ICFC_BACKEND_CANISTER_ID);
       subaccount = null;
     });
     let icp_tokens = await icp_ledger.icrc1_balance_of({
-      owner = Principal.fromText(Environment.BACKEND_CANISTER_ID);
+      owner = Principal.fromText(CanisterIds.ICFC_BACKEND_CANISTER_ID);
       subaccount = null;
     });
 
@@ -175,67 +181,61 @@ actor class Self() = this {
 
   public shared ({ caller }) func getICFCProfile(dto : ProfileCommands.GetICFCProfile) : async Result.Result<ProfileQueries.ProfileDTO, Enums.Error> {
     assert not Principal.isAnonymous(caller);
-    assert Utils.isSubApp(Principal.toText(caller));
+    assert Utilities.isSubApp(Principal.toText(caller));
     return await profileManager.getProfile(dto);
   };
 
   public shared ({ caller }) func getICFCProfileSummary(dto : ProfileCommands.GetICFCProfile) : async Result.Result<ProfileQueries.ICFCProfileSummary, Enums.Error> {
     assert not Principal.isAnonymous(caller);
-    assert Utils.isSubApp(Principal.toText(caller));
+    assert Utilities.isSubApp(Principal.toText(caller));
     return await profileManager.getICFCProfileSummary(dto);
   };
 
   /* ----- Calls to Data Canister ----- */
 
-  public shared ({ caller }) func getLeagues(dto: LeagueQueries.GetLeagues) : async Result.Result<LeagueQueries.Leagues, Enums.Error> {
+  public shared ({ caller }) func getLeagues(dto : LeagueQueries.GetLeagues) : async Result.Result<LeagueQueries.Leagues, Enums.Error> {
     assert not Principal.isAnonymous(caller);
     // TODO: Check caller is a member
 
     let data_canister = actor (CanisterIds.ICFC_DATA_CANISTER_ID) : actor {
-      getLeagues : (dto: LeagueQueries.GetLeagues) -> async Result.Result<LeagueQueries.Leagues, Enums.Error>;
+      getLeagues : (dto : LeagueQueries.GetLeagues) -> async Result.Result<LeagueQueries.Leagues, Enums.Error>;
     };
     let result = await data_canister.getLeagues(dto);
     return result;
   };
 
-
-
-  public shared ({ caller }) func getClubs(dto: ClubQueries.GetClubs) : async Result.Result<ClubQueries.Clubs, Enums.Error> {
+  public shared ({ caller }) func getClubs(dto : ClubQueries.GetClubs) : async Result.Result<ClubQueries.Clubs, Enums.Error> {
     assert not Principal.isAnonymous(caller);
     // TODO: Check caller is a member
 
     let data_canister = actor (CanisterIds.ICFC_DATA_CANISTER_ID) : actor {
-      getClubs : (dto: ClubQueries.GetClubs) -> async Result.Result<ClubQueries.Clubs, Enums.Error>;
+      getClubs : (dto : ClubQueries.GetClubs) -> async Result.Result<ClubQueries.Clubs, Enums.Error>;
     };
     return await data_canister.getClubs(dto);
   };
 
+  // public shared ({ caller }) func getCountries(dto : AppQueries.GetCountries) : async Result.Result<AppQueries.Countries, Enums.Error> {
+  //   assert not Principal.isAnonymous(caller);
+  //   // TODO: Check caller is a member
 
-
-  public shared ({ caller }) func getCountries(dto: AppQueries.GetCountries) : async Result.Result<AppQueries.Countries, Enums.Error> {
-    assert not Principal.isAnonymous(caller);
-    // TODO: Check caller is a member
-
-    let data_canister = actor (CanisterIds.ICFC_DATA_CANISTER_ID) : actor {
-      getCountries : (dto: AppQueries.GetCountries) -> async Result.Result<AppQueries.Countries, Enums.Error>;
-    };
-    return await data_canister.getCountries(dto);
-  };
-
-
+  //   let data_canister = actor (CanisterIds.ICFC_DATA_CANISTER_ID) : actor {
+  //     getCountries : (dto : AppQueries.GetCountries) -> async Result.Result<AppQueries.Countries, Enums.Error>;
+  //   };
+  //   return await data_canister.getCountries(dto);
+  // };
 
   // Stable Storage & System Functions:
-  private stable var stable_profile_canister_index : [(Base.PrincipalId, Base.CanisterId)] = [];
-  private stable var stable_active_profile_canister_id : Base.CanisterId = "";
-  private stable var stable_usernames : [(Base.PrincipalId, Text)] = [];
-  private stable var stable_unique_profile_canister_ids : [Base.CanisterId] = [];
+  private stable var stable_profile_canister_index : [(Ids.PrincipalId, Ids.CanisterId)] = [];
+  private stable var stable_active_profile_canister_id : Ids.CanisterId = "";
+  private stable var stable_usernames : [(Ids.PrincipalId, Text)] = [];
+  private stable var stable_unique_profile_canister_ids : [Ids.CanisterId] = [];
   private stable var stable_total_profile : Nat = 0;
-  private stable var stable_neurons_used_for_membership : [(Blob, Base.PrincipalId)] = [];
+  private stable var stable_neurons_used_for_membership : [(Blob, Ids.PrincipalId)] = [];
 
-  private stable var stable_podcast_channel_canister_index : [(T.FootballChannelId, Base.CanisterId)] = [];
-  private stable var stable_active_podcast_channel_canister_id : Base.CanisterId = "";
-  private stable var stable_podcast_channel_names : [(T.FootballChannelId, Text)] = [];
-  private stable var stable_unique_podcast_channel_canister_ids : [Base.CanisterId] = [];
+  private stable var stable_podcast_channel_canister_index : [(Ids.FootballChannelId, Ids.CanisterId)] = [];
+  private stable var stable_active_podcast_channel_canister_id : Ids.CanisterId = "";
+  private stable var stable_podcast_channel_names : [(Ids.FootballChannelId, Text)] = [];
+  private stable var stable_unique_podcast_channel_canister_ids : [Ids.CanisterId] = [];
   private stable var stable_total_podcast_channels : Nat = 0;
   private stable var stable_next_podcast_channel_id : Nat = 0;
 
@@ -311,7 +311,7 @@ actor class Self() = this {
 
   private func updateProfileCanisterWasms() : async () {
     let profileCanisterIds = profileManager.getStableUniqueCanisterIds();
-    let IC : Management.Management = actor (Environment.Default);
+    let IC : Management.Management = actor (CanisterIds.Default);
     for (canisterId in Iter.fromArray(profileCanisterIds)) {
       await IC.stop_canister({ canister_id = Principal.fromText(canisterId) });
       let oldCanister = actor (canisterId) : actor {};
@@ -321,7 +321,7 @@ actor class Self() = this {
   };
 
   // call_backs for profile_canister
-  public shared ({ caller }) func removeNeuronsforExpiredMembership(pofile_principal : Base.PrincipalId) : async () {
+  public shared ({ caller }) func removeNeuronsforExpiredMembership(pofile_principal : Ids.PrincipalId) : async () {
     assert profileManager.isProfileCanister(Principal.toText(caller));
     await profileManager.removeNeuronsforExpiredMembership(pofile_principal);
   };
@@ -332,10 +332,10 @@ actor class Self() = this {
 
   //functions for WWL backend to communicate
   // public shared ({ caller }) getCanistersInfo() : async Result.Result<ProfileQueries.CanisterInfo, Enums.Error> {
-    // assert not Principal.isAnonymous(caller);
-    // let canisterId = Principal.toText(caller);
-    // let canisterInfo = profileManager.getCanisterInfo(canisterId);
-    // return #ok(canisterInfo);
+  /* assert not Principal.isAnonymous(caller); */
+  /* let canisterId = Principal.toText(caller); */
+  /* let canisterInfo = profileManager.getCanisterInfo(canisterId); */
+  /* return #ok(canisterInfo); */
   // };
 
 };

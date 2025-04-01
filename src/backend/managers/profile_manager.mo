@@ -1,4 +1,3 @@
-import Base "mo:waterway-mops/BaseTypes";
 import Text "mo:base/Text";
 import T "../icfc_types";
 import TrieMap "mo:base/TrieMap";
@@ -11,7 +10,7 @@ import Buffer "mo:base/Buffer";
 import ProfileQueries "../queries/profile_queries";
 import ProfileCommands "../commands/profile_commands";
 import ProfileCanister "../canister_definations/profile-canister";
-import Environment "../environment";
+import CanisterIds "mo:waterway-mops/CanisterIds";
 import Cycles "mo:base/ExperimentalCycles";
 import Iter "mo:base/Iter";
 import Time "mo:base/Time";
@@ -21,7 +20,6 @@ import SNSGovernance "mo:waterway-mops/sns-wrappers/governance";
 import Ids "mo:waterway-mops/Ids";
 import Enums "mo:waterway-mops/Enums";
 import BaseUtilities "mo:waterway-mops/BaseUtilities";
-import CanisterIds "mo:waterway-mops/CanisterIds";
 import Management "mo:waterway-mops/Management";
 import CanisterUtilities "mo:waterway-mops/CanisterUtilities";
 import Utilities "../utilities/utilities";
@@ -235,7 +233,7 @@ module {
                 return #err(#MaxDataExceeded);
             };
 
-            let lowerCaseNewUsername = toLowercase(dto.username);
+            let lowerCaseNewUsername = BaseUtilities.toLowercase(dto.username);
             var currentOwner : ?Ids.PrincipalId = findUsernamePrincipalId(lowerCaseNewUsername);
 
             switch (currentOwner) {
@@ -742,17 +740,16 @@ module {
 
         };
 
-
-    public func toLowercase(t : Text.Text) : Text.Text {
-        func charToLower(c : Char) : Char {
-            if (Char.isUppercase(c)) {
-                Char.fromNat32(Char.toNat32(c) + 32);
-            } else {
-                c;
+        public func toLowercase(t : Text.Text) : Text.Text {
+            func charToLower(c : Char) : Char {
+                if (Char.isUppercase(c)) {
+                    Char.fromNat32(Char.toNat32(c) + 32);
+                } else {
+                    c;
+                };
             };
+            Text.map(t, charToLower);
         };
-        Text.map(t, charToLower);
-    };
 
         public func isUsernameTaken(username : Text, principalId : Text) : Bool {
             for (managerUsername in usernames.entries()) {

@@ -3,7 +3,10 @@
     "backend": {
       "main": "src/backend/main.mo",
       "type": "motoko",
-      "optimize": "cycles"
+      "optimize": "cycles",
+      "dependencies": [
+        "icfc_sale_2"
+      ]
     },
     "icfc_sale_2": {
       "main": "src/icfc_sale_2/main.mo",
