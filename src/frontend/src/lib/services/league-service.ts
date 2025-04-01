@@ -15,7 +15,7 @@ export class LeagueService {
       process.env.BACKEND_CANISTER_ID ?? "",
     );
     let dto: GetLeagues = {};
-    const result = await identityActor.getLeagues();
+    const result = await identityActor.getLeagues(dto);
     if (isError(result)) throw new Error("Failed to fetch leagues");
     return result.ok;
   }

@@ -3,6 +3,7 @@ import { toasts } from "$lib/stores/toasts-store";
 import { ActorFactory } from "$lib/utils/ActorFactory";
 import type {
   Club,
+  GetClubs,
   LeagueId,
 } from "../../../../declarations/backend/backend.did";
 import { isError } from "../utils/helpers";
@@ -18,7 +19,8 @@ export class ClubService {
         authStore,
         process.env.BACKEND_CANISTER_ID ?? "",
       );
-      const result = await identityActor.getClubs(leagueId);
+      let dto: GetClubs = { leagueId };
+      const result = await identityActor.getClubs(dto);
       if (isError(result)) throw new Error("Failed to fetch clubs");
       return result.ok;
     } catch (error) {
