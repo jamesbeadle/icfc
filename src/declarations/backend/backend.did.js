@@ -51,7 +51,7 @@ export const idlFactory = ({ IDL }) => {
     claimedOn: IDL.Int,
     membershipType: MembershipType,
   });
-  const Result_8 = IDL.Variant({ ok: MembershipClaim__1, err: Error });
+  const Result_9 = IDL.Variant({ ok: MembershipClaim__1, err: Error });
   const ClubId = IDL.Nat16;
   const LeagueId = IDL.Nat16;
   const CountryId = IDL.Nat16;
@@ -65,7 +65,7 @@ export const idlFactory = ({ IDL }) => {
     nationalityId: IDL.Opt(CountryId),
   });
   const AppStatus = IDL.Record({ version: IDL.Text, onHold: IDL.Bool });
-  const Result_7 = IDL.Variant({ ok: AppStatus, err: Error });
+  const Result_8 = IDL.Variant({ ok: AppStatus, err: Error });
   const GetClubs = IDL.Record({ leagueId: LeagueId });
   const ShirtType = IDL.Variant({ Filled: IDL.Null, Striped: IDL.Null });
   const Club = IDL.Record({
@@ -79,7 +79,15 @@ export const idlFactory = ({ IDL }) => {
     primaryColourHex: IDL.Text,
   });
   const Clubs = IDL.Record({ clubs: IDL.Vec(Club), leagueId: LeagueId });
-  const Result_6 = IDL.Variant({ ok: Clubs, err: Error });
+  const Result_7 = IDL.Variant({ ok: Clubs, err: Error });
+  const GetCountries = IDL.Record({});
+  const Country = IDL.Record({
+    id: CountryId,
+    code: IDL.Text,
+    name: IDL.Text,
+  });
+  const Countries = IDL.Record({ countries: IDL.Vec(Country) });
+  const Result_6 = IDL.Variant({ ok: Countries, err: Error });
   const GetICFCProfile = IDL.Record({ principalId: PrincipalId });
   const MembershipClaim = IDL.Record({
     expiresOn: IDL.Opt(IDL.Int),
@@ -233,10 +241,11 @@ export const idlFactory = ({ IDL }) => {
   });
   const Self = IDL.Service({
     addSubApp: IDL.Func([AddSubApp], [Result], []),
-    claimMembership: IDL.Func([], [Result_8], []),
+    claimMembership: IDL.Func([], [Result_9], []),
     createProfile: IDL.Func([CreateProfile], [Result], []),
-    getAppStatus: IDL.Func([], [Result_7], ["query"]),
-    getClubs: IDL.Func([GetClubs], [Result_6], []),
+    getAppStatus: IDL.Func([], [Result_8], ["query"]),
+    getClubs: IDL.Func([GetClubs], [Result_7], []),
+    getCountries: IDL.Func([GetCountries], [Result_6], []),
     getICFCProfile: IDL.Func([GetICFCProfile], [Result_3], []),
     getICFCProfileSummary: IDL.Func([GetICFCProfile], [Result_5], []),
     getLeagues: IDL.Func([GetLeagues], [Result_4], []),

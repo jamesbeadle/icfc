@@ -30,6 +30,14 @@ export interface Clubs {
   clubs: Array<Club>;
   leagueId: LeagueId;
 }
+export interface Countries {
+  countries: Array<Country>;
+}
+export interface Country {
+  id: CountryId;
+  code: string;
+  name: string;
+}
 export type CountryId = number;
 export interface CreateProfile {
   username: string;
@@ -83,6 +91,7 @@ export type Gender = { Male: null } | { Female: null };
 export interface GetClubs {
   leagueId: LeagueId;
 }
+export type GetCountries = {};
 export interface GetICFCProfile {
   principalId: PrincipalId;
 }
@@ -192,15 +201,17 @@ export type Result_2 = { ok: TokenBalances } | { err: Error };
 export type Result_3 = { ok: ProfileDTO } | { err: Error };
 export type Result_4 = { ok: Leagues } | { err: Error };
 export type Result_5 = { ok: ICFCProfileSummary } | { err: Error };
-export type Result_6 = { ok: Clubs } | { err: Error };
-export type Result_7 = { ok: AppStatus } | { err: Error };
-export type Result_8 = { ok: MembershipClaim__1 } | { err: Error };
+export type Result_6 = { ok: Countries } | { err: Error };
+export type Result_7 = { ok: Clubs } | { err: Error };
+export type Result_8 = { ok: AppStatus } | { err: Error };
+export type Result_9 = { ok: MembershipClaim__1 } | { err: Error };
 export interface Self {
   addSubApp: ActorMethod<[AddSubApp], Result>;
-  claimMembership: ActorMethod<[], Result_8>;
+  claimMembership: ActorMethod<[], Result_9>;
   createProfile: ActorMethod<[CreateProfile], Result>;
-  getAppStatus: ActorMethod<[], Result_7>;
-  getClubs: ActorMethod<[GetClubs], Result_6>;
+  getAppStatus: ActorMethod<[], Result_8>;
+  getClubs: ActorMethod<[GetClubs], Result_7>;
+  getCountries: ActorMethod<[GetCountries], Result_6>;
   getICFCProfile: ActorMethod<[GetICFCProfile], Result_3>;
   getICFCProfileSummary: ActorMethod<[GetICFCProfile], Result_5>;
   getLeagues: ActorMethod<[GetLeagues], Result_4>;

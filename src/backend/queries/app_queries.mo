@@ -8,7 +8,7 @@ module AppQueries {
         version : Text;
     };
 
-    public type ProfileDTO = {
+    public type Profile = {
         principalId: Ids.PrincipalId;
         username: Text;
         displayName: Text;
@@ -21,7 +21,7 @@ module AppQueries {
         appPrincipalIds: [(Text, Ids.PrincipalId)];
     };
 
-    public type CountryDTO = {
+    public type Country = {
         id : Ids.CountryId;
         name : Text;
         code : Text;
