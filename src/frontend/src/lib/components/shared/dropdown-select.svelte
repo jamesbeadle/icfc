@@ -7,7 +7,7 @@
     import SearchIcon from "$lib/icons/SearchIcon.svelte";
 
     export let value: any;
-    export let options: { id: any; label: string }[];
+    export let options: Array<{ id: number | string | bigint; label: string }> = [];
     export let placeholder = "Select...";
     export let compact = false;
     export let onChange: ((value: any) => void) | undefined = undefined;

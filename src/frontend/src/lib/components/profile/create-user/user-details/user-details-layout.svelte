@@ -3,13 +3,10 @@
     import ProfilePicture from "./profile-picture.svelte";
     import GetFootballInfo from "./get-football-info.svelte";
     import GetNames from "./get-names.svelte";
-    import type { Club, ClubId, Country, CountryId, League, LeagueId } from "../../../../../../../declarations/backend/backend.did";
+    import type { ClubId, CountryId, LeagueId } from "../../../../../../../declarations/backend/backend.did";
 
     export let file: File | null = null;
     
-    export let countries: Country[];
-    export let leagues: League[];
-    export let clubs: Club[];
     export let nationalityId: CountryId | null;
     export let favouriteLeagueId: LeagueId | null;
     export let favouriteClubId: ClubId | null;
@@ -28,7 +25,7 @@
     
     <div class="flex flex-col w-full space-y-8 base:space-y-14 md:w-3/4">
         <GetNames bind:username bind:usernameAvailable bind:displayName {store} />
-        <GetFootballInfo {countries} {leagues} {clubs} bind:nationalityId bind:favouriteLeagueId bind:favouriteClubId />
+        <GetFootballInfo bind:nationalityId bind:favouriteLeagueId bind:favouriteClubId />
     </div>
 </div>
 <div class="mt-8 border-t border-BrandGrayShade3"></div>
