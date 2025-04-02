@@ -16,6 +16,7 @@ import SNSToken "mo:waterway-mops/sns-wrappers/ledger";
 import CanisterIds "mo:waterway-mops/CanisterIds";
 import Management "mo:waterway-mops/Management";
 import BaseQueries "mo:waterway-mops/queries/BaseQueries";
+import Account "mo:waterway-mops/Account";
 
 /* ----- Canister Definition Files ----- */
 
@@ -157,7 +158,7 @@ actor class Self() = this {
 
     let icfc_ledger : SNSToken.Interface = actor (CanisterIds.ICFC_SNS_LEDGER_CANISTER_ID);
     let ckBTC_ledger : SNSToken.Interface = actor (Environment.CKBTC_LEDGER_CANISTER_ID);
-    let icp_ledger : SNSToken.Interface = actor (CanisterIds.ICP_COINS_CANISTER_ID);
+    let icp_ledger : SNSToken.Interface = actor (CanisterIds.NNS_LEDGER_CANISTER_ID);
 
     let icfc_tokens = await icfc_ledger.icrc1_balance_of({
       owner = Principal.fromText(CanisterIds.ICFC_BACKEND_CANISTER_ID);
@@ -178,6 +179,19 @@ actor class Self() = this {
       icpBalance = icp_tokens;
       icgcBalance = 0; // TODO after ICGC SNS
     });
+  };
+
+  public shared ({ caller }) func getICPBalance(user_principal : Ids.PrincipalId) : async Result.Result<Nat, Enums.Error> {
+    assert not Principal.isAnonymous(caller);
+    assert Principal.toText(caller) == Environment.ICFC_SALE_2_CANISTER_ID;
+
+    let icp_ledger : SNSToken.Interface = actor (CanisterIds.NNS_LEDGER_CANISTER_ID);
+    let icp_tokens = await icp_ledger.icrc1_balance_of({
+      owner = Principal.fromText(CanisterIds.ICFC_BACKEND_CANISTER_ID);
+      subaccount = ?Account.principalToSubaccount(Principal.fromText(user_principal));
+    });
+
+    return #ok(icp_tokens);
   };
 
   public shared ({ caller }) func getICFCProfile(dto : ProfileCommands.GetICFCProfile) : async Result.Result<ProfileQueries.ProfileDTO, Enums.Error> {
@@ -266,12 +280,10 @@ actor class Self() = this {
   };
 
   system func postupgrade() {
-    ignore Timer.setTimer<system>(#nanoseconds(Int.abs(1)), postUpgradeCallback);
-    /*
     setProfileData();
     setFootballChannelData();
     stable_membership_timer_id := Timer.recurringTimer<system>(#seconds(86_400), checkMembership);
-    */
+    ignore Timer.setTimer<system>(#nanoseconds(Int.abs(1)), postUpgradeCallback);
   };
 
   private func postUpgradeCallback() : async () {

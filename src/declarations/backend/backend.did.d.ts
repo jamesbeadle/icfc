@@ -43,7 +43,6 @@ export interface CreateProfile {
   username: string;
   displayName: string;
   favouriteClubId: [] | [ClubId];
-  appPrincipalIds: Array<[SubApp, PrincipalId]>;
   profilePicture: [] | [Uint8Array | number[]];
   favouriteLeagueId: [] | [LeagueId];
   nationalityId: [] | [CountryId];
@@ -197,23 +196,25 @@ export interface ProfileDTO {
 }
 export type Result = { ok: null } | { err: Error };
 export type Result_1 = { ok: UserNeuronsDTO } | { err: Error };
+export type Result_10 = { ok: MembershipClaim__1 } | { err: Error };
 export type Result_2 = { ok: TokenBalances } | { err: Error };
 export type Result_3 = { ok: ProfileDTO } | { err: Error };
 export type Result_4 = { ok: Leagues } | { err: Error };
-export type Result_5 = { ok: ICFCProfileSummary } | { err: Error };
-export type Result_6 = { ok: Countries } | { err: Error };
-export type Result_7 = { ok: Clubs } | { err: Error };
-export type Result_8 = { ok: AppStatus } | { err: Error };
-export type Result_9 = { ok: MembershipClaim__1 } | { err: Error };
+export type Result_5 = { ok: bigint } | { err: Error };
+export type Result_6 = { ok: ICFCProfileSummary } | { err: Error };
+export type Result_7 = { ok: Countries } | { err: Error };
+export type Result_8 = { ok: Clubs } | { err: Error };
+export type Result_9 = { ok: AppStatus } | { err: Error };
 export interface Self {
   addSubApp: ActorMethod<[AddSubApp], Result>;
-  claimMembership: ActorMethod<[], Result_9>;
+  claimMembership: ActorMethod<[], Result_10>;
   createProfile: ActorMethod<[CreateProfile], Result>;
-  getAppStatus: ActorMethod<[], Result_8>;
-  getClubs: ActorMethod<[GetClubs], Result_7>;
-  getCountries: ActorMethod<[GetCountries], Result_6>;
+  getAppStatus: ActorMethod<[], Result_9>;
+  getClubs: ActorMethod<[GetClubs], Result_8>;
+  getCountries: ActorMethod<[GetCountries], Result_7>;
   getICFCProfile: ActorMethod<[GetICFCProfile], Result_3>;
-  getICFCProfileSummary: ActorMethod<[GetICFCProfile], Result_5>;
+  getICFCProfileSummary: ActorMethod<[GetICFCProfile], Result_6>;
+  getICPBalance: ActorMethod<[PrincipalId], Result_5>;
   getLeagues: ActorMethod<[GetLeagues], Result_4>;
   getProfile: ActorMethod<[], Result_3>;
   getTokenBalances: ActorMethod<[], Result_2>;

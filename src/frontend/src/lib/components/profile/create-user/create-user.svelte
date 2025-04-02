@@ -15,7 +15,7 @@
   import CreateUserHeader from "./create-user-header.svelte";
   import UserDetailsLayout from "./user-details/user-details-layout.svelte";
 
-  let isLoading = true;
+  let isLoading = false;
   let isSubmitDisabled = true;
   
   let usernameAvailable = false;
@@ -24,7 +24,7 @@
   
   let openFplPrincipalId = '';
   
-  let loadingNeurons = false;
+  let loadingNeurons = true;
   let neurons: Neuron[] = [];
   let maxStakedICFC = 0n;
 
@@ -37,32 +37,35 @@
   let file: File | null = null;
   
   let userMembershipEligibility: EligibleMembership | null = null;
+  let loadingDropdownData = true;
   $: isSubmitDisabled = !username || !usernameAvailable;
 
-  onMount(async () => {
+  onMount(() => {
+    getNeurons();
+    loadData();
+  });
+
+  async function loadData(){
     try{
-      await loadData();
-      let countriesResult = await countryStore.getCountries();
+    let countriesResult = await countryStore.getCountries();
+      console.log('load countrie complete')
       if(countriesResult){
         countries = countriesResult.countries;
       }
-      countryStore.setCountries(countries);
+      countryStore.setCountries(countries); 
+      
       let leaguesResult = await leagueStore.getLeagues();
+      console.log('load leagues complete')
       if(leaguesResult){
         leagues = leaguesResult.leagues;
       }
       leagueStore.setLeagues(leagues);
-    } catch {
-        toasts.addToast({type: 'error', message: 'Failed to load data.'});
-        leagues = [];
-        countries = [];
-    } finally {
-        isLoading = false;
-    }
-  });
 
-  async function loadData(){
-    await getNeurons();
+    } catch {
+      toasts.addToast({type: 'info', message: 'Error loading league and country data.'});
+    } finally {
+      loadingDropdownData = false;
+    }
   }
 
   async function getNeurons() {
@@ -142,7 +145,7 @@
   async function refreshNeurons() {
     try{
       loadingNeurons = true;
-      await loadData();
+      await getNeurons();
     } catch {
       toasts.addToast({ type: 'error', message: 'Failed to refresh neurons' })
     } finally {
@@ -156,8 +159,12 @@
 {:else}
   <div class="flex flex-col mx-auto space-y-6 page-wrapper">
       <CreateUserHeader />
-      <UserDetailsLayout bind:file bind:nationalityId bind:favouriteLeagueId bind:favouriteClubId bind:username bind:usernameAvailable bind:displayName store={userStore} />
-
+      {#if loadingDropdownData}
+        <LocalSpinner />
+      {:else}
+        <UserDetailsLayout bind:file bind:nationalityId bind:favouriteLeagueId bind:favouriteClubId bind:username bind:usernameAvailable bind:displayName store={userStore} />
+      {/if}
+      
       <div class="flex flex-col space-y-6">
         <p class="text-lg text-white cta-text">Neuron Based Membership</p>
         <p class="text-BrandGrayShade5">
@@ -169,7 +176,7 @@
         {:else}
           {#if neurons.length >= 0}
             <div class="flex flex-col space-y-4">
-              <AvailableMembership {neurons} {refreshNeurons} availableMembership={userMembershipEligibility?.membershipType!} {maxStakedICFC} />            
+              <!--<AvailableMembership {neurons} {refreshNeurons} availableMembership={userMembershipEligibility?.membershipType!} {maxStakedICFC} />    -->        
             </div>
           {/if}
         {/if}

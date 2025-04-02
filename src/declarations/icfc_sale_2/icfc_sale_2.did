@@ -1,14 +1,14 @@
-type UserParticipationDTO = record {participations: vec ClaimedRecord;};
+type UserParticipation = record {participations: vec ClaimedRecord;};
 type Time = int;
 type Self = 
  service {
-   claimICFCPackets: (CalimICFCPackets) -> (Result_4);
+   claimICFCPackets: () -> (Result_4);
    getAppStatus: () -> (Result_3) query;
    getProgress: () -> (Result_2);
    getUserParticipation: () -> (Result_1);
    getUsersICFCDistributions: () -> (Result);
  };
-type SaleProgressDTO = 
+type SaleProgress = 
  record {
    remainingPackets: nat;
    totalPackets: nat;
@@ -21,17 +21,17 @@ type Result_4 =
 type Result_3 = 
  variant {
    err: Error;
-   ok: AppStatusDTO;
+   ok: AppStatus;
  };
 type Result_2 = 
  variant {
    err: Error;
-   ok: SaleProgressDTO;
+   ok: SaleProgress;
  };
 type Result_1 = 
  variant {
    err: Error;
-   ok: UserParticipationDTO;
+   ok: UserParticipation;
  };
 type Result = 
  variant {
@@ -84,8 +84,7 @@ type ClaimedRecord =
    claimedOn: int;
    packetsClaimed: nat;
  };
-type CalimICFCPackets = record {packets: nat;};
-type AppStatusDTO = 
+type AppStatus = 
  record {
    onHold: bool;
    version: text;

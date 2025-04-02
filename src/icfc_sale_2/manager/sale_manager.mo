@@ -11,7 +11,6 @@ import SaleQueries "../queries/sale_queries";
 import Ids "mo:waterway-mops/Ids";
 import CanisterIds "mo:waterway-mops/CanisterIds";
 import T "../sale_types";
-import DTO "../dtos/dtos";
 import Timer "mo:base/Timer";
 import Debug "mo:base/Debug";
 import Int "mo:base/Int";
@@ -37,39 +36,49 @@ module {
             if (icfcPacketsRemaining == 0) {
                 return #err(#NoPacketsRemaining);
             };
-
-            if (icfcPacketsRemaining < dto.packets) {
-                return #err(#InsufficientPacketsRemaining);
-            };
-
-            let user_principal = dto.principalId;
-            var claimID : Nat = 0;
-            let user = saleParticipants.get(user_principal);
-            switch (user) {
-                case (null) {
-                    let claimedRecord : T.ClaimedRecord = {
-                        claimedOn = Time.now();
-                        packetsClaimed = dto.packets;
-                        claimId = 1;
+            let packetsToClaim = await getPacketsToClaim(dto.principalId);
+            switch (packetsToClaim) {
+                case (#ok(packets)) {
+                    if (packets < 1) {
+                        return #err(#InEligible);
                     };
-                    claimID := 1;
-                    saleParticipants.put(user_principal, List.fromArray([claimedRecord]));
-                };
-                case (?participations) {
-                    let claimedRecord : T.ClaimedRecord = {
-                        claimedOn = Time.now();
-                        packetsClaimed = dto.packets;
-                        claimId = List.size(participations) + 1;
+                    if (icfcPacketsRemaining < packets) {
+                        return #err(#InsufficientPacketsRemaining);
                     };
-                    claimID := List.size(participations) + 1;
-                    let updatedParticipations = List.append(participations, List.fromArray([claimedRecord]));
-                    saleParticipants.put(user_principal, updatedParticipations);
-                };
 
+                    let user_principal = dto.principalId;
+                    var claimID : Nat = 0;
+                    let user = saleParticipants.get(user_principal);
+                    switch (user) {
+                        case (null) {
+                            let claimedRecord : T.ClaimedRecord = {
+                                claimedOn = Time.now();
+                                packetsClaimed = packets;
+                                claimId = 1;
+                            };
+                            claimID := 1;
+                            saleParticipants.put(user_principal, List.fromArray([claimedRecord]));
+                        };
+                        case (?participations) {
+                            let claimedRecord : T.ClaimedRecord = {
+                                claimedOn = Time.now();
+                                packetsClaimed = packets;
+                                claimId = List.size(participations) + 1;
+                            };
+                            claimID := List.size(participations) + 1;
+                            let updatedParticipations = List.append(participations, List.fromArray([claimedRecord]));
+                            saleParticipants.put(user_principal, updatedParticipations);
+                        };
+
+                    };
+                    icfcPacketsRemaining := icfcPacketsRemaining - packets;
+                    await scheduleDistribution(user_principal, packets, claimID);
+                    return #ok(());
+                };
+                case (#err(err)) {
+                    return #err(err);
+                };
             };
-            icfcPacketsRemaining := icfcPacketsRemaining - dto.packets;
-            await scheduleDistribution(user_principal, dto.packets, claimID);
-            return #ok(());
         };
 
         public func getUsersICFCDistributions(dto : SaleQueries.GetICFCDistributions) : async Result.Result<[T.ICFCDistribution], Enums.Error> {
@@ -83,7 +92,7 @@ module {
             return #ok(userDistributions);
         };
 
-        public func getUserParticipation(dto : SaleQueries.GetUserParticipation) : async Result.Result<DTO.UserParticipationDTO, Enums.Error> {
+        public func getUserParticipation(dto : SaleQueries.GetUserParticipation) : async Result.Result<SaleQueries.UserParticipation, Enums.Error> {
             let user_principal = dto.principalId;
             let user = saleParticipants.get(user_principal);
             switch (user) {
@@ -96,8 +105,8 @@ module {
             };
         };
 
-        public func getProgress() : async Result.Result<DTO.SaleProgressDTO, Enums.Error> {
-            let result : DTO.SaleProgressDTO = {
+        public func getProgress() : async Result.Result<SaleQueries.SaleProgress, Enums.Error> {
+            let result : SaleQueries.SaleProgress = {
                 totalPackets = TOTAL_ICFC_PACKETS;
                 remainingPackets = icfcPacketsRemaining;
             };
@@ -151,6 +160,7 @@ module {
                         #seconds(Int.abs(delay)),
                         func() : async () {
                             let res = await distributeTokens(distribution.principalId, distribution.amount);
+                            // Debug.print("Distributing tokens to " # distribution.principalId # " for claimId: " # Nat.toText(distribution.claimId) # " with amount: " # Nat.toText(distribution.installment));
                             switch (res) {
                                 case (#ok(_)) {
 
@@ -171,7 +181,6 @@ module {
                                     };
 
                                     icfcDistributions := Array.append(updatedDistributions, [updatedDistribution]);
-                                    icfcDistributions := updatedDistributions;
                                 };
                                 case (#err(err)) {
                                     Debug.print("Error distributing tokens: " # SaleUtilities.variantToText(err));
@@ -223,6 +232,7 @@ module {
                     #seconds(delay),
                     func() : async () {
                         let res = await distributeTokens(principal, installmentAmount);
+                        // Debug.print("Distributing tokens to " # principal # " for claimId: " # Nat.toText(claimId) # " with amount: " # Nat.toText(installmentAmount));
                         switch (res) {
                             case (#ok(_)) {
                                 // remove from pending
@@ -243,7 +253,6 @@ module {
                                 };
                                 // update the list
                                 icfcDistributions := Array.append(updatedDistributions, [updatedDistribution]);
-                                icfcDistributions := updatedDistributions;
                             };
                             case (#err(err)) {
                                 Debug.print("Error distributing tokens: " # SaleUtilities.variantToText(err));
@@ -282,7 +291,64 @@ module {
                     return #err(err);
                 };
             };
-        }
+        };
+
+        private func getPacketsToClaim(principalId : Ids.PrincipalId) : async Result.Result<Nat, Enums.Error> {
+            let backend_canister = actor (CanisterIds.ICFC_BACKEND_CANISTER_ID) : actor {
+                getICPBalance : (user_principal : Ids.PrincipalId) -> async Result.Result<Nat, Enums.Error>;
+            };
+            let res = await backend_canister.getICPBalance(principalId);
+            switch (res) {
+                case (#ok(balance)) {
+                    let user = saleParticipants.get(principalId);
+                    let one_packect_cost_e8s = Nat.sub(48 * 100_000_000, 10_000);
+                    switch (user) {
+                        case (null) {
+
+                            let eligiblePackets = Nat.div(balance, one_packect_cost_e8s);
+                            return #ok(eligiblePackets);
+
+                        };
+                        case (?participations) {
+                            var totalClaimedPackets : Nat = 0;
+                            for (participation : T.ClaimedRecord in List.toArray(participations).vals()) {
+                                totalClaimedPackets := totalClaimedPackets + participation.packetsClaimed;
+                            };
+
+                            // calculate the total ICP value of the claimed packets
+                            let total_icp_value = totalClaimedPackets * 48;
+                            let total_icp_value_e8s = total_icp_value * 100_000_000;
+
+                            // calculate the total fees paid
+                            let total_claims = List.size(participations);
+                            let total_fees_paid = total_claims * 10_000;
+
+                            // calculate the total actual ICP value
+                            let total_actual_icp_value = Nat.sub(total_icp_value_e8s, total_fees_paid);
+
+                            if (balance < total_actual_icp_value) {
+                                return #err(#InsufficientFunds);
+                            };
+                            if (balance == total_actual_icp_value) {
+                                return #err(#AlreadyClaimed);
+                            };
+
+                            // Check if any unclaimed packets are remaining
+                            if (balance > total_actual_icp_value) {
+                                let remainingPackets = Nat.div(Nat.sub(balance, total_actual_icp_value), one_packect_cost_e8s);
+                                return #ok(remainingPackets);
+                            };
+
+                            return #err(#InEligible);
+
+                        };
+                    };
+                };
+                case (#err(err)) {
+                    return #err(err);
+                };
+            };
+        };
 
     };
 };

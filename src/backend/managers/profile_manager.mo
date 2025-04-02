@@ -168,14 +168,31 @@ module {
 
             let existingProfileCanisterId = profileCanisterIndex.get(principalId);
             switch (existingProfileCanisterId) {
-                case (?_) {
-                    let dto : ProfileCommands.NotifyAppofLink = {
-                        icfcPrincipalId = principalId;
-                        subApp = subAppRecord.subApp;
-                        subAppUserPrincipalId = subAppRecord.subAppUserPrincipalId;
+                case (?foundCanisterId) {
+                    let getProfile : ProfileCommands.GetProfile = {
+                        principalId = principalId;
                     };
-                    let res = await notifyAppsofLink(dto);
-                    return res;
+
+                    let profile_canister = actor (foundCanisterId) : actor {
+                        getProfile : (dto : ProfileCommands.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, Enums.Error>;
+                    };
+
+                    let profile = await profile_canister.getProfile(getProfile);
+                    switch (profile) {
+                        case (#ok(profile)) {
+                            let dto : ProfileCommands.NotifyAppofLink = {
+                                icfcPrincipalId = principalId;
+                                subApp = subAppRecord.subApp;
+                                subAppUserPrincipalId = subAppRecord.subAppUserPrincipalId;
+                                membershipType = profile.membershipType;
+                            };
+                            let res = await notifyAppsofLink(dto);
+                            return res;
+                        };
+                        case (#err(err)) {
+                            return #err(err);
+                        };
+                    };
                 };
                 case (null) {
                     return #err(#NotFound);

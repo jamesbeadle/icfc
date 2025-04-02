@@ -2,10 +2,10 @@ import Result "mo:base/Result";
 import Principal "mo:base/Principal";
 import Timer "mo:base/Timer";
 import T "./sale_types";
-import DTO "./dtos/dtos";
 import Base "mo:waterway-mops/BaseTypes";
 import Ids "mo:waterway-mops/Ids";
 import Enums "mo:waterway-mops/Enums";
+import BaseTypes "mo:waterway-mops/BaseTypes";
 import SaleManager "manager/sale_manager";
 import SaleCommands "commands/sale_commands";
 import SaleQueries "queries/sale_queries";
@@ -24,20 +24,19 @@ actor class Self() = this {
     private stable var stable_saleParticipants : [(Ids.PrincipalId, [T.ClaimedRecord])] = [];
     private stable var stable_icfcDistributions : [T.ICFCDistribution] = [];
 
-    public shared query func getAppStatus() : async Result.Result<DTO.AppStatusDTO, Enums.Error> {
+    public shared query func getAppStatus() : async Result.Result<BaseTypes.AppStatus, Enums.Error> {
         return #ok(appStatus);
     };
 
-    public shared ({ caller }) func claimICFCPackets(command : SaleCommands.CalimICFCPackets) : async Result.Result<(), Enums.Error> {
+    public shared ({ caller }) func claimICFCPackets() : async Result.Result<(), Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let dto : SaleCommands.ParticipateInSale = {
             principalId = Principal.toText(caller);
-            packets = command.packets;
         };
         return await saleManager.claimICFCPackets(dto);
     };
 
-    public shared ({ caller }) func getUserParticipation() : async Result.Result<DTO.UserParticipationDTO, Enums.Error> {
+    public shared ({ caller }) func getUserParticipation() : async Result.Result<SaleQueries.UserParticipation, Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let dto : SaleQueries.GetUserParticipation = {
             principalId = Principal.toText(caller);
@@ -53,7 +52,7 @@ actor class Self() = this {
         return await saleManager.getUsersICFCDistributions(dto);
     };
 
-    public shared func getProgress() : async Result.Result<DTO.SaleProgressDTO, Enums.Error> {
+    public shared func getProgress() : async Result.Result<SaleQueries.SaleProgress, Enums.Error> {
         return await saleManager.getProgress();
     };
 
