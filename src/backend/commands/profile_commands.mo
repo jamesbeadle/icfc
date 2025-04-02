@@ -11,7 +11,6 @@ module ProfileCommands {
         username : Text;
         profilePicture : ?Blob;
         displayName : Text;
-        appPrincipalIds : [(T.SubApp, Ids.PrincipalId)];
         favouriteLeagueId : ?FootballIds.LeagueId;
         favouriteClubId : ?FootballIds.ClubId;
         nationalityId : ?Ids.CountryId;

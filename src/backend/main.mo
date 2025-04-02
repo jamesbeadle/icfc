@@ -16,6 +16,7 @@ import SNSToken "mo:waterway-mops/sns-wrappers/ledger";
 import CanisterIds "mo:waterway-mops/CanisterIds";
 import Management "mo:waterway-mops/Management";
 import BaseQueries "mo:waterway-mops/queries/BaseQueries";
+import Account "mo:waterway-mops/Account";
 
 /* ----- Canister Definition Files ----- */
 
@@ -178,6 +179,19 @@ actor class Self() = this {
       icpBalance = icp_tokens;
       icgcBalance = 0; // TODO after ICGC SNS
     });
+  };
+
+  public shared ({ caller }) func getICPBalance(user_principal : Ids.PrincipalId) : async Result.Result<Nat, Enums.Error> {
+    assert not Principal.isAnonymous(caller);
+    assert Principal.toText(caller) == Environment.ICFC_SALE_2_CANISTER_ID;
+
+    let icp_ledger : SNSToken.Interface = actor (CanisterIds.ICP_COINS_CANISTER_ID);
+    let icp_tokens = await icp_ledger.icrc1_balance_of({
+      owner = Principal.fromText(CanisterIds.ICFC_BACKEND_CANISTER_ID);
+      subaccount = ?Account.principalToSubaccount(Principal.fromText(user_principal));
+    });
+
+    return #ok(icp_tokens);
   };
 
   public shared ({ caller }) func getICFCProfile(dto : ProfileCommands.GetICFCProfile) : async Result.Result<ProfileQueries.ProfileDTO, Enums.Error> {

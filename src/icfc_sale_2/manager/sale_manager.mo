@@ -11,7 +11,6 @@ import SaleQueries "../queries/sale_queries";
 import Ids "mo:waterway-mops/Ids";
 import CanisterIds "mo:waterway-mops/CanisterIds";
 import T "../sale_types";
-import DTO "../dtos/dtos";
 import Timer "mo:base/Timer";
 import Debug "mo:base/Debug";
 import Int "mo:base/Int";
@@ -72,6 +71,66 @@ module {
             return #ok(());
         };
 
+        public func refreshParticipant(dto : SaleCommands.RefreshParticipant) : async Result.Result<(), Enums.Error> {
+            let backend_canister = actor (CanisterIds.ICFC_BACKEND_CANISTER_ID) : actor {
+                getICPBalance : (user_principal : Ids.PrincipalId) -> async Result.Result<Nat, Enums.Error>;
+            };
+            let res = await backend_canister.getICPBalance(dto.principalId);
+            switch (res) {
+                case (#ok(balance)) {
+                    let user = saleParticipants.get(dto.principalId);
+                    switch (user) {
+                        case (null) {
+                            return #err(#NotFound);
+                        };
+                        case (?participations) {
+                            var totalClaimedPackets : Nat = 0;
+                            for (participation : T.ClaimedRecord in List.toArray(participations).vals()) {
+                                totalClaimedPackets := totalClaimedPackets + participation.packetsClaimed;
+                            };
+
+                            let total_icp_value = totalClaimedPackets * 48;
+                            let total_icp_value_e8s = total_icp_value * 100_000_000;
+                            let total_claims = List.size(participations);
+                            let total_fees_paid = total_claims * 10_000;
+                            let total_actual_icp_value = Nat.sub(total_icp_value_e8s, total_fees_paid);
+
+                            if (balance < total_actual_icp_value) {
+                                return #err(#InsufficientFunds);
+                            };
+                            if (balance == total_actual_icp_value) {
+                                return #err(#AlreadyClaimed);
+                            };
+
+                            // Check if any unclaimed packets are remaining
+                            if (balance > total_actual_icp_value) {
+                                let remainingPackets = Nat.div(Nat.sub(balance, total_actual_icp_value), 48);
+                                if (remainingPackets > icfcPacketsRemaining) {
+                                    return #err(#NoPacketsRemaining);
+                                };
+                                if (remainingPackets == 0) {
+                                    return #err(#InEligible);
+                                };
+                                let claimedRecord : T.ClaimedRecord = {
+                                    claimedOn = Time.now();
+                                    packetsClaimed = remainingPackets;
+                                    claimId = total_claims + 1;
+                                };
+                                let updatedParticipations = List.append(participations, List.fromArray([claimedRecord]));
+                                saleParticipants.put(dto.principalId, updatedParticipations);
+                                icfcPacketsRemaining := Nat.sub(icfcPacketsRemaining, remainingPackets);
+                                await scheduleDistribution(dto.principalId, remainingPackets, total_claims + 1);
+                            };
+                            return #ok(());
+                        };
+                    };
+                };
+                case (#err(err)) {
+                    return #err(err);
+                };
+            };
+        };
+
         public func getUsersICFCDistributions(dto : SaleQueries.GetICFCDistributions) : async Result.Result<[T.ICFCDistribution], Enums.Error> {
             let allDistributions = icfcDistributions;
             let userDistributions = Array.filter<T.ICFCDistribution>(
@@ -83,7 +142,7 @@ module {
             return #ok(userDistributions);
         };
 
-        public func getUserParticipation(dto : SaleQueries.GetUserParticipation) : async Result.Result<DTO.UserParticipationDTO, Enums.Error> {
+        public func getUserParticipation(dto : SaleQueries.GetUserParticipation) : async Result.Result<SaleQueries.UserParticipation, Enums.Error> {
             let user_principal = dto.principalId;
             let user = saleParticipants.get(user_principal);
             switch (user) {
@@ -96,8 +155,8 @@ module {
             };
         };
 
-        public func getProgress() : async Result.Result<DTO.SaleProgressDTO, Enums.Error> {
-            let result : DTO.SaleProgressDTO = {
+        public func getProgress() : async Result.Result<SaleQueries.SaleProgress, Enums.Error> {
+            let result : SaleQueries.SaleProgress = {
                 totalPackets = TOTAL_ICFC_PACKETS;
                 remainingPackets = icfcPacketsRemaining;
             };
@@ -151,6 +210,7 @@ module {
                         #seconds(Int.abs(delay)),
                         func() : async () {
                             let res = await distributeTokens(distribution.principalId, distribution.amount);
+                            // Debug.print("Distributing tokens to " # distribution.principalId # " for claimId: " # Nat.toText(distribution.claimId) # " with amount: " # Nat.toText(distribution.installment));
                             switch (res) {
                                 case (#ok(_)) {
 
@@ -171,7 +231,6 @@ module {
                                     };
 
                                     icfcDistributions := Array.append(updatedDistributions, [updatedDistribution]);
-                                    icfcDistributions := updatedDistributions;
                                 };
                                 case (#err(err)) {
                                     Debug.print("Error distributing tokens: " # SaleUtilities.variantToText(err));
@@ -223,6 +282,7 @@ module {
                     #seconds(delay),
                     func() : async () {
                         let res = await distributeTokens(principal, installmentAmount);
+                        // Debug.print("Distributing tokens to " # principal # " for claimId: " # Nat.toText(claimId) # " with amount: " # Nat.toText(installmentAmount));
                         switch (res) {
                             case (#ok(_)) {
                                 // remove from pending
@@ -243,7 +303,6 @@ module {
                                 };
                                 // update the list
                                 icfcDistributions := Array.append(updatedDistributions, [updatedDistribution]);
-                                icfcDistributions := updatedDistributions;
                             };
                             case (#err(err)) {
                                 Debug.print("Error distributing tokens: " # SaleUtilities.variantToText(err));

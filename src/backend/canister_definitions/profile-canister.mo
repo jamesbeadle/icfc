@@ -191,7 +191,7 @@ actor class _ProfileCanister() {
             username = dto.username;
             displayName = dto.displayName;
             termsAgreed = false;
-            appPrincipalIds = dto.appPrincipalIds;
+            appPrincipalIds = [];
             podcastIds = [];
             membershipType = membership.membershipType;
             membershipClaims = [{
