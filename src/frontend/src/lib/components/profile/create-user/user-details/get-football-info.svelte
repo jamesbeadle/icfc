@@ -1,5 +1,4 @@
 <script lang="ts">
-    import DropdownSelect from "$lib/components/shared/dropdown-select.svelte";
     import { countryStore } from "$lib/stores/country-store";
     import { leagueStore } from "$lib/stores/league-store";
     import { clubStore } from "$lib/stores/club-store";
@@ -16,8 +15,11 @@
     $: leagues = $leagueStore;
     $: clubs = $clubStore;
     $: console.log("Country Store:", $countryStore);
+    $: console.log("Countries Options:", countryOptions);
     $: console.log("League Store:", $leagueStore);
+    $: console.log("Leagues Options:", leagueOptions);
     $: console.log("Club Store:", $clubStore);
+    $: console.log("Clubs Options:", clubOptions);
 
     let lastFetchedLeagueId: LeagueId | null = null;
 
@@ -76,20 +78,29 @@
     <div class="space-y-2">
         <p class="form-title">National Team <span class="text-xs text-BrandGrayShade3">(Optional)</span></p>
         <p class="form-hint min-h-[40px]">Select to participate in nationwide football competitions.</p>
-        <DropdownSelect
-            options={countryOptions}
+        <select
             bind:value={nationalityId}
-            searchOn={true}
-        />
+            class="w-full brand-input"
+        >
+            <option value={null}>Select...</option>
+            {#each countryOptions as country}
+                <option value={country.id}>{country.label}</option>
+            {/each}
+        </select>
     </div>
+
     <div class="space-y-2">
         <p class="form-title">Your Favourite League <span class="text-xs text-BrandGrayShade3">(Optional)</span></p>
         <p class="form-hint min-h-[40px]">Select to find your favourite club.</p>
-        <DropdownSelect
-            options={leagueOptions}
+        <select
             bind:value={favouriteLeagueId}
-            searchOn={true}
-        />
+            class="w-full brand-input"
+        >
+            <option value={null}>Select...</option>
+            {#each leagueOptions as league}
+                <option value={league.id}>{league.label}</option>
+            {/each}
+        </select>
     </div>
     <div class="space-y-2">
         <p class="form-title">Your Favourite Club <span class="text-xs text-BrandGrayShade3">(Optional)</span></p>
@@ -102,11 +113,15 @@
                 Select to enable club based rewards.
             {/if}
         </p>
-        <DropdownSelect
-            options={clubOptions}
+        <select
             bind:value={favouriteClubId}
-            searchOn={true}
-            disabled={favouriteLeagueId == null || favouriteLeagueId === 0}
-        />
+            disabled={!favouriteLeagueId}
+            class="w-full brand-input disabled:opacity-50"
+        >
+            <option value={null}>Select...</option>
+            {#each clubOptions as club}
+                <option value={club.id}>{club.label}</option>
+            {/each}
+        </select>
     </div>
-  </div>
+</div>
