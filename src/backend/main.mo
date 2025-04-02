@@ -19,7 +19,7 @@ import BaseQueries "mo:waterway-mops/queries/BaseQueries";
 
 /* ----- Canister Definition Files ----- */
 
-import ProfileCanister "canister_definations/profile-canister";
+import ProfileCanister "canister_definitions/profile-canister";
 
 /* ----- Queries ----- */
 import AppQueries "queries/app_queries";
