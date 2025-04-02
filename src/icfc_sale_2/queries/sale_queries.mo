@@ -19,4 +19,13 @@ module {
     public type GetICFCDistributions = {
         principalId : Ids.PrincipalId;
     };
+
+    public type UserParticipation = {
+        participations : [T.ClaimedRecord];
+    };
+
+    public type SaleProgress = {
+        totalPackets : Nat;
+        remainingPackets : Nat;
+    };
 };
