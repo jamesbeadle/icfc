@@ -1,6 +1,7 @@
 import Ids "mo:waterway-mops/Ids";
 import FootballIds "mo:waterway-mops/football/FootballIds";
 import T "../icfc_types";
+import ICFCEnums "mo:waterway-mops/ICFCEnums";
 
 module ProfileCommands {
     public type GetProfile = {
@@ -77,6 +78,7 @@ module ProfileCommands {
     };
 
     public type NotifyAppofLink = {
+        membershipType : ICFCEnums.MembershipType;
         subAppUserPrincipalId : Ids.PrincipalId;
         subApp : T.SubApp;
         icfcPrincipalId : Ids.PrincipalId;
