@@ -21,9 +21,7 @@
   let usernameAvailable = false;
   let username = "";
   let displayName = "";
-  
-  let openFplPrincipalId = '';
-  
+
   let loadingNeurons = true;
   let neurons: Neuron[] = [];
   let maxStakedICFC = 0n;
@@ -41,48 +39,52 @@
   $: isSubmitDisabled = !username || !usernameAvailable;
 
   onMount(() => {
-    getNeurons();
-    loadData();
+    Promise.all([
+      getNeurons(),
+      loadCountriesAndLeagues()
+    ]);
   });
 
-  async function loadData(){
-    try{
-    let countriesResult = await countryStore.getCountries();
-      console.log('load countrie complete')
-      if(countriesResult){
-        countries = countriesResult.countries;
-      }
-      countryStore.setCountries(countries); 
-      
-      let leaguesResult = await leagueStore.getLeagues();
-      console.log('load leagues complete')
-      if(leaguesResult){
-        leagues = leaguesResult.leagues;
-      }
-      leagueStore.setLeagues(leagues);
+  async function loadCountriesAndLeagues() {
+    try {
+      const [countriesResult, leaguesResult] = await Promise.all([
+        countryStore.getCountries(),
+        leagueStore.getLeagues()
+      ]);
 
+      if (countriesResult) {
+        countries = countriesResult.countries;
+        countryStore.setCountries(countries);
+      }
+
+      if (leaguesResult) {
+        leagues = leaguesResult.leagues;
+        leagueStore.setLeagues(leagues);
+      }
+      console.log('load countries and leagues complete')
     } catch {
-      toasts.addToast({type: 'info', message: 'Error loading league and country data.'});
+      toasts.addToast({ type: 'info', message: 'Error loading league and country data.' });
     } finally {
       loadingDropdownData = false;
     }
   }
 
   async function getNeurons() {
-    try{
+    try {
       loadingNeurons = true;
       let neuronsResult = await membershipStore.getUserNeurons();
       if (neuronsResult) {
         neurons = neuronsResult.userNeurons.sort(sortByHighestNeuron);
         userMembershipEligibility = neuronsResult.userMembershipEligibility;
         maxStakedICFC = neuronsResult.totalMaxStaked;
-    }
+      }
+      console.log('get neurons complete')
     } catch {
-      toasts.addToast({type: 'info', message: 'No neurons found'});
+      toasts.addToast({ type: 'info', message: 'No neurons found' });
       neurons = [];
       userMembershipEligibility = { membershipType: { NotEligible: null }, eligibleNeuronIds: [] };
       maxStakedICFC = BigInt(0);
-    } finally{
+    } finally {
       loadingNeurons = false;
     }
   }
@@ -129,7 +131,6 @@
 
         await userStore.createProfile(dto);
       }
-
       await userStore.sync();
       toasts.addToast({type: 'success', message: 'Profile successfully created'});
       toasts.addToast({type: 'info', message: 'You can link your OpenFPL account in the profile section'});
@@ -157,7 +158,8 @@
 {#if isLoading}
   <LocalSpinner />
 {:else}
-  <div class="flex flex-col mx-auto space-y-6 page-wrapper">
+  <div class="flex flex-col mx-auto space-y-6">
+    <div class="px-8 py-6 ">
       <CreateUserHeader />
       {#if loadingDropdownData}
         <LocalSpinner />
@@ -165,7 +167,7 @@
         <UserDetailsLayout bind:file bind:nationalityId bind:favouriteLeagueId bind:favouriteClubId bind:username bind:usernameAvailable bind:displayName store={userStore} />
       {/if}
       
-      <div class="flex flex-col space-y-6">
+      <div class="flex flex-col mt-8 space-y-6">
         <p class="text-lg text-white cta-text">Neuron Based Membership</p>
         <p class="text-BrandGrayShade5">
           To join the ICFC you need to have a non-dissolving NNS neuron with at least 1,000 ICFC staked, max staked for 2 years. Add your ICFC Principal as a hotkey to any ICFC NNS neuron over 1,000 ICFC to continue:
@@ -176,18 +178,19 @@
         {:else}
           {#if neurons.length >= 0}
             <div class="flex flex-col space-y-4">
-              <!--<AvailableMembership {neurons} {refreshNeurons} availableMembership={userMembershipEligibility?.membershipType!} {maxStakedICFC} />    -->        
+              <AvailableMembership {neurons} {refreshNeurons} availableMembership={userMembershipEligibility?.membershipType!} {maxStakedICFC} />        
             </div>
           {/if}
         {/if}
         
       </div>
       <button 
-          class="my-8 transition brand-button bg-BrandBlue hover:bg-BrandInfo disabled:bg-BrandGrayShade3" 
-          on:click={createProfile} 
-          disabled={isSubmitDisabled}
-        >
-          JOIN ICFC
+        class="w-full my-8 transition brand-button bg-BrandBlue hover:bg-BrandInfo disabled:bg-BrandGrayShade3" 
+        on:click={createProfile} 
+        disabled={isSubmitDisabled}
+      >
+        JOIN ICFC
       </button>
+    </div>
   </div>
 {/if}

@@ -97,9 +97,9 @@
       <p class="text-sm text-BrandGrayShade3">Joined: {joinedDate}</p>
   </div>
 
-  <div class="flex flex-row items-center">
+  <div class="flex flex-col items-start lg:items-center lg:flex-row">
     <h2 class="text-lg text-white cta-text">Principal ID:</h2>
-    <CopyPrincipal bgColor="bg-BrandBlueComp" borderColor="border-none" />
+    <CopyPrincipal bgColor="bg-BrandBlackShade1" borderColor="border-none" />
   </div>
   <div class="flex flex-col space-y-2">
     <h2 class="text-lg text-white cta-text">Football Preferences: </h2>

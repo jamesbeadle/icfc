@@ -49,9 +49,9 @@
     $: buttonClass = (() => {
         const baseClasses = {
             'monthly': 'bg-MonthlyPrimary border-MonthlySecondary',
-            'seasonal': 'bg-SeasonalPrimary border-SeasonalSecondary text-black',
+            'seasonal': 'bg-SeasonalPrimary border-SeasonalSecondary',
             'lifetime': 'bg-LifetimePrimary border-LifetimeSecondary',
-            'founding': 'bg-FoundingPrimary text-black border-FoundingTertiary/80',
+            'founding': 'bg-FoundingPrimary border-white',
         }[membership.type.toLowerCase()] || 'bg-BrandGrayShade3';
         
         const hoverClasses = status === "Already Claimed" || status === "Auto-Claimed" 
