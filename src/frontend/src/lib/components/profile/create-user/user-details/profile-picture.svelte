@@ -37,7 +37,7 @@
     <p class="form-title">Profile Picture <span class="text-xs text-BrandGrayShade3">(Optional)</span></p>
     <p class="form-hint">Max size 1mb</p>
     
-    <div class="relative w-full overflow-hidden rounded-lg aspect-square bg-BrandGrayShade3">
+    <div class="relative w-full overflow-hidden rounded-lg aspect-square">
         <img 
             src={profileSrc} 
             alt="Profile" 

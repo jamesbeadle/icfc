@@ -1,6 +1,5 @@
 <script>
   export let className = "";
-  export let primary = "#8DCDF2";
   export let secondary = "#FFFFFF";
 </script>
 

@@ -5,6 +5,7 @@
 
     export let bgColor = "bg-BrandGray";
     export let borderColor = "border-BrandGrayShade3";
+    export let isProfile = false;
 
     async function copyTextAndShowToast(text: string) {
         try {
@@ -22,7 +23,7 @@
     $: principalId = $authStore.identity?.getPrincipal().toString() ?? "Not available";
 </script>
 
-<div class="flex items-center w-full max-w-[600px] gap-2 px-4 py-2 border rounded-lg {bgColor} {borderColor}">
+<div class="flex items-center w-full {isProfile ? 'max-w-[600px]' : 'max-w-full'} gap-2 px-4 py-2 border rounded-lg {bgColor} {borderColor}">
     <div class="flex-1 min-w-0">
         <p class="font-mono text-sm truncate text-BrandGrayShade5">
             {principalId}

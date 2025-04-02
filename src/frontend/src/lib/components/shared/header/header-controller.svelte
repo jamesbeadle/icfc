@@ -40,8 +40,14 @@
             ></button>
         {/if}
     {:else}
-        <HeaderUserSignup />
-        <CreateUser />
+        <div class="relative flex flex-col w-full min-h-screen bg-BrandBlack">
+            <div class="fixed top-0 left-0 right-0 z-50">
+                <HeaderUserSignup />
+            </div>
+            <div class="mt-12">
+                <CreateUser />
+            </div>
+        </div>
     {/if}
 {:else}
     {#if page.route.id === '/'}
