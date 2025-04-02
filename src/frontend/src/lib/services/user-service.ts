@@ -5,6 +5,8 @@ import { toasts } from "$lib/stores/toasts-store";
 import type {
   ProfileDTO,
   CreateProfile,
+  AddSubApp,
+  SubApp
 } from "../../../../declarations/backend/backend.did";
 
 //TODO: CHANGE TO PROFILEDTO when backend is updated
@@ -36,8 +38,55 @@ export class UserService {
       );
 
       const result: any = await identityActor.getProfile();
-      if (isError(result)) throw new Error("Failed to get profile.");
+      if (isError(result)) return undefined;
       return result.ok;
-    } catch (error) {}
+    } catch (error) {
+      console.error("Error fetching user profile: ", error);
+      toasts.addToast({
+        type: "error",
+        message: "User Profile Not Found.",
+      });
+      return undefined;
+    }
+  }
+
+  async addSubApp(dto: AddSubApp): Promise<any> {
+    try {
+      const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      process.env.BACKEND_CANISTER_ID ?? "",
+    );
+
+      const result: any = await identityActor.addSubApp(dto);
+      if (isError(result)) throw new Error("Failed to add sub app.");
+      return result.ok;
+    } catch (error) {
+      console.error("Error adding sub app: ", error);
+      toasts.addToast({
+        type: "error",
+        message: "Failed to add sub app.",
+      });
+      throw error;
+    }
+  }
+
+  async removeSubApp(subApp: SubApp): Promise<any> {
+    try {
+      const identityActor = await ActorFactory.createIdentityActor(
+      authStore,
+      process.env.BACKEND_CANISTER_ID ?? "",
+    );
+
+      const result: any = await identityActor.removeSubApp(subApp);
+      if (isError(result)) throw new Error("Failed to remove sub app.");
+      return result.ok;
+    } catch (error) {
+      console.error("Error removing sub app: ", error);
+      toasts.addToast({
+        type: "error",
+        message: "Failed to remove sub app.",
+      });
+      throw error;
+    }
   }
 }

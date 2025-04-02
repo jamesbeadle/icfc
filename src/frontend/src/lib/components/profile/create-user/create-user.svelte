@@ -5,16 +5,16 @@
   import { leagueStore } from "$lib/stores/league-store";
   import { membershipStore } from "$lib/stores/membership-store";
   import { toasts } from "$lib/stores/toasts-store";
-  import { getFileExtensionFromFile, isPrincipalValid, sortByHighestNeuron } from "$lib/utils/helpers";
+  import { getFileExtensionFromFile, sortByHighestNeuron } from "$lib/utils/helpers";
   
-  import type { CreateProfile, EligibleMembership, Neuron, PrincipalId, SubApp, LeagueId, ClubId, CountryId, Country, League} from "../../../../../../declarations/backend/backend.did";
+  import type { CreateProfile, EligibleMembership, Neuron, LeagueId, ClubId, CountryId, Country, League } from "../../../../../../declarations/backend/backend.did";
 
   import LocalSpinner from "../../shared/local-spinner.svelte";
   import AvailableMembership from "../../membership/available-membership.svelte";
   import CopyPrincipal from "../copy-principal.svelte";
   import CreateUserHeader from "./create-user-header.svelte";
   import UserDetailsLayout from "./user-details/user-details-layout.svelte";
-  import SubAppsContainer from "./sub-apps-container.svelte";
+
   let isLoading = true;
   let isSubmitDisabled = true;
   
@@ -87,11 +87,6 @@
   async function createProfile() {
     isLoading = true;
     try {
-      let appPrincipalIds: Array<[SubApp, PrincipalId]> = [];
-
-      if(openFplPrincipalId.length > 0 && isPrincipalValid(openFplPrincipalId)){
-        appPrincipalIds.push([{ OpenFPL: null }, openFplPrincipalId]);
-      }
 
       if (file) {
         const extension = getFileExtensionFromFile(file);
@@ -113,7 +108,6 @@
           displayName,
           profilePicture: [profilePicture],
           username,
-          appPrincipalIds,
           favouriteLeagueId: favouriteLeagueId != null ? [favouriteLeagueId] : [],
           favouriteClubId: favouriteClubId != null ? [favouriteClubId!] : [],
           nationalityId: nationalityId != null ? [nationalityId!] : []
@@ -125,7 +119,6 @@
           displayName,
           profilePicture: [],
           username,
-          appPrincipalIds,
           favouriteLeagueId: favouriteLeagueId != null ? [favouriteLeagueId] : [],
           favouriteClubId: favouriteClubId != null ? [favouriteClubId!] : [],
           nationalityId: nationalityId != null ? [nationalityId!] : []
@@ -176,7 +169,6 @@
           {#if neurons.length >= 0}
             <div class="flex flex-col space-y-4">
               <AvailableMembership {neurons} {refreshNeurons} availableMembership={userMembershipEligibility?.membershipType!} {maxStakedICFC} />            
-              <SubAppsContainer bind:openFplPrincipalId />
             </div>
           {/if}
         {/if}
