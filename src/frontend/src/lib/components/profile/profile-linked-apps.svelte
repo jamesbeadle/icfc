@@ -12,7 +12,7 @@
     let openFplPrincipalId: string = profile.appPrincipalIds.find(x => Object.keys(x[0])[0].toLowerCase() == "OpenFPL")?.[1] ?? "";
     
     $: openFplEntry = profile?.appPrincipalIds?.find(([app]) => 'OpenFPL' in app);
-
+    $: console.log("profile", profile);
     async function updateLinkedApps() {
         isLoading = true;
         try {
