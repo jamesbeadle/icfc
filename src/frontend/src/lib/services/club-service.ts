@@ -3,6 +3,7 @@ import { toasts } from "$lib/stores/toasts-store";
 import { ActorFactory } from "$lib/utils/ActorFactory";
 import type {
   Club,
+  Clubs,
   GetClubs,
   LeagueId,
 } from "../../../../declarations/backend/backend.did";
@@ -13,7 +14,7 @@ export class ClubService {
 
   constructor() {}
 
-  async getClubs(leagueId: LeagueId): Promise<Club[] | undefined> {
+  async getClubs(leagueId: LeagueId): Promise<Clubs | undefined> {
     try {
       const identityActor: any = await ActorFactory.createIdentityActor(
         authStore,

@@ -2,6 +2,7 @@ import { ActorFactory } from "../utils/ActorFactory";
 import { isError } from "../utils/helpers";
 import { authStore } from "$lib/stores/auth-store";
 import type {
+  Countries,
   Country,
   GetCountries,
 } from "../../../../declarations/backend/backend.did";
@@ -9,7 +10,7 @@ import type {
 export class CountryService {
   constructor() {}
 
-  async getCountries(): Promise<Country[]> {
+  async getCountries(): Promise<Countries> {
     const identityActor: any = await ActorFactory.createIdentityActor(
       authStore,
       process.env.BACKEND_CANISTER_ID ?? "",

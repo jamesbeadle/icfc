@@ -5,11 +5,19 @@
     import { busy } from "$lib/stores/busy-store";
     import { toasts } from "$lib/stores/toasts-store";
 
-    import type { Club, ClubId, Country, CountryId, League, LeagueId } from "../../../../../../../declarations/backend/backend.did";
+    import type { ClubId, CountryId, LeagueId } from "../../../../../../../declarations/backend/backend.did";
+    import { onMount } from "svelte";
     
     export let nationalityId: CountryId | null;
     export let favouriteLeagueId: LeagueId | null;
     export let favouriteClubId: ClubId | null;
+
+    onMount(() => {
+        console.log('loading get-football-info')
+        console.log($countryStore);
+        console.log($leagueStore);
+        console.log($clubStore)
+    });
 
     $: countries = $countryStore;
     $: leagues = $leagueStore;
@@ -26,8 +34,8 @@
             busy.start();
             const clubsResult = await clubStore.getClubs(favouriteLeagueId!);
             if (clubsResult) {
-                clubs = clubsResult;
-                clubStore.setClubs(clubsResult);
+                clubs = clubsResult.clubs;
+                clubStore.setClubs(clubs);
             } else {
                 clubs = [];
                 clubStore.setClubs([]);

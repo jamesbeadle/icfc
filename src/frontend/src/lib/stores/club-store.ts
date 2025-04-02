@@ -2,13 +2,14 @@ import { writable } from "svelte/store";
 import { ClubService } from "../services/club-service";
 import type {
   Club,
+  Clubs,
   LeagueId,
 } from "../../../../declarations/backend/backend.did";
 
 function createClubStore() {
   const { subscribe, set } = writable<Club[]>([]);
 
-  async function getClubs(leagueId: LeagueId): Promise<Club[] | undefined> {
+  async function getClubs(leagueId: LeagueId): Promise<Clubs | undefined> {
     return new ClubService().getClubs(leagueId);
   }
   return {

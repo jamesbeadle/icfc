@@ -42,9 +42,15 @@
   onMount(async () => {
     try{
       await loadData();
-      countries = await countryStore.getCountries();
+      let countriesResult = await countryStore.getCountries();
+      if(countriesResult){
+        countries = countriesResult.countries;
+      }
       countryStore.setCountries(countries);
-      leagues = await leagueStore.getLeagues();
+      let leaguesResult = await leagueStore.getLeagues();
+      if(leaguesResult){
+        leagues = leaguesResult.leagues;
+      }
       leagueStore.setLeagues(leagues);
     } catch {
         toasts.addToast({type: 'error', message: 'Failed to load data.'});

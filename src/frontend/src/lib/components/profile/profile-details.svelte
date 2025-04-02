@@ -33,10 +33,20 @@
         isLoading = true;
         principalId = profile.principalId;
         joinedDate = getDateFromBigInt(Number(profile.createdOn));
-        countries = await countryStore.getCountries();
-        leagues = await leagueStore.getLeagues();
+        let countriesResult = await countryStore.getCountries();
+        if(countriesResult){
+          countries = countriesResult.countries;
+        }
+        countryStore.setCountries(countries);
+        let leaguesResult = await leagueStore.getLeagues();
+        if(leaguesResult){
+          leagues = leaguesResult.leagues;
+        }
         favouriteLeagueId = profile?.favouriteLeagueId[0] ?? 0;
-        clubs = await clubStore.getClubs(favouriteLeagueId);
+        let clubsResult = await clubStore.getClubs(favouriteLeagueId);
+        if(clubsResult){
+          clubs = clubsResult.clubs;
+        }
         favouriteClubId = profile?.favouriteClubId[0] ?? 0;
         nationalityId = profile?.nationalityId[0] ?? 0;
       } catch (error) {
