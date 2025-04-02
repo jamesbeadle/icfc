@@ -1,6 +1,5 @@
 import Ids "mo:waterway-mops/Ids";
 import FootballIds "mo:waterway-mops/football/FootballIds";
-import T "../icfc_types";
 import ICFCEnums "mo:waterway-mops/ICFCEnums";
 
 module ProfileCommands {
@@ -50,7 +49,7 @@ module ProfileCommands {
 
     public type UpdateMembership = {
         principalId : Ids.PrincipalId;
-        membershipType : T.MembershipType;
+        membershipType : ICFCEnums.MembershipType;
     };
 
     public type ClaimMembership = {
@@ -60,7 +59,7 @@ module ProfileCommands {
     public type AddSubApp = {
         principalId : Ids.PrincipalId;
         subAppUserPrincipalId : Ids.PrincipalId;
-        subApp : T.SubApp;
+        subApp : ICFCEnums.SubApp;
     };
 
     public type GetICFCProfile = {
@@ -68,29 +67,33 @@ module ProfileCommands {
     };
 
     public type RemoveSubApp = {
-        subApp : T.SubApp;
+        subApp : ICFCEnums.SubApp;
         userPrincipalId : Ids.PrincipalId;
     };
     public type VerifySubApp = {
         subAppUserPrincipalId : Ids.PrincipalId;
-        subApp : T.SubApp;
+        subApp : ICFCEnums.SubApp;
         icfcPrincipalId : Ids.PrincipalId;
     };
 
     public type NotifyAppofLink = {
         membershipType : ICFCEnums.MembershipType;
         subAppUserPrincipalId : Ids.PrincipalId;
-        subApp : T.SubApp;
+        subApp : ICFCEnums.SubApp;
+        icfcPrincipalId : Ids.PrincipalId;
+    };
+    public type NotifyAppofRemoveLink = {
+        subApp : ICFCEnums.SubApp;
         icfcPrincipalId : Ids.PrincipalId;
     };
     public type UpdateICFCProfile = {
         subAppUserPrincipalId : Ids.PrincipalId;
-        subApp : T.SubApp;
-        membershipType : T.MembershipType;
+        subApp : ICFCEnums.SubApp;
+        membershipType : ICFCEnums.MembershipType;
     };
 
     public type MembershipClaim = {
-        membershipType : T.MembershipType;
+        membershipType : ICFCEnums.MembershipType;
         claimedOn : Int;
         expiresOn : ?Int;
     };

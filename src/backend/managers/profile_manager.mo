@@ -212,7 +212,20 @@ module {
                         subApp = subApp;
                         userPrincipalId = principalId;
                     };
-                    return await profile_canister.removeSubApp(dtoRecord);
+                    let res = await profile_canister.removeSubApp(dtoRecord);
+                    switch (res) {
+                        case (#ok) {
+                            let dto : ProfileCommands.NotifyAppofRemoveLink = {
+                                icfcPrincipalId = principalId;
+                                subApp = subApp;
+                            };
+                            let res = await notifyAppsofRemoveLink(dto);
+                            return res;
+                        };
+                        case (#err(err)) {
+                            return #err(err);
+                        };
+                    };
                 };
                 case (null) {
                     return #err(#NotFound);
@@ -717,6 +730,41 @@ module {
                         notifyAppLink : (dto : ProfileCommands.NotifyAppofLink) -> async Result.Result<(), Enums.Error>;
                     };
                     return await footballGodCanister.notifyAppLink(dto);
+                };
+            };
+
+        };
+        private func notifyAppsofRemoveLink(dto : ProfileCommands.NotifyAppofRemoveLink) : async Result.Result<(), Enums.Error> {
+            switch (dto.subApp) {
+                case (#OpenFPL) {
+                    let openFPLCanister = actor (CanisterIds.OPENFPL_BACKEND_CANISTER_ID) : actor {
+                        notifyAppRemoveLink : (dto : ProfileCommands.NotifyAppofRemoveLink) -> async Result.Result<(), Enums.Error>;
+                    };
+                    return await openFPLCanister.notifyAppRemoveLink(dto);
+                };
+                case (#OpenWSL) {
+                    let openWSLCanister = actor (CanisterIds.OPENWSL_BACKEND_CANISTER_ID) : actor {
+                        notifyAppRemoveLink : (dto : ProfileCommands.NotifyAppofRemoveLink) -> async Result.Result<(), Enums.Error>;
+                    };
+                    return await openWSLCanister.notifyAppRemoveLink(dto);
+                };
+                case (#JeffBets) {
+                    let jeffBetsCanister = actor (CanisterIds.JEFF_BETS_BACKEND_CANISTER_ID) : actor {
+                        notifyAppRemoveLink : (dto : ProfileCommands.NotifyAppofRemoveLink) -> async Result.Result<(), Enums.Error>;
+                    };
+                    return await jeffBetsCanister.notifyAppRemoveLink(dto);
+                };
+                case (#TransferKings) {
+                    let transferKingsCanister = actor (CanisterIds.TRANSFER_KINGS_BACKEND_CANISTER_ID) : actor {
+                        notifyAppRemoveLink : (dto : ProfileCommands.NotifyAppofRemoveLink) -> async Result.Result<(), Enums.Error>;
+                    };
+                    return await transferKingsCanister.notifyAppRemoveLink(dto);
+                };
+                case (#FootballGod) {
+                    let footballGodCanister = actor (CanisterIds.FOOTBALL_GOD_BACKEND_CANISTER_ID) : actor {
+                        notifyAppRemoveLink : (dto : ProfileCommands.NotifyAppofRemoveLink) -> async Result.Result<(), Enums.Error>;
+                    };
+                    return await footballGodCanister.notifyAppRemoveLink(dto);
                 };
             };
 
