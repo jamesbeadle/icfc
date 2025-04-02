@@ -129,6 +129,7 @@
 
       await userStore.sync();
       toasts.addToast({type: 'success', message: 'Profile successfully created'});
+      toasts.addToast({type: 'info', message: 'You can link your OpenFPL account in the profile section'});
       window.location.href = "/";
     } catch (error) {
       console.error("Error creating profile:", error);
