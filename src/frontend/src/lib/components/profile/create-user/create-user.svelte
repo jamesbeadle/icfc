@@ -130,7 +130,7 @@
 
       await userStore.sync();
       toasts.addToast({type: 'success', message: 'Profile successfully created'});
-      //window.location.href = "/";
+      window.location.href = "/";
     } catch (error) {
       console.error("Error creating profile:", error);
       toasts.addToast({type: 'error', message: 'Failed to create profile'});
