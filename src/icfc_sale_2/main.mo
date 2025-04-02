@@ -28,11 +28,10 @@ actor class Self() = this {
         return #ok(appStatus);
     };
 
-    public shared ({ caller }) func claimICFCPackets(command : SaleCommands.CalimICFCPackets) : async Result.Result<(), Enums.Error> {
+    public shared ({ caller }) func claimICFCPackets() : async Result.Result<(), Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let dto : SaleCommands.ParticipateInSale = {
             principalId = Principal.toText(caller);
-            packets = command.packets;
         };
         return await saleManager.claimICFCPackets(dto);
     };
@@ -43,14 +42,6 @@ actor class Self() = this {
             principalId = Principal.toText(caller);
         };
         return await saleManager.getUserParticipation(dto);
-    };
-
-    public shared ({ caller }) func refreshParticipant() : async Result.Result<(), Enums.Error> {
-        assert not Principal.isAnonymous(caller);
-        let dto : SaleCommands.RefreshParticipant = {
-            principalId = Principal.toText(caller);
-        };
-        return await saleManager.refreshParticipant(dto);
     };
 
     public shared ({ caller }) func getUsersICFCDistributions() : async Result.Result<[T.ICFCDistribution], Enums.Error> {
