@@ -68,13 +68,14 @@ type ShirtType =
 type Self = 
  service {
    addSubApp: (AddSubApp) -> (Result);
-   claimMembership: () -> (Result_9);
+   claimMembership: () -> (Result_10);
    createProfile: (CreateProfile) -> (Result);
-   getAppStatus: () -> (Result_8) query;
-   getClubs: (GetClubs) -> (Result_7);
-   getCountries: (GetCountries) -> (Result_6);
+   getAppStatus: () -> (Result_9) query;
+   getClubs: (GetClubs) -> (Result_8);
+   getCountries: (GetCountries) -> (Result_7);
    getICFCProfile: (GetICFCProfile) -> (Result_3);
-   getICFCProfileSummary: (GetICFCProfile) -> (Result_5);
+   getICFCProfileSummary: (GetICFCProfile) -> (Result_6);
+   getICPBalance: (PrincipalId) -> (Result_5);
    getLeagues: (GetLeagues) -> (Result_4);
    getProfile: () -> (Result_3);
    getTokenBalances: () -> (Result_2);
@@ -92,27 +93,27 @@ type Self =
 type Result_9 = 
  variant {
    err: Error;
-   ok: MembershipClaim__1;
+   ok: AppStatus;
  };
 type Result_8 = 
  variant {
    err: Error;
-   ok: AppStatus;
+   ok: Clubs;
  };
 type Result_7 = 
  variant {
    err: Error;
-   ok: Clubs;
+   ok: Countries;
  };
 type Result_6 = 
  variant {
    err: Error;
-   ok: Countries;
+   ok: ICFCProfileSummary;
  };
 type Result_5 = 
  variant {
    err: Error;
-   ok: ICFCProfileSummary;
+   ok: nat;
  };
 type Result_4 = 
  variant {
@@ -128,6 +129,11 @@ type Result_2 =
  variant {
    err: Error;
    ok: TokenBalances;
+ };
+type Result_10 = 
+ variant {
+   err: Error;
+   ok: MembershipClaim__1;
  };
 type Result_1 = 
  variant {
@@ -303,10 +309,6 @@ type DisburseMaturityInProgress =
  };
 type CreateProfile = 
  record {
-   appPrincipalIds: vec record {
-                          SubApp;
-                          PrincipalId;
-                        };
    displayName: text;
    favouriteClubId: opt ClubId;
    favouriteLeagueId: opt LeagueId;

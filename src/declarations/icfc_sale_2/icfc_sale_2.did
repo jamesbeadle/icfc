@@ -1,14 +1,15 @@
-type UserParticipationDTO = record {participations: vec ClaimedRecord;};
+type UserParticipation = record {participations: vec ClaimedRecord;};
 type Time = int;
 type Self = 
  service {
-   claimICFCPackets: (CalimICFCPackets) -> (Result_4);
-   getAppStatus: () -> (Result_3) query;
-   getProgress: () -> (Result_2);
-   getUserParticipation: () -> (Result_1);
-   getUsersICFCDistributions: () -> (Result);
+   claimICFCPackets: (CalimICFCPackets) -> (Result);
+   getAppStatus: () -> (Result_4) query;
+   getProgress: () -> (Result_3);
+   getUserParticipation: () -> (Result_2);
+   getUsersICFCDistributions: () -> (Result_1);
+   refreshParticipant: () -> (Result);
  };
-type SaleProgressDTO = 
+type SaleProgress = 
  record {
    remainingPackets: nat;
    totalPackets: nat;
@@ -16,27 +17,27 @@ type SaleProgressDTO =
 type Result_4 = 
  variant {
    err: Error;
-   ok;
+   ok: AppStatus;
  };
 type Result_3 = 
  variant {
    err: Error;
-   ok: AppStatusDTO;
+   ok: SaleProgress;
  };
 type Result_2 = 
  variant {
    err: Error;
-   ok: SaleProgressDTO;
+   ok: UserParticipation;
  };
 type Result_1 = 
  variant {
    err: Error;
-   ok: UserParticipationDTO;
+   ok: vec ICFCDistribution;
  };
 type Result = 
  variant {
    err: Error;
-   ok: vec ICFCDistribution;
+   ok;
  };
 type PrincipalId = text;
 type ICFCDistribution = 
@@ -85,7 +86,7 @@ type ClaimedRecord =
    packetsClaimed: nat;
  };
 type CalimICFCPackets = record {packets: nat;};
-type AppStatusDTO = 
+type AppStatus = 
  record {
    onHold: bool;
    version: text;
