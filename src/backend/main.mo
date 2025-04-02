@@ -280,12 +280,10 @@ actor class Self() = this {
   };
 
   system func postupgrade() {
-    ignore Timer.setTimer<system>(#nanoseconds(Int.abs(1)), postUpgradeCallback);
-    /*
     setProfileData();
     setFootballChannelData();
     stable_membership_timer_id := Timer.recurringTimer<system>(#seconds(86_400), checkMembership);
-    */
+    ignore Timer.setTimer<system>(#nanoseconds(Int.abs(1)), postUpgradeCallback);
   };
 
   private func postUpgradeCallback() : async () {
