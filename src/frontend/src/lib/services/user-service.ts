@@ -6,7 +6,7 @@ import type {
   ProfileDTO,
   CreateProfile,
   AddSubApp,
-  SubApp
+  SubApp,
 } from "../../../../declarations/backend/backend.did";
 
 //TODO: CHANGE TO PROFILEDTO when backend is updated
@@ -53,9 +53,9 @@ export class UserService {
   async addSubApp(dto: AddSubApp): Promise<any> {
     try {
       const identityActor = await ActorFactory.createIdentityActor(
-      authStore,
-      process.env.BACKEND_CANISTER_ID ?? "",
-    );
+        authStore,
+        process.env.BACKEND_CANISTER_ID ?? "",
+      );
 
       const result: any = await identityActor.addSubApp(dto);
       if (isError(result)) throw new Error("Failed to add sub app.");
@@ -73,9 +73,9 @@ export class UserService {
   async removeSubApp(subApp: SubApp): Promise<any> {
     try {
       const identityActor = await ActorFactory.createIdentityActor(
-      authStore,
-      process.env.BACKEND_CANISTER_ID ?? "",
-    );
+        authStore,
+        process.env.BACKEND_CANISTER_ID ?? "",
+      );
 
       const result: any = await identityActor.removeSubApp(subApp);
       if (isError(result)) throw new Error("Failed to remove sub app.");

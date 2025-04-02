@@ -198,8 +198,6 @@ function createUserStore() {
   async function removeSubApp(subApp: SubApp): Promise<any> {
     return new UserService().removeSubApp(subApp);
   }
-  
-  
 
   return {
     subscribe,
