@@ -180,7 +180,7 @@
 }
 
 .already-claimed-membership-badge {
-  @apply items-center px-4 py-2 text-sm text-center text-black rounded bg-BrandSuccess cta-text;
+  @apply items-center px-4 py-2 text-sm text-center text-white rounded bg-OpenFPLBackground cta-text;
 }
 
 .auto-claimed-membership-badge {
