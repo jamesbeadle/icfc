@@ -44,6 +44,14 @@ type TokenBalances =
    icpBalance: nat;
  };
 type Subaccount = record {subaccount: blob;};
+type SubApp__2 = 
+ variant {
+   FootballGod;
+   JeffBets;
+   OpenFPL;
+   OpenWSL;
+   TransferKings;
+ };
 type SubApp__1 = 
  variant {
    FootballGod;
@@ -148,7 +156,7 @@ type Result =
 type ProfileDTO = 
  record {
    appPrincipalIds: vec record {
-                          SubApp;
+                          SubApp__2;
                           PrincipalId;
                         };
    createdOn: int;
@@ -217,7 +225,7 @@ type MembershipClaim__1 =
  record {
    claimedOn: int;
    expiresOn: opt int;
-   membershipType: MembershipType;
+   membershipType: MembershipType__1;
  };
 type MembershipClaim = 
  record {

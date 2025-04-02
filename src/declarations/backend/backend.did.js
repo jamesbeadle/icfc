@@ -37,7 +37,7 @@ export const idlFactory = ({ IDL }) => {
     InEligible: IDL.Null,
   });
   const Result = IDL.Variant({ ok: IDL.Null, err: Error });
-  const MembershipType = IDL.Variant({
+  const MembershipType__1 = IDL.Variant({
     Founding: IDL.Null,
     NotClaimed: IDL.Null,
     Seasonal: IDL.Null,
@@ -49,7 +49,7 @@ export const idlFactory = ({ IDL }) => {
   const MembershipClaim__1 = IDL.Record({
     expiresOn: IDL.Opt(IDL.Int),
     claimedOn: IDL.Int,
-    membershipType: MembershipType,
+    membershipType: MembershipType__1,
   });
   const Result_10 = IDL.Variant({ ok: MembershipClaim__1, err: Error });
   const ClubId = IDL.Nat16;
@@ -88,12 +88,7 @@ export const idlFactory = ({ IDL }) => {
   const Countries = IDL.Record({ countries: IDL.Vec(Country) });
   const Result_7 = IDL.Variant({ ok: Countries, err: Error });
   const GetICFCProfile = IDL.Record({ principalId: PrincipalId });
-  const MembershipClaim = IDL.Record({
-    expiresOn: IDL.Opt(IDL.Int),
-    claimedOn: IDL.Int,
-    membershipType: MembershipType,
-  });
-  const MembershipType__1 = IDL.Variant({
+  const MembershipType = IDL.Variant({
     Founding: IDL.Null,
     NotClaimed: IDL.Null,
     Seasonal: IDL.Null,
@@ -102,6 +97,18 @@ export const idlFactory = ({ IDL }) => {
     NotEligible: IDL.Null,
     Expired: IDL.Null,
   });
+  const MembershipClaim = IDL.Record({
+    expiresOn: IDL.Opt(IDL.Int),
+    claimedOn: IDL.Int,
+    membershipType: MembershipType,
+  });
+  const SubApp__2 = IDL.Variant({
+    OpenFPL: IDL.Null,
+    OpenWSL: IDL.Null,
+    FootballGod: IDL.Null,
+    TransferKings: IDL.Null,
+    JeffBets: IDL.Null,
+  });
   const ProfileDTO = IDL.Record({
     username: IDL.Text,
     displayName: IDL.Text,
@@ -109,7 +116,7 @@ export const idlFactory = ({ IDL }) => {
     podcastIds: IDL.Vec(PrincipalId),
     favouriteClubId: IDL.Opt(ClubId),
     membershipClaims: IDL.Vec(MembershipClaim),
-    appPrincipalIds: IDL.Vec(IDL.Tuple(SubApp, PrincipalId)),
+    appPrincipalIds: IDL.Vec(IDL.Tuple(SubApp__2, PrincipalId)),
     profilePicture: IDL.Opt(IDL.Vec(IDL.Nat8)),
     membershipType: MembershipType__1,
     termsAgreed: IDL.Bool,

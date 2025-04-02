@@ -135,7 +135,7 @@ export interface MembershipClaim {
 export interface MembershipClaim__1 {
   expiresOn: [] | [bigint];
   claimedOn: bigint;
-  membershipType: MembershipType;
+  membershipType: MembershipType__1;
 }
 export type MembershipType =
   | { Founding: null }
@@ -185,7 +185,7 @@ export interface ProfileDTO {
   podcastIds: Array<PrincipalId>;
   favouriteClubId: [] | [ClubId];
   membershipClaims: Array<MembershipClaim>;
-  appPrincipalIds: Array<[SubApp, PrincipalId]>;
+  appPrincipalIds: Array<[SubApp__2, PrincipalId]>;
   profilePicture: [] | [Uint8Array | number[]];
   membershipType: MembershipType__1;
   termsAgreed: boolean;
@@ -237,6 +237,12 @@ export type SubApp =
   | { TransferKings: null }
   | { JeffBets: null };
 export type SubApp__1 =
+  | { OpenFPL: null }
+  | { OpenWSL: null }
+  | { FootballGod: null }
+  | { TransferKings: null }
+  | { JeffBets: null };
+export type SubApp__2 =
   | { OpenFPL: null }
   | { OpenWSL: null }
   | { FootballGod: null }
