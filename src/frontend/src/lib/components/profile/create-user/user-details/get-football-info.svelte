@@ -6,26 +6,12 @@
     import { toasts } from "$lib/stores/toasts-store";
 
     import type { ClubId, CountryId, LeagueId } from "../../../../../../../declarations/backend/backend.did";
-    import { onMount } from "svelte";
     
     export let nationalityId: CountryId | null;
     export let favouriteLeagueId: LeagueId | null;
     export let favouriteClubId: ClubId | null;
 
-    onMount(() => {
-        console.log('loading get-football-info')
-        console.log($countryStore);
-        console.log($leagueStore);
-        console.log($clubStore)
-    });
-
-    $: countries = $countryStore;
-    $: leagues = $leagueStore;
     $: clubs = $clubStore;
-    $: console.log("Country Store:", $countryStore);
-    $: console.log("League Store:", $leagueStore);
-    $: console.log("Club Store:", $clubStore);
-
 
     let lastFetchedLeagueId: LeagueId | null = null;
 
@@ -69,7 +55,7 @@
             class="w-full brand-input"
         >
         <option value={null}>Select...</option>
-        {#each countries.sort((a, b) => a.name.localeCompare(b.name)) as country}
+        {#each $countryStore.sort((a, b) => a.name.localeCompare(b.name)) as country}
             <option value={country.id}>{country.name}</option>
         {/each}
         </select>
@@ -83,7 +69,7 @@
             class="w-full brand-input"
         >
             <option value={null}>Select...</option>
-            {#each $leagueStore as league}
+            {#each $leagueStore.sort( (a, b) => a.name.localeCompare(b.name) ) as league}
                 <option value={league.id}>{league.name}</option>
             {/each}
         </select>
