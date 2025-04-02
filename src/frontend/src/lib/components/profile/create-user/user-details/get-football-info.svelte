@@ -11,13 +11,14 @@
     export let favouriteLeagueId: LeagueId | null;
     export let favouriteClubId: ClubId | null;
 
-    $: countries = $countryStore;
+    let leagues: League[] = [];
+    let clubs: Club[] = [];
+    
     $: leagues = $leagueStore;
     $: clubs = $clubStore;
     $: console.log("Country Store:", $countryStore);
     $: console.log("League Store:", $leagueStore);
     $: console.log("Club Store:", $clubStore);
-
 
     let lastFetchedLeagueId: LeagueId | null = null;
 
@@ -60,10 +61,10 @@
             bind:value={nationalityId}
             class="w-full brand-input"
         >
-        <option value={null}>Select...</option>
-        {#each countries.sort((a, b) => a.name.localeCompare(b.name)) as country}
-            <option value={country.id}>{country.name}</option>
-        {/each}
+            <option value={null}>Select...</option>
+            {#each $countryStore as country}
+                <option value={country.id}>{country.name}</option>
+            {/each}
         </select>
     </div>
 
@@ -75,11 +76,12 @@
             class="w-full brand-input"
         >
             <option value={null}>Select...</option>
-            {#each $leagueStore as league}
+            {#each leagues as league}
                 <option value={league.id}>{league.name}</option>
             {/each}
         </select>
     </div>
+
     <div class="space-y-2">
         <p class="form-title">Your Favourite Club <span class="text-xs text-BrandGrayShade3">(Optional)</span></p>
         <p class="form-hint min-h-[40px]">
@@ -97,7 +99,7 @@
             class="w-full brand-input disabled:opacity-50"
         >
             <option value={null}>Select...</option>
-            {#each $clubStore.sort( (a, b) => a.friendlyName.localeCompare(b.friendlyName) ) as club}
+            {#each clubs as club}
                 <option value={club.id}>{club.friendlyName}</option>
             {/each}
         </select>
