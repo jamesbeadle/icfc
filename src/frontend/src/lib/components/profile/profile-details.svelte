@@ -91,7 +91,7 @@
 {#if isLoading}
   <LocalSpinner />
 {:else}
-  <div class="p-4 space-y-6 text-white">
+  <div class="p-4 space-y-5 text-white">
     <div>
         <h2 class="text-2xl text-white cta-text">PROFILE DETAILS</h2>
       <p class="text-sm text-BrandGrayShade3">Joined: {joinedDate}</p>
@@ -101,14 +101,15 @@
     <h2 class="text-lg text-white cta-text">Principal ID:</h2>
     <CopyPrincipal bgColor="bg-BrandBlueComp" borderColor="border-none" />
   </div>
-
-  <h2 class="text-lg text-white cta-text">Football Preferences: </h2>
+  <div class="flex flex-col space-y-2">
+    <h2 class="text-lg text-white cta-text">Football Preferences: </h2>
+    <p class="text-sm text-BrandGrayShade4">Set further information to further participate with the ICFC ecosystem:</p>
+  </div>
   <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
     <div class="p-3 border rounded-lg border-BrandGrayShade3">
       <div class="flex items-start justify-between">
         <div class="space-y-2">
               <h3 class="text-lg text-white">Nationality</h3>
-              <p class="form-hint">Participate in competitions</p>
               <p class="mt-1 text-sm font-medium text-white">
                   {getCountryName(nationalityId)}
               </p>
@@ -126,7 +127,6 @@
       <div class="flex items-start justify-between">
         <div class="space-y-2">
           <h3 class="text-lg text-white">Favourite League</h3>
-          <p class="form-hint">Find your favourite club</p>
           <p class="mt-1 text-sm font-medium text-white">
               {getLeagueName(favouriteLeagueId)}
           </p>
@@ -144,7 +144,6 @@
       <div class="flex items-start justify-between">
         <div class="space-y-2">
           <h3 class="text-lg text-white">Favourite Club</h3>
-          <p class="form-hint">Enable club rewards</p>
           <p class="mt-1 text-sm font-medium text-white">
               {getClubName(favouriteClubId)}
           </p>

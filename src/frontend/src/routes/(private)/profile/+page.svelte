@@ -22,6 +22,8 @@
     let displayName = $state("");
     let profileSrc = $state("");
 
+    
+
     const tabs = [
         { id: "details", label: "Details" },
         { id: "membership", label: "Membership" },
@@ -40,6 +42,7 @@
                 return;
             }
             profile = profileResult;
+
             const membership = profile.membershipClaims?.[0]?.membershipType;
             profileClass = membership ? Object.keys(membership)[0]?.toLowerCase() : '';
             foundProfile(profile);
@@ -64,7 +67,7 @@
         <LocalSpinner />
     </div>
 {:else if profile}
-    <div class="min-h-screen bg-BrandBlack">
+    <div class="min-h-screen bg-BrandBlackShade1">
         <div class="p-4 mx-auto">
             <div class="p-2">
                 <h1 class="text-3xl cta-text">ICFC Profile</h1>
@@ -96,7 +99,7 @@
                         <TabContainer {tabs} {activeTab} {setActiveTab} />
                 </div>
                 
-                <div class="p-4 mt-4 border rounded-lg shadow-lg bg-BrandBlueComp border-BrandGrayShade3/50">
+                <div class="p-4 mt-4 border rounded-lg shadow-lg border-BrandGrayShade3/50">
                     {#if activeTab == "details"}
                         <ProfileDetails {profile} />
                     {/if}
@@ -111,7 +114,7 @@
         </div>
     </div>
 {:else}
-    <div class="flex items-center justify-center h-screen text-white">
+    <div class="flex items-center justify-center h-screen text-white cta-text">
         No profile data available
     </div>
 {/if}

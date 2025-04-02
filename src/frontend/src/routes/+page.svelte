@@ -5,10 +5,6 @@
     import { authSignedInStore } from "$lib/derived/auth.derived";
 </script>
 
-<svelte:head>
-    <link rel="preload" href="/background.jpg" as="image" />
-</svelte:head>
-
 {#if $authSignedInStore}    
     <Apps />
 {:else}

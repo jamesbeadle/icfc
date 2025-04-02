@@ -188,11 +188,11 @@
 }
 
 .small-brand-button {
-  @apply px-4 py-2 text-sm text-center text-white rounded cta-text bg-BrandBlue hover:bg-BrandInfo;
+  @apply px-4 py-2 text-sm text-center rounded cta-text bg-BrandBlue hover:bg-BrandInfo;
 }
 
 .nns-button {
-  @apply px-4 py-2 text-center text-white rounded text-xxs cta-text bg-FootballGodBackground hover:bg-BrandInfo;
+  @apply px-4 py-2 text-center rounded text-xxs cta-text;
 }
 
 .profile-wrapper-monthly {

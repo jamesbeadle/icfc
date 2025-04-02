@@ -12,6 +12,8 @@ import type {
   UpdateDisplayName,
   UpdateFavouriteClub,
   UpdateNationality,
+  AddSubApp,
+  SubApp,
 } from "../../../../declarations/backend/backend.did";
 
 function createUserStore() {
@@ -189,6 +191,16 @@ function createUserStore() {
     return new UserService().createProfile(dto);
   }
 
+  async function addSubApp(dto: AddSubApp): Promise<any> {
+    return new UserService().addSubApp(dto);
+  }
+
+  async function removeSubApp(subApp: SubApp): Promise<any> {
+    return new UserService().removeSubApp(subApp);
+  }
+  
+  
+
   return {
     subscribe,
     sync,
@@ -201,6 +213,8 @@ function createUserStore() {
     isUsernameAvailable,
     cacheProfile,
     createProfile,
+    addSubApp,
+    removeSubApp,
   };
 }
 
