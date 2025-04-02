@@ -33,6 +33,20 @@
         isLoading = true;
         principalId = profile.principalId;
         joinedDate = getDateFromBigInt(Number(profile.createdOn));
+        await getFootballData();
+      } catch (error) {
+        console.error("Error fetching profile details:", error);
+        toasts.addToast({
+          message: "Error fetching profile details",
+          type: "error",
+        });
+      } finally {
+        isLoading = false;
+      }
+    });
+
+    async function getFootballData(){
+      try{
         let countriesResult = await countryStore.getCountries();
         if(countriesResult){
           countries = countriesResult.countries;
@@ -50,15 +64,13 @@
         favouriteClubId = profile?.favouriteClubId[0] ?? 0;
         nationalityId = profile?.nationalityId[0] ?? 0;
       } catch (error) {
-        console.error("Error fetching profile details:", error);
+        console.error("Error fetching football data:", error);
         toasts.addToast({
-          message: "Error fetching profile details",
+          message: "Error fetching football data",
           type: "error",
         });
-      } finally {
-        isLoading = false;
       }
-    });
+    }
 
     function getCountryName(countryId: number): string {
         const country = countries.find(x => x.id === countryId);
