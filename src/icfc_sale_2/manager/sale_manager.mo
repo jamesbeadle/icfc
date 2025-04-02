@@ -151,7 +151,7 @@ module {
                         #seconds(Int.abs(delay)),
                         func() : async () {
                             let res = await distributeTokens(distribution.principalId, distribution.amount);
-                            Debug.print("Distributing tokens to " # distribution.principalId # " for claimId: " # Nat.toText(distribution.claimId) # " with amount: " # Nat.toText(distribution.installment));
+                            // Debug.print("Distributing tokens to " # distribution.principalId # " for claimId: " # Nat.toText(distribution.claimId) # " with amount: " # Nat.toText(distribution.installment));
                             switch (res) {
                                 case (#ok(_)) {
 
