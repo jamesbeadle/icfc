@@ -158,7 +158,7 @@ actor class Self() = this {
 
     let icfc_ledger : SNSToken.Interface = actor (CanisterIds.ICFC_SNS_LEDGER_CANISTER_ID);
     let ckBTC_ledger : SNSToken.Interface = actor (Environment.CKBTC_LEDGER_CANISTER_ID);
-    let icp_ledger : SNSToken.Interface = actor (CanisterIds.ICP_COINS_CANISTER_ID);
+    let icp_ledger : SNSToken.Interface = actor (CanisterIds.NNS_LEDGER_CANISTER_ID);
 
     let icfc_tokens = await icfc_ledger.icrc1_balance_of({
       owner = Principal.fromText(CanisterIds.ICFC_BACKEND_CANISTER_ID);
@@ -185,7 +185,7 @@ actor class Self() = this {
     assert not Principal.isAnonymous(caller);
     assert Principal.toText(caller) == Environment.ICFC_SALE_2_CANISTER_ID;
 
-    let icp_ledger : SNSToken.Interface = actor (CanisterIds.ICP_COINS_CANISTER_ID);
+    let icp_ledger : SNSToken.Interface = actor (CanisterIds.NNS_LEDGER_CANISTER_ID);
     let icp_tokens = await icp_ledger.icrc1_balance_of({
       owner = Principal.fromText(CanisterIds.ICFC_BACKEND_CANISTER_ID);
       subaccount = ?Account.principalToSubaccount(Principal.fromText(user_principal));
