@@ -2,6 +2,10 @@
     import LandingPageDisplay from "./landing-page-display.svelte";  
 </script>
 
+<svelte:head>
+    <link rel="preload" href="/background.jpg" as="image" />
+</svelte:head>
+
 <div class="flex flex-col w-full h-screen space-y-4 md:bg-BrandGray md:p-3 md:flex-row">
     <div class="relative flex flex-col w-full h-full bg-center bg-cover md:rounded-lg md:w-1/2" style="background-image: url('background.jpg')">
         <div class="items-end h-full p-4 md:flex bg-gradient-to-t from-black/70 to-transparent md:rounded-lg">
