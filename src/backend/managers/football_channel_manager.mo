@@ -13,7 +13,7 @@ import CanisterIds "mo:waterway-mops/CanisterIds";
 import BaseUtilities "mo:waterway-mops/BaseUtilities";
 import FootballChannelQueries "../queries/football_channel_queries";
 import FootballChannelCommands "../commands/football_channel_commands";
-import FootballChannelsCanister "../canister_definations/football-channels-canister";
+import FootballChannelsCanister "../canister_definitions/football-channels-canister";
 import Cycles "mo:base/ExperimentalCycles";
 import Management "mo:waterway-mops/Management";
 import CanisterUtilities "mo:waterway-mops/CanisterUtilities";

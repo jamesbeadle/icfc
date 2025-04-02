@@ -9,7 +9,7 @@ import Principal "mo:base/Principal";
 import Buffer "mo:base/Buffer";
 import ProfileQueries "../queries/profile_queries";
 import ProfileCommands "../commands/profile_commands";
-import ProfileCanister "../canister_definations/profile-canister";
+import ProfileCanister "../canister_definitions/profile-canister";
 import CanisterIds "mo:waterway-mops/CanisterIds";
 import Cycles "mo:base/ExperimentalCycles";
 import Iter "mo:base/Iter";
