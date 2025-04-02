@@ -301,9 +301,13 @@ module {
             switch (res) {
                 case (#ok(balance)) {
                     let user = saleParticipants.get(principalId);
+                    let one_packect_cost_e8s = Nat.sub(48 * 100_000_000, 10_000);
                     switch (user) {
                         case (null) {
-                            return #err(#NotFound);
+
+                            let eligiblePackets = Nat.div(balance, one_packect_cost_e8s);
+                            return #ok(eligiblePackets);
+
                         };
                         case (?participations) {
                             var totalClaimedPackets : Nat = 0;
@@ -311,10 +315,15 @@ module {
                                 totalClaimedPackets := totalClaimedPackets + participation.packetsClaimed;
                             };
 
+                            // calculate the total ICP value of the claimed packets
                             let total_icp_value = totalClaimedPackets * 48;
                             let total_icp_value_e8s = total_icp_value * 100_000_000;
+
+                            // calculate the total fees paid
                             let total_claims = List.size(participations);
                             let total_fees_paid = total_claims * 10_000;
+
+                            // calculate the total actual ICP value
                             let total_actual_icp_value = Nat.sub(total_icp_value_e8s, total_fees_paid);
 
                             if (balance < total_actual_icp_value) {
@@ -326,7 +335,7 @@ module {
 
                             // Check if any unclaimed packets are remaining
                             if (balance > total_actual_icp_value) {
-                                let remainingPackets = Nat.div(Nat.sub(balance, total_actual_icp_value), 48);
+                                let remainingPackets = Nat.div(Nat.sub(balance, total_actual_icp_value), one_packect_cost_e8s);
                                 return #ok(remainingPackets);
                             };
 
