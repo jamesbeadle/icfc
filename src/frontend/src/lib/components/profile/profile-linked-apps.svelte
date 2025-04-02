@@ -24,7 +24,9 @@
                     subAppUserPrincipalId: openFplPrincipalId,
                     principalId: profile.principalId
                 };
+                console.log("addSubAppDto", addSubAppDto);
                 await userStore.addSubApp(addSubAppDto);
+                console.log("addSubAppDto added");
             }
             await userStore.sync();
             toasts.addToast({type: 'success', message: 'Linked app principal IDs successfully created'});
