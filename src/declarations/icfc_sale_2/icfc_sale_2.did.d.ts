@@ -6,9 +6,6 @@ export interface AppStatus {
   version: string;
   onHold: boolean;
 }
-export interface CalimICFCPackets {
-  packets: bigint;
-}
 export interface ClaimedRecord {
   packetsClaimed: bigint;
   claimId: bigint;
@@ -47,22 +44,21 @@ export interface ICFCDistribution {
   principalId: PrincipalId;
 }
 export type PrincipalId = string;
-export type Result = { ok: null } | { err: Error };
-export type Result_1 = { ok: Array<ICFCDistribution> } | { err: Error };
-export type Result_2 = { ok: UserParticipation } | { err: Error };
-export type Result_3 = { ok: SaleProgress } | { err: Error };
-export type Result_4 = { ok: AppStatus } | { err: Error };
+export type Result = { ok: Array<ICFCDistribution> } | { err: Error };
+export type Result_1 = { ok: UserParticipation } | { err: Error };
+export type Result_2 = { ok: SaleProgress } | { err: Error };
+export type Result_3 = { ok: AppStatus } | { err: Error };
+export type Result_4 = { ok: null } | { err: Error };
 export interface SaleProgress {
   remainingPackets: bigint;
   totalPackets: bigint;
 }
 export interface Self {
-  claimICFCPackets: ActorMethod<[CalimICFCPackets], Result>;
-  getAppStatus: ActorMethod<[], Result_4>;
-  getProgress: ActorMethod<[], Result_3>;
-  getUserParticipation: ActorMethod<[], Result_2>;
-  getUsersICFCDistributions: ActorMethod<[], Result_1>;
-  refreshParticipant: ActorMethod<[], Result>;
+  claimICFCPackets: ActorMethod<[], Result_4>;
+  getAppStatus: ActorMethod<[], Result_3>;
+  getProgress: ActorMethod<[], Result_2>;
+  getUserParticipation: ActorMethod<[], Result_1>;
+  getUsersICFCDistributions: ActorMethod<[], Result>;
 }
 export type Time = bigint;
 export interface UserParticipation {

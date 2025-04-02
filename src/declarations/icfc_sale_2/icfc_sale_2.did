@@ -2,12 +2,11 @@ type UserParticipation = record {participations: vec ClaimedRecord;};
 type Time = int;
 type Self = 
  service {
-   claimICFCPackets: (CalimICFCPackets) -> (Result);
-   getAppStatus: () -> (Result_4) query;
-   getProgress: () -> (Result_3);
-   getUserParticipation: () -> (Result_2);
-   getUsersICFCDistributions: () -> (Result_1);
-   refreshParticipant: () -> (Result);
+   claimICFCPackets: () -> (Result_4);
+   getAppStatus: () -> (Result_3) query;
+   getProgress: () -> (Result_2);
+   getUserParticipation: () -> (Result_1);
+   getUsersICFCDistributions: () -> (Result);
  };
 type SaleProgress = 
  record {
@@ -17,27 +16,27 @@ type SaleProgress =
 type Result_4 = 
  variant {
    err: Error;
-   ok: AppStatus;
+   ok;
  };
 type Result_3 = 
  variant {
    err: Error;
-   ok: SaleProgress;
+   ok: AppStatus;
  };
 type Result_2 = 
  variant {
    err: Error;
-   ok: UserParticipation;
+   ok: SaleProgress;
  };
 type Result_1 = 
  variant {
    err: Error;
-   ok: vec ICFCDistribution;
+   ok: UserParticipation;
  };
 type Result = 
  variant {
    err: Error;
-   ok;
+   ok: vec ICFCDistribution;
  };
 type PrincipalId = text;
 type ICFCDistribution = 
@@ -85,7 +84,6 @@ type ClaimedRecord =
    claimedOn: int;
    packetsClaimed: nat;
  };
-type CalimICFCPackets = record {packets: nat;};
 type AppStatus = 
  record {
    onHold: bool;

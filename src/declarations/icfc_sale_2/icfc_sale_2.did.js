@@ -1,5 +1,4 @@
 export const idlFactory = ({ IDL }) => {
-  const CalimICFCPackets = IDL.Record({ packets: IDL.Nat });
   const Error = IDL.Variant({
     InvalidProfilePicture: IDL.Null,
     DecodeError: IDL.Null,
@@ -24,14 +23,14 @@ export const idlFactory = ({ IDL }) => {
     InsufficientFunds: IDL.Null,
     InEligible: IDL.Null,
   });
-  const Result = IDL.Variant({ ok: IDL.Null, err: Error });
+  const Result_4 = IDL.Variant({ ok: IDL.Null, err: Error });
   const AppStatus = IDL.Record({ version: IDL.Text, onHold: IDL.Bool });
-  const Result_4 = IDL.Variant({ ok: AppStatus, err: Error });
+  const Result_3 = IDL.Variant({ ok: AppStatus, err: Error });
   const SaleProgress = IDL.Record({
     remainingPackets: IDL.Nat,
     totalPackets: IDL.Nat,
   });
-  const Result_3 = IDL.Variant({ ok: SaleProgress, err: Error });
+  const Result_2 = IDL.Variant({ ok: SaleProgress, err: Error });
   const ClaimedRecord = IDL.Record({
     packetsClaimed: IDL.Nat,
     claimId: IDL.Int,
@@ -40,7 +39,7 @@ export const idlFactory = ({ IDL }) => {
   const UserParticipation = IDL.Record({
     participations: IDL.Vec(ClaimedRecord),
   });
-  const Result_2 = IDL.Variant({ ok: UserParticipation, err: Error });
+  const Result_1 = IDL.Variant({ ok: UserParticipation, err: Error });
   const Time = IDL.Int;
   const DistributionStatus = IDL.Variant({
     Completed: IDL.Null,
@@ -55,17 +54,16 @@ export const idlFactory = ({ IDL }) => {
     amount: IDL.Nat,
     principalId: PrincipalId,
   });
-  const Result_1 = IDL.Variant({
+  const Result = IDL.Variant({
     ok: IDL.Vec(ICFCDistribution),
     err: Error,
   });
   const Self = IDL.Service({
-    claimICFCPackets: IDL.Func([CalimICFCPackets], [Result], []),
-    getAppStatus: IDL.Func([], [Result_4], ["query"]),
-    getProgress: IDL.Func([], [Result_3], []),
-    getUserParticipation: IDL.Func([], [Result_2], []),
-    getUsersICFCDistributions: IDL.Func([], [Result_1], []),
-    refreshParticipant: IDL.Func([], [Result], []),
+    claimICFCPackets: IDL.Func([], [Result_4], []),
+    getAppStatus: IDL.Func([], [Result_3], ["query"]),
+    getProgress: IDL.Func([], [Result_2], []),
+    getUserParticipation: IDL.Func([], [Result_1], []),
+    getUsersICFCDistributions: IDL.Func([], [Result], []),
   });
   return Self;
 };
