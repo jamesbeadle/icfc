@@ -151,6 +151,7 @@ module {
                         #seconds(Int.abs(delay)),
                         func() : async () {
                             let res = await distributeTokens(distribution.principalId, distribution.amount);
+                            Debug.print("Distributing tokens to " # distribution.principalId # " for claimId: " # Nat.toText(distribution.claimId) # " with amount: " # Nat.toText(distribution.installment));
                             switch (res) {
                                 case (#ok(_)) {
 
@@ -171,7 +172,6 @@ module {
                                     };
 
                                     icfcDistributions := Array.append(updatedDistributions, [updatedDistribution]);
-                                    icfcDistributions := updatedDistributions;
                                 };
                                 case (#err(err)) {
                                     Debug.print("Error distributing tokens: " # SaleUtilities.variantToText(err));
@@ -223,6 +223,7 @@ module {
                     #seconds(delay),
                     func() : async () {
                         let res = await distributeTokens(principal, installmentAmount);
+                        // Debug.print("Distributing tokens to " # principal # " for claimId: " # Nat.toText(claimId) # " with amount: " # Nat.toText(installmentAmount));
                         switch (res) {
                             case (#ok(_)) {
                                 // remove from pending
@@ -243,7 +244,6 @@ module {
                                 };
                                 // update the list
                                 icfcDistributions := Array.append(updatedDistributions, [updatedDistribution]);
-                                icfcDistributions := updatedDistributions;
                             };
                             case (#err(err)) {
                                 Debug.print("Error distributing tokens: " # SaleUtilities.variantToText(err));
