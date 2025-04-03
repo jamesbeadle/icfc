@@ -3,6 +3,8 @@ import { replaceHistory } from "../utils/route.utils";
 import { isNullish } from "@dfinity/utils";
 import { busy } from "$lib/stores/busy-store";
 import { toasts, type Toast } from "$lib/stores/toasts-store";
+import { get } from "svelte/store";
+import { initUserProfile } from "./user-profile-service";
 
 export const signIn = async (
   params: AuthSignInParams,
@@ -10,6 +12,16 @@ export const signIn = async (
   busy.show();
   try {
     await authStore.signIn(params);
+    const identity = get(authStore).identity;
+    if (identity) {
+      try {
+        console.log("init user profile");
+        await initUserProfile({ identity });
+        console.log("init user profile end");
+      } catch (err) {
+        console.error("initUserProfile error:", err);
+      }
+    }
     return { success: "ok" };
   } catch (err: unknown) {
     if (err === "UserInterrupt") {
