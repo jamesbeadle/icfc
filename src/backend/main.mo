@@ -7,6 +7,7 @@ import Principal "mo:base/Principal";
 import Result "mo:base/Result";
 import Text "mo:base/Text";
 import Timer "mo:base/Timer";
+import Debug "mo:base/Debug";
 import Enums "mo:waterway-mops/Enums";
 import BaseTypes "mo:waterway-mops/BaseTypes";
 import LeagueQueries "mo:waterway-mops/queries/football-queries/LeagueQueries";
@@ -294,10 +295,16 @@ actor class Self() = this {
   private func postUpgradeCallback() : async () {
     await updateProfileCanisterWasms();
     let IC : Management.Management = actor (CanisterIds.Default);
-    await CanisterUtilities.deleteCanister_("a25ax-gaaaa-aaaal-qslsa-cai", IC);
+    
+    Debug.print("deleting canisters");
+    let _ = await CanisterUtilities.deleteCanister_("dyi5i-wqaaa-aaaal-qslza-cai", IC);
+    Debug.print("deleting canisters1");
     await CanisterUtilities.deleteCanister_("ai3xo-kqaaa-aaaal-qslra-cai", IC);
+    Debug.print("deleting canisters2");
     await CanisterUtilities.deleteCanister_("bfvta-fyaaa-aaaal-qslwq-cai", IC);
+    Debug.print("deleting canisters3");
     await CanisterUtilities.deleteCanister_("drlwu-ayaaa-aaaal-qslyq-cai", IC);
+    Debug.print("deleting canisters4");
     await CanisterUtilities.deleteCanister_("gnqmr-lqaaa-aaaal-qslha-cai", IC);
   };
 
