@@ -65,6 +65,7 @@ export const idlFactory = ({ IDL }) => {
   });
   const AppStatus = IDL.Record({ version: IDL.Text, onHold: IDL.Bool });
   const Result_9 = IDL.Variant({ ok: AppStatus, err: Error });
+  const CanisterId = IDL.Text;
   const GetClubs = IDL.Record({ leagueId: LeagueId });
   const ShirtType = IDL.Variant({ Filled: IDL.Null, Striped: IDL.Null });
   const Club = IDL.Record({
@@ -251,6 +252,7 @@ export const idlFactory = ({ IDL }) => {
     claimMembership: IDL.Func([], [Result_10], []),
     createProfile: IDL.Func([CreateProfile], [Result], []),
     getAppStatus: IDL.Func([], [Result_9], ["query"]),
+    getCanisterIds: IDL.Func([], [IDL.Vec(CanisterId)], []),
     getClubs: IDL.Func([GetClubs], [Result_8], []),
     getCountries: IDL.Func([GetCountries], [Result_7], []),
     getICFCProfile: IDL.Func([GetICFCProfile], [Result_3], []),

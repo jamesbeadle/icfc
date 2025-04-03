@@ -15,6 +15,7 @@ export interface AppStatus {
   version: string;
   onHold: boolean;
 }
+export type CanisterId = string;
 export interface Club {
   id: ClubId;
   secondaryColourHex: string;
@@ -210,6 +211,7 @@ export interface Self {
   claimMembership: ActorMethod<[], Result_10>;
   createProfile: ActorMethod<[CreateProfile], Result>;
   getAppStatus: ActorMethod<[], Result_9>;
+  getCanisterIds: ActorMethod<[], Array<CanisterId>>;
   getClubs: ActorMethod<[GetClubs], Result_8>;
   getCountries: ActorMethod<[GetCountries], Result_7>;
   getICFCProfile: ActorMethod<[GetICFCProfile], Result_3>;

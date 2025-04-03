@@ -79,6 +79,7 @@ type Self =
    claimMembership: () -> (Result_10);
    createProfile: (CreateProfile) -> (Result);
    getAppStatus: () -> (Result_9) query;
+   getCanisterIds: () -> (vec CanisterId);
    getClubs: (GetClubs) -> (Result_8);
    getCountries: (GetCountries) -> (Result_7);
    getICFCProfile: (GetICFCProfile) -> (Result_3);
@@ -349,6 +350,7 @@ type Club =
    shirtType: ShirtType;
    thirdColourHex: text;
  };
+type CanisterId = text;
 type AppStatus = 
  record {
    onHold: bool;

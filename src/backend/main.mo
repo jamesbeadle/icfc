@@ -17,6 +17,7 @@ import CanisterIds "mo:waterway-mops/CanisterIds";
 import Management "mo:waterway-mops/Management";
 import BaseQueries "mo:waterway-mops/queries/BaseQueries";
 import Account "mo:waterway-mops/Account";
+import CanisterUtilities "mo:waterway-mops/CanisterUtilities";
 
 /* ----- Canister Definition Files ----- */
 
@@ -286,13 +287,18 @@ actor class Self() = this {
     ignore Timer.setTimer<system>(#nanoseconds(Int.abs(1)), postUpgradeCallback);
   };
 
+  public shared func getCanisterIds() : async [Ids.CanisterId] {
+    return profileManager.getStableUniqueCanisterIds();
+  };
+
   private func postUpgradeCallback() : async () {
     await updateProfileCanisterWasms();
-    /*
-    profileManager.setStableCanisterIndex([]);
-    profileManager.setStableUsernames([]);
-    profileManager.setStableTotalProfiles(0);
-    */
+    let IC : Management.Management = actor (CanisterIds.Default);
+    await CanisterUtilities.deleteCanister_("a25ax-gaaaa-aaaal-qslsa-cai", IC);
+    await CanisterUtilities.deleteCanister_("ai3xo-kqaaa-aaaal-qslra-cai", IC);
+    await CanisterUtilities.deleteCanister_("bfvta-fyaaa-aaaal-qslwq-cai", IC);
+    await CanisterUtilities.deleteCanister_("drlwu-ayaaa-aaaal-qslyq-cai", IC);
+    await CanisterUtilities.deleteCanister_("gnqmr-lqaaa-aaaal-qslha-cai", IC);
   };
 
   private func backupProfileData() {
