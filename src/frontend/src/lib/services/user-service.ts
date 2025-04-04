@@ -22,10 +22,7 @@ export class UserService {
       const result = await identityActor.createProfile(dto);
       return result;
     } catch (error) {
-      toasts.addToast({
-        message: "Failed to create profile",
-        type: "error",
-      });
+      console.error("Error creating profile: ", error);
       throw error;
     }
   }
