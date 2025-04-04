@@ -137,7 +137,7 @@
       window.location.href = "/";
     } catch (error) {
       console.error("Error creating profile:", error);
-      toasts.addToast({type: 'error', message: 'Failed to create profile'});
+      toasts.addToast({type: 'error', message: 'Failed to create profile. Please try again.'});
     } finally {
       isLoading = false;
     }
