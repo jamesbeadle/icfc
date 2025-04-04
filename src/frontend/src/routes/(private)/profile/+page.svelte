@@ -42,8 +42,6 @@
                 return;
             }
             userStore.set(profileResult);
-            profile = profileResult;
-            foundProfile(profile);
         } catch (error) {
             toasts.addToast({ type: 'error', message: 'Error fetching user profile.' });
             console.error('Profile fetch error:', error);
