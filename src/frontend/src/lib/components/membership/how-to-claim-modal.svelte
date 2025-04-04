@@ -32,17 +32,17 @@
         {
             step: 3,
             title: "Add Hot Key",
-            description: "Once your have staked ICFC, you will see that a neuron is created. Click on your neuron and scroll down to the 'Hot Key' section. Click on the 'Add Hot Key' button and enter your principal ID from the ICFC profile page. Then click 'Confirm' to add your hot key."
+            description: "Once your have staked ICFC, you will see that a neuron is created. Click on your neuron and scroll down to the 'Hot Key' section. Click on the 'Add Hot Key' button and enter your principal ID that was listed above this button. Then click 'Confirm' to add your hot key."
         },
         {
             step: 4,
-            title: "Refresh Page",
-            description: "Once your hot key is added, refresh the page to see your newly added ICFC neuron in the list of neurons."
+            title: "Refresh",
+            description: "Once your hot key is added, click the 'Refresh' button to see your newly added ICFC neuron in the list of neurons."
         },
         {
             step: 5,
             title: "Claim Membership",
-            description: "Once your ICFC neuron is created and has a minimum staked amount of 1000 ICP with the max dissolve delay, you can claim membership by clicking the 'Claim Membership' button."
+            description: "Once your ICFC neuron is created and has a minimum staked amount of 1000 ICP with the max dissolve delay, you can claim membership by completing the 'Create User' form or later on the profile page. On the profile page navigate to the 'Membership' tab and click on 'Status' and if you are eligible you will see a button to 'Claim Membership'."
         }
     ]
 

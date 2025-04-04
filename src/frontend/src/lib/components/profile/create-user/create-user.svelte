@@ -6,7 +6,6 @@
   import { membershipStore } from "$lib/stores/membership-store";
   import { toasts } from "$lib/stores/toasts-store";
   import { getFileExtensionFromFile, sortByHighestNeuron } from "$lib/utils/helpers";
-  
   import type { CreateProfile, EligibleMembership, Neuron, LeagueId, ClubId, CountryId, Country, League } from "../../../../../../declarations/backend/backend.did";
 
   import LocalSpinner from "../../shared/local-spinner.svelte";
@@ -131,7 +130,7 @@
 
         await userStore.createProfile(dto);
       }
-      await userStore.sync();
+      await userStore.cacheProfile();
       toasts.addToast({type: 'success', message: 'Profile successfully created'});
       toasts.addToast({type: 'info', message: 'You can link your OpenFPL account in the profile section'});
       window.location.href = "/";
@@ -156,13 +155,13 @@
 </script>
 
 {#if isLoading}
-  <LocalSpinner />
+  <LocalSpinner message="Loading Create User Form" />
 {:else}
   <div class="flex flex-col mx-auto space-y-6">
     <div class="px-8 py-6 ">
       <CreateUserHeader />
       {#if loadingDropdownData}
-        <LocalSpinner />
+        <LocalSpinner message="Loading Countries and Leagues" />
       {:else}
         <UserDetailsLayout bind:file bind:nationalityId bind:favouriteLeagueId bind:favouriteClubId bind:username bind:usernameAvailable bind:displayName store={userStore} />
       {/if}
@@ -174,7 +173,7 @@
         </p>
         <CopyPrincipal />
         {#if loadingNeurons}
-          <LocalSpinner />
+          <LocalSpinner message="Loading Neurons" />
         {:else}
           {#if neurons.length >= 0}
             <div class="flex flex-col space-y-4">

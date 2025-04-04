@@ -4,6 +4,7 @@ import { isError } from "../utils/helpers";
 import { writable } from "svelte/store";
 import { UserService } from "../services/user-service";
 import { userIdCreatedStore } from "./user-control-store";
+import { getProfileFromDB, setProfileToDB } from "$lib/utils/db.utils";
 import type {
   ProfileDTO,
   CreateProfile,
@@ -21,9 +22,9 @@ function createUserStore() {
   const { subscribe, set } = writable<any>(null);
 
   async function sync() {
-    let localStorageString = localStorage.getItem("user_profile_data");
-    if (localStorageString) {
-      const localProfile = JSON.parse(localStorageString);
+    let localProfile = await getProfileFromDB();
+    if (localProfile) {
+      
       set(localProfile);
       return;
     }
@@ -37,7 +38,7 @@ function createUserStore() {
 
   async function updateUsername(dto: UpdateUserName): Promise<any> {
     try {
-      const identityActor = await ActorFactory.createIdentityActor(
+      const identityActor: any = await ActorFactory.createIdentityActor(
         authStore,
         process.env.BACKEND_CANISTER_ID ?? "",
       );
@@ -56,7 +57,7 @@ function createUserStore() {
 
   async function updateDisplayName(dto: UpdateDisplayName): Promise<any> {
     try {
-      const identityActor = await ActorFactory.createIdentityActor(
+      const identityActor: any = await ActorFactory.createIdentityActor(
         authStore,
         process.env.BACKEND_CANISTER_ID ?? "",
       );
@@ -75,7 +76,7 @@ function createUserStore() {
 
   async function updateFavouriteClub(dto: UpdateFavouriteClub): Promise<any> {
     try {
-      const identityActor = await ActorFactory.createIdentityActor(
+      const identityActor: any = await ActorFactory.createIdentityActor(
         authStore,
         process.env.BACKEND_CANISTER_ID ?? "",
       );
@@ -94,7 +95,7 @@ function createUserStore() {
 
   async function updateNationality(dto: UpdateNationality): Promise<any> {
     try {
-      const identityActor = await ActorFactory.createIdentityActor(
+      const identityActor: any = await ActorFactory.createIdentityActor(
         authStore,
         process.env.BACKEND_CANISTER_ID ?? "",
       );
@@ -191,7 +192,7 @@ function createUserStore() {
 
     let profileData = getProfileResponse.ok;
     set(profileData);
-
+    await setProfileToDB(profileData);
     userIdCreatedStore.set({ data: profileData.principalId, certified: true });
   }
 
@@ -213,6 +214,7 @@ function createUserStore() {
 
   return {
     subscribe,
+    set,
     sync,
     getProfile,
     updateUsername,

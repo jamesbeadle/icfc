@@ -16,6 +16,7 @@
 
     let submittingClaim = $state(false);
     let isLoading = $state(false);
+    let loadingMessage = $state("");
 
     const membershipLevels = [
         { type: "Monthly", tokensRequired: 1000, key: "Monthly" },
@@ -32,6 +33,7 @@
             duration: 3000
         });
         try {
+            loadingMessage = "Claiming membership";
             submittingClaim = true;
             await membershipStore.claimMembership();
             toasts.addToast({ 
@@ -53,7 +55,7 @@
     <p class="px-2 text-2xl text-white cta-text">Membership Status</p>
     <div class="border-t horizontal-divider border-BrandGrayShade3"></div>
     {#if isLoading || submittingClaim}
-      <LocalSpinner />
+      <LocalSpinner message={loadingMessage} />
     {:else}
         <div class="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {#each membershipLevels as level, index}
