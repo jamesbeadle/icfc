@@ -31,6 +31,7 @@
                 };
                 console.log("addSubAppDto", addSubAppDto);
                 await userStore.addSubApp(addSubAppDto);
+                await userStore.cacheProfile();
                 console.log("addSubAppDto added");
             }
             await userStore.cacheProfile();
@@ -47,13 +48,18 @@
     
 
     async function removeOpenFPL() {
+        loadingMessage = "Removing OpenFPL Principal ID";
+        isLoading = true;
         let subApp: SubApp = { OpenFPL: null };
         try {
             await userStore.removeSubApp(subApp);
+            await userStore.cacheProfile();
             toasts.addToast({type: 'success', message: 'OpenFPL Principal ID removed'});
         } catch (error) {
             console.error("Error removing OpenFPL Principal ID:", error);
             toasts.addToast({type: 'error', message: 'Error removing OpenFPL Principal ID'});
+        } finally {
+            isLoading = false;
         }
     }
 

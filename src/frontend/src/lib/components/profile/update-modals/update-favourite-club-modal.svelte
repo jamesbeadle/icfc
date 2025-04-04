@@ -25,12 +25,10 @@
         try{
             loadingMessage = "Loading leagues";
             isLoading = true;
-            if(!$leagueStore){
-                let leaguesResult = await leagueStore.getLeagues();
-                if(leaguesResult){
-                    leagues = leaguesResult.leagues;
-                    leagueStore.setLeagues(leagues);
-                }
+            let leaguesResult = await leagueStore.getLeagues();
+            if(leaguesResult){
+                leagues = leaguesResult.leagues;
+                leagueStore.setLeagues(leagues);
             }
             loadingMessage = "Loading clubs";
             let clubsResult = await clubStore.getClubs(favouriteLeagueId);
@@ -46,7 +44,7 @@
         }
     });
 
-    $: isSubmitDisabled = newFavouriteLeagueId > 0 && newFavouriteClubId > 0 && newFavouriteClubId != favouriteClubId;
+    $: isSubmitDisabled = (newFavouriteLeagueId > 0) && (newFavouriteClubId > 0) && (newFavouriteClubId != favouriteClubId);
 
     const cancelModal = () => {
         newFavouriteLeagueId = favouriteLeagueId;
@@ -122,7 +120,7 @@
                     </div>
                     <div class="flex flex-row items-center py-3 space-x-4">
                         <button
-                            class="px-4 py-2 default-button fpl-cancel-btn"
+                            class="w-1/2 brand-button"
                             type="button"
                             on:click={cancelModal}
                             disabled={isLoading}
@@ -130,13 +128,10 @@
                             Cancel
                         </button>
                         <button
-                            class="px-4 py-2 default-button"
-                            class:bg-BrandGrayShade3={isSubmitDisabled}
-                            class:brand-button={!isSubmitDisabled}
-                            type="submit"
-                            disabled={isSubmitDisabled}
+                            class="w-1/2 brand-button"
+                            disabled={!isSubmitDisabled}
                         >
-                            Update
+                            Update Favourite Club
                         </button>
                     </div>
                 </form>

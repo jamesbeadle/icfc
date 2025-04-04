@@ -38,7 +38,7 @@
         }
     });
 
-    $: isSubmitDisabled = newNationalityId > 0 && newNationalityId != nationalityId && newNationalityId > 0 && newNationalityId != nationalityId;
+    $: isSubmitDisabled = (newNationalityId > 0) && (newNationalityId != nationalityId);
 
     const cancelModal = () => {
         newNationalityId = nationalityId;
@@ -97,7 +97,7 @@
                 <button
                     class="w-full brand-button"
                     onclick={handleSubmit}
-                    disabled={isSubmitDisabled}
+                    disabled={!isSubmitDisabled}
                 >
                     Update National Team
                 </button>
