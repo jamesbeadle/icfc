@@ -294,6 +294,7 @@ actor class Self() = this {
 
   private func postUpgradeCallback() : async () {
     await updateProfileCanisterWasms();
+    /*
     let IC : Management.Management = actor (CanisterIds.Default);
     
     Debug.print("deleting canisters");
@@ -306,6 +307,7 @@ actor class Self() = this {
     await CanisterUtilities.deleteCanister_("drlwu-ayaaa-aaaal-qslyq-cai", IC);
     Debug.print("deleting canisters4");
     await CanisterUtilities.deleteCanister_("gnqmr-lqaaa-aaaal-qslha-cai", IC);
+    */
   };
 
   private func backupProfileData() {
