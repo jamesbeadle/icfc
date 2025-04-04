@@ -25,7 +25,12 @@
     ];
     const currentLevelIndex = $derived(profile ? getCurrentLevelIndex(profile.membershipType) : -1);
 
-    async function handleClaimMembership() {   
+    async function handleClaimMembership() {
+        toasts.addToast({ 
+            type: "info", 
+            message: "Claiming membership...",
+            duration: 3000
+        });
         try {
             submittingClaim = true;
             await membershipStore.claimMembership();
