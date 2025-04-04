@@ -50,6 +50,7 @@ export type Result_2 = { ok: SaleProgress } | { err: Error };
 export type Result_3 = { ok: AppStatus } | { err: Error };
 export type Result_4 = { ok: null } | { err: Error };
 export interface SaleProgress {
+  packetCostinICP: bigint;
   remainingPackets: bigint;
   totalPackets: bigint;
 }

@@ -27,6 +27,7 @@ export const idlFactory = ({ IDL }) => {
   const AppStatus = IDL.Record({ version: IDL.Text, onHold: IDL.Bool });
   const Result_3 = IDL.Variant({ ok: AppStatus, err: Error });
   const SaleProgress = IDL.Record({
+    packetCostinICP: IDL.Nat,
     remainingPackets: IDL.Nat,
     totalPackets: IDL.Nat,
   });

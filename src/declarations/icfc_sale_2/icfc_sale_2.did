@@ -10,6 +10,7 @@ type Self =
  };
 type SaleProgress = 
  record {
+   packetCostinICP: nat;
    remainingPackets: nat;
    totalPackets: nat;
  };
