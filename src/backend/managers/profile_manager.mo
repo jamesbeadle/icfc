@@ -132,6 +132,10 @@ module {
                 return #err(#AlreadyExists);
             };
 
+            if (membership.membershipType == #NotEligible) {
+                return #err(#InEligible);
+            };
+
             let existingProfileCanisterId = profileCanisterIndex.get(principalId);
             switch (existingProfileCanisterId) {
                 case (?_) {
@@ -275,132 +279,13 @@ module {
             };
 
             let lowerCaseNewUsername = BaseUtilities.toLowercase(dto.username);
-            var currentOwner : ?Ids.PrincipalId = findUsernamePrincipalId(lowerCaseNewUsername);
+            var existing_owner : ?Ids.PrincipalId = findUsernamePrincipalId(lowerCaseNewUsername);
 
-            switch (currentOwner) {
-                case (?existingOwner) {
-                    // if (existingOwner == dto.principalId) {
-                    //     return #ok;
-                    // };
-
-                    var getCurrentOwnerProfileQuery : ProfileCommands.GetProfile = {
-                        principalId = existingOwner;
-                    };
-                    let currentOwnerProfile = await getProfile(getCurrentOwnerProfileQuery);
-
-                    var getRequesterProfileQuery : ProfileCommands.GetProfile = {
-                        principalId = dto.principalId;
-                    };
-                    let requesterProfile = await getProfile(getRequesterProfileQuery);
-
-                    switch (currentOwnerProfile, requesterProfile) {
-                        case (#ok(currentProfile), #ok(requester)) {
-                            let currentHasValidMembership = hasValidMembership(currentProfile);
-                            let requesterHasValidMembership = hasValidMembership(requester);
-
-                            if (not currentHasValidMembership and requesterHasValidMembership) {
-                                let newRandomUsername = generateUniqueUsername(existingOwner);
-
-                                // Update the current owner's username
-                                let currentCanisterId = profileCanisterIndex.get(existingOwner);
-                                switch (currentCanisterId) {
-                                    case (?foundCanisterId) {
-                                        let profile_canister = actor (foundCanisterId) : actor {
-                                            updateUsername : (dto : ProfileCommands.UpdateUserName) -> async Result.Result<(), Enums.Error>;
-                                            getProfile : (dto : ProfileCommands.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, Enums.Error>;
-                                        };
-
-                                        let updateOldUser = await profile_canister.updateUsername({
-                                            principalId = existingOwner;
-                                            username = newRandomUsername;
-                                        });
-
-                                        if (updateOldUser != #ok) {
-                                            return #err(#InvalidData);
-                                        };
-
-                                        usernames.put(existingOwner, newRandomUsername);
-
-                                        let oldUserProfile = await profile_canister.getProfile({
-                                            principalId = existingOwner;
-                                        });
-
-                                        switch (oldUserProfile) {
-                                            case (#ok(existingProfile)) {
-                                                let profile : ProfileQueries.ProfileDTO = existingProfile;
-                                                for ((subApp, subAppPrincipal) in profile.appPrincipalIds.vals()) {
-                                                    let _ = notifyAppsofProfileUpdate({
-                                                        membershipType = profile.membershipType;
-                                                        subApp = subApp;
-                                                        subAppUserPrincipalId = subAppPrincipal;
-                                                    });
-                                                };
-
-                                            };
-                                            case (#err(err)) {
-                                                return #err(err);
-                                            };
-                                        };
-
-                                    };
-                                    case (null) {
-                                        return #err(#NotFound);
-                                    };
-                                };
-
-                                // Allow the requester to claim the username
-                                let requesterCanisterId = profileCanisterIndex.get(dto.principalId);
-                                switch (requesterCanisterId) {
-                                    case (?foundCanisterId) {
-                                        let profile_canister = actor (foundCanisterId) : actor {
-                                            updateUsername : (dto : ProfileCommands.UpdateUserName) -> async Result.Result<(), Enums.Error>;
-                                            getProfile : (dto : ProfileCommands.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, Enums.Error>;
-                                        };
-
-                                        let updateNewUser = await profile_canister.updateUsername(dto);
-                                        if (updateNewUser == #ok) {
-                                            usernames.put(dto.principalId, dto.username);
-
-                                            let newUserProfile = await profile_canister.getProfile({
-                                                principalId = dto.principalId;
-                                            });
-
-                                            switch (newUserProfile) {
-                                                case (#ok(newProfile)) {
-                                                    let profile : ProfileQueries.ProfileDTO = newProfile;
-                                                    for ((subApp, subAppPrincipal) in profile.appPrincipalIds.vals()) {
-                                                        let _ = notifyAppsofProfileUpdate({
-                                                            membershipType = profile.membershipType;
-                                                            subApp = subApp;
-                                                            subAppUserPrincipalId = subAppPrincipal;
-                                                        });
-                                                    };
-                                                };
-                                                case (#err(err)) {
-                                                    return #err(err);
-                                                };
-                                            };
-
-                                            return #ok;
-                                        } else {
-                                            return #err(#InvalidData);
-                                        };
-                                    };
-                                    case (null) {
-                                        return #err(#NotFound);
-                                    };
-                                };
-                            } else {
-                                return #err(#AlreadyExists);
-                            };
-                        };
-                        case (_, _) {
-                            return #err(#NotFound);
-                        };
-                    };
+            switch (existing_owner) {
+                case (?_) {
+                    return #err(#AlreadyClaimed);
                 };
                 case (null) {
-                    // Username is not taken, proceed with update
                     let existingProfileCanisterId = profileCanisterIndex.get(dto.principalId);
                     switch (existingProfileCanisterId) {
                         case (?foundCanisterId) {
