@@ -68,10 +68,6 @@
                 previewUrl = '/profile_placeholder.png';
                 return;
             }
-            toasts.addToast({ 
-                    type: "success", 
-                    message: "Profile image uploaded successfully." 
-                });
             previewUrl = URL.createObjectURL(newProfilePic);
         }
     }
@@ -139,14 +135,14 @@
 
         isLoading = true;
         try {
-            await userStore.updateProfilePicture(newProfilePic);
+            await userStore.updateProfilePicture(newProfilePic, principalId);
             await userStore.sync();
             
             visible = false;
             toasts.addToast({
                 message: "Profile picture updated!",
                 type: "success",
-                duration: 2000,
+                duration: 4000,
             });
         } catch (error) {
             console.error("Error updating profile picture:", error);
