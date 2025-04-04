@@ -14,10 +14,11 @@
     $: clubs = $clubStore;
 
     let lastFetchedLeagueId: LeagueId | null = null;
+    let loadingClubs = false;
 
     async function getClubs() {
         try {
-            busy.start();
+            loadingClubs = true;
             const clubsResult = await clubStore.getClubs(favouriteLeagueId!);
             if (clubsResult) {
                 clubs = clubsResult.clubs;
@@ -32,7 +33,7 @@
             clubs = [];
             clubStore.setClubs([]);
         } finally {
-            busy.stop();
+            loadingClubs = false;
         } 
     }
 
@@ -87,7 +88,7 @@
         </p>
         <select
             bind:value={favouriteClubId}
-            disabled={!favouriteLeagueId}
+            disabled={!favouriteLeagueId || loadingClubs}
             class="w-full brand-input disabled:opacity-50"
         >
             <option value={null}>Select...</option>

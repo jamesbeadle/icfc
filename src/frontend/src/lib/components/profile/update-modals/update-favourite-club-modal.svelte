@@ -23,8 +23,14 @@
 
     onMount(async () => {
         try{
-        leagues = await leagueStore.getLeagues();
-        clubs = await clubStore.getClubs(favouriteLeagueId);
+        let leaguesResult = await leagueStore.getLeagues();
+        if(leaguesResult){
+          leagues = leaguesResult.leagues;
+        }
+        let clubsResult = await clubStore.getClubs(favouriteLeagueId);
+        if(clubsResult){
+          clubs = clubsResult.clubs;
+        }
         } catch {
         toasts.addToast({type: 'error', message: 'Failed to load data.'});
         } finally {
