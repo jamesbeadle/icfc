@@ -159,7 +159,9 @@ module {
 
                     profileCanisterIndex.put((principalId, activeCanisterId));
                     usernames.put(principalId, dto.username);
+                    totalProfiles += 1;
                     return await profile_canister.createProfile(principalId, dto, membership);
+
                 };
             };
         };
