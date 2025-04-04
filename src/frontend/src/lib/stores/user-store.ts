@@ -174,6 +174,7 @@ function createUserStore() {
     let error = isError(getProfileResponse);
     if (error) {
       console.error("Error fetching user profile");
+      throw new Error("Failed to fetch user profile");
       return;
     }
 
