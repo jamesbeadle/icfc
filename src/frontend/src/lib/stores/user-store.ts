@@ -111,7 +111,10 @@ function createUserStore() {
     }
   }
 
-  async function updateProfilePicture(picture: File, principalId: string): Promise<any> {
+  async function updateProfilePicture(
+    picture: File,
+    principalId: string,
+  ): Promise<any> {
     try {
       const maxPictureSize = 1000;
       if (picture.size > maxPictureSize * 1024) {

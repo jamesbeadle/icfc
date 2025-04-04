@@ -8,7 +8,7 @@
     <p class="text-xl text-white">Total ICFC Staked:</p>
     <div class="flex flex-row items-center h-8 space-x-2">
         <IcfcCoinIcon className="w-7" />
-        <p class="text-lg text-white">{formatICFC(maxStakedICFC / 100000000n)}</p>
+        <p class="text-lg text-white">{formatICFC(maxStakedICFC)}</p>
     </div>
     <p class="text-base text-BrandGrayShade3">Non-dissolving neurons with a dissolve delay greater than 2 years.</p>
 </div>
