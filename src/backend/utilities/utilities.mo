@@ -132,6 +132,8 @@ module Utilities {
                 };
             };
         };
+        let e8s : Nat64 = 100_000_000;
+        total_staked := total_staked / e8s;
 
         return total_staked;
     };
