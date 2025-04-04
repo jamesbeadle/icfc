@@ -15,9 +15,8 @@
     let isLoading = $state(false);
     let loadingMessage = $state("");
     let profile = $state($userStore);
-    let profileClass = $state('');
     let activeTab = $state("details");
-    let showUpdateRequiredDetailsModal: boolean = $state(false);
+    let showUpdateRequiredDetailsModal = $state(false);
     let principalId = $state("");
     let username = $state("");
     let displayName = $state("");
@@ -37,18 +36,12 @@
         loadingMessage = "Loading profile";
         isLoading = true;
         try {
-            if(!$userStore) {
-                const profileResult = await userStore.getProfile();
-                if (!profileResult) {
-                    toasts.addToast({ type: 'error', message: 'No profile found.' });
-                    return;
-                }
-                userStore.set(profileResult);
-                profile = profileResult;
+            const profileResult = await userStore.getProfile();
+            if (!profileResult) {
+                toasts.addToast({ type: 'error', message: 'No profile found.' });
+                return;
             }
-            const membership = profile.membershipClaims?.[0]?.membershipType;
-            profileClass = membership ? Object.keys(membership)[0]?.toLowerCase() : '';
-            foundProfile(profile);
+            userStore.set(profileResult);
         } catch (error) {
             toasts.addToast({ type: 'error', message: 'Error fetching user profile.' });
             console.error('Profile fetch error:', error);
@@ -63,6 +56,12 @@
         displayName = profile.displayName;
         profileSrc = getImageURL(profile.profilePicture);
     }
+
+    $effect(() => {
+        if (profile) {
+            foundProfile(profile);
+        }
+    });
 </script>
 
 {#if isLoading}

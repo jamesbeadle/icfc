@@ -88,7 +88,9 @@
 <div class="flex flex-col p-4 space-y-6">
     <div class="flex items-center space-x-4">
         <p class="text-2xl text-white cta-text">Your ICFC Membership</p>
-        <span class="status">{getMembershipStatus()}</span>
+        {#if !isLoading}
+            <span class="status">{getMembershipStatus()}</span>
+        {/if}
     </div>
     <p class="text-BrandGrayShade5">
       Please see information below related to your neuron based membership.

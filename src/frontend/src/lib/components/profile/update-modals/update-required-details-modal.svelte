@@ -14,6 +14,7 @@
     export let principalId: PrincipalId;
 
     let isLoading = false;
+    let loadingMessage = ("");
     let newUsername = username;
     let newDisplayName = displayName;
     let isCheckingUsername = false;
@@ -75,7 +76,7 @@
     const handleSubmitUsername = async (e: Event) => {
         e.preventDefault();
         if (isUsernameSubmitDisabled) return;
-
+        loadingMessage = "Updating Username";
         isLoading = true;
         try {
             let dto: UpdateUserName =  {
@@ -103,7 +104,7 @@
     const handleSubmitDisplayName = async (e: Event) => {
         e.preventDefault();
         if (isDisplayNameSubmitDisabled) return;
-
+        loadingMessage = "Updating Display Name";
         isLoading = true;
         try {
             let dto: UpdateDisplayName =  {
@@ -132,7 +133,7 @@
     const handleSubmitProfilePicture = async (e: Event) => {
         e.preventDefault();
         if (!newProfilePic) return;
-
+        loadingMessage = "Updating Profile Picture";
         isLoading = true;
         try {
             await userStore.updateProfilePicture(newProfilePic, principalId);
@@ -184,7 +185,7 @@
 {#if visible}
     <Modal onClose={cancelModal} title="Update Required Details">
         {#if isLoading}
-            <LocalSpinner />
+            <LocalSpinner message={loadingMessage} />
         {:else}
             <div class="flex flex-col p-4 space-y-6">
                 <form on:submit|preventDefault={handleSubmitProfilePicture} class="space-y-4">
