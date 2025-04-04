@@ -36,6 +36,7 @@
             loadingMessage = "Claiming membership";
             submittingClaim = true;
             await membershipStore.claimMembership();
+            loadingMessage = "Updating profile";
             await userStore.cacheProfile();
             toasts.addToast({ 
                 type: "success", 
