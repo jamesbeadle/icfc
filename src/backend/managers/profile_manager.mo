@@ -158,7 +158,7 @@ module {
                     };
 
                     profileCanisterIndex.put((principalId, activeCanisterId));
-                    usernames.put(principalId, activeCanisterId);
+                    usernames.put(principalId, dto.username);
                     return await profile_canister.createProfile(principalId, dto, membership);
                 };
             };
@@ -977,7 +977,7 @@ module {
         };
 
         public func setStableUsernames(stable_usernames : [(Ids.PrincipalId, Text)]) : () {
-            let usernames_map : TrieMap.TrieMap<Ids.PrincipalId, Ids.CanisterId> = TrieMap.TrieMap<Ids.PrincipalId, Ids.CanisterId>(Text.equal, Text.hash);
+            let usernames_map : TrieMap.TrieMap<Ids.PrincipalId, Text> = TrieMap.TrieMap<Ids.PrincipalId, Text>(Text.equal, Text.hash);
 
             for (username in Iter.fromArray(stable_usernames)) {
                 usernames_map.put(username);
