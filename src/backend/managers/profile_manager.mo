@@ -489,7 +489,7 @@ module {
 
                             let isNeuronsValid = validNeurons(eligibleMembership.eligibleNeuronIds, dto.principalId);
                             if (not isNeuronsValid) {
-                                return #err(#NotAllowed);
+                                return #err(#InEligible);
                             };
 
                             switch (eligibleMembership.membershipType) {
