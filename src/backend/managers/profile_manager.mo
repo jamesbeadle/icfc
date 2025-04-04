@@ -349,10 +349,10 @@ module {
             switch (existingProfileCanisterId) {
                 case (?foundCanisterId) {
                     let profile_canister = actor (foundCanisterId) : actor {
-                        updateDisplayname : (dto : ProfileCommands.UpdateDisplayName) -> async Result.Result<(), Enums.Error>;
+                        updateDisplayName : (dto : ProfileCommands.UpdateDisplayName) -> async Result.Result<(), Enums.Error>;
                         getProfile : (dto : ProfileCommands.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, Enums.Error>;
                     };
-                    let res = await profile_canister.updateDisplayname(dto);
+                    let res = await profile_canister.updateDisplayName(dto);
                     switch (res) {
                         case (#ok) {
                             let profile = await profile_canister.getProfile({
