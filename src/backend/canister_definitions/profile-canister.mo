@@ -1170,6 +1170,5 @@ actor class _ProfileCanister() {
 
     system func preupgrade() {};
 
-    system func postupgrade() {
-    };
+    system func postupgrade() {};
 };

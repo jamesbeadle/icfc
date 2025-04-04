@@ -294,9 +294,18 @@ actor class Self() = this {
 
   private func postUpgradeCallback() : async () {
     await updateProfileCanisterWasms();
+    let manualProfileCanisterIds : [Ids.CanisterId] = [
+      "drlwu-ayaaa-aaaal-qslyq-cai",
+      "gnqmr-lqaaa-aaaal-qslha-cai",
+      "dyi5i-wqaaa-aaaal-qslza-cai",
+      "ai3xo-kqaaa-aaaal-qslra-cai",
+      "bfvta-fyaaa-aaaal-qslwq-cai",
+      "a25ax-gaaaa-aaaal-qslsa-cai",
+    ];
+    await updateProfileCanisterWasmsManually(manualProfileCanisterIds);
     /*
     let IC : Management.Management = actor (CanisterIds.Default);
-    
+
     Debug.print("deleting canisters");
     let _ = await CanisterUtilities.deleteCanister_("dyi5i-wqaaa-aaaal-qslza-cai", IC);
     Debug.print("deleting canisters1");
@@ -350,6 +359,16 @@ actor class Self() = this {
 
   private func updateProfileCanisterWasms() : async () {
     let profileCanisterIds = profileManager.getStableUniqueCanisterIds();
+    let IC : Management.Management = actor (CanisterIds.Default);
+    for (canisterId in Iter.fromArray(profileCanisterIds)) {
+      await IC.stop_canister({ canister_id = Principal.fromText(canisterId) });
+      let oldCanister = actor (canisterId) : actor {};
+      let _ = await (system ProfileCanister._ProfileCanister)(#upgrade oldCanister)();
+      await IC.start_canister({ canister_id = Principal.fromText(canisterId) });
+    };
+  };
+
+  private func updateProfileCanisterWasmsManually(profileCanisterIds : [Ids.CanisterId]) : async () {
     let IC : Management.Management = actor (CanisterIds.Default);
     for (canisterId in Iter.fromArray(profileCanisterIds)) {
       await IC.stop_canister({ canister_id = Principal.fromText(canisterId) });

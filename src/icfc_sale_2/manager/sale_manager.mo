@@ -20,6 +20,7 @@ import SNSLedger "mo:waterway-mops/def/Ledger";
 import SaleUtilities "../utilities/sale-utilities";
 import Account "mo:waterway-mops/Account";
 import Enums "mo:waterway-mops/Enums";
+import Environment "../environment";
 
 module {
     public class SaleManager() {
@@ -301,7 +302,7 @@ module {
             switch (res) {
                 case (#ok(balance)) {
                     let user = saleParticipants.get(principalId);
-                    let one_packect_cost_e8s = Nat.sub(48 * 100_000_000, 10_000);
+                    let one_packect_cost_e8s = Nat.sub(Environment.ICFC_PACKET_PRICE_IN_ICP * 100_000_000, 10_000);
                     switch (user) {
                         case (null) {
 
@@ -316,7 +317,7 @@ module {
                             };
 
                             // calculate the total ICP value of the claimed packets
-                            let total_icp_value = totalClaimedPackets * 48;
+                            let total_icp_value = totalClaimedPackets * Environment.ICFC_PACKET_PRICE_IN_ICP;
                             let total_icp_value_e8s = total_icp_value * 100_000_000;
 
                             // calculate the total fees paid
