@@ -6,7 +6,7 @@
     import { userStore } from "$lib/stores/user-store";
     import { onMount } from "svelte";
     import { countryStore } from "$lib/stores/country-store";
-    import type { Country, CountryId, PrincipalId, UpdateNationality } from "../../../../../../declarations/backend/backend.did";
+    import type { Country, Countries, CountryId, PrincipalId, UpdateNationality } from "../../../../../../declarations/backend/backend.did";
 
 
     export let visible: boolean = false;
@@ -14,17 +14,27 @@
     export let principalId: PrincipalId;
 
     let isLoading = false;
+    let loadingMessage ="";
     let newNationalityId = nationalityId;
     let countries: Country[] = [];
 
 
     onMount(async () => {
         try{
-        countries = await countryStore.getCountries();
-        } catch {
-        toasts.addToast({type: 'error', message: 'Failed to load data.'});
+            loadingMessage = "Loading countries";
+            isLoading = true;
+         if(!$countryStore){
+            const countriesResult = await countryStore.getCountries();
+            if(countriesResult){
+                countries = countriesResult.countries;
+                countryStore.setCountries(countries);
+            }
+         }
+        } catch (error) {
+            toasts.addToast({type: 'error', message: 'Failed to load countries.', duration: 5000});
+            console.error('Failed to load countries.', error);
         } finally {
-        isLoading = false;
+            isLoading = false;
         }
     });
 
@@ -38,7 +48,7 @@
     const handleSubmit = async (e: Event) => {
         e.preventDefault();
         if (isSubmitDisabled) return;
-
+        loadingMessage = "Updating National Team";
         isLoading = true;
         try {
             let dto: UpdateNationality =  {
@@ -49,7 +59,7 @@
             await userStore.sync();
             visible = false;
             toasts.addToast({
-                message: "Nationality updated.",
+                message: "National Team updated.",
                 type: "success",
                 duration: 2000,
             });
@@ -70,20 +80,23 @@
 {#if visible}
     <Modal onClose={cancelModal} title="Update National Team">
         {#if isLoading}
-            <LocalSpinner />
+            <LocalSpinner message={loadingMessage} />
         {:else}
             <div class="flex flex-col p-4 space-y-2">
                 <p class="form-title">National Team</p>
                 <p class="form-hint">Select to participate in nationwide football competitions.</p>
-                <DropdownSelect
-                    options={countries.sort((a, b) => a.name.localeCompare(b.name)).map((country: Country) => ({ id: country.id, label: country.name }))}
-                    value={nationalityId}
-                    onChange={(value: string | number) => {
-                        nationalityId = Number(value);
-                    }}
-                />
+                <select
+                    bind:value={nationalityId}
+                    class="w-full brand-input"
+                >
+                <option value={null}>Select...</option>
+                {#each $countryStore.sort((a, b) => a.name.localeCompare(b.name)) as country}
+                    <option value={country.id}>{country.name}</option>
+                {/each}
+                </select>
                 <button
                     class="w-full brand-button"
+                    onclick={handleSubmit}
                     disabled={isSubmitDisabled}
                 >
                     Update National Team

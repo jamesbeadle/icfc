@@ -20,31 +20,24 @@
     
   let worker: { syncAuthIdle: (auth: AuthStoreData) => void } | undefined;
   let isLoading = $state(true);
+  let loadingMessage = $state("Loading");
 
   const init = async () => {
-    console.log('init called')
     if (!browser) return;
-    console.log('auth store sync called')
     await authStore.sync();
-    console.log('auth store sync complete')
     displayAndCleanLogoutMsg();
-    console.log('end init')
   };
 
   onMount(async () => {
-    console.log('mounting')
     if (browser) {
       document.querySelector('#app-spinner')?.remove();
     }
-    console.log('init')
     await init();
-    console.log('init end')
     const identity = get(authStore).identity;
     if (identity) {
       try {
-        console.log('init user profile')
+        loadingMessage = "Initalizing User Profile";
         await initUserProfile({ identity });
-        console.log('init user profile end')
       } catch (err) {
         console.error('initUserProfile error:', err);
       }
@@ -58,7 +51,7 @@
 
 {#if browser && isLoading}
   <div in:fade>
-    <FullScreenSpinner />
+    <FullScreenSpinner message={loadingMessage} />
   </div>
 {:else}
   <HeaderController>

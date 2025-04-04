@@ -5,15 +5,16 @@
     
     import { toasts } from "$lib/stores/toasts-store";
     import { getImageURL } from "$lib/utils/helpers";
-    import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
+    import FullScreenSpinner from '$lib/components/shared/full-screen-spinner.svelte';
     import TabContainer from "$lib/components/shared/tab-container.svelte";
     import ProfileDetails from "$lib/components/profile/profile-details.svelte";
     import ProfileMembership from "$lib/components/profile/profile-membership.svelte";
     import ProfileLinkedApps from "$lib/components/profile/profile-linked-apps.svelte";
     import UpdateRequiredDetailsModal from "$lib/components/profile/update-modals/update-required-details-modal.svelte";
     
-    let isLoading = $state(true);
-    let profile: ProfileDTO | null = $state(null);
+    let isLoading = $state(false);
+    let loadingMessage = $state("");
+    let profile = $state($userStore);
     let profileClass = $state('');
     let activeTab = $state("details");
     let showUpdateRequiredDetailsModal: boolean = $state(false);
@@ -21,8 +22,6 @@
     let username = $state("");
     let displayName = $state("");
     let profileSrc = $state("");
-
-    
 
     const tabs = [
         { id: "details", label: "Details" },
@@ -35,14 +34,18 @@
     }
 
     onMount(async () => {
+        loadingMessage = "Loading profile";
+        isLoading = true;
         try {
-            const profileResult = await userStore.getProfile();
-            if (!profileResult) {
-                toasts.addToast({ type: 'error', message: 'No profile found.' });
-                return;
+            if(!$userStore) {
+                const profileResult = await userStore.getProfile();
+                if (!profileResult) {
+                    toasts.addToast({ type: 'error', message: 'No profile found.' });
+                    return;
+                }
+                userStore.set(profileResult);
+                profile = profileResult;
             }
-            profile = profileResult;
-
             const membership = profile.membershipClaims?.[0]?.membershipType;
             profileClass = membership ? Object.keys(membership)[0]?.toLowerCase() : '';
             foundProfile(profile);
@@ -64,7 +67,7 @@
 
 {#if isLoading}
     <div class="flex items-center justify-center h-screen">
-        <LocalSpinner />
+        <FullScreenSpinner message={loadingMessage} />
     </div>
 {:else if profile}
     <div class="min-h-screen bg-BrandBlackShade1">

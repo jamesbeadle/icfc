@@ -15,6 +15,7 @@
     export let profile: ProfileDTO;
 
     let isLoading = false;
+    let loadingMessage = "";
 
     let showUpdateFavouriteClubModal: boolean = false;
     let showUpdateNationalityModal: boolean = false;
@@ -29,6 +30,7 @@
     let nationalityId = 0;
     
     onMount(async () => {
+      loadingMessage = "Loading profile details";
       try{
         isLoading = true;
         principalId = profile.principalId;
@@ -47,15 +49,18 @@
 
     async function getFootballData(){
       try{
+        loadingMessage = "Loading National Team";
         let countriesResult = await countryStore.getCountries();
         if(countriesResult){
           countries = countriesResult.countries;
         }
         countryStore.setCountries(countries);
+        loadingMessage = "Loading Favourite League";
         let leaguesResult = await leagueStore.getLeagues();
         if(leaguesResult){
           leagues = leaguesResult.leagues;
         }
+        loadingMessage = "Loading Favourite Club";
         favouriteLeagueId = profile?.favouriteLeagueId[0] ?? 0;
         let clubsResult = await clubStore.getClubs(favouriteLeagueId);
         if(clubsResult){
@@ -89,7 +94,7 @@
 </script>
   
 {#if isLoading}
-  <LocalSpinner />
+  <LocalSpinner message={loadingMessage} />
 {:else}
   <div class="p-4 space-y-5 text-white">
     <div>

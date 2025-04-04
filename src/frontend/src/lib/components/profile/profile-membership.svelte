@@ -11,7 +11,8 @@
     
     const { profile } = $props<{ profile: ProfileDTO }>();
     
-    let isLoading = $state(true);
+    let isLoading = $state(false);
+    let loadingMessage = $state("");
     let neurons: Neuron[] = $state([]);
     let userMembershipEligibility: EligibleMembership | null = $state(null);
     let maxStakedICFC = $state(0n);
@@ -27,6 +28,8 @@
     }
 
     onMount(async () => {
+        loadingMessage = "Loading Membership Details";
+        isLoading = true;
         try{
             await loadData();
         } catch {
@@ -38,6 +41,7 @@
 
     async function loadData(){
         try {
+            loadingMessage = "Loading Neurons";
             await getNeurons();
         } catch (error) {
             console.error("No neurons found:", error);
@@ -45,8 +49,6 @@
             isLoading = false;
         }
     }
-
-    
 
     async function getNeurons() {
         let neuronsResult = await membershipStore.getUserNeurons();
@@ -72,6 +74,7 @@
     
     async function refreshNeurons() {
         try{
+            loadingMessage = "Refreshing Neurons";
             isLoading = true;
             await loadData();
         } catch {
@@ -92,7 +95,7 @@
     </p>
 
     {#if isLoading}
-      <LocalSpinner />
+      <LocalSpinner message={loadingMessage} />
     {:else}
       {#if neurons.length >= 0}
         <div class="flex flex-col p-5 rounded-lg">

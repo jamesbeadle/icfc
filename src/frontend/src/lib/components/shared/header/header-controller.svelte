@@ -10,8 +10,8 @@
     import Sidebar from './sidebar.svelte';
     import CreateUser from '$lib/components/profile/create-user/create-user.svelte';
     import { busy } from '$lib/stores/busy-store';
-    import LocalSpinner from '../local-spinner.svelte';
-
+    import FullScreenSpinner from '../full-screen-spinner.svelte';
+    
     interface Props {
         children: Snippet;
     }
@@ -25,7 +25,7 @@
 </script>
 
 {#if $busy}
-    <LocalSpinner />
+    <FullScreenSpinner message="Checking for Existing Profile" />
 {:else}
 
     {#if $authSignedInStore}

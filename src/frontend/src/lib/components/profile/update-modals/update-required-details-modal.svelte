@@ -83,7 +83,7 @@
                 principalId
             }
             await userStore.updateUsername(dto);
-            await userStore.sync();
+            await userStore.cacheProfile();
             visible = false;
             toasts.addToast({
                 message: "Username updated.",
@@ -111,7 +111,7 @@
                 principalId
             }
             await userStore.updateDisplayName(dto);
-            await userStore.sync();
+            await userStore.cacheProfile();
             visible = false;
             toasts.addToast({
                 message: "Display name updated.",
@@ -136,7 +136,7 @@
         isLoading = true;
         try {
             await userStore.updateProfilePicture(newProfilePic, principalId);
-            await userStore.sync();
+            await userStore.cacheProfile();
             
             visible = false;
             toasts.addToast({
