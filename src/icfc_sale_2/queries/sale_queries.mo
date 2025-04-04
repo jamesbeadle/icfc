@@ -27,5 +27,6 @@ module {
     public type SaleProgress = {
         totalPackets : Nat;
         remainingPackets : Nat;
+        packetCostinICP : Nat;
     };
 };

@@ -24,7 +24,7 @@ import Environment "../environment";
 
 module {
     public class SaleManager() {
-        private var TOTAL_ICFC_PACKETS : Nat = 1000;
+
         private var icfcPacketsRemaining : Nat = 1000;
 
         private var saleParticipants : TrieMap.TrieMap<Ids.PrincipalId, List.List<T.ClaimedRecord>> = TrieMap.TrieMap<Ids.PrincipalId, List.List<T.ClaimedRecord>>(
@@ -108,8 +108,9 @@ module {
 
         public func getProgress() : async Result.Result<SaleQueries.SaleProgress, Enums.Error> {
             let result : SaleQueries.SaleProgress = {
-                totalPackets = TOTAL_ICFC_PACKETS;
+                totalPackets = Environment.TOTAL_ICFC_PACKETS;
                 remainingPackets = icfcPacketsRemaining;
+                packetCostinICP = Environment.ICFC_PACKET_PRICE_IN_ICP;
             };
             return #ok(result);
         };
