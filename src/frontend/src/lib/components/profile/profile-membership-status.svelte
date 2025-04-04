@@ -3,10 +3,10 @@
     import { membershipStore } from "$lib/stores/membership-store";
     import { toasts } from "$lib/stores/toasts-store";
     import { getCurrentLevelIndex } from "$lib/utils/helpers";
+    import { userStore } from "$lib/stores/user-store";
     import MembershipCard from "../membership/membership-card.svelte";
     import LocalSpinner from "../shared/local-spinner.svelte";
     
-
     let {profile, maxStakedICFC, refreshNeurons} = 
         $props<{ 
             profile: ProfileDTO; 
@@ -36,6 +36,8 @@
             loadingMessage = "Claiming membership";
             submittingClaim = true;
             await membershipStore.claimMembership();
+            loadingMessage = "Updating profile";
+            await userStore.cacheProfile();
             toasts.addToast({ 
                 type: "success", 
                 message: `Successfully claimed membership.` 
