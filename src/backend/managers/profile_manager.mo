@@ -829,9 +829,7 @@ module {
                             return false;
                         };
                     };
-                    case (null) {
-                        return false;
-                    };
+                    case (null) {};
                 };
             };
             return true;
