@@ -136,6 +136,11 @@ module {
                 return #err(#InEligible);
             };
 
+            let isNeuronsValid = validNeurons(membership.eligibleNeuronIds, principalId);
+            if (not isNeuronsValid) {
+                return #err(#InEligible);
+            };
+
             let existingProfileCanisterId = profileCanisterIndex.get(principalId);
             switch (existingProfileCanisterId) {
                 case (?_) {
@@ -167,6 +172,9 @@ module {
                             profileCanisterIndex.put((principalId, activeCanisterId));
                             usernames.put(principalId, dto.username);
                             totalProfiles += 1;
+                            for (neuron in membership.eligibleNeuronIds.vals()) {
+                                neuronsUsedforMembership.put(neuron, principalId);
+                            };
                             return #ok;
                         };
 
@@ -527,6 +535,9 @@ module {
 
                                     switch (res) {
                                         case (#ok(claim)) {
+                                            for (neuron in eligibleMembership.eligibleNeuronIds.vals()) {
+                                                neuronsUsedforMembership.put(neuron, dto.principalId);
+                                            };
                                             return #ok(claim);
                                         };
                                         case (#err(err)) {
@@ -829,9 +840,7 @@ module {
                             return false;
                         };
                     };
-                    case (null) {
-                        return false;
-                    };
+                    case (null) {};
                 };
             };
             return true;
