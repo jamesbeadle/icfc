@@ -53,7 +53,7 @@ module Utilities {
                 case (?dissolve_state) {
                     switch (dissolve_state) {
                         case (#DissolveDelaySeconds(dissolve_delay)) {
-                            if (convertSecondsToYears(Int64.toInt(Int64.fromNat64(dissolve_delay))) > 2.0) {
+                            if (convertSecondsToYears(Int64.toInt(Int64.fromNat64(dissolve_delay))) >= 2.0) {
                                 total_staked += neuron.cached_neuron_stake_e8s;
                                 switch (neuron.id) {
                                     case (?neuronId) {
@@ -117,7 +117,7 @@ module Utilities {
                 case (?dissolve_state) {
                     switch (dissolve_state) {
                         case (#DissolveDelaySeconds(dissolve_delay)) {
-                            if (convertSecondsToYears(Int64.toInt(Int64.fromNat64(dissolve_delay))) > 2.0) {
+                            if (convertSecondsToYears(Int64.toInt(Int64.fromNat64(dissolve_delay))) >= 2.0) {
                                 total_staked += neuron.cached_neuron_stake_e8s;
                             };
                         };
