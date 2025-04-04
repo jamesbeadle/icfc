@@ -157,10 +157,19 @@ module {
                         };
                     };
 
-                    profileCanisterIndex.put((principalId, activeCanisterId));
-                    usernames.put(principalId, dto.username);
-                    totalProfiles += 1;
-                    return await profile_canister.createProfile(principalId, dto, membership);
+                    let res = await profile_canister.createProfile(principalId, dto, membership);
+                    switch (res) {
+                        case (#ok(_)) {
+                            profileCanisterIndex.put((principalId, activeCanisterId));
+                            usernames.put(principalId, dto.username);
+                            totalProfiles += 1;
+                            return #ok;
+                        };
+
+                        case (#err(err)) {
+                            return #err(err);
+                        };
+                    }
 
                 };
             };
