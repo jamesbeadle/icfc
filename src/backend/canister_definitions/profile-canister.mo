@@ -8,6 +8,7 @@ import Time "mo:base/Time";
 import Array "mo:base/Array";
 import Buffer "mo:base/Buffer";
 import List "mo:base/List";
+import Debug "mo:base/Debug";
 import T "../icfc_types";
 import ProfileQueries "../queries/profile_queries";
 import ProfileCommands "../commands/profile_commands";
