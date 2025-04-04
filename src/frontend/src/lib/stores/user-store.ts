@@ -11,6 +11,7 @@ import type {
   UpdateUserName,
   UpdateDisplayName,
   UpdateFavouriteClub,
+  UpdateProfilePicture,
   UpdateNationality,
   AddSubApp,
   SubApp,
@@ -110,39 +111,46 @@ function createUserStore() {
     }
   }
 
-  async function updateProfilePicture(picture: File): Promise<any> {
+  async function updateProfilePicture(picture: File, principalId: string): Promise<any> {
     try {
       const maxPictureSize = 1000;
-      const extension = getFileExtensionFromFile(picture);
-
       if (picture.size > maxPictureSize * 1024) {
         return null;
       }
       const reader = new FileReader();
-      reader.readAsArrayBuffer(picture);
-      reader.onloadend = async () => {
-        const arrayBuffer = reader.result as ArrayBuffer;
-        const uint8Array = new Uint8Array(arrayBuffer);
-        try {
-          const identityActor = await ActorFactory.createIdentityActor(
-            authStore,
-            process.env.BACKEND_CANISTER_ID ?? "",
-          );
-          const result = await identityActor.updateProfilePicture(
-            uint8Array,
-            extension,
-          );
-          if (isError(result)) {
-            console.error("Error updating profile picture");
-            return;
-          }
+      const extension = getFileExtensionFromFile(picture);
 
-          await cacheProfile();
-          return result;
-        } catch (error) {
-          console.error(error);
+      const profilePictureData = new Promise<Uint8Array>((resolve, reject) => {
+        reader.onloadend = () => {
+          const arrayBuffer = reader.result as ArrayBuffer;
+          const uint8Array = new Uint8Array(arrayBuffer);
+          resolve(uint8Array);
+        };
+        reader.onerror = reject;
+        reader.readAsArrayBuffer(picture!);
+      });
+
+      const profilePicture = await profilePictureData;
+      try {
+        const identityActor = await ActorFactory.createIdentityActor(
+          authStore,
+          process.env.BACKEND_CANISTER_ID ?? "",
+        );
+        let dto: UpdateProfilePicture = {
+          principalId: principalId,
+          profilePicture: [profilePicture],
+        };
+        const result = await identityActor.updateProfilePicture(dto);
+        if (isError(result)) {
+          console.error("Error updating profile picture");
+          return;
         }
-      };
+
+        await cacheProfile();
+        return result;
+      } catch (error) {
+        console.error(error);
+      }
     } catch (error) {
       console.error("Error updating username:", error);
       throw error;
