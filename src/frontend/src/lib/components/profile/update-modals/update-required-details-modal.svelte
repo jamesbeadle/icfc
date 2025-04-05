@@ -11,7 +11,6 @@
     export let username: string;
     export let displayName: string;
     export let profileSrc: string;
-    export let principalId: PrincipalId;
 
     let isLoading = false;
     let loadingMessage = ("");
@@ -134,7 +133,7 @@
         loadingMessage = "Updating Profile Picture";
         isLoading = true;
         try {
-            await userStore.updateProfilePicture(newProfilePic, principalId);
+            await userStore.updateProfilePicture(newProfilePic);
             await userStore.cacheProfile();
             
             visible = false;
