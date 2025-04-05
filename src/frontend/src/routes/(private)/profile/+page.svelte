@@ -14,13 +14,13 @@
     
     let isLoading = $state(false);
     let loadingMessage = $state("");
-    let profile = $state($userStore);
     let activeTab = $state("details");
     let showUpdateRequiredDetailsModal = $state(false);
-    let principalId = $state("");
-    let username = $state("");
-    let displayName = $state("");
-    let profileSrc = $state("");
+    
+    let profile = $derived($userStore);
+    let username = $derived(profile?.username ?? "");
+    let displayName = $derived(profile?.displayName ?? "");
+    let profileSrc = $derived(profile ? getImageURL(profile.profilePicture) : "");
 
     const tabs = [
         { id: "details", label: "Details" },
@@ -47,19 +47,6 @@
             console.error('Profile fetch error:', error);
         } finally {
             isLoading = false;
-        }
-    });
-
-    function foundProfile(profile: ProfileDTO): void {
-        principalId = profile.principalId;
-        username = profile.username;
-        displayName = profile.displayName;
-        profileSrc = getImageURL(profile.profilePicture);
-    }
-
-    $effect(() => {
-        if ($userStore) {
-            foundProfile(profile);
         }
     });
 </script>
@@ -122,5 +109,5 @@
 {/if}
 
 {#if showUpdateRequiredDetailsModal}
-    <UpdateRequiredDetailsModal bind:visible={showUpdateRequiredDetailsModal} {username} {displayName} profileSrc={profileSrc} {principalId} />
+    <UpdateRequiredDetailsModal bind:visible={showUpdateRequiredDetailsModal} {username} {displayName} profileSrc={profileSrc} />
 {/if}

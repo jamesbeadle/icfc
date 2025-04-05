@@ -24,7 +24,6 @@
     let leagues: League[] = [];
 
     let joinedDate = "";
-    let principalId = "";
     let favouriteLeagueId = 0;
     let favouriteClubId = 0;
     let nationalityId = 0;
@@ -33,7 +32,6 @@
       loadingMessage = "Loading profile details";
       try{
         isLoading = true;
-        principalId = profile.principalId;
         joinedDate = getDateFromBigInt(Number(profile.createdOn));
         await getFootballData();
       } catch (error) {

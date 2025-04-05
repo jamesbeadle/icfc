@@ -17,7 +17,7 @@
 
   let isLoading = false;
   let loadingMessage = '';
-  let newNationalityId: CountryId;
+  let newNationalityId: CountryId = nationalityId;
   let countries: Country[] = [];
 
   onMount(async () => {
@@ -41,7 +41,7 @@
     }
   });
 
-  $: isSubmitDisabled = newNationalityId < 0 && newNationalityId == nationalityId;
+  $: isSubmitDisabled = newNationalityId < 0 || newNationalityId === nationalityId;
 
   const cancelModal = () => {
     newNationalityId = nationalityId;
@@ -90,7 +90,7 @@
         </p>
         <select bind:value={newNationalityId} class="w-full brand-input">
           <option value={null}>Select...</option>
-          {#each $countryStore.sort( (a, b) => a.name.localeCompare(b.name) ) as country}
+          {#each $countryStore.sort((a, b) => a.name.localeCompare(b.name)) as country}
             <option value={country.id}>{country.name}</option>
           {/each}
         </select>
