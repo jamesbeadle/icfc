@@ -248,6 +248,12 @@ export const idlFactory = ({ IDL }) => {
     getICPBalance: IDL.Func([PrincipalId], [Result_5], []),
     getLeagues: IDL.Func([GetLeagues], [Result_4], []),
     getProfile: IDL.Func([], [Result_3], []),
+    getProfileCanisterIds: IDL.Func([], [IDL.Vec(CanisterId)], []),
+    getProfileCanisterIndex: IDL.Func(
+      [],
+      [IDL.Vec(IDL.Tuple(PrincipalId, CanisterId))],
+      [],
+    ),
     getTokenBalances: IDL.Func([], [Result_2], []),
     getUserNeurons: IDL.Func([], [Result_1], []),
     isUsernameValid: IDL.Func([IsUsernameValid], [IDL.Bool], ["query"]),

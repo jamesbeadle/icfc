@@ -70,6 +70,11 @@ type Self =
    getICPBalance: (PrincipalId) -> (Result_5);
    getLeagues: (GetLeagues) -> (Result_4);
    getProfile: () -> (Result_3);
+   getProfileCanisterIds: () -> (vec CanisterId);
+   getProfileCanisterIndex: () -> (vec record {
+                                         PrincipalId;
+                                         CanisterId;
+                                       });
    getTokenBalances: () -> (Result_2);
    getUserNeurons: () -> (Result_1);
    isUsernameValid: (IsUsernameValid) -> (bool) query;

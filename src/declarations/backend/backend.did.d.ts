@@ -218,6 +218,8 @@ export interface Self {
   getICPBalance: ActorMethod<[PrincipalId], Result_5>;
   getLeagues: ActorMethod<[GetLeagues], Result_4>;
   getProfile: ActorMethod<[], Result_3>;
+  getProfileCanisterIds: ActorMethod<[], Array<CanisterId>>;
+  getProfileCanisterIndex: ActorMethod<[], Array<[PrincipalId, CanisterId]>>;
   getTokenBalances: ActorMethod<[], Result_2>;
   getUserNeurons: ActorMethod<[], Result_1>;
   isUsernameValid: ActorMethod<[IsUsernameValid], boolean>;
