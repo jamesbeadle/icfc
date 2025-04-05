@@ -6,53 +6,45 @@
     import { toasts } from '$lib/stores/toasts-store';
     import { saleStore } from '$lib/stores/sale-store';
     import { isError } from '$lib/utils/helpers';
-    //import { SaleGoalDTO } from  "../../../../../declarations/backend/backend.did";
-
-    //TODO: Remove this once the SaleGoalDTO is imported
-    interface SaleGoalDTO {
-        currentProgress: bigint;
-        maxGoal: bigint;
-        minGoal: bigint;
-    }
-
+    import type { SaleProgress } from '../../../../../declarations/icfc_sale_2/icfc_sale_2.did';
     export let showModal: boolean;
     export let onClose: () => void;
 
     let userBalance: bigint = BigInt(0);
-    let donationAmount: bigint = BigInt(0);
-    let maxDonationAmount: bigint = BigInt(20);
+    let contributionAmount: bigint = BigInt(0);
+    let maxContributionAmount: bigint = BigInt(20);
     let showConfirm: boolean = false;
 
-    let saleGoal: SaleGoalDTO = {
-        currentProgress: BigInt(0),
-        maxGoal: BigInt(100),
-        minGoal: BigInt(50)
+    let saleGoal: SaleProgress = {
+        packetCostinICP: BigInt(60),
+        remainingPackets: BigInt(1000),
+        totalPackets: BigInt(1000)
     };
 
-    function validateDonation(): { isValid: boolean; error?: string } {
-        if (donationAmount <= 0) {
+    function validateContribution(): { isValid: boolean; error?: string } {
+        if (contributionAmount <= 0) {
             return {
                 isValid: false,
                 error: "Please enter a valid amount."
             };
         }
-        if (donationAmount > userBalance) {
+        if (contributionAmount > userBalance) {
             return {
                 isValid: false,
                 error: "You don't have enough balance to donate that amount."
             };
         }
-        if (donationAmount > maxDonationAmount) {
+        if (contributionAmount > maxContributionAmount) {
             return {
                 isValid: false,
-                error: "You can't donate more than the maximum donation amount."
+                error: "You can't donate more than the maximum contribution amount."
             };
         }
         return { isValid: true };
     }
 
     function showConfirmation() {
-        const validation = validateDonation();
+        const validation = validateContribution();
         if (!validation.isValid) {
             toasts.addToast({
                 message: validation.error!,
@@ -66,32 +58,32 @@
 
     async function handleSubmit() {
         try {
-            const result = await saleStore.participateInSale();
+            const result = await saleStore.participateInSale(Number(maxContributionAmount));
             if (isError(result)) {
                 toasts.addToast({
-                    message: "Error submitting donation",
+                    message: "Error submitting contribution",
                     type: "error",
                 });
-                console.error("Error submitting donation", result);
+                console.error("Error submitting contribution", result);
                 return;
             }
             toasts.addToast({
-                message: "Thank you for your donation! Donation submitted successfully",
+                message: "Your contribution has been successfully submitted.",
                 type: "success",
                 duration: 3000
             });
             onClose();
         } catch (error) {
             toasts.addToast({
-                message: "Error submitting donation",
+                message: "Error submitting contribition",
                 type: "error",
             });
-            console.error("Error submitting donation", error);
+            console.error("Error submitting contribution", error);
         }
     }
 
     function resetModalState() {
-        donationAmount = BigInt(0);
+        contributionAmount = BigInt(0);
         showConfirm = false;
     }
 
@@ -103,9 +95,12 @@
     onMount(async () => {
         try {
             resetModalState();
-            saleGoal = await saleStore.getGoal();
-            maxDonationAmount = saleGoal.maxGoal - saleGoal.currentProgress;
-            userBalance = await saleStore.getUserBalance();
+            let saleGoalResult = await saleStore.getProgress();
+            if(saleGoalResult){
+                saleGoal = saleGoalResult;
+                maxContributionAmount = saleGoal.remainingPackets * saleGoal.packetCostinICP;
+                userBalance = await saleStore.getUserBalance() ?? 0n;
+            }
         } catch (error) {
             console.error("Error fetching sale goal", error);
         }
@@ -118,7 +113,7 @@
             <h2 class="text-2xl text-white cta-text">Participate In Sale</h2>
             <div class="p-8 space-y-6">
                 <div class="flex items-center justify-between pb-4 border-b border-BrandGrayShade3">
-                    <h3 class="text-xl text-white cta-text">Donate Tokens</h3>
+                    <h3 class="text-xl text-white cta-text">Contribute</h3>
                     <button 
                         onclick={onClose}
                         class="p-2 transition-colors duration-300 rounded-lg hover:bg-white/10"
@@ -134,23 +129,23 @@
                             <span class="text-white cta-text">{Number(userBalance).toFixed(4)} ckBTC</span>
                         </div>
                         <div class="flex items-center justify-between gap-8 pt-4 border-t border-BrandGrayShade3">
-                            <span class="text-BrandGrayShade2">Maximum Donation Allowed:</span>
-                            <span class="text-white cta-text">{Number(maxDonationAmount).toFixed(4)} ckBTC</span>
+                            <span class="text-BrandGrayShade2">Maximum Contribution Allowed:</span>
+                            <span class="text-white cta-text">{Number(maxContributionAmount).toFixed(4)} ckBTC</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="space-y-2">
-                    <label for="donation" class="block text-sm text-BrandGrayShade2">
-                        Amount to Donate
+                    <label for="contribution" class="block text-sm text-BrandGrayShade2">
+                        Amount to Contribute
                     </label>
                     <input
-                        id="donation"
+                        id="contribution"
                         type="number"
-                        bind:value={donationAmount}
+                        bind:value={contributionAmount}
                         class="w-full px-4 py-3 text-white border border-BrandGrayShade3 rounded-lg bg-white/5 focus:outline-none focus:border-BrandBlue"
-                        max={Number(maxDonationAmount)}
-                        placeholder="Enter donation amount"
+                        max={Number(maxContributionAmount)}
+                        placeholder="Enter contribution amount"
                     />
                 </div>
 
@@ -175,7 +170,7 @@
                             class="w-full px-4 py-3 text-white transition-colors duration-200 rounded-lg bg-BrandBlue hover:bg-BrandBlue/90"
                             onclick={handleSubmit}
                         >
-                            Confirm Donation
+                            Confirm Contribution
                         </button>
                     </div>
                 {/if}
