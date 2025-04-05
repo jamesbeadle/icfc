@@ -26,7 +26,7 @@ export class UserService {
   }
 
   async getProfile(): Promise<ProfileDTO | undefined> {
-   try {
+    try {
       const identityActor = await ActorFactory.createIdentityActor(
         authStore,
         process.env.BACKEND_CANISTER_ID ?? "",
@@ -38,7 +38,7 @@ export class UserService {
     } catch (error) {
       console.error("Error fetching user profile: ", error);
       return undefined;
-    } 
+    }
   }
 
   async addSubApp(dto: AddSubApp): Promise<any> {

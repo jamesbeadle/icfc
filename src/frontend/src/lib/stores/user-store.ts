@@ -24,7 +24,6 @@ function createUserStore() {
   async function sync() {
     let localProfile = await getProfileFromDB();
     if (localProfile) {
-      
       set(localProfile);
       return;
     }
