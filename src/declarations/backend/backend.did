@@ -10,32 +10,15 @@ type UserNeuronsDTO =
    userMembershipEligibility: EligibleMembership;
    userNeurons: vec Neuron;
  };
-type UpdateUserName = 
- record {
-   principalId: PrincipalId;
-   username: text;
- };
-type UpdateProfilePicture = 
- record {
-   principalId: PrincipalId;
-   profilePicture: opt blob;
- };
-type UpdateNationality = 
- record {
-   nationalityId: CountryId;
-   principalId: PrincipalId;
- };
+type UpdateUserName = record {username: text;};
+type UpdateProfilePicture = record {profilePicture: opt blob;};
+type UpdateNationality = record {nationalityId: CountryId;};
 type UpdateFavouriteClub = 
  record {
    favouriteClubId: ClubId;
    favouriteLeagueId: LeagueId;
-   principalId: PrincipalId;
  };
-type UpdateDisplayName = 
- record {
-   displayName: text;
-   principalId: PrincipalId;
- };
+type UpdateDisplayName = record {displayName: text;};
 type TokenBalances = 
  record {
    ckBTCBalance: nat;
@@ -358,7 +341,6 @@ type AppStatus =
  };
 type AddSubApp = 
  record {
-   principalId: PrincipalId;
    subApp: SubApp;
    subAppUserPrincipalId: PrincipalId;
  };

@@ -9,7 +9,6 @@ export interface Account {
 export interface AddSubApp {
   subApp: SubApp;
   subAppUserPrincipalId: PrincipalId;
-  principalId: PrincipalId;
 }
 export interface AppStatus {
   version: string;
@@ -261,24 +260,19 @@ export interface TokenBalances {
 }
 export interface UpdateDisplayName {
   displayName: string;
-  principalId: PrincipalId;
 }
 export interface UpdateFavouriteClub {
   favouriteClubId: ClubId;
   favouriteLeagueId: LeagueId;
-  principalId: PrincipalId;
 }
 export interface UpdateNationality {
   nationalityId: CountryId;
-  principalId: PrincipalId;
 }
 export interface UpdateProfilePicture {
   profilePicture: [] | [Uint8Array | number[]];
-  principalId: PrincipalId;
 }
 export interface UpdateUserName {
   username: string;
-  principalId: PrincipalId;
 }
 export interface UserNeuronsDTO {
   totalMaxStaked: bigint;
