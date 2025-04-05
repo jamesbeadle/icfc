@@ -27,7 +27,7 @@
         }
     });
 
-    async function getSaleData() {
+    /* async function getSaleData() {
         const goal = await saleStore.getGoal();
         const countdown = await saleStore.getSaleCountdown();
 
@@ -39,7 +39,7 @@
         saleStatus = countdown.status;
         const timeRemaining = countdown.timeRemaining;
         saleTimeRemaining = getCountdownTime(Number(timeRemaining));
-    }
+    } */
 </script>
 
     <div class="relative min-h-screen">

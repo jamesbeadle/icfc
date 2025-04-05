@@ -1,7 +1,7 @@
 <script lang="ts">
     import { userStore } from "$lib/stores/user-store";
     import { onMount } from "svelte";
-    import type { ProfileDTO } from "../../../../../declarations/backend/backend.did";
+    import type { ProfileDTO } from "../../../../../../declarations/backend/backend.did";
     
     import { toasts } from "$lib/stores/toasts-store";
     import { getImageURL } from "$lib/utils/helpers";
