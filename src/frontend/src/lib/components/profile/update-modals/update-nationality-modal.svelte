@@ -47,14 +47,14 @@
   });
 
   $: isSubmitDisabled =
-    newNationalityId > 0 && newNationalityId != nationalityId;
+    newNationalityId < 0 && newNationalityId == nationalityId;
 
   const cancelModal = () => {
     newNationalityId = nationalityId;
     visible = false;
   };
 
-  async function handleSubmit (){
+  async function handleSubmit() {
     loadingMessage = 'Updating National Team';
     isLoading = true;
     try {

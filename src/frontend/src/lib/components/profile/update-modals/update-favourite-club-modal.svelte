@@ -56,9 +56,9 @@
   });
 
   $: isSubmitDisabled =
-    newFavouriteLeagueId > 0 &&
-    newFavouriteClubId > 0 &&
-    newFavouriteClubId != favouriteClubId;
+    newFavouriteLeagueId < 0 &&
+    newFavouriteClubId < 0 &&
+    newFavouriteClubId == favouriteClubId;
 
   const cancelModal = () => {
     newFavouriteLeagueId = favouriteLeagueId;
@@ -142,7 +142,7 @@
             </button>
             <button
               class="w-1/2 brand-button"
-              disabled={!isSubmitDisabled}
+              disabled={isSubmitDisabled}
               on:click={handleSubmit}
             >
               Update Favourite Club
