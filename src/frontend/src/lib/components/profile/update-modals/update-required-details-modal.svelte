@@ -81,7 +81,6 @@
         try {
             let dto: UpdateUserName =  {
                 username: newUsername,
-                principalId
             }
             await userStore.updateUsername(dto);
             await userStore.cacheProfile();
@@ -109,7 +108,6 @@
         try {
             let dto: UpdateDisplayName =  {
                 displayName: newDisplayName,
-                principalId
             }
             await userStore.updateDisplayName(dto);
             await userStore.cacheProfile();

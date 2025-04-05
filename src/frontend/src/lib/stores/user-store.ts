@@ -144,7 +144,6 @@ function createUserStore() {
           process.env.BACKEND_CANISTER_ID ?? "",
         );
         let dto: UpdateProfilePicture = {
-          principalId: principalId,
           profilePicture: [profilePicture],
         };
         const result = await identityActor.updateProfilePicture(dto);
