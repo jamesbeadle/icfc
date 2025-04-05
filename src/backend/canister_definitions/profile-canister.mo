@@ -39,7 +39,7 @@ actor class _ProfileCanister() {
 
     //Public endpoints
 
-    public shared ({ caller }) func getProfile(dto : ProfileCommands.GetProfile) : async Result.Result<ProfileQueries.ProfileDTO, Enums.Error> {
+    public shared ({ caller }) func getProfile(dto : ProfileQueries.GetProfile) : async Result.Result<ProfileQueries.ProfileDTO, Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
         assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
@@ -86,7 +86,7 @@ actor class _ProfileCanister() {
         };
     };
 
-    public shared ({ caller }) func getProfileSummary(dto : ProfileCommands.GetProfile) : async Result.Result<ProfileQueries.ICFCProfileSummary, Enums.Error> {
+    public shared ({ caller }) func getProfileSummary(dto : ProfileQueries.GetProfile) : async Result.Result<ProfileQueries.ICFCProfileSummary, Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
         assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
@@ -103,20 +103,13 @@ actor class _ProfileCanister() {
                 let profile = findProfile(foundGroupIndex, dto.principalId);
                 switch (profile) {
                     case (?foundProfile) {
-
-                        let latest_membership_claims = List.take<T.MembershipClaim>(List.reverse(List.fromArray(foundProfile.membershipClaims)), 1);
-                        let latestMembershipClaim = List.toArray(latest_membership_claims)[0];
-
                         let dto : ProfileQueries.ICFCProfileSummary = {
                             principalId = foundProfile.principalId;
                             username = foundProfile.username;
                             profilePicture = foundProfile.profilePicture;
                             displayName = foundProfile.displayName;
                             termsAgreed = foundProfile.termsAgreed;
-                            appPrincipalIds = foundProfile.appPrincipalIds;
-                            podcastIds = foundProfile.podcastIds;
                             membershipType = foundProfile.membershipType;
-                            membershipClaim = latestMembershipClaim;
                             createdOn = foundProfile.createdOn;
                             membershipExpiryTime = foundProfile.membershipExpiryTime;
                             favouriteLeagueId = foundProfile.favouriteLeagueId;
@@ -213,21 +206,21 @@ actor class _ProfileCanister() {
 
     };
 
-    public shared ({ caller }) func updateUsername(dto : ProfileCommands.UpdateUserName) : async Result.Result<(), Enums.Error> {
+    public shared ({ caller }) func updateUsername(principalId : Ids.PrincipalId, dto : ProfileCommands.UpdateUserName) : async Result.Result<(), Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
         assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
 
         var groupIndex : ?Nat8 = null;
         for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
-            if (profileGroupIndex.0 == dto.principalId) {
+            if (profileGroupIndex.0 == principalId) {
                 groupIndex := ?profileGroupIndex.1;
             };
         };
         switch (groupIndex) {
             case (null) { return #err(#NotFound) };
             case (?foundGroupIndex) {
-                let profile = findProfile(foundGroupIndex, dto.principalId);
+                let profile = findProfile(foundGroupIndex, principalId);
                 switch (profile) {
                     case (?foundProfile) {
                         let updatedProfile : T.Profile = {
@@ -256,21 +249,21 @@ actor class _ProfileCanister() {
         };
     };
 
-    public shared ({ caller }) func updateDisplayName(dto : ProfileCommands.UpdateDisplayName) : async Result.Result<(), Enums.Error> {
+    public shared ({ caller }) func updateDisplayName(principalId : Ids.PrincipalId, dto : ProfileCommands.UpdateDisplayName) : async Result.Result<(), Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
         assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
 
         var groupIndex : ?Nat8 = null;
         for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
-            if (profileGroupIndex.0 == dto.principalId) {
+            if (profileGroupIndex.0 == principalId) {
                 groupIndex := ?profileGroupIndex.1;
             };
         };
         switch (groupIndex) {
             case (null) { return #err(#NotFound) };
             case (?foundGroupIndex) {
-                let profile = findProfile(foundGroupIndex, dto.principalId);
+                let profile = findProfile(foundGroupIndex, principalId);
                 switch (profile) {
                     case (?foundProfile) {
                         let updatedProfile : T.Profile = {
@@ -299,21 +292,21 @@ actor class _ProfileCanister() {
         };
     };
 
-    public shared ({ caller }) func updateNationality(dto : ProfileCommands.UpdateNationality) : async Result.Result<(), Enums.Error> {
+    public shared ({ caller }) func updateNationality(principalId : Ids.PrincipalId, dto : ProfileCommands.UpdateNationality) : async Result.Result<(), Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
         assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
 
         var groupIndex : ?Nat8 = null;
         for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
-            if (profileGroupIndex.0 == dto.principalId) {
+            if (profileGroupIndex.0 == principalId) {
                 groupIndex := ?profileGroupIndex.1;
             };
         };
         switch (groupIndex) {
             case (null) { return #err(#NotFound) };
             case (?foundGroupIndex) {
-                let profile = findProfile(foundGroupIndex, dto.principalId);
+                let profile = findProfile(foundGroupIndex, principalId);
                 switch (profile) {
                     case (?foundProfile) {
                         let updatedProfile : T.Profile = {
@@ -342,21 +335,21 @@ actor class _ProfileCanister() {
         };
     };
 
-    public shared ({ caller }) func updateFavouriteClub(dto : ProfileCommands.UpdateFavouriteClub) : async Result.Result<(), Enums.Error> {
+    public shared ({ caller }) func updateFavouriteClub(principalId : Ids.PrincipalId, dto : ProfileCommands.UpdateFavouriteClub) : async Result.Result<(), Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
         assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
 
         var groupIndex : ?Nat8 = null;
         for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
-            if (profileGroupIndex.0 == dto.principalId) {
+            if (profileGroupIndex.0 == principalId) {
                 groupIndex := ?profileGroupIndex.1;
             };
         };
         switch (groupIndex) {
             case (null) { return #err(#NotFound) };
             case (?foundGroupIndex) {
-                let profile = findProfile(foundGroupIndex, dto.principalId);
+                let profile = findProfile(foundGroupIndex, principalId);
                 switch (profile) {
                     case (?foundProfile) {
                         let updatedProfile : T.Profile = {
@@ -385,21 +378,21 @@ actor class _ProfileCanister() {
         };
     };
 
-    public shared ({ caller }) func updateAppPrincipalIds(dto : ProfileCommands.AddSubApp) : async Result.Result<(), Enums.Error> {
+    public shared ({ caller }) func updateAppPrincipalIds(principalId : Ids.PrincipalId, dto : ProfileCommands.AddSubApp) : async Result.Result<(), Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
         assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
 
         var groupIndex : ?Nat8 = null;
         for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
-            if (profileGroupIndex.0 == dto.principalId) {
+            if (profileGroupIndex.0 == principalId) {
                 groupIndex := ?profileGroupIndex.1;
             };
         };
         switch (groupIndex) {
             case (null) { return #err(#NotFound) };
             case (?foundGroupIndex) {
-                let profile = findProfile(foundGroupIndex, dto.principalId);
+                let profile = findProfile(foundGroupIndex, principalId);
                 switch (profile) {
                     case (?foundProfile) {
 
@@ -460,14 +453,14 @@ actor class _ProfileCanister() {
         };
     };
 
-    public shared ({ caller }) func removeSubApp(dto : ProfileCommands.RemoveSubApp) : async Result.Result<(), Enums.Error> {
+    public shared ({ caller }) func removeSubApp(principalId : Ids.PrincipalId, dto : ProfileCommands.RemoveSubApp) : async Result.Result<(), Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
         assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
 
         var groupIndex : ?Nat8 = null;
         for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
-            if (profileGroupIndex.0 == dto.userPrincipalId) {
+            if (profileGroupIndex.0 == principalId) {
                 groupIndex := ?profileGroupIndex.1;
             };
         };
@@ -475,7 +468,7 @@ actor class _ProfileCanister() {
         switch (groupIndex) {
             case (null) { return #err(#NotFound) };
             case (?foundGroupIndex) {
-                let profile = findProfile(foundGroupIndex, dto.userPrincipalId);
+                let profile = findProfile(foundGroupIndex, principalId);
                 switch (profile) {
                     case (?foundProfile) {
                         let updatedAppPrincipalIds = Array.filter<(T.SubApp, Ids.PrincipalId)>(
@@ -511,21 +504,21 @@ actor class _ProfileCanister() {
         };
     };
 
-    public shared ({ caller }) func updateProfilePicture(dto : ProfileCommands.UpdateProfilePicture) : async Result.Result<(), Enums.Error> {
+    public shared ({ caller }) func updateProfilePicture(principalId : Ids.PrincipalId, dto : ProfileCommands.UpdateProfilePicture) : async Result.Result<(), Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
         assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
 
         var groupIndex : ?Nat8 = null;
         for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
-            if (profileGroupIndex.0 == dto.principalId) {
+            if (profileGroupIndex.0 == principalId) {
                 groupIndex := ?profileGroupIndex.1;
             };
         };
         switch (groupIndex) {
             case (null) { return #err(#NotFound) };
             case (?foundGroupIndex) {
-                let profile = findProfile(foundGroupIndex, dto.principalId);
+                let profile = findProfile(foundGroupIndex, principalId);
                 switch (profile) {
                     case (?foundProfile) {
                         let updatedProfile : T.Profile = {
@@ -554,14 +547,14 @@ actor class _ProfileCanister() {
         };
     };
 
-    public shared ({ caller }) func updateMembership(dto : ProfileCommands.UpdateMembership) : async Result.Result<(T.MembershipClaim), Enums.Error> {
+    public shared ({ caller }) func updateMembership(principalId : Ids.PrincipalId, dto : ProfileCommands.UpdateMembership) : async Result.Result<(T.MembershipClaim), Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
         assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
 
         var groupIndex : ?Nat8 = null;
         for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
-            if (profileGroupIndex.0 == dto.principalId) {
+            if (profileGroupIndex.0 == principalId) {
                 groupIndex := ?profileGroupIndex.1;
             };
         };
@@ -569,7 +562,7 @@ actor class _ProfileCanister() {
         switch (groupIndex) {
             case (null) { return #err(#NotFound) };
             case (?foundGroupIndex) {
-                let profile = findProfile(foundGroupIndex, dto.principalId);
+                let profile = findProfile(foundGroupIndex, principalId);
                 switch (profile) {
                     case (?foundProfile) {
                         let membershipClaimsBuffer = Buffer.fromArray<T.MembershipClaim>(foundProfile.membershipClaims);

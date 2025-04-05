@@ -3,9 +3,6 @@ import FootballIds "mo:waterway-mops/football/FootballIds";
 import ICFCEnums "mo:waterway-mops/ICFCEnums";
 
 module ProfileCommands {
-    public type GetProfile = {
-        principalId : Ids.PrincipalId;
-    };
 
     public type CreateProfile = {
         username : Text;
@@ -17,47 +14,35 @@ module ProfileCommands {
     };
 
     public type UpdateUserName = {
-        principalId : Ids.PrincipalId;
         username : Text;
     };
 
     public type UpdateDisplayName = {
-        principalId : Ids.PrincipalId;
         displayName : Text;
     };
 
     public type UpdateFavouriteClub = {
-        principalId : Ids.PrincipalId;
         favouriteLeagueId : FootballIds.LeagueId;
         favouriteClubId : FootballIds.ClubId;
     };
 
     public type UpdateNationality = {
-        principalId : Ids.PrincipalId;
         nationalityId : Ids.CountryId;
     };
 
     public type UpdateProfilePicture = {
-        principalId : Ids.PrincipalId;
         profilePicture : ?Blob;
     };
 
     public type DeleteProfile = {
-        principalId : Ids.PrincipalId;
         confirm : Bool;
     };
 
     public type UpdateMembership = {
-        principalId : Ids.PrincipalId;
         membershipType : ICFCEnums.MembershipType;
     };
 
-    public type ClaimMembership = {
-        principalId : Ids.PrincipalId;
-    };
-
     public type AddSubApp = {
-        principalId : Ids.PrincipalId;
         subAppUserPrincipalId : Ids.PrincipalId;
         subApp : ICFCEnums.SubApp;
     };
@@ -68,7 +53,6 @@ module ProfileCommands {
 
     public type RemoveSubApp = {
         subApp : ICFCEnums.SubApp;
-        userPrincipalId : Ids.PrincipalId;
     };
     public type VerifySubApp = {
         subAppUserPrincipalId : Ids.PrincipalId;

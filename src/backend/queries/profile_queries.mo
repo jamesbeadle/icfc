@@ -5,6 +5,10 @@ import T "../icfc_types";
 import SNSGovernance "mo:waterway-mops/sns-wrappers/governance";
 
 module ProfileQueries {
+    public type GetProfile = {
+        principalId : Ids.PrincipalId;
+    };
+
     public type ProfileDTO = {
         principalId : Ids.PrincipalId;
         username : Text;

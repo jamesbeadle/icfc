@@ -41,9 +41,9 @@ module {
                 case (?foundCanisterId) {
 
                     let profile_canister = actor (foundCanisterId) : actor {
-                        getProfile : (dto : ProfileCommands.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, Enums.Error>;
+                        getProfile : (dto : ProfileQueries.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, Enums.Error>;
                     };
-                    let dto : ProfileCommands.GetProfile = {
+                    let dto : ProfileQueries.GetProfile = {
                         principalId = principalId;
                     };
                     let profile = await profile_canister.getProfile(dto);
@@ -84,13 +84,13 @@ module {
             return not isUsernameTaken(dto.username, dto.principalId);
         };
 
-        public func getProfile(dto : ProfileCommands.GetProfile) : async Result.Result<ProfileQueries.ProfileDTO, Enums.Error> {
+        public func getProfile(dto : ProfileQueries.GetProfile) : async Result.Result<ProfileQueries.ProfileDTO, Enums.Error> {
             let existingProfileCanisterId = profileCanisterIndex.get(dto.principalId);
             switch (existingProfileCanisterId) {
                 case (?foundCanisterId) {
 
                     let profile_canister = actor (foundCanisterId) : actor {
-                        getProfile : (dto : ProfileCommands.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, Enums.Error>;
+                        getProfile : (dto : ProfileQueries.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, Enums.Error>;
                     };
 
                     let profile = await profile_canister.getProfile(dto);
@@ -124,7 +124,7 @@ module {
         public func createProfile(principalId : Ids.PrincipalId, dto : ProfileCommands.CreateProfile, membership : T.EligibleMembership) : async Result.Result<(), Enums.Error> {
 
             if (Text.size(dto.username) < 5 or Text.size(dto.username) > 20) {
-                return #err(#MaxDataExceeded);
+                return #err(#InvalidProperty);
             };
 
             let invalidUsername = isUsernameTaken(dto.username, principalId);
@@ -192,12 +192,12 @@ module {
             let existingProfileCanisterId = profileCanisterIndex.get(principalId);
             switch (existingProfileCanisterId) {
                 case (?foundCanisterId) {
-                    let getProfile : ProfileCommands.GetProfile = {
+                    let getProfile : ProfileQueries.GetProfile = {
                         principalId = principalId;
                     };
 
                     let profile_canister = actor (foundCanisterId) : actor {
-                        getProfile : (dto : ProfileCommands.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, Enums.Error>;
+                        getProfile : (dto : ProfileQueries.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, Enums.Error>;
                     };
 
                     let profile = await profile_canister.getProfile(getProfile);
@@ -281,7 +281,7 @@ module {
 
         };
 
-        public func updateUsername(dto : ProfileCommands.UpdateUserName) : async Result.Result<(), Enums.Error> {
+        public func updateUsername(principalId : Ids.PrincipalId, dto : ProfileCommands.UpdateUserName) : async Result.Result<(), Enums.Error> {
             if (Text.size(dto.username) < 5 or Text.size(dto.username) > 20) {
                 return #err(#MaxDataExceeded);
             };
@@ -294,20 +294,20 @@ module {
                     return #err(#AlreadyClaimed);
                 };
                 case (null) {
-                    let existingProfileCanisterId = profileCanisterIndex.get(dto.principalId);
+                    let existingProfileCanisterId = profileCanisterIndex.get(principalId);
                     switch (existingProfileCanisterId) {
                         case (?foundCanisterId) {
                             let profile_canister = actor (foundCanisterId) : actor {
                                 updateUsername : (dto : ProfileCommands.UpdateUserName) -> async Result.Result<(), Enums.Error>;
-                                getProfile : (dto : ProfileCommands.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, Enums.Error>;
+                                getProfile : (dto : ProfileQueries.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, Enums.Error>;
                             };
 
                             let updateResult = await profile_canister.updateUsername(dto);
                             if (updateResult == #ok) {
-                                usernames.put(dto.principalId, dto.username);
+                                usernames.put(principalId, dto.username);
 
                                 let profile = await profile_canister.getProfile({
-                                    principalId = dto.principalId;
+                                    principalId = principalId;
                                 });
 
                                 switch (profile) {
@@ -339,24 +339,24 @@ module {
             };
         };
 
-        public func updateDisplayName(dto : ProfileCommands.UpdateDisplayName) : async Result.Result<(), Enums.Error> {
+        public func updateDisplayName(principalId : Ids.PrincipalId, dto : ProfileCommands.UpdateDisplayName) : async Result.Result<(), Enums.Error> {
 
             if (Text.size(dto.displayName) < 1 or Text.size(dto.displayName) > 20) {
                 return #err(#MaxDataExceeded);
             };
 
-            let existingProfileCanisterId = profileCanisterIndex.get(dto.principalId);
+            let existingProfileCanisterId = profileCanisterIndex.get(principalId);
             switch (existingProfileCanisterId) {
                 case (?foundCanisterId) {
                     let profile_canister = actor (foundCanisterId) : actor {
-                        updateDisplayName : (dto : ProfileCommands.UpdateDisplayName) -> async Result.Result<(), Enums.Error>;
-                        getProfile : (dto : ProfileCommands.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, Enums.Error>;
+                        updateDisplayName : (principalId : Ids.PrincipalId, dto : ProfileCommands.UpdateDisplayName) -> async Result.Result<(), Enums.Error>;
+                        getProfile : (dto : ProfileQueries.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, Enums.Error>;
                     };
-                    let res = await profile_canister.updateDisplayName(dto);
+                    let res = await profile_canister.updateDisplayName(principalId, dto);
                     switch (res) {
                         case (#ok) {
                             let profile = await profile_canister.getProfile({
-                                principalId = dto.principalId;
+                                principalId = principalId;
                             });
 
                             switch (profile) {
@@ -388,14 +388,14 @@ module {
             };
         };
 
-        public func updateNationality(dto : ProfileCommands.UpdateNationality) : async Result.Result<(), Enums.Error> {
-            let existingProfileCanisterId = profileCanisterIndex.get(dto.principalId);
+        public func updateNationality(principalId : Ids.PrincipalId, dto : ProfileCommands.UpdateNationality) : async Result.Result<(), Enums.Error> {
+            let existingProfileCanisterId = profileCanisterIndex.get(principalId);
             switch (existingProfileCanisterId) {
                 case (?foundCanisterId) {
                     let profile_canister = actor (foundCanisterId) : actor {
-                        updateNationality : (dto : ProfileCommands.UpdateNationality) -> async Result.Result<(), Enums.Error>;
+                        updateNationality : (principalId : Ids.PrincipalId, dto : ProfileCommands.UpdateNationality) -> async Result.Result<(), Enums.Error>;
                     };
-                    return await profile_canister.updateNationality(dto);
+                    return await profile_canister.updateNationality(principalId, dto);
                 };
                 case (null) {
                     return #err(#NotFound);
@@ -403,14 +403,14 @@ module {
             };
         };
 
-        public func updateFavouriteClub(dto : ProfileCommands.UpdateFavouriteClub) : async Result.Result<(), Enums.Error> {
-            let existingProfileCanisterId = profileCanisterIndex.get(dto.principalId);
+        public func updateFavouriteClub(principalId : Ids.PrincipalId, dto : ProfileCommands.UpdateFavouriteClub) : async Result.Result<(), Enums.Error> {
+            let existingProfileCanisterId = profileCanisterIndex.get(principalId);
             switch (existingProfileCanisterId) {
                 case (?foundCanisterId) {
                     let profile_canister = actor (foundCanisterId) : actor {
-                        updateFavouriteClub : (dto : ProfileCommands.UpdateFavouriteClub) -> async Result.Result<(), Enums.Error>;
+                        updateFavouriteClub : (principalId : Ids.PrincipalId, dto : ProfileCommands.UpdateFavouriteClub) -> async Result.Result<(), Enums.Error>;
                     };
-                    return await profile_canister.updateFavouriteClub(dto);
+                    return await profile_canister.updateFavouriteClub(principalId, dto);
                 };
                 case (null) {
                     return #err(#NotFound);
@@ -418,24 +418,24 @@ module {
             };
         };
 
-        public func updateProfilePicture(dto : ProfileCommands.UpdateProfilePicture) : async Result.Result<(), Enums.Error> {
+        public func updateProfilePicture(principalId : Ids.PrincipalId, dto : ProfileCommands.UpdateProfilePicture) : async Result.Result<(), Enums.Error> {
             let validProfilePicture = isProfilePictureValid(dto.profilePicture);
             if (not validProfilePicture) {
                 return #err(#InvalidData);
             };
 
-            let existingProfileCanisterId = profileCanisterIndex.get(dto.principalId);
+            let existingProfileCanisterId = profileCanisterIndex.get(principalId);
             switch (existingProfileCanisterId) {
                 case (?foundCanisterId) {
                     let profile_canister = actor (foundCanisterId) : actor {
-                        updateProfilePicture : (dto : ProfileCommands.UpdateProfilePicture) -> async Result.Result<(), Enums.Error>;
-                        getProfile : (dto : ProfileCommands.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, Enums.Error>;
+                        updateProfilePicture : (principalId : Ids.PrincipalId, dto : ProfileCommands.UpdateProfilePicture) -> async Result.Result<(), Enums.Error>;
+                        getProfile : (dto : ProfileQueries.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, Enums.Error>;
                     };
-                    let res = await profile_canister.updateProfilePicture(dto);
+                    let res = await profile_canister.updateProfilePicture(principalId, dto);
                     switch (res) {
                         case (#ok) {
                             let profile = await profile_canister.getProfile({
-                                principalId = dto.principalId;
+                                principalId = principalId;
                             });
 
                             switch (profile) {
@@ -469,25 +469,27 @@ module {
             return #err(#NotFound);
         };
 
-        public func claimMembership(dto : ProfileCommands.ClaimMembership) : async Result.Result<(T.MembershipClaim), Enums.Error> {
-            let existingProfileCanisterId = profileCanisterIndex.get(dto.principalId);
+        public func claimMembership(principalId : Ids.PrincipalId) : async Result.Result<(T.MembershipClaim), Enums.Error> {
+            let existingProfileCanisterId = profileCanisterIndex.get(principalId);
             switch (existingProfileCanisterId) {
                 case (?foundCanisterId) {
                     let profile_canister = actor (foundCanisterId) : actor {
-                        getProfile : (dto : ProfileCommands.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, Enums.Error>;
+                        getProfile : (dto : ProfileQueries.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, Enums.Error>;
                     };
 
-                    let profile = await profile_canister.getProfile(dto);
+                    let profile = await profile_canister.getProfile({
+                        principalId;
+                    });
                     switch (profile) {
                         case (#ok(profileDTO)) {
                             let profile = profileDTO;
                             let currentMembership = profile.membershipType;
 
                             let snsManager = SNSManager.SNSManager();
-                            let userNeurons : [SNSGovernance.Neuron] = await snsManager.getUsersNeurons(Principal.fromText(dto.principalId));
+                            let userNeurons : [SNSGovernance.Neuron] = await snsManager.getUsersNeurons(Principal.fromText(principalId));
                             let eligibleMembership : T.EligibleMembership = Utilities.getMembershipType(userNeurons);
 
-                            let isNeuronsValid = validNeurons(eligibleMembership.eligibleNeuronIds, dto.principalId);
+                            let isNeuronsValid = validNeurons(eligibleMembership.eligibleNeuronIds, principalId);
                             if (not isNeuronsValid) {
                                 return #err(#InEligible);
                             };
@@ -528,15 +530,14 @@ module {
                                     };
 
                                     let updateMembershipCommand : ProfileCommands.UpdateMembership = {
-                                        principalId = dto.principalId;
                                         membershipType = newMembershipType;
                                     };
-                                    let res = await updateMembership(updateMembershipCommand);
+                                    let res = await updateMembership(principalId, updateMembershipCommand);
 
                                     switch (res) {
                                         case (#ok(claim)) {
                                             for (neuron in eligibleMembership.eligibleNeuronIds.vals()) {
-                                                neuronsUsedforMembership.put(neuron, dto.principalId);
+                                                neuronsUsedforMembership.put(neuron, principalId);
                                             };
                                             return #ok(claim);
                                         };
@@ -560,20 +561,20 @@ module {
             };
         };
 
-        public func updateMembership(dto : ProfileCommands.UpdateMembership) : async Result.Result<(T.MembershipClaim), Enums.Error> {
-            let existingProfileCanisterId = profileCanisterIndex.get(dto.principalId);
+        public func updateMembership(principalId : Ids.PrincipalId, dto : ProfileCommands.UpdateMembership) : async Result.Result<(T.MembershipClaim), Enums.Error> {
+            let existingProfileCanisterId = profileCanisterIndex.get(principalId);
             switch (existingProfileCanisterId) {
                 case (?foundCanisterId) {
                     let profile_canister = actor (foundCanisterId) : actor {
-                        updateMembership : (dto : ProfileCommands.UpdateMembership) -> async Result.Result<(T.MembershipClaim), Enums.Error>;
-                        getProfile : (dto : ProfileCommands.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, Enums.Error>;
+                        updateMembership : (principalId : Ids.PrincipalId, dto : ProfileCommands.UpdateMembership) -> async Result.Result<(T.MembershipClaim), Enums.Error>;
+                        getProfile : (dto : ProfileQueries.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, Enums.Error>;
                     };
-                    let res = await profile_canister.updateMembership(dto);
+                    let res = await profile_canister.updateMembership(principalId, dto);
 
                     switch (res) {
                         case (#ok(claim)) {
                             let profile = await profile_canister.getProfile({
-                                principalId = dto.principalId;
+                                principalId = principalId;
                             });
 
                             switch (profile) {

@@ -60,7 +60,7 @@ actor class Self() = this {
 
   public shared ({ caller }) func getProfile() : async Result.Result<ProfileQueries.ProfileDTO, Enums.Error> {
     assert not Principal.isAnonymous(caller);
-    let dto : ProfileCommands.GetProfile = {
+    let dto : ProfileQueries.GetProfile = {
       principalId = Principal.toText(caller);
     };
     return await profileManager.getProfile(dto);
@@ -103,10 +103,9 @@ actor class Self() = this {
 
   public shared ({ caller }) func claimMembership() : async Result.Result<(ProfileCommands.MembershipClaim), Enums.Error> {
     assert not Principal.isAnonymous(caller);
-    let dto : ProfileCommands.ClaimMembership = {
-      principalId = Principal.toText(caller);
-    };
-    return await profileManager.claimMembership(dto);
+
+    let principalId = Principal.toText(caller);
+    return await profileManager.claimMembership(principalId);
   };
 
   public shared ({ caller }) func addSubApp(dto : ProfileCommands.AddSubApp) : async Result.Result<(), Enums.Error> {
@@ -127,32 +126,32 @@ actor class Self() = this {
 
   public shared ({ caller }) func updateUsername(dto : ProfileCommands.UpdateUserName) : async Result.Result<(), Enums.Error> {
     assert not Principal.isAnonymous(caller);
-    assert dto.principalId == Principal.toText(caller);
-    return await profileManager.updateUsername(dto);
+    let principalId = Principal.toText(caller);
+    return await profileManager.updateUsername(principalId, dto);
   };
 
   public shared ({ caller }) func updateDisplayName(dto : ProfileCommands.UpdateDisplayName) : async Result.Result<(), Enums.Error> {
     assert not Principal.isAnonymous(caller);
-    assert dto.principalId == Principal.toText(caller);
-    return await profileManager.updateDisplayName(dto);
+    let principalId = Principal.toText(caller);
+    return await profileManager.updateDisplayName(principalId, dto);
   };
 
   public shared ({ caller }) func updateNationality(dto : ProfileCommands.UpdateNationality) : async Result.Result<(), Enums.Error> {
     assert not Principal.isAnonymous(caller);
-    assert dto.principalId == Principal.toText(caller);
-    return await profileManager.updateNationality(dto);
+    let principalId = Principal.toText(caller);
+    return await profileManager.updateNationality(principalId, dto);
   };
 
   public shared ({ caller }) func updateFavouriteClub(dto : ProfileCommands.UpdateFavouriteClub) : async Result.Result<(), Enums.Error> {
     assert not Principal.isAnonymous(caller);
-    assert dto.principalId == Principal.toText(caller);
-    return await profileManager.updateFavouriteClub(dto);
+    let principalId = Principal.toText(caller);
+    return await profileManager.updateFavouriteClub(principalId, dto);
   };
 
   public shared ({ caller }) func updateProfilePicture(dto : ProfileCommands.UpdateProfilePicture) : async Result.Result<(), Enums.Error> {
     assert not Principal.isAnonymous(caller);
-    assert dto.principalId == Principal.toText(caller);
-    return await profileManager.updateProfilePicture(dto);
+    let principalId = Principal.toText(caller);
+    return await profileManager.updateProfilePicture(principalId, dto);
   };
 
   public shared ({ caller }) func getTokenBalances() : async Result.Result<AppQueries.TokenBalances, Enums.Error> {
