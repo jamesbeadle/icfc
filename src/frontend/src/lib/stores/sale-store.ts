@@ -68,7 +68,7 @@ function createSaleStore() {
             let _ = await transfer({
               to: {
                 owner: Principal.fromText(
-                  process.env.FOOTBALL_GOD_BACKEND_CANISTER_ID ?? "",
+                  process.env.BACKEND_CANISTER_ID ?? "",
                 ),
                 subaccount: [subaccount],
               },
@@ -81,7 +81,7 @@ function createSaleStore() {
 
             const identityActor = await ActorFactory.createIdentityActor(
               authStore,
-              process.env.BACKEND_CANISTER_ID ?? "",
+              process.env.CANISTER_ID_ICFC_SALE_2 ?? "",
             );
   
             const result = await identityActor.claimICFCPackets();
