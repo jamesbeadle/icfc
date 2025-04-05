@@ -1,5 +1,4 @@
 <script lang="ts">
-  import DropdownSelect from '$lib/components/shared/dropdown-select.svelte';
   import LocalSpinner from '$lib/components/shared/local-spinner.svelte';
   import Modal from '$lib/components/shared/modal.svelte';
   import { toasts } from '$lib/stores/toasts-store';
@@ -46,8 +45,7 @@
     }
   });
 
-  $: isSubmitDisabled =
-    newNationalityId < 0 && newNationalityId == nationalityId;
+  $: isSubmitDisabled = newNationalityId < 0 && newNationalityId == nationalityId;
 
   const cancelModal = () => {
     newNationalityId = nationalityId;
@@ -62,8 +60,10 @@
         nationalityId: newNationalityId,
         principalId,
       };
+      console.log("Submitting update nationality");
       await userStore.updateNationality(dto);
       await userStore.sync();
+      console.log("Update nationality and sync complete");
       visible = false;
       toasts.addToast({
         message: 'National Team updated.',
