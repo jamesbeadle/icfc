@@ -60,6 +60,7 @@
         nationalityId: newNationalityId,
         principalId,
       };
+      console.log("dto", dto);
       console.log("Submitting update nationality");
       await userStore.updateNationality(dto);
       await userStore.sync();
