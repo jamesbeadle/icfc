@@ -10,7 +10,6 @@ export const idlFactory = ({ IDL }) => {
   const AddSubApp = IDL.Record({
     subApp: SubApp,
     subAppUserPrincipalId: PrincipalId,
-    principalId: PrincipalId,
   });
   const Error = IDL.Variant({
     InvalidProfilePicture: IDL.Null,
@@ -221,27 +220,16 @@ export const idlFactory = ({ IDL }) => {
     TransferKings: IDL.Null,
     JeffBets: IDL.Null,
   });
-  const UpdateDisplayName = IDL.Record({
-    displayName: IDL.Text,
-    principalId: PrincipalId,
-  });
+  const UpdateDisplayName = IDL.Record({ displayName: IDL.Text });
   const UpdateFavouriteClub = IDL.Record({
     favouriteClubId: ClubId,
     favouriteLeagueId: LeagueId,
-    principalId: PrincipalId,
   });
-  const UpdateNationality = IDL.Record({
-    nationalityId: CountryId,
-    principalId: PrincipalId,
-  });
+  const UpdateNationality = IDL.Record({ nationalityId: CountryId });
   const UpdateProfilePicture = IDL.Record({
     profilePicture: IDL.Opt(IDL.Vec(IDL.Nat8)),
-    principalId: PrincipalId,
   });
-  const UpdateUserName = IDL.Record({
-    username: IDL.Text,
-    principalId: PrincipalId,
-  });
+  const UpdateUserName = IDL.Record({ username: IDL.Text });
   const VerifySubApp = IDL.Record({
     icfcPrincipalId: PrincipalId,
     subApp: SubApp,
