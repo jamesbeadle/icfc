@@ -2,18 +2,18 @@ import { ActorFactory } from "$lib/utils/ActorFactory";
 import { isError } from "$lib/utils/helpers";
 import { authStore } from "$lib/stores/auth-store";
 import type {
-  SaleProgressDTO,
-  UserParticipationDTO,
+  SaleProgress,
+  UserParticipation,
   ICFCDistribution,
 } from "../../../../declarations/icfc_sale_2/icfc_sale_2.did";
 
 export class SaleService {
   constructor() {}
 
-  async getProgress(): Promise<SaleProgressDTO | undefined> {
+  async getProgress(): Promise<SaleProgress | undefined> {
     try {
       const identityActor: any =
-        await ActorFactory.createSaleCanisterIdentityActor(
+        await ActorFactory.createIdentityActor(
           authStore,
           process.env.CANISTER_ID_ICFC_SALE_2 ?? "",
         );
@@ -28,10 +28,10 @@ export class SaleService {
     }
   }
 
-  async getUserParticipation(): Promise<UserParticipationDTO | undefined> {
+  async getUserParticipation(): Promise<UserParticipation | undefined> {
     try {
       const identityActor: any =
-        await ActorFactory.createSaleCanisterIdentityActor(
+        await ActorFactory.createIdentityActor(
           authStore,
           process.env.CANISTER_ID_ICFC_SALE_2 ?? "",
         );
@@ -49,7 +49,7 @@ export class SaleService {
   async getUsersICFCDistributions(): Promise<ICFCDistribution[] | undefined> {
     try {
       const identityActor: any =
-        await ActorFactory.createSaleCanisterIdentityActor(
+        await ActorFactory.createIdentityActor(
           authStore,
           process.env.CANISTER_ID_ICFC_SALE_2 ?? "",
         );
@@ -64,16 +64,14 @@ export class SaleService {
     }
   }
 
-  async claimICFCPackets(numberOfPackets: number): Promise<boolean> {
+  async claimICFCPackets(): Promise<boolean> {
     try {
       const identityActor: any =
-        await ActorFactory.createSaleCanisterIdentityActor(
+        await ActorFactory.createIdentityActor(
           authStore,
           process.env.CANISTER_ID_ICFC_SALE_2 ?? "",
         );
-      const result = await identityActor.claimICFCPackets({
-        packets: numberOfPackets,
-      });
+      const result = await identityActor.claimICFCPackets();
       if (isError(result)) {
         console.error("Error claiming packets:", result.err);
         return false;
