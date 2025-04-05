@@ -66,7 +66,7 @@
 
     async function handleSubmit() {
         try {
-            const result = await saleStore.particpate(BigInt(donationAmount));
+            const result = await saleStore.participateInSale();
             if (isError(result)) {
                 toasts.addToast({
                     message: "Error submitting donation",
