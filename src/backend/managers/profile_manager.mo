@@ -261,15 +261,16 @@ module {
             switch (existingProfileCanisterId) {
                 case (?foundCanisterId) {
                     let profile_canister = actor (foundCanisterId) : actor {
-                        updateAppPrincipalIds : (dto : ProfileCommands.AddSubApp) -> async Result.Result<(), Enums.Error>;
+                        updateAppPrincipalIds : (principalId : Ids.PrincipalId, dto : ProfileCommands.AddSubApp) -> async Result.Result<(), Enums.Error>;
                     };
                     let dto : ProfileCommands.AddSubApp = {
-                        principalId = verifySubAppRecord.icfcPrincipalId;
+
                         subApp = verifySubAppRecord.subApp;
                         subAppUserPrincipalId = verifySubAppRecord.subAppUserPrincipalId;
                     };
                     let res = await profile_canister.updateAppPrincipalIds(
-                        dto
+                        verifySubAppRecord.icfcPrincipalId,
+                        dto,
                     );
 
                     return res;
@@ -298,11 +299,11 @@ module {
                     switch (existingProfileCanisterId) {
                         case (?foundCanisterId) {
                             let profile_canister = actor (foundCanisterId) : actor {
-                                updateUsername : (dto : ProfileCommands.UpdateUserName) -> async Result.Result<(), Enums.Error>;
+                                updateUsername : (principalId : Ids.PrincipalId, dto : ProfileCommands.UpdateUserName) -> async Result.Result<(), Enums.Error>;
                                 getProfile : (dto : ProfileQueries.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, Enums.Error>;
                             };
 
-                            let updateResult = await profile_canister.updateUsername(dto);
+                            let updateResult = await profile_canister.updateUsername(principalId, dto);
                             if (updateResult == #ok) {
                                 usernames.put(principalId, dto.username);
 
