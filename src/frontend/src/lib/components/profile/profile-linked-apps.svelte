@@ -27,7 +27,6 @@
                 let addSubAppDto: AddSubApp = {
                     subApp: { OpenFPL: null },
                     subAppUserPrincipalId: openFplPrincipalId,
-                    principalId: profile.principalId
                 };
                 console.log("addSubAppDto", addSubAppDto);
                 await userStore.addSubApp(addSubAppDto);

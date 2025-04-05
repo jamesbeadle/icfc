@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { getDateFromBigInt, getImageURL } from "$lib/utils/helpers";
+    import { getDateFromBigInt } from "$lib/utils/helpers";
     import type { Club, Country, League, ProfileDTO } from "../../../../../declarations/backend/backend.did";
     import { countryStore } from "$lib/stores/country-store";
     import { leagueStore } from "$lib/stores/league-store";
@@ -169,7 +169,6 @@
 
 {#if showUpdateNationalityModal}
   <UpdateNationalityModal 
-      {principalId}
       {nationalityId}
       bind:visible={showUpdateNationalityModal} 
   />
@@ -177,7 +176,6 @@
 
 {#if showUpdateFavouriteClubModal}
   <UpdateFavouriteClubModal
-      {principalId}
       {favouriteLeagueId}
       {favouriteClubId}
       bind:visible={showUpdateFavouriteClubModal} 

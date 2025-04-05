@@ -9,29 +9,25 @@
     Country,
     Countries,
     CountryId,
-    PrincipalId,
     UpdateNationality,
   } from '../../../../../../declarations/backend/backend.did';
 
   export let visible: boolean = false;
   export let nationalityId: CountryId;
-  export let principalId: PrincipalId;
 
   let isLoading = false;
   let loadingMessage = '';
-  let newNationalityId = nationalityId;
+  let newNationalityId: CountryId;
   let countries: Country[] = [];
 
   onMount(async () => {
     try {
       loadingMessage = 'Loading countries';
       isLoading = true;
-      if (!$countryStore) {
-        const countriesResult = await countryStore.getCountries();
-        if (countriesResult) {
-          countries = countriesResult.countries;
-          countryStore.setCountries(countries);
-        }
+      const countriesResult: Countries = await countryStore.getCountries();
+      if (countriesResult) {
+        countries = countriesResult.countries;
+        countryStore.setCountries(countries);
       }
     } catch (error) {
       toasts.addToast({
@@ -58,7 +54,6 @@
     try {
       let dto: UpdateNationality = {
         nationalityId: newNationalityId,
-        principalId,
       };
       console.log("dto", dto);
       console.log("Submitting update nationality");
@@ -93,7 +88,7 @@
         <p class="form-hint">
           Select to participate in nationwide football competitions.
         </p>
-        <select bind:value={nationalityId} class="w-full brand-input">
+        <select bind:value={newNationalityId} class="w-full brand-input">
           <option value={null}>Select...</option>
           {#each $countryStore.sort( (a, b) => a.name.localeCompare(b.name) ) as country}
             <option value={country.id}>{country.name}</option>

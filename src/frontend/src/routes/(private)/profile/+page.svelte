@@ -58,7 +58,8 @@
     }
 
     $effect(() => {
-        if (profile) {
+        if ($userStore) {
+            profile = $userStore;
             foundProfile(profile);
         }
     });
