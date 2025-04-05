@@ -54,9 +54,7 @@
     visible = false;
   };
 
-  const handleSubmit = async (e: Event) => {
-    e.preventDefault();
-    if (isSubmitDisabled) return;
+  async function handleSubmit (){
     loadingMessage = 'Updating National Team';
     isLoading = true;
     try {
@@ -81,7 +79,7 @@
     } finally {
       isLoading = false;
     }
-  };
+  }
 </script>
 
 {#if visible}
@@ -103,7 +101,7 @@
         <button
           class="w-full brand-button"
           on:click={handleSubmit}
-          disabled={!isSubmitDisabled}
+          disabled={isSubmitDisabled}
         >
           Update National Team
         </button>
