@@ -84,7 +84,9 @@ function createUserStore() {
         console.error("Error updating favourite club.");
         return;
       }
+      console.log("result", result);
       await cacheProfile();
+      console.log("result cached");
       return result;
     } catch (error) {
       console.error("Error updating favourite club:", error);
@@ -103,7 +105,9 @@ function createUserStore() {
         console.error("Error updating nationality.");
         return;
       }
+      console.log("result", result);
       await cacheProfile();
+      console.log("result cached");
       return result;
     } catch (error) {
       console.error("Error updating nationality:", error);
