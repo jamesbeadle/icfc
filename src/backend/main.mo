@@ -8,6 +8,7 @@ import Result "mo:base/Result";
 import Text "mo:base/Text";
 import Timer "mo:base/Timer";
 import Debug "mo:base/Debug";
+import Buffer "mo:base/Buffer";
 import Enums "mo:waterway-mops/Enums";
 import BaseTypes "mo:waterway-mops/BaseTypes";
 import LeagueQueries "mo:waterway-mops/queries/football-queries/LeagueQueries";
@@ -231,6 +232,16 @@ actor class Self() = this {
     return result;
   };
 
+  /* ----- Calls for Debug ----- */
+  public shared ({ caller }) func getProfileCanisterIds() : async [Ids.CanisterId] {
+    assert not Principal.isAnonymous(caller);
+    return profileManager.getStableUniqueCanisterIds();
+  };
+  public shared ({ caller }) func getProfileCanisterIndex() : async [(Ids.PrincipalId, Ids.CanisterId)] {
+    assert not Principal.isAnonymous(caller);
+    return profileManager.getStableCanisterIndex();
+  };
+
   public shared ({ caller }) func getClubs(dto : ClubQueries.GetClubs) : async Result.Result<ClubQueries.Clubs, Enums.Error> {
     assert not Principal.isAnonymous(caller);
     // TODO: Check caller is a member
@@ -292,7 +303,11 @@ actor class Self() = this {
   };
 
   private func postUpgradeCallback() : async () {
+    // let unique_Canister_ids = Buffer.fromArray<Ids.CanisterId>(profileManager.getStableUniqueCanisterIds());
+    // unique_Canister_ids.add("a25ax-gaaaa-aaaal-qslsa-cai");
+    // stable_unique_profile_canister_ids := Buffer.toArray(unique_Canister_ids);
     /*
+
     await updateProfileCanisterWasms();
     let manualProfileCanisterIds : [Ids.CanisterId] = [
       "drlwu-ayaaa-aaaal-qslyq-cai",
