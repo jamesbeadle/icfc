@@ -159,7 +159,7 @@
                 </div>
                 <div class="space-y-2">
                     <label for="packets" class="block text-sm text-BrandGrayShade2">
-                        Number of Packets (10,000 ICFC each)
+                        1 Packet = {packetCost} ICP = 10,000 ICFC
                     </label>
                     <input
                         id="packets"
