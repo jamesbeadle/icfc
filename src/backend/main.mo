@@ -303,6 +303,7 @@ actor class Self() = this {
   };
 
   private func postUpgradeCallback() : async () {
+    await updateProfileCanisterWasms();
     // let unique_Canister_ids = Buffer.fromArray<Ids.CanisterId>(profileManager.getStableUniqueCanisterIds());
     // unique_Canister_ids.add("a25ax-gaaaa-aaaal-qslsa-cai");
     // stable_unique_profile_canister_ids := Buffer.toArray(unique_Canister_ids);
@@ -317,7 +318,6 @@ actor class Self() = this {
       "bfvta-fyaaa-aaaal-qslwq-cai",
       "a25ax-gaaaa-aaaal-qslsa-cai",
     ];
-    await updateProfileCanisterWasmsManually(manualProfileCanisterIds);
     let IC : Management.Management = actor (CanisterIds.Default);
 
     Debug.print("deleting canisters");
