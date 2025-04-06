@@ -30,7 +30,7 @@ export class SaleService {
 
   async getUserParticipation(): Promise<UserParticipation | undefined> {
     try {
-      const identityActor: any = await ActorFactory.createIdentityActor(
+      const identityActor: any = await ActorFactory.createSaleActor(
         authStore,
         process.env.ICFC_SALE_2_CANISTER_ID ?? "",
       );
@@ -47,7 +47,7 @@ export class SaleService {
 
   async getUsersICFCDistributions(): Promise<ICFCDistribution[] | undefined> {
     try {
-      const identityActor: any = await ActorFactory.createIdentityActor(
+      const identityActor: any = await ActorFactory.createSaleActor(
         authStore,
         process.env.ICFC_SALE_2_CANISTER_ID ?? "",
       );
@@ -64,7 +64,7 @@ export class SaleService {
 
   async claimICFCPackets(): Promise<boolean> {
     try {
-      const identityActor: any = await ActorFactory.createIdentityActor(
+      const identityActor: any = await ActorFactory.createSaleActor(
         authStore,
         process.env.ICFC_SALE_2_CANISTER_ID ?? "",
       );

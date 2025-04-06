@@ -4,6 +4,7 @@ import type { OptionIdentity } from "../types/identity";
 import { Actor, HttpAgent } from "@dfinity/agent";
 import type { Unsubscriber } from "svelte/store";
 import { idlFactory as canister } from "../../../../declarations/backend";
+import { idlFactory as icfc_sale_2 } from "../../../../declarations/icfc_sale_2";
 
 export class ActorFactory {
   static createActor(
@@ -85,6 +86,19 @@ export class ActorFactory {
     }).then((identity) => {
       unsubscribe();
       return ActorFactory.createActor(canister, canisterId, identity);
+    });
+  }
+  static createSaleActor(authStore: AuthStore, canisterId: string) {
+    let unsubscribe: Unsubscriber;
+    return new Promise<OptionIdentity>((resolve, reject) => {
+      unsubscribe = authStore.subscribe((store) => {
+        if (store.identity) {
+          resolve(store.identity);
+        }
+      });
+    }).then((identity) => {
+      unsubscribe();
+      return ActorFactory.createActor(icfc_sale_2, canisterId, identity);
     });
   }
 
