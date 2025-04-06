@@ -67,15 +67,15 @@ const logout = async ({
   clearStorages?: boolean;
 }) => {
   busy.start();
-
+  if (typeof localStorage !== 'undefined') {
+    localStorage.removeItem('user_signup_choice');
+  }
   if (clearStorages) {
     await Promise.all([
-      //TODO: clear storages
+     
     ]);
   }
-
   await authStore.signOut();
-
   if (msg) {
     toasts.addToast(msg);
   }

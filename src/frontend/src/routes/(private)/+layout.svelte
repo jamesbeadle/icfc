@@ -1,63 +1,48 @@
 <script lang="ts">
-    import type { Snippet } from 'svelte';
-    import { browser } from '$app/environment';
-    import { goto } from '$app/navigation';
-    import { authSignedInStore } from '$lib/derived/auth.derived';
-    import { appStore } from '$lib/stores/app-store';
-    import { userStore } from '$lib/stores/user-store';
     import FullScreenSpinner from '$lib/components/shared/full-screen-spinner.svelte';
-  
+    import {onMount, type  Snippet } from 'svelte';
+    import { authStore } from '$lib/stores/auth-store';
+    import { toasts } from '$lib/stores/toasts-store';
+    import { displayAndCleanLogoutMsg } from '$lib/services/auth.services';
+    import { get } from 'svelte/store';
+    import { goto } from '$app/navigation';
+    let isLoading = $state(false);
+    let loadingMessage = $state("Loading");
+
     interface Props {
-      children: Snippet;
+        children: Snippet;
     }
     let { children }: Props = $props();
 
-    const init = async () => {
+    onMount(async () => {
+        isLoading = true;
         try {
-            const results = await Promise.allSettled([
-                appStore.checkServerVersion().catch(err => {
-                    console.error('Version check failed:', err);
-                    return null;
-                }),
-                userStore.sync().catch(err => {
-                    console.error('User sync failed:', err);
-                    return null;
-                })
-            ]);
-
-            const criticalFailure = results.every(result => 
-                result.status === 'rejected' || result.value === null
-            );
-            
-            if (criticalFailure) {
-                throw new Error('All store initializations failed');
+            if (typeof window !== 'undefined') {
+                displayAndCleanLogoutMsg();
             }
+            loadingMessage = 'Checking Authentication';
+            await authStore.sync();
+            const identity = get(authStore).identity;
+            if (!identity) {
+                throw new Error('No identity found');
+            }
+            loadingMessage = 'Loading';
         } catch (error) {
-            console.error('Store initialization failed:', error);
-            return Promise.reject(error);
+            toasts.addToast({
+                message: 'Failed to verify session',
+                type: 'error',
+                duration: 3000
+            });
+            console.error('Failed to verify session', error);
+            goto('/', { replaceState: true });
+        } finally {
+            isLoading = false;
         }
-    };
-
-    $effect(() => {
-      if (browser && !$authSignedInStore) {
-        goto('/', { replaceState: true });
-      }
     });
 </script>
 
-{#await init()}
-    <FullScreenSpinner message="Loading Page Layout" />
-{:catch error}
-    <div class="flex flex-col items-center justify-center min-h-screen bg-gray-900 error-container">
-        <p class="mb-4 text-xl text-red-500">Failed to load application data</p>
-        <p class="text-gray-400">Please try refreshing the page</p>
-        <button 
-            class="px-4 py-2 mt-4 text-white rounded bg-BrandGreen hover:bg-BrandGreen/80"
-            onclick={() => window.location.reload()}
-        >
-            Refresh Page
-        </button>
-    </div>
-{:then}
+{#if isLoading}
+    <FullScreenSpinner message={loadingMessage} />
+{:else}
     {@render children()}
-{/await}
+{/if}

@@ -12,7 +12,6 @@
     }
 
     const navLinks = [
-        { href: '/sale-preview/', label: 'Sale' },
         { href: '/whitepaper/', label: 'Whitepaper' }
     ];
 </script>

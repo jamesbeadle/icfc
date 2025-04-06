@@ -151,6 +151,10 @@
   @apply px-4 text-4xl cta-text;
 }
 
+.status {
+  @apply inline-block px-3 py-1 rounded-full;
+}
+
 .section-title {
   @apply text-3xl cta-text text-BrandSuccess;
 }

@@ -1,54 +1,55 @@
 <script lang="ts">
+	import type { SaleProgress } from './../../../../../../../.dfx/local/canisters/icfc_sale_2/service.did.d.ts';
     import { onMount } from "svelte";
     import { saleStore } from "$lib/stores/sale-store";
-    import { getCountdownTime } from "$lib/utils/helpers";
 
+    import FullScreenSpinner from "$lib/components/shared/full-screen-spinner.svelte";
     import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
     import ICFCCoinIcon from "$lib/icons/ICFCCoinIcon.svelte";
     import FundingProgress from "$lib/components/sale/funding-progress.svelte";
 
-    let isLoading = true;
-    let totalICFC = 0;
-    let raisedCkBTC = 0;
-    let minTarget = 50;
-    let maxTarget = 100;
+    let dataLoading = $state(false);
+    let isLoading = $state(false);
+    let loadingMessage = $state("Loading Sale Page");
+
+    let packetCost: bigint = $state(0n);
+    let remainingPackets: bigint = $state(0n);
     
-    //TODO: Change Sale Status to ""
-    let saleStatus = "upcoming";
-    let saleTimeRemaining = { days: 20, hours: 10, minutes: 0, seconds: 0 };
   
     onMount(async () => {
-        try {
-            //await getSaleData();
-        } catch (error) {
-            console.error("Error fetching funding data:", error);
-        } finally {
-            isLoading = false;
-        }
+        loadingMessage = "Loading Sale Page";
+        isLoading = true;
+        await getSaleData();
+        isLoading = false;
     });
 
     async function getSaleData() {
-        const goal = await saleStore.getGoal();
-        const countdown = await saleStore.getSaleCountdown();
-
-        raisedCkBTC = goal.currentProgress;
-        totalICFC = goal.maxGoal;
-        minTarget = goal.minGoal;
-        maxTarget = goal.maxGoal;
-
-        saleStatus = countdown.status;
-        const timeRemaining = countdown.timeRemaining;
-        saleTimeRemaining = getCountdownTime(Number(timeRemaining));
+        try{
+            dataLoading = true;
+            const saleProgress = await saleStore.getProgress();
+            if(saleProgress){
+                packetCost = saleProgress.packetCostinICP;
+                remainingPackets = saleProgress.remainingPackets;
+            }
+        } catch (error) {
+            console.error("Error fetching sale data:", error);
+        } finally {
+            dataLoading = false;
+        }
     }
+
 </script>
 
+{#if isLoading}
+    <FullScreenSpinner message={loadingMessage} />
+{:else}
     <div class="relative min-h-screen">
         <div class="absolute inset-0 z-0">
             <img 
-                src="/background.jpg" 
-                alt="Background" 
-                class="object-cover w-full h-full"
-            />
+            src="/background.jpg" 
+            alt="Background" 
+            class="object-cover w-full h-full"
+        />
             <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
         </div>
 
@@ -65,23 +66,17 @@
                             The world's first decentralised football club is coming to the Internet Computer.
                         </p>
                     </div>
-                    {#if !isLoading}
-                        <div class="w-full max-w-xl mx-auto lg:mx-0">
-                            <FundingProgress 
-                                {raisedCkBTC}
-                                {totalICFC}
-                                {minTarget}
-                                {maxTarget}
-                                {saleStatus}
-                                {saleTimeRemaining}
-                            />
+                    {#if dataLoading}
+                        <div class="flex items-center justify-center p-12">
+                            <LocalSpinner message={loadingMessage} />
                         </div>
                     {:else}
-                        <div class="flex items-center justify-center p-12">
-                            <LocalSpinner />
+                        <div class="w-full max-w-xl mx-auto lg:mx-0">
+                            <FundingProgress {packetCost} {remainingPackets}/>
                         </div>
                     {/if}
                 </div>
             </div>
         </div>
     </div>
+{/if}
