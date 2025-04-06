@@ -1,7 +1,6 @@
 <script lang="ts">
     import Modal from '../shared/modal.svelte';
     import LocalSpinner from '../shared/local-spinner.svelte';
-
     import { onMount } from 'svelte';
     import { toasts } from '$lib/stores/toasts-store';
     import { saleStore } from '$lib/stores/sale-store';
@@ -31,7 +30,6 @@
                 error: "Please enter a valid amount."
             };
         }
-
         if (contributionAmount > userBalance) {
             return {
                 isValid: false,
@@ -61,31 +59,30 @@
     }
 
     async function handleSubmit() {
-        loadingMessage = "Submitting Claim";
+        loadingMessage = "Submitting Purchase";
         try {
             isLoading = true;
-            const result = await saleStore.participateInSale(Number(maxContributionAmount));
+            const result = await saleStore.participateInSale(Number(contributionAmount));
             if (isError(result)) {
-                console.error("Error claiming ICFC Packets", result);
+                console.error("Error purchasing ICFC Packets", result);
                 toasts.addToast({
-                    message: "Error Claiming ICFC Packets",
+                    message: "Error purchasing ICFC Packets",
                     type: "error",
                 });
-                console.error("Error claiming ICFC Packets", result);
                 return;
             }
             toasts.addToast({
-                message: "You Claimed your ICFC Packets successfully",
+                message: "You purchased your ICFC Packets successfully",
                 type: "success",
                 duration: 3000
             });
             onClose();
         } catch (error) {
             toasts.addToast({
-                message: "Error submitting contribition",
+                message: "Error submitting purchase",
                 type: "error",
             });
-            console.error("Error submitting contribution", error);
+            console.error("Error submitting purchase", error);
         } finally {
             isLoading = false;
             showConfirm = false;
@@ -107,7 +104,7 @@
         try {
             loadingMessage = "Refreshing User Balance";
             isLoading = true;
-            userBalance = await saleStore.getUserBalance() ?? 0n;
+            userBalance = (await saleStore.getUserBalance()) ?? 0n;
         } catch (error) {
             console.error("Error fetching user balance", error);
             toasts.addToast({
@@ -126,11 +123,12 @@
             resetModalState();
             loadingMessage = "Getting Sale Progress";
             let saleGoal = await saleStore.getProgress();
-            if(saleGoal){
+            if (saleGoal) {
+                packetsRemaining = BigInt(saleGoal.remainingPackets);
                 packetCost = saleGoal.packetCostinICP;
                 maxContributionAmount = saleGoal.remainingPackets * saleGoal.packetCostinICP;
                 loadingMessage = "Getting User Balance";
-                userBalance = await saleStore.getUserBalance() ?? 0n;
+                userBalance = (await saleStore.getUserBalance()) ?? 0n;
             }
         } catch (error) {
             console.error("Error fetching sale goal", error);
@@ -158,16 +156,16 @@
                 </div>
                 <div class="space-y-2">
                     <label for="packets" class="block text-sm text-BrandGrayShade2">
-                        Number of Packets (10,000 ICFC each)
+                        1 Packet = {packetCost} ICP = 10,000 ICFC
                     </label>
                     <input
                         id="packets"
+                        min={1}
+                        max={Number(packetsRemaining)}
+                        step="1"
                         type="number"
                         bind:value={packetsToBuy}
                         class="w-full px-4 py-3 text-white border rounded-lg border-BrandGrayShade3 bg-white/5 focus:outline-none focus:border-BrandBlue"
-                        max={Number(packetsRemaining)}
-                        min="0"
-                        step="1"
                         placeholder="Enter number of packets"
                     />
                 </div>
@@ -196,7 +194,6 @@
                     <div class="flex justify-between pt-2 border-t border-BrandGrayShade3">
                         <span class="text-BrandGrayShade2">Your ICP balance:</span>
                         <span class="font-medium text-white">{userBalance} ICP</span>
-                        
                     </div>
                 </div>
 
@@ -231,4 +228,3 @@
         {/if}
     </Modal>
 {/if}
-  
