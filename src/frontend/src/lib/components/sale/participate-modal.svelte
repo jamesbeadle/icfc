@@ -23,6 +23,15 @@
 
     $: contributionAmount = packetCost * BigInt(packetsToBuy ?? 0);
 
+    $: totalICFC = packetsToBuy ? packetsToBuy * 10000 : 0;
+    $: amountPerInstallment = totalICFC / 6;
+    $: now = new Date();
+    $: installments = Array.from({ length: 6 }, (_, i) => {
+        let date = new Date(now);
+        date.setMonth(date.getMonth() + 3 + i * 6);
+        return date;
+    });
+
     function validateContribution(): { isValid: boolean; error?: string } {
         if (!packetsToBuy || packetsToBuy <= 0) {
             return {
@@ -33,7 +42,7 @@
         if (contributionAmount > userBalance) {
             return {
                 isValid: false,
-                error: "You don't have enough balance to donate that amount."
+                error: "You don't have enough balance to buy this amount of packets."
             };
         }
         if (contributionAmount > maxContributionAmount) {
@@ -56,6 +65,44 @@
             return;
         }
         showConfirm = true;
+    }
+
+    function handleInput(event) {
+        const input = event.target.value;
+        
+        if (input === '' || input === '.') {
+            packetsToBuy = null;
+            contributionAmount = BigInt(0);
+            return;
+        } 
+        else if (/^\d+$/.test(input)) {
+            packetsToBuy = Number(input);
+            contributionAmount = packetCost * BigInt(packetsToBuy);
+        } 
+        else if (input.includes('.')) {
+            const cleanedInput = input.split('.')[0]; 
+            if (/^\d+$/.test(cleanedInput)) {
+                packetsToBuy = Number(cleanedInput);
+                contributionAmount = packetCost * BigInt(packetsToBuy);
+            } else {
+                packetsToBuy = null;
+                contributionAmount = BigInt(0);
+            }
+        } 
+        else if (input.includes(',')) {
+            const cleanedInput = input.split(',')[0]; 
+            if (/^\d+$/.test(cleanedInput)) {
+                packetsToBuy = Number(cleanedInput);
+                contributionAmount = packetCost * BigInt(packetsToBuy);
+            } else {
+                packetsToBuy = null;
+                contributionAmount = BigInt(0);
+            }
+        }
+        else {
+            packetsToBuy = null;
+            contributionAmount = BigInt(0);
+        }
     }
 
     async function handleSubmit() {
@@ -162,6 +209,7 @@
                         id="packets"
                         min={1}
                         max={Number(packetsRemaining)}
+                        oninput={handleInput} 
                         step="1"
                         type="number"
                         bind:value={packetsToBuy}
@@ -196,6 +244,28 @@
                         <span class="font-medium text-white">{userBalance} ICP</span>
                     </div>
                 </div>
+
+                {#if packetsToBuy > 0}
+                    <div class="mt-4">
+                        <h4 class="text-lg text-white">Distribution Schedule</h4>
+                        <p class="text-sm text-BrandGrayShade2">
+                            The ICFC tokens will be distributed in 6 equal installments starting 3 months from now, with subsequent installments every 6 months.
+                        </p>
+                        <div class="space-y-2 mt-2 flex flex-col items-center justify-center w-full">
+                            {#each installments as installment, index}
+                                <div class="lg:flex lg:flex-row justify-between lg:w-[80%] w-full text-sm items-center text-BrandGrayShade2">                               
+                                    <div class="flex-row">   
+                                        <div>{installment.toLocaleDateString('en-US', { day: 'numeric',month: 'short', year: 'numeric' })} -</div>
+                                        <div>ICFC Memmbership Sale (Disbursement {index + 1}/6)</div>
+                                    </div>
+                                    <div class="flex">  
+                                        <div>- {amountPerInstallment.toFixed(2)} ICFC</div>
+                                    </div> 
+                                </div>
+                            {/each}
+                        </div>
+                    </div>
+                {/if}
 
                 <div class="flex gap-4 pt-4">
                     <button

@@ -7,7 +7,7 @@
 
 </script>
 <WhitepaperPage
-    title="Decentralisation Sale 2: Financial Focus"
+    title="Membership Sale: Financial Focus"
     intro="A swap will occur throughout April 2025, if successful, decentralising 25% of the ICFC platform.">
     
 
