@@ -14,7 +14,7 @@ export class SaleService {
     try {
       const identityActor: any = await ActorFactory.createIdentityActor(
         authStore,
-        process.env.CANISTER_ID_ICFC_SALE_2 ?? "",
+        process.env.ICFC_SALE_2_CANISTER_ID ?? "",
       );
       const result = await identityActor.getProgress();
       if (isError(result)) {
@@ -31,7 +31,7 @@ export class SaleService {
     try {
       const identityActor: any = await ActorFactory.createIdentityActor(
         authStore,
-        process.env.CANISTER_ID_ICFC_SALE_2 ?? "",
+        process.env.ICFC_SALE_2_CANISTER_ID ?? "",
       );
       const result = await identityActor.getUserParticipation();
       if (isError(result)) {
@@ -48,7 +48,7 @@ export class SaleService {
     try {
       const identityActor: any = await ActorFactory.createIdentityActor(
         authStore,
-        process.env.CANISTER_ID_ICFC_SALE_2 ?? "",
+        process.env.ICFC_SALE_2_CANISTER_ID ?? "",
       );
       const result = await identityActor.getUsersICFCDistributions();
       if (isError(result)) {
@@ -65,7 +65,7 @@ export class SaleService {
     try {
       const identityActor: any = await ActorFactory.createIdentityActor(
         authStore,
-        process.env.CANISTER_ID_ICFC_SALE_2 ?? "",
+        process.env.ICFC_SALE_2_CANISTER_ID ?? "",
       );
       const result = await identityActor.claimICFCPackets();
       if (isError(result)) {
