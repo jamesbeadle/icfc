@@ -7,6 +7,7 @@
     import { isError } from '$lib/utils/helpers';
     import type { SaleProgress } from '../../../../../declarations/icfc_sale_2/icfc_sale_2.did';
     import CopyPrincipal from '../profile/copy-principal.svelte';
+    import IcfcCoinIcon from "$lib/icons/ICFCCoinIcon.svelte";
     
     export let showModal: boolean;
     export let onClose: () => void;
@@ -146,6 +147,9 @@
         resetModalState();
         onClose();
     }
+    function addNumberCommas(num: number): string {
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
 
     async function refreshUserBalance() {
         try {
@@ -251,15 +255,16 @@
                         <p class="text-sm text-BrandGrayShade2">
                             The ICFC tokens will be distributed in 6 equal installments starting 3 months from now, with subsequent installments every 6 months.
                         </p>
-                        <div class="space-y-2 mt-2 flex flex-col items-center justify-center w-full">
+                        <div class="space-y-2 flex flex-col items-center justify-center w-full pt-2">
                             {#each installments as installment, index}
-                                <div class="lg:flex lg:flex-row justify-between lg:w-[80%] w-full text-sm items-center text-BrandGrayShade2">                               
-                                    <div class="flex-row">   
-                                        <div>{installment.toLocaleDateString('en-US', { day: 'numeric',month: 'short', year: 'numeric' })} -</div>
+                                <div class="lg:flex lg:flex-row justify-between lg:w-[90%] w-full text-sm items-center text-white pb-2">                               
+                                    <div class="flex-row lg:text-sm text-[10px]">   
+                                        <div>{installment.toLocaleDateString('en-US', { day: 'numeric',month: 'short', year: 'numeric' })}</div>
                                         <div>ICFC Memmbership Sale (Disbursement {index + 1}/6)</div>
                                     </div>
-                                    <div class="flex">  
-                                        <div>- {amountPerInstallment.toFixed(2)} ICFC</div>
+                                    <div class="flex pt-1 lg:pt-0">  
+                                        <IcfcCoinIcon className="w-6 mr-2" /> 
+                                        <div><p class="text-[16px] font-200">{addNumberCommas(amountPerInstallment.toFixed(2))} ICFC</p></div>
                                     </div> 
                                 </div>
                             {/each}
