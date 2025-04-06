@@ -4,7 +4,7 @@
     import { onMount } from 'svelte';
     import { authStore } from '$lib/stores/auth-store';
     import { toasts } from '$lib/stores/toasts-store';
-    import { formatUnixDateToReadable } from '$lib/utils/helpers';
+    import { fromUnixDateTimeToReadable } from '$lib/utils/helpers';
     import LocalSpinner from '$lib/components/shared/local-spinner.svelte';
 
     let participation: UserParticipation | undefined = $state(undefined);
@@ -80,7 +80,7 @@
                     {#each participation.participations as claim (claim.claimId)}
                     <tr class="transition-colors border-b border-BrandGrayShade3 hover:bg-white/5">
                         <td class="p-3 text-BrandGrayShade5">{claim.claimId}</td>
-                        <td class="p-3 text-BrandGrayShade5">{formatUnixDateToReadable(Number(claim.claimedOn))}</td>
+                        <td class="p-3 text-BrandGrayShade5">{fromUnixDateTimeToReadable(Number(claim.claimedOn))}</td>
                         <td class="p-3 text-BrandGrayShade5">{claim.packetsClaimed}</td>
                     </tr>
                     {/each}
@@ -104,17 +104,19 @@
             <table class="w-full">
                 <thead>
                 <tr class="text-left border-b border-BrandGrayShade3">
-                    <th class="p-3 small-header">Installment</th>
-                    <th class="p-3 small-header">Distribution Date</th>
+                    <th class="p-3 small-header">Claim</th>
+                    <th class="p-3 small-header">Disbursement</th>
+                    <th class="p-3 small-header">Date</th>
                     <th class="p-3 small-header">Amount</th>
                     <th class="p-3 small-header">Status</th>
                 </tr>
                 </thead>
                 <tbody>
-                {#each distributions as dist (dist.claimId)}
+                {#each distributions as dist }
                     <tr class="transition-colors border-b border-BrandGrayShade3 hover:bg-white/5">
+                    <td class="p-3 text-BrandGrayShade5">{dist.claimId}</td>
                     <td class="p-3 text-BrandGrayShade5">{dist.installment.toString()}</td>
-                    <td class="p-3 text-BrandGrayShade5">{formatUnixDateToReadable(Number(dist.time))}</td>
+                    <td class="p-3 text-BrandGrayShade5">{fromUnixDateTimeToReadable(Number(dist.time))}</td>
                     <td class="p-3 text-BrandGrayShade5">{(dist.amount)} ICFC</td>
                     <td class="p-3">
                         <span class:status={'Completed' in dist.distributionStatus}
