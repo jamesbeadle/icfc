@@ -33,6 +33,16 @@ export const initUserProfile = async ({
       userIdCreatedStore.set({ data: profile.principalId, certified: true });
       return { result: "has-profile", profile };
     }
+
+    /* 
+    const saleProfile = await saleStore.getSaleProfile();
+    if (saleProfile) {
+      restrictedSaleStore.set({
+        data: saleProfile.principalId,
+        certified: true
+      });
+      return { result: "has-profile", requiresAction: "temp-access" };
+    } */
     if (context === "create-profile") {
       return { result: "no-profile", requiresAction: "continue-creation" };
     }
@@ -42,6 +52,7 @@ export const initUserProfile = async ({
     }
 
     return { result: "no-profile", requiresAction: "create-profile" };
+
   } catch (err) {
     toasts.addToast({
       message: "Error initializing user profile",
@@ -49,6 +60,6 @@ export const initUserProfile = async ({
     });
     console.error("initUserProfile error", err);
     await initErrorSignOut();
-    return { result: "error" };
+    return { result: "error", requiresAction: "create-profile" };
   }
 };
