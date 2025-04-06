@@ -1,10 +1,12 @@
 <script lang="ts">
     import ParticipateModal from './participate-modal.svelte';
+    import HowItWorksModal from './how-it-works-modal.svelte';
     
     export let packetCost: bigint;
     export let remainingPackets: bigint;
 
     let showParticipateModal = false;
+    let showHowItWorksModal = false;
 
     $: packetCostInICP = Number(packetCost)
 
@@ -14,6 +16,14 @@
 
     function closeParticipateModal() {
         showParticipateModal = false;
+    }
+
+    function openHowItWorksModal() {
+        showHowItWorksModal = true;
+    }
+
+    function closeHowItWorksModal() {
+        showHowItWorksModal = false;
     }
 </script>
 
@@ -37,14 +47,22 @@
         </button>
         <button 
             class="flex-1 px-4 py-3 text-white transition border rounded-lg border-BrandGrayShade3 brand-button hover:bg-BrandBlack hover:border-BrandBlue/80"
-            
+            on:click={openHowItWorksModal}
         >
             How It Works
         </button>
     </div>
 </div>
 
-<ParticipateModal 
-    showModal={showParticipateModal}
-    onClose={closeParticipateModal}
-/> 
+{#if showHowItWorksModal}
+    <HowItWorksModal 
+        showModal={showHowItWorksModal}
+        onClose={closeHowItWorksModal}
+    />
+{/if}
+{#if showParticipateModal}
+    <ParticipateModal 
+        showModal={showParticipateModal}
+        onClose={closeParticipateModal}
+    /> 
+{/if}
