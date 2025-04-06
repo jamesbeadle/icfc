@@ -29,7 +29,10 @@
             </button>
             <div class="mt-6 text-xs text-center">
                 <p class="mt-6 text-sm text-center text-white">
-                    Have questions? Read our <a href="/whitepaper" class="hover:underline">Whitepaper</a>
+                    Have questions? Read our <a href="/whitepaper" class="underline hover:text-BrandBlue">Whitepaper</a>
+                </p>
+                <p class="mt-2 text-sm text-center text-white">
+                    Login to see our exclusive sale.
                 </p>
             </div>
         </div>
