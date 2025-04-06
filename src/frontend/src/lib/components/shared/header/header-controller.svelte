@@ -41,6 +41,7 @@
         if (typeof localStorage !== 'undefined') {
             localStorage.setItem(SIGN_UP_CHOICE_KEY, 'full');
         }
+        
     }
 
     async function handleSaleSignup() {

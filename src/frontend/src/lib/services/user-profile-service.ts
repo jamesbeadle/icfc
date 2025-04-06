@@ -33,16 +33,6 @@ export const initUserProfile = async ({
       return { result: "has-profile" };
     }
 
-    /* TODO: UNCOMMENT THIS and remove the check below
-    const saleProfile = await saleStore.getSaleProfile();
-    if (saleProfile) {
-      restrictedSaleStore.set({
-        data: saleProfile.principalId,
-        certified: true
-      });
-      return { result: "has-profile" };
-    } */
-
     if (context === "sale-access" && get(restrictedSaleStore)?.data) {
       return { result: "no-profile" };
     }
