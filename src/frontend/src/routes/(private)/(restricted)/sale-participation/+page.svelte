@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { ICFCDistribution, UserParticipation, ClaimedRecord } from './../../../../../../declarations/icfc_sale_2/icfc_sale_2.did.d.ts';
+	import type { ICFCDistribution, UserParticipation, ClaimedRecord } from '../../../../../../declarations/icfc_sale_2/icfc_sale_2.did.js';
 	import { saleStore } from '$lib/stores/sale-store';
     import { onMount } from 'svelte';
     import { authStore } from '$lib/stores/auth-store';

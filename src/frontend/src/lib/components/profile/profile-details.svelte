@@ -12,21 +12,21 @@
     import UpdateFavouriteClubModal from "./update-modals/update-favourite-club-modal.svelte";
     import UpdateNationalityModal from "./update-modals/update-nationality-modal.svelte";
   
-    export let profile: ProfileDTO;
+    let { profile } = $props<{ profile: ProfileDTO }>();
 
-    let isLoading = false;
-    let loadingMessage = "";
+    let isLoading = $state(false);
+    let loadingMessage = $state("");
 
-    let showUpdateFavouriteClubModal: boolean = false;
-    let showUpdateNationalityModal: boolean = false;
-    let clubs: Club[] = [];
-    let countries: Country[] = [];
-    let leagues: League[] = [];
+    let showUpdateFavouriteClubModal: boolean = $state(false);
+    let showUpdateNationalityModal: boolean = $state(false);
+    let clubs: Club[] = $state([]);
+    let countries: Country[] = $state([]);
+    let leagues: League[] = $state([]);
 
-    let joinedDate = "";
-    let favouriteLeagueId = 0;
-    let favouriteClubId = 0;
-    let nationalityId = 0;
+    let joinedDate = $state("");
+    let favouriteLeagueId = $state(0);
+    let favouriteClubId = $state(0);
+    let nationalityId = $state(0);
     
     onMount(async () => {
       loadingMessage = "Loading profile details";
@@ -47,25 +47,34 @@
 
     async function getFootballData(){
       try{
-        loadingMessage = "Loading National Team";
-        let countriesResult = await countryStore.getCountries();
-        if(countriesResult){
-          countries = countriesResult.countries;
-        }
-        countryStore.setCountries(countries);
-        loadingMessage = "Loading Favourite League";
-        let leaguesResult = await leagueStore.getLeagues();
-        if(leaguesResult){
-          leagues = leaguesResult.leagues;
-        }
-        loadingMessage = "Loading Favourite Club";
+
         favouriteLeagueId = profile?.favouriteLeagueId[0] ?? 0;
-        let clubsResult = await clubStore.getClubs(favouriteLeagueId);
-        if(clubsResult){
-          clubs = clubsResult.clubs;
-        }
         favouriteClubId = profile?.favouriteClubId[0] ?? 0;
         nationalityId = profile?.nationalityId[0] ?? 0;
+
+        if(nationalityId > 0){
+          loadingMessage = "Loading National Team";
+          let countriesResult = await countryStore.getCountries();
+          if(countriesResult){
+            countries = countriesResult.countries;
+          }
+        }
+        countryStore.setCountries(countries);
+        if(favouriteLeagueId > 0){
+          loadingMessage = "Loading Favourite League";
+          let leaguesResult = await leagueStore.getLeagues();
+          if(leaguesResult){
+            leagues = leaguesResult.leagues;
+          }
+          if(favouriteClubId > 0){
+            loadingMessage = "Loading Favourite Club";
+            
+            let clubsResult = await clubStore.getClubs(favouriteLeagueId);
+            if(clubsResult){
+              clubs = clubsResult.clubs;
+            }
+          }
+        }
       } catch (error) {
         console.error("Error fetching football data:", error);
         toasts.addToast({
@@ -76,18 +85,27 @@
     }
 
     function getCountryName(countryId: number): string {
-        const country = countries.find(x => x.id === countryId);
-        return country?.name ?? 'Not found';
+      if(countryId > 0){
+          const country = countries.find(x => x.id === countryId);
+          return country?.name ?? 'Not found';
+      }
+      return 'Not Set';
     }
 
     function getLeagueName(leagueId: number): string {
+      if(leagueId > 0){
         const league = leagues.find(x => x.id === leagueId);
         return league?.name ?? 'Not found';
+      }
+      return 'Not Set';
     }
 
     function getClubName(clubId: number): string {
+      if(clubId > 0){
         const club = clubs.find(x => x.id === clubId);
         return club?.name ?? 'Not found';
+      }
+      return 'Not Set';
     }
 </script>
   
@@ -118,7 +136,7 @@
               </p>
         </div>
           <button
-            on:click={() => showUpdateNationalityModal = true}
+            onclick={() => showUpdateNationalityModal = true}
             class="px-3 py-1 text-sm text-white border border-white rounded-md hover:border-BrandBlue/80" 
           >
             Edit
@@ -135,7 +153,7 @@
           </p>
         </div>
         <button
-          on:click={() => showUpdateFavouriteClubModal = true}
+          onclick={() => showUpdateFavouriteClubModal = true}
           class="px-3 py-1 text-sm text-white border border-white rounded-md hover:border-BrandBlue/80"
         >
           Edit
@@ -152,7 +170,7 @@
           </p>
         </div>
         <button
-            on:click={() => showUpdateFavouriteClubModal = true}
+            onclick={() => showUpdateFavouriteClubModal = true}
             class="px-3 py-1 text-sm text-white border border-white rounded-md hover:border-BrandBlue/80"
         >
             Edit
