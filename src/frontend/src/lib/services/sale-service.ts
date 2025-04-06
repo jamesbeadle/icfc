@@ -1,6 +1,7 @@
 import { ActorFactory } from "$lib/utils/ActorFactory";
 import { isError } from "$lib/utils/helpers";
 import { authStore } from "$lib/stores/auth-store";
+import { idlFactory as sale_canister } from "../../../../declarations/icfc_sale_2";
 import type {
   SaleProgress,
   UserParticipation,
@@ -12,11 +13,11 @@ export class SaleService {
 
   async getProgress(): Promise<SaleProgress | undefined> {
     try {
-      const identityActor: any = await ActorFactory.createIdentityActor(
-        authStore,
-        process.env.ICFC_SALE_2_CANISTER_ID ?? "",
+      const actor: any = await ActorFactory.createActor(
+        sale_canister,
+        process.env.ICFC_SALE_2_CANISTER_ID,
       );
-      const result = await identityActor.getProgress();
+      const result = await actor.getProgress();
       if (isError(result)) {
         throw new Error("Failed to get progress");
       }
