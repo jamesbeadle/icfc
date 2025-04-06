@@ -481,6 +481,7 @@ module {
                     let profile = await profile_canister.getProfile({
                         principalId;
                     });
+
                     switch (profile) {
                         case (#ok(profileDTO)) {
                             let profile = profileDTO;
@@ -505,27 +506,18 @@ module {
 
                                     if (not canUpgrade) {
                                         switch (currentMembership) {
-                                            case (#Monthly or #Seasonal) {
+                                            case (#Monthly or #Seasonal or #Lifetime or #Founding) {
                                                 let currentTimestamp = Time.now();
-                                                let membershipClaim = List.last(List.fromArray(profile.membershipClaims));
-                                                switch (membershipClaim) {
-                                                    case (?claim) {
-                                                        let expiresOn = claim.expiresOn;
-                                                        switch (expiresOn) {
-                                                            case (?exp) {
-                                                                if (exp > currentTimestamp) {
-                                                                    return #err(#AlreadyExists);
-                                                                };
-                                                            };
-                                                            case (null) {};
-                                                        };
-                                                    };
-                                                    case (null) {};
+
+                                                let expiresOn = profile.membershipExpiryTime;
+
+                                                if (expiresOn > currentTimestamp) {
+                                                    return #err(#AlreadyExists);
                                                 };
+
                                             };
                                             case (_) {
-
-                                                return #err(#AlreadyExists);
+                                                return #err(#InEligible);
                                             };
                                         };
                                     };
@@ -935,6 +927,8 @@ module {
                             neuronsUsedforMembership.delete(neuron.0);
                         };
                     };
+
+                    let _ = await claimMembership(principalId);
 
                 };
                 case (null) {};
