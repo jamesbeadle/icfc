@@ -131,7 +131,7 @@ function createSaleStore() {
             console.error("Error getting balance.");
             return;
           }
-          let icp_balance = res/BigInt(1_00_000_000); 
+          let icp_balance = res / BigInt(1_00_000_000);
           return icp_balance;
         } catch (err: any) {
           console.error(err.errorType);
