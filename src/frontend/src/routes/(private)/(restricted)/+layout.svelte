@@ -17,9 +17,17 @@
       try {
         loading = true;
         await authStore.sync();
-      
-        if (!get(restrictedSaleStore)?.data) {
-          throw new Error('No sale profile found');
+
+        const identity = get(authStore).identity;
+        if (identity) {
+          const principal = $authStore.identity?.getPrincipal();
+            if (!principal) throw new Error('No principal found');
+            restrictedSaleStore.set({
+                data: principal.toString(),
+                certified: true,
+            });
+        } else {
+            throw new Error('No identity found');
         }
     } catch (err) {
         syncError = err instanceof Error ? err.message : 'Sync failed';

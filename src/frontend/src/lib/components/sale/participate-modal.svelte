@@ -7,6 +7,7 @@
     import { saleStore } from '$lib/stores/sale-store';
     import { isError } from '$lib/utils/helpers';
     import type { SaleProgress } from '../../../../../declarations/icfc_sale_2/icfc_sale_2.did';
+    import CopyPrincipal from '../profile/copy-principal.svelte';
     
     export let showModal: boolean;
     export let onClose: () => void;
@@ -140,6 +141,10 @@
                         placeholder="Enter number of packets"
                     />
                 </div>
+                <label for="principal" class="block text-sm text-BrandGrayShade2">
+                    ICFC Principal ID
+                </label>
+                <CopyPrincipal bgColor="bg-white/5" borderColor="border-BrandGrayShade3" />
 
                 <div class="p-4 space-y-3 rounded-lg bg-white/5">
                     <div class="flex justify-between">
