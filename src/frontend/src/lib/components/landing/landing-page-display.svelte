@@ -31,9 +31,6 @@
                 <p class="mt-6 text-sm text-center text-white">
                     Have questions? Read our <a href="/whitepaper" class="hover:underline">Whitepaper</a>
                 </p>
-                <p class="text-sm text-center text-white">
-                    See our <a href="/sale-preview" class="hover:underline">Sale Status</a>
-                </p>
             </div>
         </div>
     </div>
