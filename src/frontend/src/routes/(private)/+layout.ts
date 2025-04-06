@@ -3,7 +3,6 @@ import { get } from 'svelte/store';
 import { authStore } from '$lib/stores/auth-store';
 import { initUserProfile } from '$lib/services/user-profile-service';
 import { displayAndCleanLogoutMsg } from '$lib/services/auth.services';
-import type { ProfileDTO } from '../../../../declarations/backend/backend.did';
 
 export const ssr = false; 
 export const load = async ({ url }) => {
