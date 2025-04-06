@@ -42,6 +42,7 @@
         <button 
             class="flex-1 px-4 py-3 text-white transition border rounded-lg border-BrandGrayShade3 brand-button hover:bg-BrandBlack hover:border-BrandBlue/80"
             on:click={openParticipateModal}
+            disabled={remainingPackets <= 0}
         >
             Buy ICFC Packets
         </button>

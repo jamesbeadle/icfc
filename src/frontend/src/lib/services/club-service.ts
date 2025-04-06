@@ -26,7 +26,7 @@ export class ClubService {
       return result.ok;
     } catch (error) {
       console.error("Error fetching clubs: ", error);
-      toasts.addToast({ type: "error", message: "Error fetching clubs." });
+      return;
     }
   }
 }

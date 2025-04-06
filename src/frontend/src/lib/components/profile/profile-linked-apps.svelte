@@ -6,19 +6,28 @@
     import LocalSpinner from "../shared/local-spinner.svelte";
     import { onMount } from 'svelte';
 
-    export let profile: ProfileDTO;
+    let { profile } = $props<{ profile: ProfileDTO }>();
 
-    let isLoading = false;
-    let pendingVerification = false;
-    let loadingMessage = "";
+    let isLoading = $state(false);
+    let pendingVerification = $state(false);
+    let loadingMessage = $state("");
 
-    let openFplPrincipalId: string = profile.appPrincipalIds.find(x => Object.keys(x[0])[0].toLowerCase() == "OpenFPL")?.[1] ?? "";
+    let openFplPrincipalId = $state(
+        profile.appPrincipalIds.find((x: [Record<string, null>, string]) => 
+            Object.keys(x[0])[0].toLowerCase() == "OpenFPL"
+        )?.[1] ?? ""
+    );
     
-    $: openFplEntry = profile?.appPrincipalIds?.find(([app]) => 'OpenFPL' in app);
-    $: if(openFplEntry){
-        pendingVerification = false;
-    }
-    $: console.log("profile", profile);
+    let openFplEntry = $derived(
+        profile?.appPrincipalIds?.find(([app]: [Record<string, null>]) => 'OpenFPL' in app)
+    );
+
+    $effect(() => {
+        if (openFplEntry) {
+            pendingVerification = false;
+        }
+    });
+
     async function updateLinkedApps() {
         loadingMessage = "Linking to OpenFPL";
         isLoading = true;
@@ -99,7 +108,7 @@
                         <p class="text-OpenFPLBackground">{openFplEntry[1]}</p>
                     </div>
                     <button 
-                        on:click={() => removeOpenFPL()}
+                        onclick={() => removeOpenFPL()}
                         class="px-2 py-2 text-white transition border brand-button hover:bg-BrandBlack/50 border-BrandGrayShade3 hover:border-BrandRed/80"
                     >
                         Remove
@@ -129,7 +138,7 @@
         <div class="flex flex-col justify-center w-full my-4">
             {#if !pendingVerification && !openFplEntry}
             <button 
-                on:click={updateLinkedApps} 
+                onclick={updateLinkedApps} 
                 class="px-4 py-2 text-white transition border rounded-lg brand-button bg-BrandBlue hover:bg-BrandBlack/50 border-BrandGrayShade3 hover:border-BrandBlue/80"
             >
                 Update
@@ -137,7 +146,7 @@
             {:else if pendingVerification}
                 <p class="my-2 text-sm text-BrandBlue">Pending Verification. Please go to OpenFPL to finalize the process, and then refresh the page.</p>
                 <button 
-                    on:click={refreshAndCheck}
+                    onclick={refreshAndCheck}
                     class="px-4 py-2 text-white transition border rounded-lg brand-button bg-BrandBlue hover:bg-BrandBlack/50 border-BrandGrayShade3 hover:border-BrandBlue/80"
                 >
                     Refresh
