@@ -211,7 +211,7 @@
                         class="flex-1 px-4 py-3 text-white transition border rounded-lg brand-button hover:bg-BrandBlack/50 hover:border-BrandBlue/80"
                         disabled={isLoading}
                     >
-                        Claim ICFC Packets
+                        Buy ICFC Packets
                     </button>
                 </div>
 
@@ -221,7 +221,7 @@
                             class="w-full px-4 py-3 text-white transition border rounded-lg brand-button hover:bg-BrandBlack/50 hover:border-BrandBlue/80"
                             onclick={handleSubmit}
                         >
-                            Confirm Claim
+                            Confirm Purchase
                         </button>
                     </div>
                 {/if}
