@@ -26,12 +26,12 @@ export const idlFactory = ({ IDL }) => {
     InvalidData: IDL.Null,
     SystemOnHold: IDL.Null,
     AlreadyExists: IDL.Null,
-    NoPacketsRemaining: IDL.Null,
+    NoPacksRemaining: IDL.Null,
     UpdateFailed: IDL.Null,
     CanisterCreateError: IDL.Null,
     NeuronAlreadyUsed: IDL.Null,
     FailedInterCanisterCall: IDL.Null,
-    InsufficientPacketsRemaining: IDL.Null,
+    InsufficientPacksRemaining: IDL.Null,
     InsufficientFunds: IDL.Null,
     InEligible: IDL.Null,
   });
@@ -47,7 +47,7 @@ export const idlFactory = ({ IDL }) => {
   });
   const MembershipClaim__1 = IDL.Record({
     expiresOn: IDL.Opt(IDL.Int),
-    claimedOn: IDL.Int,
+    purchasedOn: IDL.Int,
     membershipType: MembershipType__1,
   });
   const Result_10 = IDL.Variant({ ok: MembershipClaim__1, err: Error });
@@ -99,7 +99,7 @@ export const idlFactory = ({ IDL }) => {
   });
   const MembershipClaim = IDL.Record({
     expiresOn: IDL.Opt(IDL.Int),
-    claimedOn: IDL.Int,
+    purchasedOn: IDL.Int,
     membershipType: MembershipType,
   });
   const SubApp__2 = IDL.Variant({

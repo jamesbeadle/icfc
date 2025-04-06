@@ -75,12 +75,12 @@ export type Error =
   | { InvalidData: null }
   | { SystemOnHold: null }
   | { AlreadyExists: null }
-  | { NoPacketsRemaining: null }
+  | { NoPacksRemaining: null }
   | { UpdateFailed: null }
   | { CanisterCreateError: null }
   | { NeuronAlreadyUsed: null }
   | { FailedInterCanisterCall: null }
-  | { InsufficientPacketsRemaining: null }
+  | { InsufficientPacksRemaining: null }
   | { InsufficientFunds: null }
   | { InEligible: null };
 export interface Followees {
@@ -129,12 +129,12 @@ export interface Leagues {
 }
 export interface MembershipClaim {
   expiresOn: [] | [bigint];
-  claimedOn: bigint;
+  purchasedOn: bigint;
   membershipType: MembershipType;
 }
 export interface MembershipClaim__1 {
   expiresOn: [] | [bigint];
-  claimedOn: bigint;
+  purchasedOn: bigint;
   membershipType: MembershipType__1;
 }
 export type MembershipType =

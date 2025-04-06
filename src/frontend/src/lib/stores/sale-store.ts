@@ -30,8 +30,8 @@ function createSaleStore() {
     return new SaleService().getUsersICFCDistributions();
   }
 
-  async function claimICFCPackets(): Promise<boolean> {
-    return new SaleService().claimICFCPackets();
+  async function claimICFCPacks(): Promise<boolean> {
+    return new SaleService().claimICFCPacks();
   }
 
   async function participateInSale(amount: number): Promise<any> {
@@ -81,7 +81,7 @@ function createSaleStore() {
             process.env.ICFC_SALE_2_CANISTER_ID ?? "",
           );
 
-          const result = await identityActor.claimICFCPackets();
+          const result = await identityActor.purchaseICFCPacks();
           if (isError(result)) {
             console.error("Error participating in ICFC sale.");
             return;
@@ -148,7 +148,7 @@ function createSaleStore() {
     getUserParticipation,
     getUserBalance,
     getUsersICFCDistributions,
-    claimICFCPackets,
+    claimICFCPacks,
     participateInSale,
   };
 }

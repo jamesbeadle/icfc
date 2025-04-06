@@ -7,9 +7,9 @@ export interface AppStatus {
   onHold: boolean;
 }
 export interface ClaimedRecord {
-  packetsClaimed: bigint;
-  claimId: bigint;
-  claimedOn: bigint;
+  packsClaimed: bigint;
+  purchaseId: bigint;
+  purchasedOn: bigint;
 }
 export type DistributionStatus = { Completed: null } | { Pending: null };
 export type Error =
@@ -27,17 +27,17 @@ export type Error =
   | { InvalidData: null }
   | { SystemOnHold: null }
   | { AlreadyExists: null }
-  | { NoPacketsRemaining: null }
+  | { NoPacksRemaining: null }
   | { UpdateFailed: null }
   | { CanisterCreateError: null }
   | { NeuronAlreadyUsed: null }
   | { FailedInterCanisterCall: null }
-  | { InsufficientPacketsRemaining: null }
+  | { InsufficientPacksRemaining: null }
   | { InsufficientFunds: null }
   | { InEligible: null };
 export interface ICFCDistribution {
   time: Time;
-  claimId: bigint;
+  purchaseId: bigint;
   installment: bigint;
   distributionStatus: DistributionStatus;
   amount: bigint;
@@ -51,11 +51,11 @@ export type Result_3 = { ok: AppStatus } | { err: Error };
 export type Result_4 = { ok: null } | { err: Error };
 export interface SaleProgress {
   packetCostinICP: bigint;
-  remainingPackets: bigint;
-  totalPackets: bigint;
+  remainingPacks: bigint;
+  totalPacks: bigint;
 }
 export interface Self {
-  claimICFCPackets: ActorMethod<[], Result_4>;
+  claimICFCPacks: ActorMethod<[], Result_4>;
   getAppStatus: ActorMethod<[], Result_3>;
   getProgress: ActorMethod<[], Result_2>;
   getUserParticipation: ActorMethod<[], Result_1>;

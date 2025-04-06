@@ -60,7 +60,7 @@ module ICFCTypes {
 
   public type MembershipClaim = {
     membershipType : MembershipType;
-    claimedOn : Int;
+    purchasedOn : Int;
     expiresOn : ?Int;
   };
 

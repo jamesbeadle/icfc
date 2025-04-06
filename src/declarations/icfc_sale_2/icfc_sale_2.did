@@ -2,7 +2,7 @@ type UserParticipation = record {participations: vec ClaimedRecord;};
 type Time = int;
 type Self = 
  service {
-   claimICFCPackets: () -> (Result_4);
+   claimICFCPacks: () -> (Result_4);
    getAppStatus: () -> (Result_3) query;
    getProgress: () -> (Result_2);
    getUserParticipation: () -> (Result_1);
@@ -11,8 +11,8 @@ type Self =
 type SaleProgress = 
  record {
    packetCostinICP: nat;
-   remainingPackets: nat;
-   totalPackets: nat;
+   remainingPacks: nat;
+   totalPacks: nat;
  };
 type Result_4 = 
  variant {
@@ -43,7 +43,7 @@ type PrincipalId = text;
 type ICFCDistribution = 
  record {
    amount: nat;
-   claimId: nat;
+   purchaseId: nat;
    distributionStatus: DistributionStatus;
    installment: nat;
    principalId: PrincipalId;
@@ -60,13 +60,13 @@ type Error =
    InEligible;
    IncorrectSetup;
    InsufficientFunds;
-   InsufficientPacketsRemaining;
+   InsufficientPacksRemaining;
    InvalidData;
    InvalidProfilePicture;
    InvalidProperty;
    MaxDataExceeded;
    NeuronAlreadyUsed;
-   NoPacketsRemaining;
+   NoPacksRemaining;
    NotAllowed;
    NotAuthorized;
    NotFound;
@@ -81,9 +81,9 @@ type DistributionStatus =
  };
 type ClaimedRecord = 
  record {
-   claimId: int;
-   claimedOn: int;
-   packetsClaimed: nat;
+   purchaseId: int;
+   purchasedOn: int;
+   packsClaimed: nat;
  };
 type AppStatus = 
  record {

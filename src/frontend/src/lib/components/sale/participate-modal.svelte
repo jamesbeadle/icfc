@@ -15,16 +15,16 @@
     let userBalance: bigint = BigInt(0);
     let contributionAmount: bigint = BigInt(0);
     let maxContributionAmount: bigint = BigInt(20);
-    let packetCost: bigint = BigInt(0);
-    let packetsToBuy: number | null = null;
-    let packetsRemaining: bigint = BigInt(0);
+    let packCost: bigint = BigInt(0);
+    let packsToBuy: number | null = null;
+    let packsRemaining: bigint = BigInt(0);
     let showConfirm: boolean = false;
     let isLoading: boolean = false;
     let loadingMessage: string = "Loading";
 
-    $: contributionAmount = packetCost * BigInt(packetsToBuy ?? 0);
+    $: contributionAmount = packCost * BigInt(packsToBuy ?? 0);
 
-    $: totalICFC = packetsToBuy ? packetsToBuy * 10000 : 0;
+    $: totalICFC = packsToBuy ? packsToBuy * 10000 : 0;
     $: amountPerInstallment = totalICFC / 6;
     $: now = new Date();
     $: installments = Array.from({ length: 6 }, (_, i) => {
@@ -34,7 +34,7 @@
     });
 
     function validateContribution(): { isValid: boolean; error?: string } {
-        if (!packetsToBuy || packetsToBuy <= 0) {
+        if (!packsToBuy || packsToBuy <= 0) {
             return {
                 isValid: false,
                 error: "Please enter a valid amount."
@@ -43,13 +43,13 @@
         if (contributionAmount > userBalance) {
             return {
                 isValid: false,
-                error: "You don't have enough balance to buy this amount of packets."
+                error: "You don't have enough balance to buy this amount of packs."
             };
         }
         if (contributionAmount > maxContributionAmount) {
             return {
                 isValid: false,
-                error: "You can't purchase more packets than the amount of packets remaining."
+                error: "You can't purchase more packs than the amount of packs remaining."
             };
         }
         return { isValid: true };
@@ -72,36 +72,36 @@
         const input = event.target.value;
         
         if (input === '' || input === '.') {
-            packetsToBuy = null;
+            packsToBuy = null;
             contributionAmount = BigInt(0);
             return;
         } 
         else if (/^\d+$/.test(input)) {
-            packetsToBuy = Number(input);
-            contributionAmount = packetCost * BigInt(packetsToBuy);
+            packsToBuy = Number(input);
+            contributionAmount = packCost * BigInt(packsToBuy);
         } 
         else if (input.includes('.')) {
             const cleanedInput = input.split('.')[0]; 
             if (/^\d+$/.test(cleanedInput)) {
-                packetsToBuy = Number(cleanedInput);
-                contributionAmount = packetCost * BigInt(packetsToBuy);
+                packsToBuy = Number(cleanedInput);
+                contributionAmount = packCost * BigInt(packsToBuy);
             } else {
-                packetsToBuy = null;
+                packsToBuy = null;
                 contributionAmount = BigInt(0);
             }
         } 
         else if (input.includes(',')) {
             const cleanedInput = input.split(',')[0]; 
             if (/^\d+$/.test(cleanedInput)) {
-                packetsToBuy = Number(cleanedInput);
-                contributionAmount = packetCost * BigInt(packetsToBuy);
+                packsToBuy = Number(cleanedInput);
+                contributionAmount = packCost * BigInt(packsToBuy);
             } else {
-                packetsToBuy = null;
+                packsToBuy = null;
                 contributionAmount = BigInt(0);
             }
         }
         else {
-            packetsToBuy = null;
+            packsToBuy = null;
             contributionAmount = BigInt(0);
         }
     }
@@ -112,15 +112,15 @@
             isLoading = true;
             const result = await saleStore.participateInSale(Number(contributionAmount));
             if (isError(result)) {
-                console.error("Error purchasing ICFC Packets", result);
+                console.error("Error purchasing ICFC Packs", result);
                 toasts.addToast({
-                    message: "Error purchasing ICFC Packets",
+                    message: "Error purchasing ICFC Packs",
                     type: "error",
                 });
                 return;
             }
             toasts.addToast({
-                message: "You purchased your ICFC Packets successfully",
+                message: "You purchased your ICFC Packs successfully",
                 type: "success",
                 duration: 3000
             });
@@ -139,7 +139,7 @@
 
     function resetModalState() {
         contributionAmount = BigInt(0);
-        packetsToBuy = null;
+        packsToBuy = null;
         showConfirm = false;
     }
 
@@ -175,9 +175,9 @@
             loadingMessage = "Getting Sale Progress";
             let saleGoal = await saleStore.getProgress();
             if (saleGoal) {
-                packetsRemaining = BigInt(saleGoal.remainingPackets);
-                packetCost = saleGoal.packetCostinICP;
-                maxContributionAmount = saleGoal.remainingPackets * saleGoal.packetCostinICP;
+                packsRemaining = BigInt(saleGoal.remainingPacks);
+                packCost = saleGoal.packCostinICP;
+                maxContributionAmount = saleGoal.remainingPacks * saleGoal.packCostinICP;
                 loadingMessage = "Getting User Balance";
                 userBalance = (await saleStore.getUserBalance()) ?? 0n;
             }
@@ -190,7 +190,7 @@
 </script>
 
 {#if showModal}
-    <Modal onClose={handleClose} title="Buy ICFC Packets">
+    <Modal onClose={handleClose} title="Buy ICFC Packs">
         {#if isLoading}
             <LocalSpinner message={loadingMessage} />
         {:else}
@@ -206,19 +206,19 @@
                     </button>
                 </div>
                 <div class="space-y-2">
-                    <label for="packets" class="block text-sm text-BrandGrayShade2">
-                        1 Packet = {packetCost} ICP = 10,000 ICFC
+                    <label for="packs" class="block text-sm text-BrandGrayShade2">
+                        1 Pack = {packCost} ICP = 10,000 ICFC
                     </label>
                     <input
-                        id="packets"
+                        id="packs"
                         min={1}
-                        max={Number(packetsRemaining)}
+                        max={Number(packsRemaining)}
                         oninput={handleInput} 
                         step="1"
                         type="number"
-                        bind:value={packetsToBuy}
+                        bind:value={packsToBuy}
                         class="w-full px-4 py-3 text-white border rounded-lg border-BrandGrayShade3 bg-white/5 focus:outline-none focus:border-BrandBlue"
-                        placeholder="Enter number of packets"
+                        placeholder="Enter number of packs"
                     />
                 </div>
                 <label for="principal" class="block text-sm text-BrandGrayShade2">
@@ -228,16 +228,16 @@
 
                 <div class="p-4 space-y-3 rounded-lg bg-white/5">
                     <div class="flex justify-between">
-                        <span class="text-BrandGrayShade2">Packets Remaining:</span>
-                        <span class="font-medium text-white">{packetsRemaining}</span>
+                        <span class="text-BrandGrayShade2">Packs Remaining:</span>
+                        <span class="font-medium text-white">{packsRemaining}</span>
                     </div>
                     <div class="flex justify-between">
-                        <span class="text-BrandGrayShade2">Cost per packet:</span>
-                        <span class="font-medium text-white">{packetCost} ICP</span>
+                        <span class="text-BrandGrayShade2">Cost per Packs:</span>
+                        <span class="font-medium text-white">{packCost} ICP</span>
                     </div>
                     <div class="flex justify-between">
-                        <span class="text-BrandGrayShade2">Packets to buy:</span>
-                        <span class="font-medium text-white">{packetsToBuy}</span>
+                        <span class="text-BrandGrayShade2">Packs to buy:</span>
+                        <span class="font-medium text-white">{packsToBuy}</span>
                     </div>
                     <div class="flex justify-between">
                         <span class="text-BrandGrayShade2">Total cost:</span>
@@ -249,7 +249,7 @@
                     </div>
                 </div>
 
-                {#if packetsToBuy > 0}
+                {#if packsToBuy > 0}
                     <div class="mt-4">
                         <h4 class="text-lg text-white">Distribution Schedule</h4>
                         <p class="text-sm text-BrandGrayShade2">
@@ -285,7 +285,7 @@
                         class="flex-1 px-4 py-3 text-white transition border rounded-lg brand-button hover:bg-BrandBlack/50 hover:border-BrandBlue/80"
                         disabled={isLoading}
                     >
-                        Buy ICFC Packets
+                        Buy ICFC Packs
                     </button>
                 </div>
 

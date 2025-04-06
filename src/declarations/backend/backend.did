@@ -212,13 +212,13 @@ type MembershipType =
  };
 type MembershipClaim__1 = 
  record {
-   claimedOn: int;
+   purchasedOn: int;
    expiresOn: opt int;
    membershipType: MembershipType__1;
  };
 type MembershipClaim = 
  record {
-   claimedOn: int;
+   purchasedOn: int;
    expiresOn: opt int;
    membershipType: MembershipType;
  };
@@ -273,13 +273,13 @@ type Error =
    InEligible;
    IncorrectSetup;
    InsufficientFunds;
-   InsufficientPacketsRemaining;
+   InsufficientPacksRemaining;
    InvalidData;
    InvalidProfilePicture;
    InvalidProperty;
    MaxDataExceeded;
    NeuronAlreadyUsed;
-   NoPacketsRemaining;
+   NoPacksRemaining;
    NotAllowed;
    NotAuthorized;
    NotFound;

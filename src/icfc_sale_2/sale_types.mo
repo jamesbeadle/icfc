@@ -6,10 +6,10 @@ module SaleTypes {
     type Timestamp = Nat64;
     type BlockIndex = Nat;
 
-    public type ClaimedRecord = {
-        packetsClaimed : Nat;
-        claimedOn : Int;
-        claimId : Int;
+    public type PurchaseRecord = {
+        packsPurchased : Nat;
+        purchasedOn : Int;
+        purchaseId : Nat;
     };
 
     public type TransferError = {
@@ -32,7 +32,7 @@ module SaleTypes {
         principalId : Ids.PrincipalId;
         amount : Nat;
         time : Time.Time;
-        claimId : Nat;
+        purchaseId : Nat;
         installment : Nat;
         distributionStatus : DistributionStatus;
     };
@@ -54,24 +54,6 @@ module SaleTypes {
         created_at_time : ?Timestamp;
     };
 
-    public type Error = {
-        #NotFound;
-        #AlreadyExists;
-        #NotAuthorized;
-        #NotAllowed;
-        #DecodeError;
-        #InvalidData;
-        #OutOfRange;
-        #NotEnoughFunds;
-        #PaymentError;
-        #CreateGameError;
-        #UpdateFailed;
-        #AlreadyClaimed;
-        #NoPacketsRemaining;
-        #NotEligible;
-        #InsufficientPacketsRemaining;
-    };
-
     public type MembershipType = {
         #Monthly;
         #Seasonal;
@@ -84,7 +66,32 @@ module SaleTypes {
 
     public type MembershipClaim = {
         membershipType : MembershipType;
-        claimedOn : Int;
+        purchasedOn : Int;
         expiresOn : ?Int;
+    };
+
+    public type Error = {
+        #AlreadyClaimed;
+        #AlreadyExists;
+        #CanisterCreateError;
+        #DecodeError;
+        #DuplicateData;
+        #FailedInterCanisterCall;
+        #InEligible;
+        #IncorrectSetup;
+        #InsufficientFunds;
+        #InsufficientPacketsRemaining; // TODO Packs
+        #InvalidData;
+        #InvalidProfilePicture;
+        #InvalidProperty;
+        #MaxDataExceeded;
+        #NeuronAlreadyUsed;
+        #NoPacketsRemaining;  // TODO Packs
+        #NotAllowed;
+        #NotAuthorized;
+        #NotFound;
+        #SystemOnHold;
+        #TooLong;
+        #UpdateFailed
     };
 };

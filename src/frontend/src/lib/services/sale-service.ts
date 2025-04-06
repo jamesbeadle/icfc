@@ -62,20 +62,20 @@ export class SaleService {
     }
   }
 
-  async claimICFCPackets(): Promise<boolean> {
+  async claimICFCPacks(): Promise<boolean> {
     try {
       const identityActor: any = await ActorFactory.createSaleActor(
         authStore,
         process.env.ICFC_SALE_2_CANISTER_ID ?? "",
       );
-      const result = await identityActor.claimICFCPackets();
+      const result = await identityActor.claimICFCPacks();
       if (isError(result)) {
-        console.error("Error claiming packets:", result.err);
+        console.error("Error claiming packs:", result.err);
         return false;
       }
       return true;
     } catch (error) {
-      console.error("Error claiming packets:", error);
+      console.error("Error claiming packs:", error);
       return false;
     }
   }

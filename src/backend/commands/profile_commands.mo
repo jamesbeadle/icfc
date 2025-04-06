@@ -78,7 +78,7 @@ module ProfileCommands {
 
     public type MembershipClaim = {
         membershipType : ICFCEnums.MembershipType;
-        claimedOn : Int;
+        purchasedOn : Int;
         expiresOn : ?Int;
     };
     public type SubApp = {
