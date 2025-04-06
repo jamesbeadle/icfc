@@ -72,7 +72,7 @@ function createSaleStore() {
             fee: tranferFee,
             memo: new Uint8Array(Text.encodeValue("0")),
             from_subaccount: undefined,
-            created_at_time: BigInt(Date.now()),
+            created_at_time: BigInt(Date.now()) * BigInt(1_000_000),
             amount: amounte8s - tranferFee,
           });
 
