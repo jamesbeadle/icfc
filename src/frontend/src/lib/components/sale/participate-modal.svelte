@@ -127,6 +127,7 @@
             loadingMessage = "Getting Sale Progress";
             let saleGoal = await saleStore.getProgress();
             if(saleGoal){
+                packetsRemaining = BigInt(saleGoal.remainingPackets);
                 packetCost = saleGoal.packetCostinICP;
                 maxContributionAmount = saleGoal.remainingPackets * saleGoal.packetCostinICP;
                 loadingMessage = "Getting User Balance";
