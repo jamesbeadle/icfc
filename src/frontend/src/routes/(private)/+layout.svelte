@@ -1,24 +1,17 @@
 <script lang="ts">
     import FullScreenSpinner from '$lib/components/shared/full-screen-spinner.svelte';
-    import type { ProfileDTO } from '../../../../declarations/backend/backend.did';
-    import type { OptionIdentity } from '$lib/types/identity';
     import type { Snippet } from 'svelte';
     
-    const { profile, identity, children } = $props<{
-        profile: ProfileDTO;
-        identity?: OptionIdentity;
-        children: (data: { 
-            profile: ProfileDTO; 
-            identity?: OptionIdentity 
-        }) => Snippet;
+    const { children } = $props<{
+        children: Snippet;  
     }>();
 
     let loading = $state(false);
-    let loadingMessage = $state("");
+    let loadingMessage = $state("Loading");
 </script>
 
 {#if loading}
     <FullScreenSpinner message={loadingMessage} />
 {:else}
-    {@render children({ profile, identity })}
+    {@render children()}
 {/if}

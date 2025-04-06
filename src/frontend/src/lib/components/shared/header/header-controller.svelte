@@ -36,7 +36,7 @@
         try {
             const principal = $authStore.identity?.getPrincipal();
             if (!principal) throw new Error('No principal found');
-            
+            //TODO: ADD CREATE SALE PROFILE HERE
             restrictedSaleStore.set({
                 data: principal.toString(),
                 certified: true,
@@ -79,11 +79,18 @@
             {/if}
         {:else}
             {#if signupChoice === null}
-                <SignupChoice
-                    onFull={handleFullSignup}
-                    onSale={handleSaleSignup}
-                    processing={saleSignupProcessing}
-                />
+                <div class="relative flex flex-col w-full min-h-screen bg-BrandBlack">
+                    <div class="fixed top-0 left-0 right-0 z-50">
+                        <HeaderUserSignup />
+                    </div>
+                    <div>
+                        <SignupChoice
+                            onFull={handleFullSignup}
+                            onSale={handleSaleSignup}
+                            processing={saleSignupProcessing}
+                        />
+                    </div>
+                </div>
             {:else if signupChoice === 'full'}
                 <div class="relative flex flex-col w-full min-h-screen bg-BrandBlack">
                     <div class="fixed top-0 left-0 right-0 z-50">

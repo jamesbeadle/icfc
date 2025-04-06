@@ -9,7 +9,6 @@ import { get } from "svelte/store";
 export type InitUserProfileResult = { 
   result: "has-profile" | "no-profile" | "unauthenitcated" | "error";
   profile?: ProfileDTO; 
-  requiresAction?: "create-profile" | "temp-access" | "continue-creation";
 };
 
 export const initUserProfile = async ({
@@ -23,7 +22,7 @@ export const initUserProfile = async ({
 }): Promise<InitUserProfileResult> => {
   if (!identity) return allowAunthenticated 
     ? { result: "unauthenitcated" } 
-    : { result: "error", requiresAction: "create-profile" };
+    : { result: "error" };
 
   try {
     const profile = await userStore.getProfile();
@@ -31,27 +30,27 @@ export const initUserProfile = async ({
     console.log("profile when doing initUserProfile", profile);
     if (profile) {
       userIdCreatedStore.set({ data: profile.principalId, certified: true });
-      return { result: "has-profile", profile };
+      return { result: "has-profile" };
     }
 
-    /* 
+    /* TODO: UNCOMMENT THIS and remove the check below
     const saleProfile = await saleStore.getSaleProfile();
     if (saleProfile) {
       restrictedSaleStore.set({
         data: saleProfile.principalId,
         certified: true
       });
-      return { result: "has-profile", requiresAction: "temp-access" };
+      return { result: "has-profile" };
     } */
-    if (context === "create-profile") {
-      return { result: "no-profile", requiresAction: "continue-creation" };
-    }
 
     if (context === "sale-access" && get(restrictedSaleStore)?.data) {
-      return { result: "no-profile", requiresAction: "temp-access" };
+      return { result: "no-profile" };
+    }
+    if (context === "create-profile") {
+      return { result: "no-profile"};
     }
 
-    return { result: "no-profile", requiresAction: "create-profile" };
+    return { result: "no-profile" };
 
   } catch (err) {
     toasts.addToast({
@@ -60,6 +59,6 @@ export const initUserProfile = async ({
     });
     console.error("initUserProfile error", err);
     await initErrorSignOut();
-    return { result: "error", requiresAction: "create-profile" };
+    return { result: "error" };
   }
 };

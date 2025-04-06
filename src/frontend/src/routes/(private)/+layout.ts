@@ -15,26 +15,17 @@ export const load = async ({ url }) => {
   const { identity } = get(authStore);
 
   if (!identity) {
-    const redirectUrl = url.pathname !== '/' 
-      ? `/auth/login?redirect=${encodeURIComponent(url.pathname)}`
-      : '/auth/login';
-    throw redirect(307, redirectUrl);
+    throw redirect(307, '/');
   }
 
   try {
-    const profile = await initUserProfile({ identity });
+    await initUserProfile({ identity });
     
-    return {
-      profile: profile.profile as ProfileDTO,
-      identity 
-    };
   } catch (error) {
     console.error('Profile initialization failed:', error);
-
     if (error instanceof Error && error.message.includes('II')) {
-      throw redirect(307, '/auth/login?error=ii_timeout');
+      throw redirect(307, '/');
     }
-    
-    throw redirect(307, '/error?code=profile_init');
+    throw redirect(307, '/');
   }
 };
