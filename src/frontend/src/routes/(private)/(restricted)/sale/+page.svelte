@@ -61,7 +61,7 @@
                             <ICFCCoinIcon className="w-12 h-12 2xl:w-16 2xl:h-16" />
                             <h1 class="text-4xl text-white 2xl:text-5xl cta-text">ICFC</h1>
                         </div>
-                        <h2 class="mb-4 text-3xl font-bold text-center text-white 2xl:text-4xl xxs:text-5xl">Football Ownership Unleashed</h2>
+                        <h2 class="mb-4 text-3xl font-bold text-center text-white 2xl:text-4xl xxs:text-5xl">Membership Sale</h2>
                         <p class="text-xl text-center text-BrandGrayShade2 2xl:text-2xl">
                             The world's first decentralised football club is coming to the Internet Computer.
                         </p>

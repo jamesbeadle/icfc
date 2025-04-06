@@ -20,7 +20,7 @@
   const menuItems: MenuItem[] = [
     { path: '/', label: 'Home', showForSaleOnly: true },
     { path: '/apps', label: 'Apps', showForSaleOnly: true },
-    { path: '/sale', label: 'Decentralisation Sale 2', showForSaleOnly: true },
+    { path: '/sale', label: 'Membership Sale', showForSaleOnly: true },
     { path: '/sale-participation', label: 'Sale Participation', showForSaleOnly: true },
     { path: '/profile', label: 'Profile', showForSaleOnly: true },
     { path: '/membership', label: 'Membership', showForSaleOnly: true },
