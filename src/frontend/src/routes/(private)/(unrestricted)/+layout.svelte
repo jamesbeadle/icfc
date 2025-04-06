@@ -35,6 +35,7 @@
       }
     } catch (err) {
         syncError = err instanceof Error ? err.message : 'Sync failed';
+        goto('/', { replaceState: true });
     } finally {
       loading = false;
     }

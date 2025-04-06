@@ -1,8 +1,9 @@
 <script lang="ts">
     import { restrictedSaleStore } from '$lib/stores/user-control-store';
+    import { authStore } from '$lib/stores/auth-store';
     import { get } from 'svelte/store';
     import { onMount, type Snippet } from 'svelte';
-
+    import { goto } from '$app/navigation';
     import FullScreenSpinner from '$lib/components/shared/full-screen-spinner.svelte';
 
     const { children } = $props<{
@@ -15,21 +16,18 @@
     onMount(async () => {
       try {
         loading = true;
-      //TODO JUST UNCOMMENT THIS
-      //import store to get sale profile
-      //await syncSaleProfile();
+        await authStore.sync();
       
-      // if (!get(restrictedSaleStore)?.data) {
-      //   throw new Error('No sale profile found');
-      // }
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        if (!get(restrictedSaleStore)?.data) {
+          throw new Error('No sale profile found');
+        }
     } catch (err) {
         syncError = err instanceof Error ? err.message : 'Sync failed';
+        goto('/', { replaceState: true });
     } finally {
         loading = false;
     }
   });
-  
    
   </script>
   {#if syncError}

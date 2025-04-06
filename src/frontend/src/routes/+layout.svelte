@@ -5,6 +5,8 @@
   import { initAuthWorker } from "$lib/services/worker.auth.services";
   import { displayAndCleanLogoutMsg } from "$lib/services/auth.services";
   import { authStore, type AuthStoreData } from "$lib/stores/auth-store";
+  import { get } from "svelte/store";
+  import { initUserProfile } from "$lib/services/user-profile-service";
 
   import "../app.css";
   
@@ -31,6 +33,16 @@
       document.querySelector('#app-spinner')?.remove();
     }
     await init();
+    const identity = get(authStore).identity;
+    if (identity) {
+      try {
+        console.log('init user profile')
+        await initUserProfile({ identity });
+        console.log('init user profile end')
+      } catch (err) {
+        console.error('initUserProfile error:', err);
+      }
+    }
     worker = await initAuthWorker();
     isLoading = false;
   });

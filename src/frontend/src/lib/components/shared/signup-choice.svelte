@@ -24,7 +24,7 @@
           onclick={onFull}
           class="w-full px-4 py-3 text-white transition border rounded-lg border-BrandGrayShade3 brand-button hover:bg-BrandBlack hover:border-BrandBlue/80"
         >
-          Create Full Profile
+          Continue To Full Site
         </button>
         
         <button

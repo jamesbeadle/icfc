@@ -22,8 +22,15 @@
     let { children }: Props = $props();
 
     let isMenuOpen = $state(false);
-    let signupChoice = $state<'full' | 'sale' | null>(null);
     let saleSignupProcessing = $state(false);
+
+    const SIGN_UP_CHOICE_KEY = 'user_signup_choice';
+
+    let signupChoice = $state<'full' | 'sale' | null>(
+        typeof localStorage !== 'undefined' 
+            ? localStorage.getItem(SIGN_UP_CHOICE_KEY) as 'full' | 'sale' | null
+            : null
+    );
 
     function toggleMenu() {
         isMenuOpen = !isMenuOpen;
@@ -31,18 +38,24 @@
 
     function handleFullSignup() {
         signupChoice = 'full';
+        if (typeof localStorage !== 'undefined') {
+            localStorage.setItem(SIGN_UP_CHOICE_KEY, 'full');
+        }
     }
 
     async function handleSaleSignup() {
+        signupChoice = 'sale';
         saleSignupProcessing = true;
         try {
             const principal = $authStore.identity?.getPrincipal();
             if (!principal) throw new Error('No principal found');
-            //TODO: ADD CREATE SALE PROFILE HERE
             restrictedSaleStore.set({
                 data: principal.toString(),
                 certified: true,
             });
+            if (typeof localStorage !== 'undefined') {
+                localStorage.setItem(SIGN_UP_CHOICE_KEY, 'sale');
+            }
             await goto('/sale', { replaceState: true });
             toasts.addToast({
                 message: 'Sale signup successful',
@@ -66,16 +79,53 @@
     });
 
     const isSaleOnly = $derived(!$userIdCreatedStore?.data && !!$restrictedSaleStore?.data);
-
 </script>
 
 {#if $busy}
     <FullScreenSpinner message="Checking for Existing Profile" />
 {:else}
     {#if $authSignedInStore}
-        {#if saleSignupProcessing}
-            <FullScreenSpinner message="Signing up for Sale" />
-        {:else if $userIdCreatedStore?.data || $restrictedSaleStore?.data}
+        {#if signupChoice === null}
+            <div class="relative flex flex-col w-full min-h-screen bg-BrandBlack">
+                <div class="fixed top-0 left-0 right-0 z-50">
+                    <HeaderUserSignup />
+                </div>
+                <div>
+                    <SignupChoice
+                        onFull={handleFullSignup}
+                        onSale={handleSaleSignup}
+                        processing={saleSignupProcessing}
+                    />
+                </div>
+            </div>
+        {:else if signupChoice === 'full'}
+            {#if $userIdCreatedStore?.data}
+                <div class="relative flex flex-col w-full min-h-screen">
+                    <LoggedInHeader {toggleMenu} />
+                    <main class="flex-1 w-full mt-16 overflow-x-hidden">
+                    {@render children()}
+                    </main>
+                </div>
+                <Sidebar {isMenuOpen} {toggleMenu} isSaleOnly={false} />
+                {#if isMenuOpen}
+                    <button 
+                    class="fixed inset-0 z-30 pointer-events-none bg-black/40 sm:bg-black/20 sm:pointer-events-auto"
+                    onclick={toggleMenu}
+                    onkeydown={(e) => e.key === 'Enter' && toggleMenu()}
+                    aria-label="Close menu overlay"
+                    ></button>
+                {/if}
+            {:else}
+                <div class="relative flex flex-col w-full min-h-screen bg-BrandBlack">
+                    <div class="fixed top-0 left-0 right-0 z-50">
+                        <HeaderUserSignup />
+                    </div>
+                    <div class="mt-12">
+                        <CreateUser />
+                    </div>
+                </div>
+            {/if}
+        {:else if signupChoice === 'sale'}
             <div class="relative flex flex-col w-full min-h-screen">
                 <LoggedInHeader {toggleMenu} />
                 <main class="flex-1 w-full mt-16 overflow-x-hidden">
@@ -91,30 +141,10 @@
                 aria-label="Close menu overlay"
                 ></button>
             {/if}
+        {:else if saleSignupProcessing}
+            <FullScreenSpinner message="Signing up for Sale" />
         {:else}
-            {#if signupChoice === null}
-                <div class="relative flex flex-col w-full min-h-screen bg-BrandBlack">
-                    <div class="fixed top-0 left-0 right-0 z-50">
-                        <HeaderUserSignup />
-                    </div>
-                    <div>
-                        <SignupChoice
-                            onFull={handleFullSignup}
-                            onSale={handleSaleSignup}
-                            processing={saleSignupProcessing}
-                        />
-                    </div>
-                </div>
-            {:else if signupChoice === 'full'}
-                <div class="relative flex flex-col w-full min-h-screen bg-BrandBlack">
-                    <div class="fixed top-0 left-0 right-0 z-50">
-                        <HeaderUserSignup />
-                    </div>
-                    <div class="mt-12">
-                        <CreateUser />
-                    </div>
-                </div>
-            {/if}
+        <HeaderUserSignup />
         {/if}
     {:else}
         {#if page.route.id === '/'}
