@@ -15,16 +15,16 @@
     let contributionAmount: bigint = BigInt(0);
     let maxContributionAmount: bigint = BigInt(20);
     let packetCost: bigint = BigInt(0);
-    let packetsToBuy: number = 0;
+    let packetsToBuy: number | null = null;
     let packetsRemaining: bigint = BigInt(0);
     let showConfirm: boolean = false;
     let isLoading: boolean = false;
     let loadingMessage: string = "Loading";
 
-    $: contributionAmount = packetCost * BigInt(packetsToBuy);
+    $: contributionAmount = packetCost * BigInt(packetsToBuy ?? 0);
 
     function validateContribution(): { isValid: boolean; error?: string } {
-        if (packetsToBuy <= 0) {
+        if (!packetsToBuy || packetsToBuy <= 0) {
             return {
                 isValid: false,
                 error: "Please enter a valid amount."
@@ -91,7 +91,7 @@
 
     function resetModalState() {
         contributionAmount = BigInt(0);
-        packetsToBuy = 0;
+        packetsToBuy = null;
         showConfirm = false;
     }
 

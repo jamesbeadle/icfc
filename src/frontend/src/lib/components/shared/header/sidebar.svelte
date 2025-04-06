@@ -21,7 +21,7 @@
     { path: '/', label: 'Home', showForSaleOnly: true },
     { path: '/apps', label: 'Apps', showForSaleOnly: true },
     { path: '/sale', label: 'Decentralisation Sale 2', showForSaleOnly: true },
-    { path: '/sale-schedule', label: 'Sale Schedule', showForSaleOnly: true },
+    { path: '/sale-participation', label: 'Sale Participation', showForSaleOnly: true },
     { path: '/profile', label: 'Profile', showForSaleOnly: true },
     { path: '/membership', label: 'Membership', showForSaleOnly: true },
     { path: '/channels', label: 'Channels', showForSaleOnly: true },

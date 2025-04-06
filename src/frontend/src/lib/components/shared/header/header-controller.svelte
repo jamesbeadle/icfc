@@ -14,7 +14,7 @@
     import Sidebar from './sidebar.svelte';
     import CreateUser from '$lib/components/profile/create-user/create-user.svelte';
     import FullScreenSpinner from '../full-screen-spinner.svelte';
-    import SignupChoice from '../signup-choice.svelte';
+    import SignupChoice from '$lib/components/shared/signup-choice.svelte';
     
     interface Props {
         children: Snippet;
