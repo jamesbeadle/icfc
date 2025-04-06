@@ -10,16 +10,21 @@ export const load = async ({ url }) => {
     displayAndCleanLogoutMsg();
   }
 
-  await authStore.sync();
-  const { identity } = get(authStore);
-
-  if (!identity) {
-    throw redirect(307, '/');
-  }
-
   try {
+    let loadingMessage = "Checking authentication";
+    await authStore.sync();
+    const { identity } = get(authStore);
+
+    if (!identity) {
+      throw redirect(307, '/');
+    }
+    loadingMessage = "Initializing user profile";
     await initUserProfile({ identity });
-    
+    return {
+      status: 'authenticated',
+      loading: false,
+      loadingMessage: "Loading"
+    }
   } catch (error) {
     console.error('Profile initialization failed:', error);
     if (error instanceof Error && error.message.includes('II')) {

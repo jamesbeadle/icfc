@@ -5,6 +5,8 @@
     import { page } from '$app/state';
     import { busy } from '$lib/stores/busy-store';
     import { authStore } from '$lib/stores/auth-store';
+    import { goto } from '$app/navigation';
+    import { toasts } from '$lib/stores/toasts-store';
 
     import HeaderUserSignup from './header-user-signup.svelte';
     import LoggedInHeader from './logged-in-header.svelte';
@@ -41,8 +43,19 @@
                 data: principal.toString(),
                 certified: true,
             });
+            await goto('/sale', { replaceState: true });
+            toasts.addToast({
+                message: 'Sale signup successful',
+                type: 'success',
+                duration: 3000
+            });
         } catch (error) {
             console.error('Sale signup failed:', error);
+            toasts.addToast({
+                message: 'Sale signup failed',
+                type: 'error',
+                duration: 3000
+            });
         } finally {
             saleSignupProcessing = false;
         }
@@ -59,9 +72,10 @@
 {#if $busy}
     <FullScreenSpinner message="Checking for Existing Profile" />
 {:else}
-
     {#if $authSignedInStore}
-        {#if $userIdCreatedStore?.data || $restrictedSaleStore?.data}
+        {#if saleSignupProcessing}
+            <FullScreenSpinner message="Signing up for Sale" />
+        {:else if $userIdCreatedStore?.data || $restrictedSaleStore?.data}
             <div class="relative flex flex-col w-full min-h-screen">
                 <LoggedInHeader {toggleMenu} />
                 <main class="flex-1 w-full mt-16 overflow-x-hidden">

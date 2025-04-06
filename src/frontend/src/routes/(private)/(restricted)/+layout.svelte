@@ -14,7 +14,7 @@
 
     onMount(async () => {
       try {
-      loading = true;
+        loading = true;
       //TODO JUST UNCOMMENT THIS
       //import store to get sale profile
       //await syncSaleProfile();
@@ -22,10 +22,11 @@
       // if (!get(restrictedSaleStore)?.data) {
       //   throw new Error('No sale profile found');
       // }
+        await new Promise(resolve => setTimeout(resolve, 1000));
     } catch (err) {
-      syncError = err instanceof Error ? err.message : 'Sync failed';
+        syncError = err instanceof Error ? err.message : 'Sync failed';
     } finally {
-      loading = false;
+        loading = false;
     }
   });
   
