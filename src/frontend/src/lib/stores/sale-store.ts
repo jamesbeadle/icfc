@@ -78,7 +78,7 @@ function createSaleStore() {
 
           const identityActor = await ActorFactory.createIdentityActor(
             authStore,
-            process.env.CANISTER_ID_ICFC_SALE_2 ?? "",
+            process.env.ICFC_SALE_2_CANISTER_ID ?? "",
           );
 
           const result = await identityActor.claimICFCPackets();
