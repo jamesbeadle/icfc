@@ -14,12 +14,12 @@ export const idlFactory = ({ IDL }) => {
     InvalidData: IDL.Null,
     SystemOnHold: IDL.Null,
     AlreadyExists: IDL.Null,
-    NoPacksRemaining: IDL.Null,
+    NoPacketsRemaining: IDL.Null,
     UpdateFailed: IDL.Null,
     CanisterCreateError: IDL.Null,
     NeuronAlreadyUsed: IDL.Null,
     FailedInterCanisterCall: IDL.Null,
-    InsufficientPacksRemaining: IDL.Null,
+    InsufficientPacketsRemaining: IDL.Null,
     InsufficientFunds: IDL.Null,
     InEligible: IDL.Null,
   });
@@ -27,18 +27,18 @@ export const idlFactory = ({ IDL }) => {
   const AppStatus = IDL.Record({ version: IDL.Text, onHold: IDL.Bool });
   const Result_3 = IDL.Variant({ ok: AppStatus, err: Error });
   const SaleProgress = IDL.Record({
-    packetCostinICP: IDL.Nat,
     remainingPacks: IDL.Nat,
+    packCostinICP: IDL.Nat,
     totalPacks: IDL.Nat,
   });
   const Result_2 = IDL.Variant({ ok: SaleProgress, err: Error });
-  const ClaimedRecord = IDL.Record({
-    packsClaimed: IDL.Nat,
-    purchaseId: IDL.Int,
+  const PurchaseRecord = IDL.Record({
     purchasedOn: IDL.Int,
+    packsPurchased: IDL.Nat,
+    purchaseId: IDL.Nat,
   });
   const UserParticipation = IDL.Record({
-    participations: IDL.Vec(ClaimedRecord),
+    participations: IDL.Vec(PurchaseRecord),
   });
   const Result_1 = IDL.Variant({ ok: UserParticipation, err: Error });
   const Time = IDL.Int;
@@ -49,9 +49,9 @@ export const idlFactory = ({ IDL }) => {
   const PrincipalId = IDL.Text;
   const ICFCDistribution = IDL.Record({
     time: Time,
-    purchaseId: IDL.Nat,
     installment: IDL.Nat,
     distributionStatus: DistributionStatus,
+    purchaseId: IDL.Nat,
     amount: IDL.Nat,
     principalId: PrincipalId,
   });

@@ -212,15 +212,15 @@ type MembershipType =
  };
 type MembershipClaim__1 = 
  record {
-   purchasedOn: int;
    expiresOn: opt int;
    membershipType: MembershipType__1;
+   purchasedOn: int;
  };
 type MembershipClaim = 
  record {
-   purchasedOn: int;
    expiresOn: opt int;
    membershipType: MembershipType;
+   purchasedOn: int;
  };
 type Leagues = record {leagues: vec League;};
 type LeagueId = nat16;
@@ -273,13 +273,13 @@ type Error =
    InEligible;
    IncorrectSetup;
    InsufficientFunds;
-   InsufficientPacksRemaining;
+   InsufficientPacketsRemaining;
    InvalidData;
    InvalidProfilePicture;
    InvalidProperty;
    MaxDataExceeded;
    NeuronAlreadyUsed;
-   NoPacksRemaining;
+   NoPacketsRemaining;
    NotAllowed;
    NotAuthorized;
    NotFound;

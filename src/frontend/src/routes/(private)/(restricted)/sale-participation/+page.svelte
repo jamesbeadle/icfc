@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { ICFCDistribution, UserParticipation, ClaimedRecord } from '../../../../../../declarations/icfc_sale_2/icfc_sale_2.did.js';
+	import type { ICFCDistribution, UserParticipation } from '../../../../../../declarations/icfc_sale_2/icfc_sale_2.did.js';
 	import { saleStore } from '$lib/stores/sale-store';
     import { onMount } from 'svelte';
     import { authStore } from '$lib/stores/auth-store';
@@ -52,7 +52,7 @@
         <div class="p-4 rounded-lg bg-white/5">
             <h3 class="brand-sub-title">Total Packs</h3>
             <p class="text-2xl font-bold text-white">
-            {participation?.participations.reduce((sum, p) => sum + p.packsClaimed, BigInt(0)).toString()}
+            {participation?.participations.reduce((sum, p) => sum + p.packsPurchased, BigInt(0)).toString()}
             </p>
         </div>
         <div class="p-4 rounded-lg bg-white/5">

@@ -75,12 +75,12 @@ export type Error =
   | { InvalidData: null }
   | { SystemOnHold: null }
   | { AlreadyExists: null }
-  | { NoPacksRemaining: null }
+  | { NoPacketsRemaining: null }
   | { UpdateFailed: null }
   | { CanisterCreateError: null }
   | { NeuronAlreadyUsed: null }
   | { FailedInterCanisterCall: null }
-  | { InsufficientPacksRemaining: null }
+  | { InsufficientPacketsRemaining: null }
   | { InsufficientFunds: null }
   | { InEligible: null };
 export interface Followees {
