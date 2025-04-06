@@ -101,6 +101,23 @@
         onClose();
     }
 
+    async function refreshUserBalance() {
+        try {
+            loadingMessage = "Refreshing User Balance";
+            isLoading = true;
+            userBalance = await saleStore.getUserBalance() ?? 0n;
+        } catch (error) {
+            console.error("Error fetching user balance", error);
+            toasts.addToast({
+                message: "Error fetching user balance",
+                type: "error",
+                duration: 5000
+            });
+        } finally {
+            isLoading = false;
+        }
+    }
+
     onMount(async () => {
         try {
             isLoading = true;
@@ -127,7 +144,16 @@
             <LocalSpinner message={loadingMessage} />
         {:else}
             <div class="w-full max-w-2xl mx-auto space-y-4">
-                <h3 class="text-xl text-white cta-text">Purchase Details</h3>
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl text-white cta-text">Purchase Details</h3>
+                    <button
+                        onclick={refreshUserBalance}
+                        class="px-4 py-1 text-white transition border rounded-lg bg-BrandBlueComp hover:bg-BrandBlack/50 hover:border-BrandBlue/80"
+                        disabled={isLoading}
+                    >
+                        Refresh Balance
+                    </button>
+                </div>
                 <div class="space-y-2">
                     <label for="packets" class="block text-sm text-BrandGrayShade2">
                         Number of Packets (10,000 ICFC each)
@@ -166,13 +192,14 @@
                     <div class="flex justify-between pt-2 border-t border-BrandGrayShade3">
                         <span class="text-BrandGrayShade2">Your ICP balance:</span>
                         <span class="font-medium text-white">{userBalance} ICP</span>
+                        
                     </div>
                 </div>
 
                 <div class="flex gap-4 pt-4">
                     <button
                         onclick={handleClose}
-                        class="flex-1 px-4 py-3 text-white transition border rounded-lg border-BrandGrayShade3 hover:bg-BrandBlack/50 hover:border-BrandError/80"
+                        class="flex-1 px-4 py-3 text-white transition border rounded-lg bg-BrandError/50 border-BrandGrayShade3 cta-text hover:bg-BrandBlack/50 hover:border-BrandError/80"
                         disabled={isLoading}
                     >
                         Cancel
