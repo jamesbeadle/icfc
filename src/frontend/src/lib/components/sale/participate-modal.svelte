@@ -168,7 +168,6 @@
                         type="number"
                         bind:value={packetsToBuy}
                         class="w-full px-4 py-3 text-white border rounded-lg border-BrandGrayShade3 bg-white/5 focus:outline-none focus:border-BrandBlue"
-                        max={Number(packetsRemaining)}
                         placeholder="Enter number of packets"
                     />
                 </div>
