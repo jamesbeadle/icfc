@@ -194,7 +194,7 @@ actor class _ProfileCanister() {
                 membershipType = membership.membershipType;
             }];
             createdOn = Time.now();
-            membershipExpiryTime = 0;
+            membershipExpiryTime = Utilities.getMembershipExpirationDate(membership.membershipType);
             favouriteLeagueId = dto.favouriteLeagueId;
             favouriteClubId = dto.favouriteClubId;
             nationalityId = dto.nationalityId;
