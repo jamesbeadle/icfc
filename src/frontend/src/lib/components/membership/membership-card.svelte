@@ -52,7 +52,7 @@
             'monthly': 'bg-MonthlyPrimary border-MonthlySecondary',
             'seasonal': 'bg-SeasonalPrimary border-SeasonalSecondary',
             'lifetime': 'bg-LifetimePrimary border-LifetimeSecondary',
-            'founding': 'bg-FoundingPrimary border-white',
+            'founding': 'bg-FoundingPrimary border-white text-black',
         }[membership.type.toLowerCase()] || 'bg-BrandGrayShade3';
         
         const hoverClasses = status === "Already Claimed" || status === "Auto-Claimed" 
