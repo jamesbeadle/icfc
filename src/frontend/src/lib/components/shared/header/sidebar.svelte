@@ -1,9 +1,14 @@
 <script lang="ts">
   import { signOut } from "$lib/services/auth.services";
   import { goto } from "$app/navigation";
-  
-  export let isMenuOpen: boolean;
-  export let toggleMenu: () => void;
+  import type { MenuItem } from "$lib/types/menu";
+
+  interface Props {
+    isMenuOpen: boolean;
+    toggleMenu: () => void;
+    isSaleOnly: boolean;
+  }
+  let { isMenuOpen, toggleMenu, isSaleOnly }: Props = $props();
   
   let menuRef: HTMLDivElement;
 
@@ -12,6 +17,23 @@
     goto('/', { replaceState: true });
   }
 
+  const menuItems: MenuItem[] = [
+    { path: '/', label: 'Home', showForSaleOnly: true },
+    { path: '/apps', label: 'Apps', showForSaleOnly: true },
+    { path: '/profile', label: 'Profile', showForSaleOnly: true },
+    { path: '/membership', label: 'Membership', showForSaleOnly: true },
+    { path: '/channels', label: 'Channels', showForSaleOnly: true },
+    { path: '/shop', label: 'Shop', showForSaleOnly: false },
+    { path: '/whitepaper', label: 'Whitepaper', showForSaleOnly: true },
+    { path: '/sale', label: 'Decentralisation Sale 2', showForSaleOnly: true },
+    { path: '/tokens', label: 'Token Balances', showForSaleOnly: true },
+    { path: '/', label: 'Sign Out', showForSaleOnly: true }
+  ]
+
+  let visibleItems = $derived(menuItems.filter(item => 
+    item.showForSaleOnly === undefined || 
+    (isSaleOnly ? item.showForSaleOnly : true) 
+  ));
 </script>
 <div 
   class="{isMenuOpen ? 'translate-x-0' : 'translate-x-full'} fixed inset-y-0 right-0 z-40 w-full sm:w-80 bg-white shadow-xl transform transition-transform duration-300 ease-in-out"
@@ -19,8 +41,8 @@
 >
 
   <button
-    on:click={toggleMenu}
-    class="absolute p-2 text-BrandGrayShade4 top-4 right-4 hover:text-BrandGrayShade5"
+    onclick={toggleMenu}
+    class="absolute p-2 transition-all duration-200 text-BrandGrayShade4 top-4 right-4 hover:text-BrandBlue hover:scale-110"
     aria-label="Close sidebar"
   >
     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -30,16 +52,25 @@
 
   <nav class="h-full px-6 pt-16 text-lg text-white bg-BrandBlueComp cta-text">
     <ul class="space-y-4">
-      <li><a class="hover:text-BrandBlue" href="/" on:click={toggleMenu}>Home</a></li>
-      <li><a class="hover:text-BrandBlue" href="/apps" on:click={toggleMenu}>Apps</a></li>
-      <li><a class="hover:text-BrandBlue" href="/profile" on:click={toggleMenu}>Profile</a></li>
-      <li><a class="hover:text-BrandBlue" href="/membership" on:click={toggleMenu}>Membership</a></li>
-      <li><a class="hover:text-BrandBlue" href="/channels" on:click={toggleMenu}>Channels</a></li>
-      <li><a class="hover:text-BrandBlue" href="/shop" on:click={toggleMenu}>Shop</a></li>
-      <li><a class="hover:text-BrandBlue" href="/whitepaper" on:click={toggleMenu}>Whitepaper</a></li>
-      <li><a class="hover:text-BrandBlue" href="/sale" on:click={toggleMenu}>Decentralisation Sale 2</a></li>
-      <li><a class="hover:text-BrandBlue" href="/tokens" on:click={toggleMenu}>Token Balances</a></li>
-      <li><a class="hover:text-BrandBlue" href="/" on:click={handleDisconnect}>Sign Out</a></li>
+      {#each visibleItems as item}
+        <li>
+          <a 
+            href={item.path}
+            onclick={(e) => {
+              e.preventDefault();
+              toggleMenu();
+              if (item.label === 'Sign Out') {
+                handleDisconnect();
+              } else {
+                goto(item.path);
+              }
+            }}
+            class="hover:text-BrandBlue"
+          >
+            {item.label}
+          </a>
+        </li>
+      {/each}
     </ul>
   </nav>
 </div>

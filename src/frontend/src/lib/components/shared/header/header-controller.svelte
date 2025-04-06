@@ -52,6 +52,8 @@
         console.log('restrictedSaleStore', $restrictedSaleStore);
     });
 
+    const isSaleOnly = $derived(!$userIdCreatedStore?.data && !!$restrictedSaleStore?.data);
+
 </script>
 
 {#if $busy}
@@ -66,7 +68,7 @@
                 {@render children()}
                 </main>
             </div>
-            <Sidebar {isMenuOpen} {toggleMenu} />
+            <Sidebar {isMenuOpen} {toggleMenu} {isSaleOnly} />
             {#if isMenuOpen}
                 <button 
                 class="fixed inset-0 z-30 pointer-events-none bg-black/40 sm:bg-black/20 sm:pointer-events-auto"

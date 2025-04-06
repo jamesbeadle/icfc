@@ -92,7 +92,7 @@ function createSaleStore() {
         }
       }
     } catch (error) {
-      console.error("Error saving Euro2024 prediction.", error);
+      console.error("Error participating in ICFC sale.", error);
       throw error;
     }
   }
@@ -137,7 +137,7 @@ function createSaleStore() {
         }
       }
     } catch (error) {
-      console.error("Error saving Euro2024 prediction.", error);
+      console.error("Error getting user balance.", error);
       throw error;
     }
   }
