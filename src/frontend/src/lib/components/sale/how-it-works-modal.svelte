@@ -6,52 +6,62 @@
     export let onClose: () => void;
     export let showModal: boolean;
     
-    let depositICFCSteps = [
+    let depositICP = [
         {
             step: 1,
-            title: "Purchase ICP and Swap for ICFC",
-            description: "Purchase ICP from a reputable exchange. Then swap your ICP for ICFC on a reputable exchange."
+            title: "Purchase ICP",
+            description: "Purchase ICP from a reputable exchange."
         },
         {
             step: 2,
-            title: "Transfer ICFC to NNS",
-            description: "Transfer the ICFC you purchased or won to the NNS: https://nns.ic0.app"
-        }
-    ]
-
-    let paymentScheduleSteps = [
-        {
-            step: 1,
-            title: "Log into NNS",
-            description: "Go to https://nns.ic0.app/ and log in with your internet identity."
-        },
-        {
-            step: 2,
-            title: "Stake ICFC",
-            description: "Click on 'Neuron Staking' in the left sidebar, then find and click on ICFC in the list of nervous systems. Now click the 'Stake ICFC' button. Enter the amount of ICFC you want to stake and set the max dissolve delay to qualify for a ICFC membership."
+            title: "Transfer ICP to Your Principal ID",
+            description: "Transfer the ICP to your principal ID. You can find your principal ID after you click on 'Buy ICFC Packets'."
         },
         {
             step: 3,
-            title: "Add Hot Key",
-            description: "Once your have staked ICFC, you will see that a neuron is created. Click on your neuron and scroll down to the 'Hot Key' section. Click on the 'Add Hot Key' button and enter your principal ID that was listed above this button. Then click 'Confirm' to add your hot key."
-        },
-        {
-            step: 4,
-            title: "Refresh",
-            description: "Once your hot key is added, click the 'Refresh' button to see your newly added ICFC neuron in the list of neurons."
-        },
-        {
-            step: 5,
-            title: "Claim Membership",
-            description: "Once your ICFC neuron is created and has a minimum staked amount of 1000 ICP with the max dissolve delay, you can claim membership by completing the 'Create User' form or later on the profile page. On the profile page navigate to the 'Membership' tab and click on 'Status' and if you are eligible you will see a button to 'Claim Membership'."
+            title: "Check Your ICP Balance",
+            description: "You should be able to see your ICP balance in the Claim ICFC Packets section. If you don't see it, please wait for a few minutes and refresh the page."
         }
     ]
 
-    let activeTab: string = "stakeICFC";
+    let claimICFCPacket = [
+        {
+            step: 1,
+            title: "Go to Buy ICFC Packets",
+            description: "Click on the 'Buy ICFC Packets' button in the center."
+        },
+        {
+            step: 2,
+            title: "Enter the number of ICFC Packets",
+            description: "Enter the number of ICFC packets you want to buy."
+        },
+        {
+            step: 3,
+            title: "Confirm Purchase",
+            description: "Click the 'Claim ICFC Packets' button to confirm your purchase. You will be prompted to confirm the purchase."
+        },
+        {
+            step: 4,
+            title: "Check your Balance",
+            description: "You balance should be updated if the purchase was successful. If you don't see the updated balance, please wait for a few minutes and refresh the page."
+        },
+        {
+            step: 5,
+            title: "Check your ICFC Claims",
+            description: "In the Navigation bar, click on the 'Sale Schedule' tab to see your ICFC claims. and the Schedule of your ICFC distributions."
+        },
+        {
+            step: 6,
+            title: "Note",
+            description: "Each packet is 10,000 ICFC. You can buy any number of packets, but the minimum is 1 packet. The Distribution of ICFC will be done to your Principal ID, in 6 installments. The first distribution of 1/6 of your total packets will be done in 3 months, and the rest will be done in 6 month intervals. Check the Sale Schedule for more details."
+        }
+    ]
+
+    let activeTab: string = "depositICP";
 
     const tabs = [
-        { id: "depositICFC", label: "Deposit ICFC" },
-        { id: "paymentSchedule", label: "Payment Schedule" },
+        { id: "depositICP", label: "Deposit ICP" },
+        { id: "claimICFCPacket", label: "Claim ICFC Packets" },
     ];
     function setActiveTab(tab: string): void {
         activeTab = tab;
@@ -59,18 +69,18 @@
 </script>
 
 {#if showModal}
-<Modal {onClose} title="How To Claim Membership">
+<Modal {onClose} title="How To Claim ICFC Packets">
    <div class="flex flex-col h-full">
         <div class="flex-none">
             <TabContainer {tabs} {activeTab} {setActiveTab} />
         </div>
         <div class="flex-1 mt-4">
-            {#if activeTab === "depositICFC"}
-                {#each depositICFCSteps as step}
+            {#if activeTab === "depositICP"}
+                {#each depositICP as step}
                     <StepPanel {...step} />
                 {/each}
-            {:else if activeTab === "paymentSchedule"}
-                {#each paymentScheduleSteps as step}
+            {:else if activeTab === "claimICFCPacket"}
+                {#each claimICFCPacket as step}
                     <StepPanel {...step} />
                 {/each}
             {/if}

@@ -61,20 +61,21 @@
     }
 
     async function handleSubmit() {
-        loadingMessage = "Submitting Contribution";
+        loadingMessage = "Submitting Claim";
         try {
             isLoading = true;
             const result = await saleStore.participateInSale(Number(maxContributionAmount));
             if (isError(result)) {
+                console.error("Error claiming ICFC Packets", result);
                 toasts.addToast({
-                    message: "Error submitting contribution",
+                    message: "Error Claiming ICFC Packets",
                     type: "error",
                 });
-                console.error("Error submitting contribution", result);
+                console.error("Error claiming ICFC Packets", result);
                 return;
             }
             toasts.addToast({
-                message: "Your contribution has been successfully submitted.",
+                message: "You Claimed your ICFC Packets successfully",
                 type: "success",
                 duration: 3000
             });
@@ -87,6 +88,7 @@
             console.error("Error submitting contribution", error);
         } finally {
             isLoading = false;
+            showConfirm = false;
         }
     }
 
@@ -209,7 +211,7 @@
                         class="flex-1 px-4 py-3 text-white transition border rounded-lg brand-button hover:bg-BrandBlack/50 hover:border-BrandBlue/80"
                         disabled={isLoading}
                     >
-                        Donate
+                        Claim ICFC Packets
                     </button>
                 </div>
 
@@ -219,7 +221,7 @@
                             class="w-full px-4 py-3 text-white transition border rounded-lg brand-button hover:bg-BrandBlack/50 hover:border-BrandBlue/80"
                             onclick={handleSubmit}
                         >
-                            Confirm Contribution
+                            Confirm Claim
                         </button>
                     </div>
                 {/if}
