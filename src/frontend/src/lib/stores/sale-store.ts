@@ -72,7 +72,7 @@ function createSaleStore() {
             fee: tranferFee,
             memo: new Uint8Array(Text.encodeValue("0")),
             from_subaccount: undefined,
-            created_at_time: BigInt(Date.now()),
+            created_at_time: BigInt(Date.now()) * BigInt(1_000_000),
             amount: amounte8s - tranferFee,
           });
 
@@ -131,7 +131,8 @@ function createSaleStore() {
             console.error("Error getting balance.");
             return;
           }
-          return res;
+          let icp_balance = res/BigInt(1_00_000_000); 
+          return icp_balance;
         } catch (err: any) {
           console.error(err.errorType);
         }
