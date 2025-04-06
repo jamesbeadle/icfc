@@ -35,6 +35,21 @@ export function formatUnixDateToReadable(unixNano: number) {
   return new Intl.DateTimeFormat("en-UK", options).format(date);
 }
 
+export function fromUnixDateTimeToReadable(unixNano: number) {
+  const date = new Date(unixNano / 1000000);
+  const options: Intl.DateTimeFormatOptions = {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    
+    hour12: true,
+  };
+
+  return new Intl.DateTimeFormat("en-GB", options).format(date);
+}
+
 export function formatUnixDateToSmallReadable(unixNano: number) {
   const date = new Date(unixNano / 1000000);
   const options: Intl.DateTimeFormatOptions = {
