@@ -211,7 +211,7 @@
                 </div>
                 <div class="space-y-2">
                     <label for="packs" class="block text-sm text-BrandGrayShade2">
-                        1 Pack = {packCost} ICP = 10,000 ICFC
+                        1 Pack = {formatTokenBalance(packCost)} ICP = 10,000 ICFC
                     </label>
                     <input
                         id="packs"
@@ -237,7 +237,7 @@
                     </div>
                     <div class="flex justify-between">
                         <span class="text-BrandGrayShade2">Cost per Packs:</span>
-                        <span class="font-medium text-white">{packCost} ICP</span>
+                        <span class="font-medium text-white">{formatTokenBalance(packCost)} ICP</span>
                     </div>
                     <div class="flex justify-between">
                         <span class="text-BrandGrayShade2">Packs to buy:</span>
@@ -245,7 +245,7 @@
                     </div>
                     <div class="flex justify-between">
                         <span class="text-BrandGrayShade2">Total cost:</span>
-                        <span class="font-medium text-white">{contributionAmount} ICP</span>
+                        <span class="font-medium text-white">{formatTokenBalance(contributionAmount)} ICP</span>
                     </div>
                     <div class="flex justify-between pt-2 border-t border-BrandGrayShade3">
                         <span class="text-BrandGrayShade2">Your ICP balance:</span>
