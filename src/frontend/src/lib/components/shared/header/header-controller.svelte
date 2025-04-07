@@ -32,6 +32,12 @@
             : null
     );
 
+    $effect(() => {
+        if (!signupChoice && page.route.id && page.route.id.includes('sale')) {
+            handleSaleSignup();
+        }
+    });
+
     function toggleMenu() {
         isMenuOpen = !isMenuOpen;
     }
@@ -64,7 +70,6 @@
                 duration: 3000
             });
         } catch (error) {
-            console.error('Sale signup failed:', error);
         } finally {
             saleSignupProcessing = false;
         }
