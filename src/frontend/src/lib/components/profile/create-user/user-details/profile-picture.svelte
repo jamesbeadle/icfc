@@ -24,10 +24,6 @@
                 profileSrc = '/profile_placeholder.png';
                 return;
             }
-            toasts.addToast({ 
-                    type: "success", 
-                    message: "Profile image uploaded successfully." 
-                });
             profileSrc = URL.createObjectURL(file);
         }
     }
