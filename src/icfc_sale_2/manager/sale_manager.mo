@@ -306,9 +306,9 @@ module {
                 case (#ok(balance)) {
 
                     let one_packect_cost_e8s = Nat.sub(Environment.ICFC_PACK_PRICE_IN_ICP * 100_000_000, 10_000);
-
+                    Debug.print("One pack cost in e8s: " # Nat.toText(one_packect_cost_e8s));
+                    Debug.print("User balance in e8s: " # Nat.toText(balance));
                     var eligiblePacks = Nat.div(balance, one_packect_cost_e8s);
-                    
 
                     if (eligiblePacks == 0) {
                         return #err(#InEligible);
