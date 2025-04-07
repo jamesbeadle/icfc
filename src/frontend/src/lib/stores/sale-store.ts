@@ -92,7 +92,7 @@ function createSaleStore() {
             process.env.ICFC_SALE_2_CANISTER_ID ?? "",
           );
 
-          const result = await identityActor.purchaseICFCPacks();
+          const result = await identityActor.claimICFCPacks();
           if (isError(result)) {
             console.error("Error participating in ICFC sale.");
             return;
