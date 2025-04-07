@@ -41,12 +41,10 @@ actor class Self() = this {
             principalId = Principal.toText(caller);
         };
         let subAccount = Account.principalToSubaccount(caller);
-        let blob_array = Blob.toArray(subAccount);
-        var subAccountHex = "";
-        for (i in Iter.range(0, 32)) {
-            subAccountHex := subAccountHex # Nat.toText(Nat8.toNat(blob_array[i]));
+
+        for (byte : Nat8 in subAccount.vals()) {
+            Debug.print(Nat8.toText(byte));
         };
-        Debug.print("Subaccount hex: " # subAccountHex);
         return await saleManager.claimICFCPacks(dto);
     };
 
