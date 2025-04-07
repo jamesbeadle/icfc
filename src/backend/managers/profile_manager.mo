@@ -34,7 +34,6 @@ module {
         private var neuronsUsedforMembership : TrieMap.TrieMap<Blob, Ids.PrincipalId> = TrieMap.TrieMap<Blob, Ids.PrincipalId>(Blob.equal, Blob.hash);
 
         //Getters
-
         public func getProfilePicture(principalId : Ids.PrincipalId) : async Result.Result<ProfileQueries.ProfilePictureDTO, Enums.Error> {
             let existingProfileCanisterId = profileCanisterIndex.get(principalId);
             switch (existingProfileCanisterId) {
@@ -228,14 +227,13 @@ module {
             switch (existingProfileCanisterId) {
                 case (?foundCanisterId) {
                     let profile_canister = actor (foundCanisterId) : actor {
-                        removeSubApp : (dto : ProfileCommands.RemoveSubApp) -> async Result.Result<(), Enums.Error>;
+                        removeSubApp : (principalId : Ids.PrincipalId, dto : ProfileCommands.RemoveSubApp) -> async Result.Result<(), Enums.Error>;
                     };
 
                     let dtoRecord : ProfileCommands.RemoveSubApp = {
                         subApp = subApp;
-                        userPrincipalId = principalId;
                     };
-                    let res = await profile_canister.removeSubApp(dtoRecord);
+                    let res = await profile_canister.removeSubApp(principalId,dtoRecord);
                     switch (res) {
                         case (#ok) {
                             let dto : ProfileCommands.NotifyAppofRemoveLink = {
