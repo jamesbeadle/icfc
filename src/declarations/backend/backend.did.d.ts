@@ -208,6 +208,7 @@ export type Result_9 = { ok: AppStatus } | { err: Error };
 export interface Self {
   addSubApp: ActorMethod<[AddSubApp], Result>;
   claimMembership: ActorMethod<[], Result_10>;
+  completeICFCPackPurchase: ActorMethod<[PrincipalId, bigint], Result>;
   createProfile: ActorMethod<[CreateProfile], Result>;
   getAppStatus: ActorMethod<[], Result_9>;
   getCanisterIds: ActorMethod<[], Array<CanisterId>>;
