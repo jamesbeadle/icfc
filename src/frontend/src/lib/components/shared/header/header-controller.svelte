@@ -33,8 +33,13 @@
     );
 
     $effect(() => {
-        if (!signupChoice && page.route.id && page.route.id.includes('sale')) {
+        if (!signupChoice && $authSignedInStore && page.route.id && page.route.id.includes('sale')) {
             handleSaleSignup();
+        }
+    });
+    $effect(() => {
+        if (!$authSignedInStore) {
+            resetSignupChoice();
         }
     });
 
@@ -48,6 +53,13 @@
             localStorage.setItem(SIGN_UP_CHOICE_KEY, 'full');
         }
         
+    }
+
+    function resetSignupChoice() {
+        signupChoice = null;
+        if (typeof localStorage !== 'undefined') {
+                localStorage.removeItem(SIGN_UP_CHOICE_KEY);
+            }
     }
 
     async function handleSaleSignup() {
@@ -64,11 +76,6 @@
                 localStorage.setItem(SIGN_UP_CHOICE_KEY, 'sale');
             }
             await goto('/sale', { replaceState: true });
-            toasts.addToast({
-                message: 'Sale signup successful',
-                type: 'success',
-                duration: 3000
-            });
         } catch (error) {
         } finally {
             saleSignupProcessing = false;
@@ -78,7 +85,7 @@
 </script>
 
 {#if $busy}
-    <FullScreenSpinner message="Checking for Existing Profile" />
+    <FullScreenSpinner message="Logging in" />
 {:else}
     {#if $authSignedInStore}
         {#if signupChoice === null}
