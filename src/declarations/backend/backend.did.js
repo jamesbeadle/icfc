@@ -238,6 +238,7 @@ export const idlFactory = ({ IDL }) => {
   const Self = IDL.Service({
     addSubApp: IDL.Func([AddSubApp], [Result], []),
     claimMembership: IDL.Func([], [Result_10], []),
+    completeICFCPackPurchase: IDL.Func([PrincipalId, IDL.Nat], [Result], []),
     createProfile: IDL.Func([CreateProfile], [Result], []),
     getAppStatus: IDL.Func([], [Result_9], ["query"]),
     getCanisterIds: IDL.Func([], [IDL.Vec(CanisterId)], []),

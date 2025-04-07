@@ -60,6 +60,7 @@ type Self =
  service {
    addSubApp: (AddSubApp) -> (Result);
    claimMembership: () -> (Result_10);
+   completeICFCPackPurchase: (PrincipalId, nat) -> (Result);
    createProfile: (CreateProfile) -> (Result);
    getAppStatus: () -> (Result_9) query;
    getCanisterIds: () -> (vec CanisterId);
