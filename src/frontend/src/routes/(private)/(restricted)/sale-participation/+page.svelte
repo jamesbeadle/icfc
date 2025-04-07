@@ -18,9 +18,10 @@
     async function refreshData() {
         try {
              loading = true;
-            [participation, distributions] = await Promise.all([
+            [participation, distributions,_] = await Promise.all([
                 saleStore.getUserParticipation(),
-                saleStore.getUsersICFCDistributions()
+                saleStore.getUsersICFCDistributions(),
+                saleStore.claimICFCPacks()
             ]);
         } catch (err) {
             console.error('Failed to load claims:', err);
