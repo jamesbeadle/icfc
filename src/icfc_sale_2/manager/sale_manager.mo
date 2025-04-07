@@ -218,7 +218,7 @@ module {
 
             for (i in Iter.range(0, 5)) {
                 let delay = if (i == 0) threeMonths else (threeMonths + (i * sixMonths));
-                let distributionTime = now + delay;
+                let distributionTime = now + (delay * 1_000_000_000);
 
                 let newDistribution : T.ICFCDistribution = {
                     principalId = principal;
