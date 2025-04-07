@@ -3,6 +3,7 @@
     import { onMount } from 'svelte';
     import { userStore } from '$lib/stores/user-store';
     import { toasts } from '$lib/stores/toasts-store';
+    import { goto } from '$app/navigation';
     import LocalSpinner from '$lib/components/shared/local-spinner.svelte';
     import ProfileMembership from '$lib/components/profile/profile-membership.svelte';
 
@@ -13,13 +14,12 @@
         try {
             const profileResult = await userStore.getProfile();
             if (!profileResult) {
-                toasts.addToast({ type: 'error', message: 'No profile found.' });
+                goto('/', { replaceState: true });
                 return;
             }
             
             profile = profileResult;
         } catch (error) {
-            toasts.addToast({ type: 'error', message: 'Error fetching user profile.' });
             console.error('Profile fetch error:', error);
         } finally {
             isLoading = false;
