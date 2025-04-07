@@ -240,6 +240,7 @@ export const idlFactory = ({ IDL }) => {
     claimMembership: IDL.Func([], [Result_10], []),
     completeICFCPackPurchase: IDL.Func([PrincipalId, IDL.Nat], [Result], []),
     createProfile: IDL.Func([CreateProfile], [Result], []),
+    deleteCanister: IDL.Func([], [], []),
     getAppStatus: IDL.Func([], [Result_9], ["query"]),
     getCanisterIds: IDL.Func([], [IDL.Vec(CanisterId)], []),
     getClubs: IDL.Func([GetClubs], [Result_8], []),

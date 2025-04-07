@@ -210,6 +210,7 @@ export interface Self {
   claimMembership: ActorMethod<[], Result_10>;
   completeICFCPackPurchase: ActorMethod<[PrincipalId, bigint], Result>;
   createProfile: ActorMethod<[CreateProfile], Result>;
+  deleteCanister: ActorMethod<[], undefined>;
   getAppStatus: ActorMethod<[], Result_9>;
   getCanisterIds: ActorMethod<[], Array<CanisterId>>;
   getClubs: ActorMethod<[GetClubs], Result_8>;

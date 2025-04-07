@@ -62,6 +62,7 @@ type Self =
    claimMembership: () -> (Result_10);
    completeICFCPackPurchase: (PrincipalId, nat) -> (Result);
    createProfile: (CreateProfile) -> (Result);
+   deleteCanister: () -> ();
    getAppStatus: () -> (Result_9) query;
    getCanisterIds: () -> (vec CanisterId);
    getClubs: (GetClubs) -> (Result_8);
