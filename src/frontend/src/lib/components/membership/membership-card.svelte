@@ -23,7 +23,6 @@
         if (amount >= 1000) {
             return `${(amount / 1000)}K`;
         }
-        console.log("Amount Staked", amount);
         return amount.toLocaleString();
     }
 

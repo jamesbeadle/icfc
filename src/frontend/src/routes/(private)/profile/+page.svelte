@@ -2,7 +2,7 @@
     import { userStore } from "$lib/stores/user-store";
     import { onMount } from "svelte";
     import type { ProfileDTO } from "../../../../../declarations/backend/backend.did";
-    
+    import { goto } from "$app/navigation";
     import { toasts } from "$lib/stores/toasts-store";
     import { getImageURL } from "$lib/utils/helpers";
     import FullScreenSpinner from '$lib/components/shared/full-screen-spinner.svelte';
@@ -38,12 +38,11 @@
         try {
             const profileResult = await userStore.getProfile();
             if (!profileResult) {
-                toasts.addToast({ type: 'error', message: 'No profile found.' });
+                goto('/', { replaceState: true });
                 return;
             }
             userStore.set(profileResult);
         } catch (error) {
-            toasts.addToast({ type: 'error', message: 'Error fetching user profile.' });
             console.error('Profile fetch error:', error);
         } finally {
             isLoading = false;

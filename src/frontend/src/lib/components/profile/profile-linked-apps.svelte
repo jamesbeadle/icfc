@@ -37,10 +37,8 @@
                     subApp: { OpenFPL: null },
                     subAppUserPrincipalId: openFplPrincipalId,
                 };
-                console.log("addSubAppDto", addSubAppDto);
                 await userStore.addSubApp(addSubAppDto);
                 await userStore.cacheProfile();
-                console.log("addSubAppDto added");
             }
             await userStore.cacheProfile();
             toasts.addToast({type: 'info', message: 'OpenFPL Link Status: Pending. Please go to the OpenFPL app to finalize the process.'});
