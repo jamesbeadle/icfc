@@ -55,11 +55,8 @@
       let dto: UpdateNationality = {
         nationalityId: newNationalityId,
       };
-      console.log("dto", dto);
-      console.log("Submitting update nationality");
       await userStore.updateNationality(dto);
       await userStore.sync();
-      console.log("Update nationality and sync complete");
       visible = false;
       toasts.addToast({
         message: 'National Team updated.',

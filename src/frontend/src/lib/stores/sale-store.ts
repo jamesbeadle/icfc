@@ -41,7 +41,6 @@ function createSaleStore() {
       return false;
     }
     let subaccount: Uint8Array = principalToSubAccount(identity.getPrincipal());
-    console.log("subaccount", subaccount);
     return new SaleService().claimICFCPacks();
   }
 
@@ -137,7 +136,6 @@ function createSaleStore() {
             owner: principalId,
             subaccount: undefined,
           });
-          console.log(res);
           if (isError(res)) {
             console.error("Error getting balance.");
             return;

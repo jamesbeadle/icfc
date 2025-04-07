@@ -15,9 +15,7 @@ export const signIn = async (
     const identity = get(authStore).identity;
     if (identity) {
       try {
-        console.log("init user profile");
         await initUserProfile({ identity });
-        console.log("init user profile end");
       } catch (err) {
         console.error("initUserProfile error:", err);
       }

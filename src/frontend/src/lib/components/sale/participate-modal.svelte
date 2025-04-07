@@ -12,7 +12,7 @@
     export let showModal: boolean;
     export let onClose: () => void;
 
-    let userBalance: Number = 0;
+    let userBalance: number = 0;
     let contributionAmount: bigint = BigInt(0);
     let maxContributionAmount: bigint = BigInt(20);
     let packCost: bigint = BigInt(0);
@@ -43,7 +43,7 @@
                 error: "Please enter a valid amount."
             };
         }
-        if (contributionAmount > userBalance) {
+        if (contributionAmount > BigInt(userBalance)) {
             return {
                 isValid: false,
                 error: "You don't have enough balance to buy this amount of packs."
@@ -71,8 +71,8 @@
         showConfirm = true;
     }
 
-    function handleInput(event) {
-        const input = event.target.value;
+    function handleInput(event: Event & { currentTarget: EventTarget & HTMLInputElement }) {
+        const input = event.currentTarget.value;
         
         if (input === '' || input === '.') {
             packsToBuy = null;
@@ -150,7 +150,7 @@
         resetModalState();
         onClose();
     }
-    function addNumberCommas(num: number): string {
+    function addNumberCommas(num: string | number): string {
         return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 
@@ -158,7 +158,7 @@
         try {
             loadingMessage = "Refreshing User Balance";
             isLoading = true;
-            userBalance = (await saleStore.getUserBalance()) ?? 0n;
+            userBalance = (await saleStore.getUserBalance()) ?? 0;
         } catch (error) {
             console.error("Error fetching user balance", error);
             toasts.addToast({
@@ -182,7 +182,7 @@
                 packCost = saleGoal.packCostinICP;
                 maxContributionAmount = saleGoal.remainingPacks * saleGoal.packCostinICP;
                 loadingMessage = "Getting User Balance";
-                userBalance = (await saleStore.getUserBalance()) ?? 0n; 
+                userBalance = (await saleStore.getUserBalance()) ?? 0; 
                 
             }
         } catch (error) {
@@ -253,13 +253,13 @@
                     </div>
                 </div>
 
-                {#if packsToBuy > 0}
+                {#if packsToBuy && packsToBuy > 0}
                     <div class="mt-4">
                         <h4 class="text-lg text-white">Distribution Schedule</h4>
                         <p class="text-sm text-BrandGrayShade2">
                             The ICFC tokens will be distributed in 6 equal installments starting 3 months from now, with subsequent installments every 6 months.
                         </p>
-                        <div class="space-y-2 flex flex-col items-center justify-center w-full pt-2">
+                        <div class="flex flex-col items-center justify-center w-full pt-2 space-y-2">
                             {#each installments as installment, index}
                                 <div class="lg:flex lg:flex-row justify-between lg:w-[90%] w-full text-sm items-center text-white pb-2">                               
                                     <div class="flex-row lg:text-sm text-[10px]">   

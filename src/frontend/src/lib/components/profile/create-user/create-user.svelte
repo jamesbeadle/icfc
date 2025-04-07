@@ -60,7 +60,6 @@
         leagues = leaguesResult.leagues;
         leagueStore.setLeagues(leagues);
       }
-      console.log('load countries and leagues complete')
     } catch {
       toasts.addToast({ type: 'info', message: 'Error loading league and country data.' });
     } finally {
@@ -77,7 +76,6 @@
         userMembershipEligibility = neuronsResult.userMembershipEligibility;
         maxStakedICFC = neuronsResult.totalMaxStaked;
       }
-      console.log('get neurons complete')
     } catch {
       toasts.addToast({ type: 'info', message: 'No neurons found' });
       neurons = [];

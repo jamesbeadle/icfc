@@ -74,11 +74,6 @@
             saleSignupProcessing = false;
         }
     }
-
-    $effect(() => {
-        console.log('restrictedSaleStore', $restrictedSaleStore);
-    });
-
     const isSaleOnly = $derived(!$userIdCreatedStore?.data && !!$restrictedSaleStore?.data);
 </script>
 
