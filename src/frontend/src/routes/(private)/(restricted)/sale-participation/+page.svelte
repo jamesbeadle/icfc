@@ -15,14 +15,28 @@
        await refreshData();
     });
 
+    async function refreshPurchase(){
+        saleStore.claimICFCPacks().then(() => {
+            refreshData();
+            toasts.addToast({
+                message: 'Claimed your ICFC packs successfully',
+                type: 'success',
+                duration: 3000
+            });
+        }).catch((err) => {
+            console.error('Failed to claim packs:', err);
+        });
+     
+    }
+
     async function refreshData() {
         try {
-             loading = true;
-            [participation, distributions,_] = await Promise.all([
+            loading = true;
+            [participation, distributions] = await Promise.all([
                 saleStore.getUserParticipation(),
                 saleStore.getUsersICFCDistributions(),
-                saleStore.claimICFCPacks()
             ]);
+
         } catch (err) {
             console.error('Failed to load claims:', err);
             toasts.addToast({
@@ -139,7 +153,7 @@
         <div class="flex justify-center mt-8">
             <button 
                 class="px-4 py-2 text-white transition border rounded-lg brand-button hover:bg-BrandBlack/50 hover:border-BrandSuccess"
-                onclick={refreshData}
+                onclick={refreshPurchase}
             >
                 Refresh
             </button>
