@@ -12,7 +12,7 @@ import Base "mo:waterway-mops/BaseTypes";
 import Ids "mo:waterway-mops/Ids";
 import Enums "mo:waterway-mops/Enums";
 import BaseTypes "mo:waterway-mops/BaseTypes";
-import Account "mo:waterway-mops/Account";
+import AccountIdentifier "mo:account-identifier";
 import SaleManager "manager/sale_manager";
 import SaleCommands "commands/sale_commands";
 import SaleQueries "queries/sale_queries";
@@ -40,11 +40,13 @@ actor class Self() = this {
         let dto : SaleCommands.ParticipateInSale = {
             principalId = Principal.toText(caller);
         };
-        let subAccount = Account.principalToSubaccount(caller);
-
-        for (byte : Nat8 in subAccount.vals()) {
-            Debug.print(Nat8.toText(byte));
+        let subAccount = AccountIdentifier.principalToSubaccount(caller);
+        let blob_array = Blob.toArray(subAccount);
+        var subAccountHex = "";
+        for (i in Iter.range(0, 32)) {
+            subAccountHex := subAccountHex # Nat.toText(Nat8.toNat(blob_array[i]));
         };
+        Debug.print("Subaccount hex: " # subAccountHex);
         return await saleManager.claimICFCPacks(dto);
     };
 
