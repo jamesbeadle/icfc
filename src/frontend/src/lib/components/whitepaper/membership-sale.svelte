@@ -8,7 +8,7 @@
 </script>
 <WhitepaperPage
     title="Membership Sale: Financial Focus"
-    intro="A swap will occur throughout April 2025, if successful, decentralising 25% of the ICFC platform.">
+    intro="A swap will occur from April 2025 onwards, if successful, decentralising 10% of the ICFC platform.">
     
 
     <WhitepaperSection title="Token Sale">
