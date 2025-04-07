@@ -2,7 +2,6 @@
 	import type { ICFCDistribution, UserParticipation } from '../../../../../../declarations/icfc_sale_2/icfc_sale_2.did.js';
 	import { saleStore } from '$lib/stores/sale-store';
     import { onMount } from 'svelte';
-    import { authStore } from '$lib/stores/auth-store';
     import { toasts } from '$lib/stores/toasts-store';
     import { fromUnixDateTimeToReadable } from '$lib/utils/helpers';
     import LocalSpinner from '$lib/components/shared/local-spinner.svelte';
