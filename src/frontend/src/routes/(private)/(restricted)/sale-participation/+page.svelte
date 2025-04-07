@@ -48,7 +48,7 @@
     
     {#if loading}
         <div class="flex justify-center p-8">
-            <LocalSpinner message="Loading your claim data..." />
+            <LocalSpinner message="Loading your claim data" />
         </div>
     {:else}
         <div class="grid grid-cols-1 gap-4 mb-8 sm:grid-cols-3">
