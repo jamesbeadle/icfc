@@ -33,7 +33,7 @@
     );
 
     $effect(() => {
-        if (!signupChoice && $authSignedInStore && page.route.id && page.route.id.includes('sale')) {
+        if (!signupChoice && $authSignedInStore && !$userIdCreatedStore?.data && page.route.id && page.route.id.includes('sale')) {
             handleSaleSignup();
         }
     });
@@ -42,6 +42,12 @@
             resetSignupChoice();
         }
     });
+
+    $effect(() => {
+        if($userIdCreatedStore?.data){
+            signupChoice = 'full';
+        }
+    })
 
     function toggleMenu() {
         isMenuOpen = !isMenuOpen;
@@ -85,7 +91,7 @@
 </script>
 
 {#if $busy}
-    <FullScreenSpinner message="Logging in" />
+    <FullScreenSpinner message="Loading" />
 {:else}
     {#if $authSignedInStore}
         {#if signupChoice === null}
