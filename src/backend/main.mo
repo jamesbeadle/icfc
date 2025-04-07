@@ -196,6 +196,34 @@ actor class Self() = this {
     return #ok(icp_tokens);
   };
 
+  public shared ({ caller }) func completeICFCPackPurchase(user_principal : Ids.PrincipalId, amount : Nat) : async Result.Result<(), Enums.Error> {
+    assert not Principal.isAnonymous(caller);
+    assert Principal.toText(caller) == Environment.ICFC_SALE_2_CANISTER_ID;
+
+    let icp_ledger : SNSToken.Interface = actor (CanisterIds.NNS_LEDGER_CANISTER_ID);
+
+    let res = await icp_ledger.icrc1_transfer({
+      to = {
+        owner = Principal.fromText(CanisterIds.ICFC_BACKEND_CANISTER_ID);
+        subaccount = null;
+      };
+      from_subaccount = ?Account.principalToSubaccount(Principal.fromText(user_principal));
+      amount = amount;
+      fee = null;
+      memo = ?"0";
+      created_at_time = null;
+    });
+
+    switch (res) {
+      case (#Ok(_)) {
+        return #ok(());
+      };
+      case (#Err(_)) {
+        return #err(#FailedInterCanisterCall);
+      };
+    };
+  };
+
   public shared ({ caller }) func getICFCProfile(dto : ProfileCommands.GetICFCProfile) : async Result.Result<ProfileQueries.ProfileDTO, Enums.Error> {
     assert not Principal.isAnonymous(caller);
     assert Utilities.isSubApp(Principal.toText(caller));
