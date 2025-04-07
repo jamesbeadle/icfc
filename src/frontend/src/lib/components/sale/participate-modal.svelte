@@ -28,9 +28,12 @@
     $: amountPerInstallment = totalICFC / 6;
     $: now = new Date();
     $: installments = Array.from({ length: 6 }, (_, i) => {
-        let date = new Date(now);
-        date.setMonth(date.getMonth() + 3 + i * 6);
-        return date;
+        const nowInNanoseconds = BigInt(now.getTime()) * 1_000_000n;
+        const threeMonthsInNanoseconds = BigInt(3 * 30 * 24 * 60 * 60 * 1_000_000_000); 
+        const sixMonthsInNanoseconds = BigInt(6 * 30 * 24 * 60 * 60 * 1_000_000_000);
+        const installmentTimeInNanoseconds = nowInNanoseconds + threeMonthsInNanoseconds + BigInt(i) * sixMonthsInNanoseconds;
+        const installmentDate = new Date(Number(installmentTimeInNanoseconds / 1_000_000n));
+        return installmentDate;
     });
 
     function validateContribution(): { isValid: boolean; error?: string } {
@@ -179,7 +182,7 @@
                 packCost = saleGoal.packCostinICP;
                 maxContributionAmount = saleGoal.remainingPacks * saleGoal.packCostinICP;
                 loadingMessage = "Getting User Balance";
-                userBalance = (await saleStore.getUserBalance()) ?? 0n;
+                userBalance = (await saleStore.getUserBalance()) ?? 0n; 
                 
             }
         } catch (error) {
