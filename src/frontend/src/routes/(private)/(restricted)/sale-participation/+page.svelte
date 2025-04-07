@@ -119,7 +119,7 @@
             <table class="w-full">
                 <thead>
                 <tr class="text-left border-b border-BrandGrayShade3">
-                    <th class="p-3 small-header">Claim</th>
+                    <th class="p-3 small-header">Purchase</th>
                     <th class="p-3 small-header">Disbursement</th>
                     <th class="p-3 small-header">Date</th>
                     <th class="p-3 small-header">Amount</th>
