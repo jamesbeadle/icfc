@@ -12,46 +12,45 @@
     
 
     <WhitepaperSection title="Token Sale">
-        <p>25 million ICFC will be transferred from the ICFC SNS treasury into a swap canister to undertake a fully automated sale.</p>
+        <p>10 million ICFC is now on sale via <a href="https://icfc.app/sale">icfc.app/sale</a> to raise ICP for the continued development of our football ecosystem. We aim to secure our gambling license within the next few months, enabling the ICFC token to be the first SNS token to receive a license to offer fixed odds betting in 170+ countries, including the UK.</p>
         <ListSection
             title="ICFC Swap Details"
             items={[
-                "ICFC to be swapped: 25 million.",
-                "Swap Currency: ckBTC.",
-                "Minimum amount for swap to be successful: 50 ckBTC.",
-                "Maximum amount to be raised: 100 ckBTC."
+                "ICFC to be swapped: 10 million.",
+                "Swap Currency: ICP.",
+                "Raising 33,000 ICP @ 0.0033 ICP per ICFC."
             ]}
         />
         
         <ListSection
             title="Purpose of Funds"
             items={[
-                "Acquiring a real-world football club.",
-                "Continued development & promotion of the ICFC ecosystem.",
-                "Providing liquidity for future token trading."
+                "On-going development, marketing and promotional cost of the ICFC ecosystem.",
+                "On-going fees in relation to securing a Internet Computer Protocol based gambling license.",
+                "10% of the raise will be used to create a new liquidity pool on Kong Swap, aiming to stabilise our price at this higher level."
             ]}
         />     
     </WhitepaperSection>
 
     <WhitepaperSection title="Token Vesting Schedule:">
-        <HeaderContentSection title='Dissolve Delays' content="Tokens are securely locked in five non-dissolving neurons with delays equally staggered ranging from 6 months to a 2.5-year delay." />
+        <HeaderContentSection title='Dissolve Delays' content="Tokens are securely locked in six non-dissolving neurons with delays equally staggered ranging from 3 months of point of purchase and then 5 X 6 month installments thereafter." />
         <HeaderContentSection title='Liquid Tokens' content="When fully dissolved, liquid ICFC tokens are added to your ICFC wallet balance. Participants can log into the ICFC platform to track the dissolution of their ICFC neurons, confirming the amount that becomes liquid." />
     </WhitepaperSection>
 
     <p>
-        After the sale the DAO will remain in control of the Bitcoin (ckBTC) raised, only withdrawable via a DAO proposal.
+        After the sale the Waterway Labs will remain in control of the ICP raised, allowing them to fund the on-going costs associated with delivering the ICFC ecosystem.
     </p>
 
     <p class="small-header">
-        RWA Acquisition 
+        The Waterway Labs Team 
     </p>
 
     <p>
-        The largest use of the funds raised will be to purchase a UK football club through a broker here in the UK to run through the ICFC DAO. Our aim is to bring the football club under complete control of the DAO, we anticipate future legal frameworks that will make this possible.
+        The largest use of the funds raised will be to fund our team, currently managing a suite of applications with large potential.
     </p>
 
     <p>
-        For clubs acquired by ICFC, their revenue streams will remain fully with each club. This approach ensures that each club retains financial independence and continues to reinvest in its own growth and success, while still benefiting from the strategic support provided by ICFC.
+        We aim to grow our development and promotional teams, delivering more products, features and promotional events to further the cause of the Internet Computer.
     </p>
 
 </WhitepaperPage>
