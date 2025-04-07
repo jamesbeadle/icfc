@@ -47,7 +47,7 @@ export const idlFactory = ({ IDL }) => {
   });
   const MembershipClaim__1 = IDL.Record({
     expiresOn: IDL.Opt(IDL.Int),
-    claimedOn: IDL.Int,
+    purchasedOn: IDL.Int,
     membershipType: MembershipType__1,
   });
   const Result_10 = IDL.Variant({ ok: MembershipClaim__1, err: Error });
@@ -99,7 +99,7 @@ export const idlFactory = ({ IDL }) => {
   });
   const MembershipClaim = IDL.Record({
     expiresOn: IDL.Opt(IDL.Int),
-    claimedOn: IDL.Int,
+    purchasedOn: IDL.Int,
     membershipType: MembershipType,
   });
   const SubApp__2 = IDL.Variant({

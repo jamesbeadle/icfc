@@ -12,8 +12,8 @@
     let isLoading = $state(false);
     let loadingMessage = $state("Loading Sale Page");
 
-    let packetCost: bigint = $state(0n);
-    let remainingPackets: bigint = $state(0n);
+    let packCost: bigint = $state(0n);
+    let remainingPacks: bigint = $state(0n);
     
   
     onMount(async () => {
@@ -28,8 +28,8 @@
             dataLoading = true;
             const saleProgress = await saleStore.getProgress();
             if(saleProgress){
-                packetCost = saleProgress.packetCostinICP;
-                remainingPackets = saleProgress.remainingPackets;
+                packCost = saleProgress.packCostinICP;
+                remainingPacks = saleProgress.remainingPacks;
             }
         } catch (error) {
             console.error("Error fetching sale data:", error);
@@ -72,7 +72,7 @@
                         </div>
                     {:else}
                         <div class="w-full max-w-xl mx-auto lg:mx-0">
-                            <FundingProgress {packetCost} {remainingPackets}/>
+                            <FundingProgress {packCost} {remainingPacks}/>
                         </div>
                     {/if}
                 </div>

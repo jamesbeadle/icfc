@@ -212,15 +212,15 @@ type MembershipType =
  };
 type MembershipClaim__1 = 
  record {
-   claimedOn: int;
    expiresOn: opt int;
    membershipType: MembershipType__1;
+   purchasedOn: int;
  };
 type MembershipClaim = 
  record {
-   claimedOn: int;
    expiresOn: opt int;
    membershipType: MembershipType;
+   purchasedOn: int;
  };
 type Leagues = record {leagues: vec League;};
 type LeagueId = nat16;

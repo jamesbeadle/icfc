@@ -129,12 +129,12 @@ export interface Leagues {
 }
 export interface MembershipClaim {
   expiresOn: [] | [bigint];
-  claimedOn: bigint;
+  purchasedOn: bigint;
   membershipType: MembershipType;
 }
 export interface MembershipClaim__1 {
   expiresOn: [] | [bigint];
-  claimedOn: bigint;
+  purchasedOn: bigint;
   membershipType: MembershipType__1;
 }
 export type MembershipType =

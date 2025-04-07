@@ -19,21 +19,21 @@ actor class Self() = this {
         version = "0.0.2";
     };
 
-    private stable var stable_icfcPacketsRemaining : Nat = 1000;
+    private stable var stable_icfcPacksRemaining : Nat = 1000;
 
-    private stable var stable_saleParticipants : [(Ids.PrincipalId, [T.ClaimedRecord])] = [];
+    private stable var stable_saleParticipants : [(Ids.PrincipalId, [T.PurchaseRecord])] = [];
     private stable var stable_icfcDistributions : [T.ICFCDistribution] = [];
 
     public shared query func getAppStatus() : async Result.Result<BaseTypes.AppStatus, Enums.Error> {
         return #ok(appStatus);
     };
 
-    public shared ({ caller }) func claimICFCPackets() : async Result.Result<(), Enums.Error> {
+    public shared ({ caller }) func claimICFCPacks() : async Result.Result<(), Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let dto : SaleCommands.ParticipateInSale = {
             principalId = Principal.toText(caller);
         };
-        return await saleManager.claimICFCPackets(dto);
+        return await saleManager.claimICFCPacks(dto);
     };
 
     public shared ({ caller }) func getUserParticipation() : async Result.Result<SaleQueries.UserParticipation, Enums.Error> {
@@ -72,13 +72,13 @@ actor class Self() = this {
     };
 
     private func backUpStableData() {
-        stable_icfcPacketsRemaining := saleManager.getStableICFCPacketsRemaining();
+        stable_icfcPacksRemaining := saleManager.getStableICFCPacksRemaining();
         stable_saleParticipants := saleManager.getStableSaleParticipants();
         stable_icfcDistributions := saleManager.getStableICFCDistributions();
     };
 
     private func restoreStableData() {
-        saleManager.setStableICFCPacketsRemaining(stable_icfcPacketsRemaining);
+        saleManager.setStableICFCPacksRemaining(stable_icfcPacksRemaining);
         saleManager.setStableSaleParticipants(stable_saleParticipants);
         saleManager.setStableICFCDistributions(stable_icfcDistributions);
     };

@@ -21,12 +21,12 @@ module {
     };
 
     public type UserParticipation = {
-        participations : [T.ClaimedRecord];
+        participations : [T.PurchaseRecord];
     };
 
     public type SaleProgress = {
-        totalPackets : Nat;
-        remainingPackets : Nat;
-        packetCostinICP : Nat;
+        totalPacks : Nat;
+        remainingPacks : Nat;
+        packCostinICP : Nat;
     };
 };

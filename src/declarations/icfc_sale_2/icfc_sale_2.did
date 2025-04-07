@@ -1,8 +1,8 @@
-type UserParticipation = record {participations: vec ClaimedRecord;};
+type UserParticipation = record {participations: vec PurchaseRecord;};
 type Time = int;
 type Self = 
  service {
-   claimICFCPackets: () -> (Result_4);
+   claimICFCPacks: () -> (Result_4);
    getAppStatus: () -> (Result_3) query;
    getProgress: () -> (Result_2);
    getUserParticipation: () -> (Result_1);
@@ -10,9 +10,9 @@ type Self =
  };
 type SaleProgress = 
  record {
-   packetCostinICP: nat;
-   remainingPackets: nat;
-   totalPackets: nat;
+   packCostinICP: nat;
+   remainingPacks: nat;
+   totalPacks: nat;
  };
 type Result_4 = 
  variant {
@@ -39,14 +39,20 @@ type Result =
    err: Error;
    ok: vec ICFCDistribution;
  };
+type PurchaseRecord = 
+ record {
+   packsPurchased: nat;
+   purchaseId: nat;
+   purchasedOn: int;
+ };
 type PrincipalId = text;
 type ICFCDistribution = 
  record {
    amount: nat;
-   claimId: nat;
    distributionStatus: DistributionStatus;
    installment: nat;
    principalId: PrincipalId;
+   purchaseId: nat;
    time: Time;
  };
 type Error = 
@@ -78,12 +84,6 @@ type DistributionStatus =
  variant {
    Completed;
    Pending;
- };
-type ClaimedRecord = 
- record {
-   claimId: int;
-   claimedOn: int;
-   packetsClaimed: nat;
  };
 type AppStatus = 
  record {

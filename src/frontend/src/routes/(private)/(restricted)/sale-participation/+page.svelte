@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { ICFCDistribution, UserParticipation, ClaimedRecord } from '../../../../../../declarations/icfc_sale_2/icfc_sale_2.did.js';
+	import type { ICFCDistribution, UserParticipation } from '../../../../../../declarations/icfc_sale_2/icfc_sale_2.did.js';
 	import { saleStore } from '$lib/stores/sale-store';
     import { onMount } from 'svelte';
     import { authStore } from '$lib/stores/auth-store';
@@ -50,9 +50,9 @@
             </p>
         </div>
         <div class="p-4 rounded-lg bg-white/5">
-            <h3 class="brand-sub-title">Total Packets</h3>
+            <h3 class="brand-sub-title">Total Packs</h3>
             <p class="text-2xl font-bold text-white">
-            {participation?.participations.reduce((sum, p) => sum + p.packetsClaimed, BigInt(0)).toString()}
+            {participation?.participations.reduce((sum, p) => sum + p.packsPurchased, BigInt(0)).toString()}
             </p>
         </div>
         <div class="p-4 rounded-lg bg-white/5">
@@ -71,17 +71,17 @@
                 <thead>
                 <tr class="text-left border-b border-BrandGrayShade3">
                     <th class="p-3 small-header">Claim ID</th>
-                    <th class="p-3 small-header">Date Claimed</th>
-                    <th class="p-3 small-header">Packets Claimed</th>
+                    <th class="p-3 small-header">Date Purchased</th>
+                    <th class="p-3 small-header">Packs Purchased</th>
                 </tr>
                 </thead>
                 <tbody>
                 {#if participation.participations.length}
-                    {#each participation.participations as claim (claim.claimId)}
+                    {#each participation.participations as claim (claim.purchaseId)}
                     <tr class="transition-colors border-b border-BrandGrayShade3 hover:bg-white/5">
-                        <td class="p-3 text-BrandGrayShade5">{claim.claimId}</td>
-                        <td class="p-3 text-BrandGrayShade5">{fromUnixDateTimeToReadable(Number(claim.claimedOn))}</td>
-                        <td class="p-3 text-BrandGrayShade5">{claim.packetsClaimed}</td>
+                        <td class="p-3 text-BrandGrayShade5">{claim.purchaseId}</td>
+                        <td class="p-3 text-BrandGrayShade5">{fromUnixDateTimeToReadable(Number(claim.purchasedOn))}</td>
+                        <td class="p-3 text-BrandGrayShade5">{claim.packsPurchased}</td>
                     </tr>
                     {/each}
                 {:else}
@@ -114,7 +114,7 @@
                 <tbody>
                 {#each distributions as dist }
                     <tr class="transition-colors border-b border-BrandGrayShade3 hover:bg-white/5">
-                    <td class="p-3 text-BrandGrayShade5">{dist.claimId}</td>
+                    <td class="p-3 text-BrandGrayShade5">{dist.purchaseId}</td>
                     <td class="p-3 text-BrandGrayShade5">{dist.installment.toString()}</td>
                     <td class="p-3 text-BrandGrayShade5">{fromUnixDateTimeToReadable(Number(dist.time))}</td>
                     <td class="p-3 text-BrandGrayShade5">{(dist.amount)} ICFC</td>

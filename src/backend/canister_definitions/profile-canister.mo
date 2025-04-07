@@ -189,7 +189,7 @@ actor class _ProfileCanister() {
             podcastIds = [];
             membershipType = membership.membershipType;
             membershipClaims = [{
-                claimedOn = Time.now();
+                purchasedOn = Time.now();
                 expiresOn = ?Utilities.getMembershipExpirationDate(membership.membershipType);
                 membershipType = membership.membershipType;
             }];
@@ -568,7 +568,7 @@ actor class _ProfileCanister() {
                         let membershipClaimsBuffer = Buffer.fromArray<T.MembershipClaim>(foundProfile.membershipClaims);
                         let newClaim : T.MembershipClaim = {
                             membershipType = dto.membershipType;
-                            claimedOn = Time.now();
+                            purchasedOn = Time.now();
                             expiresOn = ?Utilities.getMembershipExpirationDate(dto.membershipType);
                         };
                         membershipClaimsBuffer.add(newClaim);
