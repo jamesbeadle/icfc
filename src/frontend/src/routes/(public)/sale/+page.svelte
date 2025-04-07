@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { SaleProgress } from './../../../../../../../.dfx/local/canisters/icfc_sale_2/service.did.d.ts';
+	import type { SaleProgress } from '../../../../../../.dfx/local/canisters/icfc_sale_2/service.did.js';
     import { onMount } from "svelte";
     import { saleStore } from "$lib/stores/sale-store";
 
@@ -15,7 +15,6 @@
     let packCost: bigint = $state(0n);
     let remainingPacks: bigint = $state(0n);
     
-  
     onMount(async () => {
         loadingMessage = "Loading Sale Page";
         isLoading = true;

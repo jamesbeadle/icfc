@@ -61,8 +61,9 @@
             newProfilePic = input.files[0];
             if (newProfilePic.size > 1000 * 1024) {
                 toasts.addToast({ 
-                    type: "error", 
-                    message: "Profile image too large. The maximum size is 1MB." 
+                    type: "info", 
+                    message: "Profile image too large. The maximum size is 1MB.",
+                    duration: 3000
                 });
                 newProfilePic = null;
                 previewUrl = '/profile_placeholder.png';
@@ -94,6 +95,7 @@
             toasts.addToast({
                 message: "Error updating username.",
                 type: "error",
+                duration: 2000,
             });
         } finally {
             isLoading = false;
@@ -121,6 +123,7 @@
             toasts.addToast({
                 message: "Error updating display name.",
                 type: "error",
+                duration: 2000,
             });
         } finally {
             isLoading = false;
@@ -147,6 +150,7 @@
             toasts.addToast({
                 message: "Failed to update profile picture",
                 type: "error",
+                duration: 2000,
             });
         } finally {
             isLoading = false;

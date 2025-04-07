@@ -1,18 +1,16 @@
 <script lang="ts">
     import LogoIcon from "$lib/icons/LogoIcon.svelte";
-    import { authStore, type AuthSignInParams } from "$lib/stores/auth-store";
-    import { goto } from "$app/navigation";
     import { page } from "$app/state";
     import { signIn } from "$lib/services/auth.services";
     import { isBusy } from '$lib/stores/busy-store';
 
     async function handleLoginClick() {
         await signIn({});
-        goto("/", {invalidateAll: true});
     }
 
     const navLinks = [
-        { href: '/whitepaper/', label: 'Whitepaper' }
+        { href: '/whitepaper/', label: 'Whitepaper' },
+        { href: '/sale/', label: 'Membership Sale' }
     ];
 </script>
 

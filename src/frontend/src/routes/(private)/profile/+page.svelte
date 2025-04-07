@@ -11,11 +11,13 @@
     import ProfileMembership from "$lib/components/profile/profile-membership.svelte";
     import ProfileLinkedApps from "$lib/components/profile/profile-linked-apps.svelte";
     import UpdateRequiredDetailsModal from "$lib/components/profile/update-modals/update-required-details-modal.svelte";
+    import CreateUser from "$lib/components/profile/create-user/create-user.svelte";
     
     let isLoading = $state(false);
     let loadingMessage = $state("");
     let activeTab = $state("details");
     let showUpdateRequiredDetailsModal = $state(false);
+    let noProfile = $state(false);
     
     let profile = $derived($userStore);
     let username = $derived(profile?.username ?? "");
@@ -38,7 +40,7 @@
         try {
             const profileResult = await userStore.getProfile();
             if (!profileResult) {
-                goto('/', { replaceState: true });
+                noProfile = true;
                 return;
             }
             userStore.set(profileResult);
@@ -101,10 +103,8 @@
             </div>
         </div>
     </div>
-{:else}
-    <div class="flex items-center justify-center h-screen text-white cta-text">
-        No profile data available
-    </div>
+{:else if noProfile}
+    <CreateUser />
 {/if}
 
 {#if showUpdateRequiredDetailsModal}

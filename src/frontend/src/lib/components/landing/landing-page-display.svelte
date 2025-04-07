@@ -32,7 +32,7 @@
                     Have questions? Read our <a href="/whitepaper" class="underline hover:text-BrandBlue">Whitepaper</a>
                 </p>
                 <p class="mt-2 text-sm text-center text-white">
-                    Login to see our exclusive sale.
+                    View Our Exclusive <a href="/sale" class="underline hover:text-BrandBlue">Sale</a>
                 </p>
             </div>
         </div>

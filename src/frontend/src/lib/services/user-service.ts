@@ -36,7 +36,6 @@ export class UserService {
       if (isError(result)) return undefined;
       return result.ok;
     } catch (error) {
-      console.error("Error fetching user profile: ", error);
       return undefined;
     }
   }

@@ -16,17 +16,14 @@
             file = input.files[0];
             if (file.size > 1000 * 1024) {
                 toasts.addToast({ 
-                    type: "error", 
-                    message: "Profile image too large. The maximum size is 1MB." 
+                    type: "info", 
+                    message: "Profile image too large. The maximum size is 1MB.",
+                    duration: 3000
                 });
                 file = null;
                 profileSrc = '/profile_placeholder.png';
                 return;
             }
-            toasts.addToast({ 
-                    type: "success", 
-                    message: "Profile image uploaded successfully." 
-                });
             profileSrc = URL.createObjectURL(file);
         }
     }
