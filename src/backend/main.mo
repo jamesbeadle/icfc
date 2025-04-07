@@ -330,11 +330,35 @@ actor class Self() = this {
     return profileManager.getStableUniqueCanisterIds();
   };
 
+  public shared func deleteCanister() : async () {
+    let IC : Management.Management = actor (CanisterIds.Default);
+    let result1 = await IC.stop_canister({
+      canister_id = Principal.fromText("a25ax-gaaaa-aaaal-qslsa-cai");
+    });
+    let result2 = await IC.delete_canister({
+      canister_id = Principal.fromText("a25ax-gaaaa-aaaal-qslsa-cai");
+    });
+
+    Debug.print(debug_show result1);
+    Debug.print(debug_show result2);
+  };
+
   private func postUpgradeCallback() : async () {
+    /*
     
+    let result1 = await IC.stop_canister({
+      canister_id = Principal.fromText("a25ax-gaaaa-aaaal-qslsa-cai");
+    });
+    let result2 = await IC.delete_canister({
+      canister_id = Principal.fromText("a25ax-gaaaa-aaaal-qslsa-cai");
+    });
+
+    Debug.print(debug_show result1);
+    Debug.print(debug_show result2);
+
+    //
     
     // stable_unique_profile_canister_ids := Buffer.toArray(unique_Canister_ids);
-    /*
 
     await updateProfileCanisterWasms();
     let manualProfileCanisterIds : [Ids.CanisterId] = [
@@ -345,10 +369,8 @@ actor class Self() = this {
       "bfvta-fyaaa-aaaal-qslwq-cai",
       "a25ax-gaaaa-aaaal-qslsa-cai",
     ];
-    let IC : Management.Management = actor (CanisterIds.Default);
 
     Debug.print("deleting canisters");
-    let _ = await CanisterUtilities.deleteCanister_("dyi5i-wqaaa-aaaal-qslza-cai", IC);
     Debug.print("deleting canisters1");
     await CanisterUtilities.deleteCanister_("ai3xo-kqaaa-aaaal-qslra-cai", IC);
     Debug.print("deleting canisters2");
