@@ -28,12 +28,6 @@
             }
             loadingMessage = 'Loading';
         } catch (error) {
-            toasts.addToast({
-                message: 'Failed to verify session',
-                type: 'error',
-                duration: 3000
-            });
-            console.error('Failed to verify session', error);
             goto('/', { replaceState: true });
         } finally {
             isLoading = false;
