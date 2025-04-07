@@ -29,8 +29,8 @@
     $: now = new Date();
     $: installments = Array.from({ length: 6 }, (_, i) => {
         const nowInNanoseconds = BigInt(now.getTime()) * 1_000_000n;
-        const threeMonthsInNanoseconds = BigInt(3 * 30 * 24 * 60 * 60 * 1_000_000_000); // Approximation of 3 months
-        const sixMonthsInNanoseconds = BigInt(6 * 30 * 24 * 60 * 60 * 1_000_000_000); // Approximation of 6 months
+        const threeMonthsInNanoseconds = BigInt(3 * 30 * 24 * 60 * 60 * 1_000_000_000); 
+        const sixMonthsInNanoseconds = BigInt(6 * 30 * 24 * 60 * 60 * 1_000_000_000);
         const installmentTimeInNanoseconds = nowInNanoseconds + threeMonthsInNanoseconds + BigInt(i) * sixMonthsInNanoseconds;
         const installmentDate = new Date(Number(installmentTimeInNanoseconds / 1_000_000n));
         return installmentDate;
