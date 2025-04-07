@@ -50,7 +50,7 @@
     }
 </script>
 <div class="p-8 mx-auto">
-    <h1 class="mb-8 text-4xl font-bold text-white cta-text">Your ICFC Claims</h1>
+    <h1 class="mb-8 text-4xl font-bold text-white cta-text">Your ICFC Purchases</h1>
     
     {#if loading}
         <div class="flex justify-center p-8">
@@ -85,7 +85,7 @@
             <table class="w-full">
                 <thead>
                 <tr class="text-left border-b border-BrandGrayShade3">
-                    <th class="p-3 small-header">Claim ID</th>
+                    <th class="p-3 small-header">Purchase ID</th>
                     <th class="p-3 small-header">Date Purchased</th>
                     <th class="p-3 small-header">Packs Purchased</th>
                 </tr>
