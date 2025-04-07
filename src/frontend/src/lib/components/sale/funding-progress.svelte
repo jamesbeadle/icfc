@@ -1,4 +1,7 @@
 <script lang="ts">
+    import { authSignedInStore } from '$lib/derived/auth.derived';
+    import { signIn } from "$lib/services/auth.services";
+    import { isBusy } from '$lib/stores/busy-store';
     import ParticipateModal from './participate-modal.svelte';
     import HowItWorksModal from './how-it-works-modal.svelte';
     
@@ -39,6 +42,7 @@
         </div>
     </div>
     <div class="flex flex-col gap-3">
+        {#if $authSignedInStore}
         <button 
             class="flex-1 px-4 py-3 text-white transition border rounded-lg border-BrandGrayShade3 brand-button hover:bg-BrandBlack hover:border-BrandBlue/80"
             on:click={openParticipateModal}
@@ -46,6 +50,15 @@
         >
             Buy ICFC Packs
         </button>
+        {:else}
+        <button 
+            class="flex-1 px-4 py-3 text-white transition border rounded-lg border-BrandGrayShade3 brand-button hover:bg-BrandBlack hover:border-BrandBlue/80"
+            on:click={async () => await signIn({})}
+            disabled={$isBusy}
+        >
+            Login to Buy ICFC Packs
+        </button>
+        {/if}
         <button 
             class="flex-1 px-4 py-3 text-white transition border rounded-lg border-BrandGrayShade3 brand-button hover:bg-BrandBlack hover:border-BrandBlue/80"
             on:click={openHowItWorksModal}

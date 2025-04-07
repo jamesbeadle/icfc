@@ -36,10 +36,6 @@
         await getFootballData();
       } catch (error) {
         console.error("Error fetching profile details:", error);
-        toasts.addToast({
-          message: "Error fetching profile details",
-          type: "error",
-        });
       } finally {
         isLoading = false;
       }
@@ -77,10 +73,6 @@
         }
       } catch (error) {
         console.error("Error fetching football data:", error);
-        toasts.addToast({
-          message: "Error fetching football data",
-          type: "error",
-        });
       }
     }
 

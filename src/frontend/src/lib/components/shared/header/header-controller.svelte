@@ -65,11 +65,6 @@
             });
         } catch (error) {
             console.error('Sale signup failed:', error);
-            toasts.addToast({
-                message: 'Sale signup failed',
-                type: 'error',
-                duration: 3000
-            });
         } finally {
             saleSignupProcessing = false;
         }
