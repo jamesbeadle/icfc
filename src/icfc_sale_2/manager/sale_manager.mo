@@ -299,53 +299,36 @@ module {
         private func getPacksToClaim(principalId : Ids.PrincipalId) : async Result.Result<Nat, Enums.Error> {
             let backend_canister = actor (CanisterIds.ICFC_BACKEND_CANISTER_ID) : actor {
                 getICPBalance : (user_principal : Ids.PrincipalId) -> async Result.Result<Nat, Enums.Error>;
+                completeICFCPackPurchase : (user_principal : Ids.PrincipalId, amount : Nat) -> async Result.Result<(), Enums.Error>;
             };
             let res = await backend_canister.getICPBalance(principalId);
             switch (res) {
                 case (#ok(balance)) {
-                    let user = saleParticipants.get(principalId);
+
                     let one_packect_cost_e8s = Nat.sub(Environment.ICFC_PACK_PRICE_IN_ICP * 100_000_000, 10_000);
-                    switch (user) {
-                        case (null) {
 
-                            let eligiblePacks = Nat.div(balance, one_packect_cost_e8s);
+                    var eligiblePacks = Nat.div(balance, one_packect_cost_e8s);
+                    
+
+                    if (eligiblePacks == 0) {
+                        return #err(#InEligible);
+                    };
+                    if (icfcPacksRemaining < eligiblePacks) {
+                        return #err(#InsufficientPacketsRemaining);
+                    };
+
+                    eligiblePacks := Nat.min(eligiblePacks, icfcPacksRemaining);
+                    var amount = Nat.mul(eligiblePacks, one_packect_cost_e8s);
+                    let res = await backend_canister.completeICFCPackPurchase(principalId, amount);
+                    switch (res) {
+                        case (#ok(_)) {
                             return #ok(eligiblePacks);
-
                         };
-                        case (?participations) {
-                            var totalClaimedPacks : Nat = 0;
-                            for (participation : T.PurchaseRecord in List.toArray(participations).vals()) {
-                                totalClaimedPacks := totalClaimedPacks + participation.packsPurchased;
-                            };
-
-                            // calculate the total ICP value of the claimed packs
-                            let total_icp_value = totalClaimedPacks * Environment.ICFC_PACK_PRICE_IN_ICP;
-                            let total_icp_value_e8s = total_icp_value * 100_000_000;
-
-                            // calculate the total fees paid
-                            let total_claims = List.size(participations);
-                            let total_fees_paid = total_claims * 10_000;
-
-                            // calculate the total actual ICP value
-                            let total_actual_icp_value = Nat.sub(total_icp_value_e8s, total_fees_paid);
-
-                            if (balance < total_actual_icp_value) {
-                                return #err(#InsufficientFunds);
-                            };
-                            if (balance == total_actual_icp_value) {
-                                return #err(#AlreadyClaimed);
-                            };
-
-                            // Check if any unclaimed packs are remaining
-                            if (balance > total_actual_icp_value) {
-                                let remainingPacks = Nat.div(Nat.sub(balance, total_actual_icp_value), one_packect_cost_e8s);
-                                return #ok(remainingPacks);
-                            };
-
-                            return #err(#InEligible);
-
+                        case (#err(err)) {
+                            return #err(err);
                         };
                     };
+
                 };
                 case (#err(err)) {
                     return #err(err);
