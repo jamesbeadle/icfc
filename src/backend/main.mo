@@ -331,10 +331,7 @@ actor class Self() = this {
   };
 
   private func postUpgradeCallback() : async () {
-    let _ = reinstallProfileCanisterWasms();
-    profileManager.setStableActiveCanisterId("a25ax-gaaaa-aaaal-qslsa-cai");
-    profileManager.setStableUniqueCanisterIds(["a25ax-gaaaa-aaaal-qslsa-cai"]);
-
+    
     
     // stable_unique_profile_canister_ids := Buffer.toArray(unique_Canister_ids);
     /*
