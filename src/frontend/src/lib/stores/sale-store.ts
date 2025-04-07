@@ -107,7 +107,7 @@ function createSaleStore() {
       throw error;
     }
   }
-  async function getUserBalance(): Promise<bigint | undefined> {
+  async function getUserBalance(): Promise<number | undefined> {
     try {
       let identity: OptionIdentity;
       authStore.subscribe(async (auth) => {
@@ -142,7 +142,7 @@ function createSaleStore() {
             console.error("Error getting balance.");
             return;
           }
-          let icp_balance = res / BigInt(1_00_000_000);
+          let icp_balance = Number(res) / 1_00_000_000;
           return icp_balance;
         } catch (err: any) {
           console.error(err.errorType);

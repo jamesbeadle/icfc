@@ -12,7 +12,7 @@
     export let showModal: boolean;
     export let onClose: () => void;
 
-    let userBalance: bigint = BigInt(0);
+    let userBalance: Number = 0;
     let contributionAmount: bigint = BigInt(0);
     let maxContributionAmount: bigint = BigInt(20);
     let packCost: bigint = BigInt(0);
@@ -180,6 +180,7 @@
                 maxContributionAmount = saleGoal.remainingPacks * saleGoal.packCostinICP;
                 loadingMessage = "Getting User Balance";
                 userBalance = (await saleStore.getUserBalance()) ?? 0n;
+                
             }
         } catch (error) {
             console.error("Error fetching sale goal", error);
@@ -245,7 +246,7 @@
                     </div>
                     <div class="flex justify-between pt-2 border-t border-BrandGrayShade3">
                         <span class="text-BrandGrayShade2">Your ICP balance:</span>
-                        <span class="font-medium text-white">{userBalance} ICP</span>
+                        <span class="font-medium text-white">{userBalance.toFixed(2)} ICP</span>
                     </div>
                 </div>
 
@@ -260,7 +261,7 @@
                                 <div class="lg:flex lg:flex-row justify-between lg:w-[90%] w-full text-sm items-center text-white pb-2">                               
                                     <div class="flex-row lg:text-sm text-[10px]">   
                                         <div>{installment.toLocaleDateString('en-US', { day: 'numeric',month: 'short', year: 'numeric' })}</div>
-                                        <div>ICFC Memmbership Sale (Disbursement {index + 1}/6)</div>
+                                        <div>ICFC Membership Sale (Disbursement {index + 1}/6)</div>
                                     </div>
                                     <div class="flex pt-1 lg:pt-0">  
                                         <IcfcCoinIcon className="w-6 mr-2" /> 
