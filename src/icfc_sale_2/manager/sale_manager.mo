@@ -18,8 +18,8 @@ import Principal "mo:base/Principal";
 import Nat64 "mo:base/Nat64";
 import SNSLedger "mo:waterway-mops/def/Ledger";
 import SaleUtilities "../utilities/sale-utilities";
-import AccountIdentifier "mo:account-identifier";
 import Enums "mo:waterway-mops/Enums";
+import Account "mo:waterway-mops/Account";
 import Environment "../environment";
 import SaleTypes "../sale_types";
 
@@ -275,10 +275,10 @@ module {
             let e8s_amount = amount * 100_000_000;
 
             let transfer_dto : T.TransferArg = {
-                from_subaccount = ?AccountIdentifier.defaultSubaccount();
+                from_subaccount = ?Account.defaultSubaccount();
                 to = {
                     owner = Principal.fromText(principal);
-                    subaccount = ?AccountIdentifier.defaultSubaccount();
+                    subaccount = ?Account.defaultSubaccount();
                 };
                 amount = e8s_amount - transfer_fee;
                 created_at_time = ?Nat64.fromNat(Int.abs(Time.now()));
