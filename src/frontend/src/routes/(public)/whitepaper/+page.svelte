@@ -3,7 +3,8 @@
     import Token from '$lib/components/whitepaper/token.svelte';
     import Products from '$lib/components/whitepaper/products.svelte';
     import Revenue from '$lib/components/whitepaper/revenue.svelte';
-    import Sale from '$lib/components/whitepaper/sale.svelte';
+    import MembershipSale from '$lib/components/whitepaper/membership-sale.svelte';
+    import OwnershipSale from '$lib/components/whitepaper/membership-sale.svelte';
     import ClubDAOs from '$lib/components/whitepaper/club-daos.svelte';
     import Notes from '$lib/components/whitepaper/notes.svelte';
     import Membership from '$lib/components/whitepaper/membership.svelte';
@@ -16,11 +17,12 @@
       { id: 'ownership', title: 'The ICFC DAO', component: Token },
       { id: 'products', title: 'Our Products', component: Products },
       { id: 'revenue', title: 'Revenue', component: Revenue },
-      { id: 'sale', title: 'Sale #2', component: Sale },
+      { id: 'sale', title: 'Membership Sale', component: MembershipSale },
+      { id: 'sale', title: 'Ownership Sale', component: OwnershipSale },
       { id: 'membership', title: 'Membership', component: Membership },
-      { id: 'club-daos', title: 'Club DAOs', component: ClubDAOs },
       { id: 'content-creators', title: 'Content Creators', component: ContentCreators },
       { id: 'deai', title: 'Artificial Intelligence', component: DecentralisedAi },
+      { id: 'club-daos', title: 'Club DAOs', component: ClubDAOs },
       { id: 'roadmap', title: 'Roadmap', component: Roadmap },
       { id: 'notes', title: 'Notes', component: Notes },
     ];
