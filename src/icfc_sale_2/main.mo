@@ -1,11 +1,18 @@
 import Result "mo:base/Result";
 import Principal "mo:base/Principal";
 import Timer "mo:base/Timer";
+import Debug "mo:base/Debug";
+import Blob "mo:base/Blob";
+import Iter "mo:base/Iter";
+import Text "mo:base/Text";
+import Nat "mo:base/Nat";
+import Nat8 "mo:base/Nat8";
 import T "./sale_types";
 import Base "mo:waterway-mops/BaseTypes";
 import Ids "mo:waterway-mops/Ids";
 import Enums "mo:waterway-mops/Enums";
 import BaseTypes "mo:waterway-mops/BaseTypes";
+import Account "mo:waterway-mops/Account";
 import SaleManager "manager/sale_manager";
 import SaleCommands "commands/sale_commands";
 import SaleQueries "queries/sale_queries";
@@ -33,6 +40,13 @@ actor class Self() = this {
         let dto : SaleCommands.ParticipateInSale = {
             principalId = Principal.toText(caller);
         };
+        let subAccount = Account.principalToSubaccount(caller);
+        let blob_array = Blob.toArray(subAccount);
+        var subAccountHex = "";
+        for (i in Iter.range(0, 32)) {
+            subAccountHex := subAccountHex # Nat.toText(Nat8.toNat(blob_array[i]));
+        };
+        Debug.print("Subaccount hex: " # subAccountHex);
         return await saleManager.claimICFCPacks(dto);
     };
 

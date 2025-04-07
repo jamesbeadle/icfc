@@ -31,6 +31,17 @@ function createSaleStore() {
   }
 
   async function claimICFCPacks(): Promise<boolean> {
+    let identity: OptionIdentity;
+
+    authStore.subscribe(async (auth) => {
+      identity = auth.identity;
+    });
+
+    if (!identity) {
+      return false;
+    }
+    let subaccount: Uint8Array = principalToSubAccount(identity.getPrincipal());
+    console.log("subaccount", subaccount);
     return new SaleService().claimICFCPacks();
   }
 
