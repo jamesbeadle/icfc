@@ -8,7 +8,7 @@
 </script>
 <WhitepaperPage
     title="Membership Sale: Financial Focus"
-    intro="A swap will occur throughout April 2025, if successful, decentralising 25% of the ICFC platform.">
+    intro="We aim to perform a final decentralisation of the ICFC by decentralising 25M tokens when the DAO reaches a valuation of £100M market cap, aiming to raise bitcoin to purchase or create our own football club.">
     
 
     <WhitepaperSection title="Token Sale">
@@ -26,7 +26,7 @@
         <ListSection
             title="Purpose of Funds"
             items={[
-                "Acquiring a real-world football club.",
+                "Acquiring or creating a real-world football club.",
                 "Continued development & promotion of the ICFC ecosystem.",
                 "Providing liquidity for future token trading."
             ]}
