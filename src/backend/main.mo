@@ -208,8 +208,8 @@ actor class Self() = this {
         subaccount = null;
       };
       from_subaccount = ?Account.principalToSubaccount(Principal.fromText(user_principal));
-      amount = amount;
-      fee = null;
+      amount = amount - 10_000;
+      fee = ?10_000;
       memo = ?"0";
       created_at_time = null;
     });
