@@ -1,23 +1,22 @@
 <script lang="ts">
-    import Modal from '../shared/modal.svelte';
-    import LocalSpinner from '../shared/local-spinner.svelte';
     import { onMount } from 'svelte';
     import { toasts } from '$lib/stores/toasts-store';
     import { saleStore } from '$lib/stores/sale-store';
-    import { isError } from '$lib/utils/helpers';
-    import type { SaleProgress } from '../../../../../declarations/icfc_sale_2/icfc_sale_2.did';
+    import { formatTokenBalance, isError } from '$lib/utils/helpers';
+    import Modal from '../shared/modal.svelte';
     import CopyPrincipal from '../profile/copy-principal.svelte';
     import IcfcCoinIcon from "$lib/icons/ICFCCoinIcon.svelte";
+    import LocalSpinner from '../shared/local-spinner.svelte';
     
     export let showModal: boolean;
     export let onClose: () => void;
 
-    let userBalance: number = 0;
-    let contributionAmount: bigint = BigInt(0);
-    let maxContributionAmount: bigint = BigInt(20);
-    let packCost: bigint = BigInt(0);
+    let userBalance = 0n;
+    let contributionAmount = 0n;
+    let maxContributionAmount = 0n;
+    let packCost = 0n;
     let packsToBuy: number | null = null;
-    let packsRemaining: bigint = BigInt(0);
+    let packsRemaining = 0n;
     let showConfirm: boolean = false;
     let isLoading: boolean = false;
     let loadingMessage: string = "Loading";
@@ -36,6 +35,28 @@
         return installmentDate;
     });
 
+    onMount(async () => {
+        try {
+            isLoading = true;
+            resetModalState();
+            loadingMessage = "Getting Sale Progress";
+            let saleGoal = await saleStore.getProgress();
+            if (saleGoal) {
+                let packCostE8s = (saleGoal.packCostinICP * 100_000_000n);
+                packsRemaining = BigInt(saleGoal.remainingPacks);
+                packCost = packCostE8s;
+                maxContributionAmount = saleGoal.remainingPacks * packCostE8s;
+                loadingMessage = "Getting User Balance";
+                userBalance = (await saleStore.getUserBalance()) ?? 0n; 
+                
+            }
+        } catch (error) {
+            console.error("Error fetching sale goal", error);
+        } finally {
+            isLoading = false;
+        }
+    });
+
     function validateContribution(): { isValid: boolean; error?: string } {
         if (!packsToBuy || packsToBuy <= 0) {
             return {
@@ -43,7 +64,7 @@
                 error: "Please enter a valid amount."
             };
         }
-        if (contributionAmount > BigInt(userBalance)) {
+        if (contributionAmount > userBalance) {
             return {
                 isValid: false,
                 error: "You don't have enough balance to buy this amount of packs."
@@ -113,7 +134,7 @@
         loadingMessage = "Submitting Purchase";
         try {
             isLoading = true;
-            const result = await saleStore.participateInSale(Number(contributionAmount));
+            const result = await saleStore.participateInSale(contributionAmount);
             if (isError(result)) {
                 console.error("Error purchasing ICFC Packs", result);
                 toasts.addToast({
@@ -158,7 +179,7 @@
         try {
             loadingMessage = "Refreshing User Balance";
             isLoading = true;
-            userBalance = (await saleStore.getUserBalance()) ?? 0;
+            userBalance = (await saleStore.getUserBalance()) ?? 0n; 
         } catch (error) {
             console.error("Error fetching user balance", error);
             toasts.addToast({
@@ -170,27 +191,6 @@
             isLoading = false;
         }
     }
-
-    onMount(async () => {
-        try {
-            isLoading = true;
-            resetModalState();
-            loadingMessage = "Getting Sale Progress";
-            let saleGoal = await saleStore.getProgress();
-            if (saleGoal) {
-                packsRemaining = BigInt(saleGoal.remainingPacks);
-                packCost = saleGoal.packCostinICP;
-                maxContributionAmount = saleGoal.remainingPacks * saleGoal.packCostinICP;
-                loadingMessage = "Getting User Balance";
-                userBalance = (await saleStore.getUserBalance()) ?? 0; 
-                
-            }
-        } catch (error) {
-            console.error("Error fetching sale goal", error);
-        } finally {
-            isLoading = false;
-        }
-    });
 </script>
 
 {#if showModal}
@@ -249,7 +249,7 @@
                     </div>
                     <div class="flex justify-between pt-2 border-t border-BrandGrayShade3">
                         <span class="text-BrandGrayShade2">Your ICP balance:</span>
-                        <span class="font-medium text-white">{userBalance.toFixed(2)} ICP</span>
+                        <span class="font-medium text-white">{formatTokenBalance(userBalance)} ICP</span>
                     </div>
                 </div>
 

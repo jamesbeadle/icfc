@@ -805,3 +805,4 @@ export function formatTokenBalance(balance: BigInt): string {
   });
   return balanceFormatted;
 }
+

@@ -44,9 +44,8 @@ function createSaleStore() {
     return new SaleService().claimICFCPacks();
   }
 
-  async function participateInSale(amount: number): Promise<any> {
+  async function participateInSale(amountE8s: bigint): Promise<any> {
     try {
-      let amounte8s = BigInt(amount) * BigInt(1_00_000_000);
       let tranferFee = BigInt(10_000);
       let identity: OptionIdentity;
 
@@ -83,7 +82,7 @@ function createSaleStore() {
             memo: new Uint8Array(Text.encodeValue("0")),
             from_subaccount: undefined,
             created_at_time: BigInt(Date.now()) * BigInt(1_000_000),
-            amount: amounte8s - tranferFee,
+            amount: amountE8s - tranferFee,
           });
 
           const identityActor = await ActorFactory.createSaleActor(
@@ -106,7 +105,7 @@ function createSaleStore() {
       throw error;
     }
   }
-  async function getUserBalance(): Promise<number | undefined> {
+  async function getUserBalance(): Promise<bigint | undefined> {
     try {
       let identity: OptionIdentity;
       authStore.subscribe(async (auth) => {
@@ -140,7 +139,7 @@ function createSaleStore() {
             console.error("Error getting balance.");
             return;
           }
-          let icp_balance = Number(res) / 1_00_000_000;
+          let icp_balance = res;
           return icp_balance;
         } catch (err: any) {
           console.error(err.errorType);
