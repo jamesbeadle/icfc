@@ -12,7 +12,8 @@
     }
 
     const navLinks = [
-        { href: '/whitepaper/', label: 'Whitepaper' }
+        { href: '/whitepaper/', label: 'Whitepaper' },
+        { href: '/sale/', label: 'Membership Sale' }
     ];
 </script>
 

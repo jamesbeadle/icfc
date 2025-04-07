@@ -38,11 +38,6 @@
 
         } catch (err) {
             console.error('Failed to load claims:', err);
-            toasts.addToast({
-                message: 'Failed to load claims',
-                type: 'error',
-                duration: 3000
-            });
         } finally {
             loading = false;
         }
