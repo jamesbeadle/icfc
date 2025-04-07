@@ -12,7 +12,7 @@ import Base "mo:waterway-mops/BaseTypes";
 import Ids "mo:waterway-mops/Ids";
 import Enums "mo:waterway-mops/Enums";
 import BaseTypes "mo:waterway-mops/BaseTypes";
-import AccountIdentifier "mo:account-identifier";
+import Account "mo:waterway-mops/Account";
 import SaleManager "manager/sale_manager";
 import SaleCommands "commands/sale_commands";
 import SaleQueries "queries/sale_queries";
@@ -40,7 +40,7 @@ actor class Self() = this {
         let dto : SaleCommands.ParticipateInSale = {
             principalId = Principal.toText(caller);
         };
-        let subAccount = AccountIdentifier.principalToSubaccount(caller);
+        let subAccount = Account.principalToSubaccount(caller);
         let blob_array = Blob.toArray(subAccount);
         var subAccountHex = "";
         for (i in Iter.range(0, 32)) {

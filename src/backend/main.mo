@@ -18,8 +18,8 @@ import SNSToken "mo:waterway-mops/sns-wrappers/ledger";
 import CanisterIds "mo:waterway-mops/CanisterIds";
 import Management "mo:waterway-mops/Management";
 import BaseQueries "mo:waterway-mops/queries/BaseQueries";
-import AccountIdentifier "mo:account-identifier";
 import CanisterUtilities "mo:waterway-mops/CanisterUtilities";
+import Account "mo:waterway-mops/Account";
 
 /* ----- Canister Definition Files ----- */
 
@@ -190,7 +190,7 @@ actor class Self() = this {
     let icp_ledger : SNSToken.Interface = actor (CanisterIds.NNS_LEDGER_CANISTER_ID);
     let icp_tokens = await icp_ledger.icrc1_balance_of({
       owner = Principal.fromText(CanisterIds.ICFC_BACKEND_CANISTER_ID);
-      subaccount = ?AccountIdentifier.principalToSubaccount(Principal.fromText(user_principal));
+      subaccount = ?Account.principalToSubaccount(Principal.fromText(user_principal));
     });
 
     return #ok(icp_tokens);
@@ -207,7 +207,7 @@ actor class Self() = this {
         owner = Principal.fromText(CanisterIds.ICFC_BACKEND_CANISTER_ID);
         subaccount = null;
       };
-      from_subaccount = ?AccountIdentifier.principalToSubaccount(Principal.fromText(user_principal));
+      from_subaccount = ?Account.principalToSubaccount(Principal.fromText(user_principal));
       amount = amount;
       fee = null;
       memo = ?"0";
