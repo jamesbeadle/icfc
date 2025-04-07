@@ -76,7 +76,7 @@ function createSaleStore() {
             amount: amounte8s - tranferFee,
           });
 
-          const identityActor = await ActorFactory.createIdentityActor(
+          const identityActor = await ActorFactory.createSaleActor(
             authStore,
             process.env.ICFC_SALE_2_CANISTER_ID ?? "",
           );
