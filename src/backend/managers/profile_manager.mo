@@ -823,7 +823,7 @@ module {
             uniqueProfileCanisterIds := List.fromArray(Buffer.toArray(uniqueCanisterIdBuffer));
         };
 
-        private func validNeurons(neurons : [Blob], newPrinciaplId : Ids.PrincipalId) : Bool {
+        public func validNeurons(neurons : [Blob], newPrinciaplId : Ids.PrincipalId) : Bool {
             for (neuron in neurons.vals()) {
                 let existingPrincipalId = neuronsUsedforMembership.get(neuron);
                 switch (existingPrincipalId) {
