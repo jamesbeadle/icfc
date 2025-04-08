@@ -79,8 +79,21 @@ actor class Self() = this {
 
     let neurons = await snsManager.getUsersNeurons(caller);
     let userEligibility : ProfileQueries.EligibleMembership = Utilities.getMembershipType(neurons);
-    let totalMaxStaked = Utilities.getTotalMaxStaked(neurons);
+    let isValidNeurons = profileManager.validNeurons(userEligibility.eligibleNeuronIds, Principal.toText(caller));
 
+    if (not isValidNeurons) {
+      let dto : ProfileQueries.UserNeuronsDTO = {
+        userNeurons = [];
+        totalMaxStaked = 0;
+        userMembershipEligibility = {
+          membershipType = #NotEligible;
+          eligibleNeuronIds = [];
+        };
+      };
+      return #ok(dto);
+    };
+
+    let totalMaxStaked = Utilities.getTotalMaxStaked(neurons);
     let result : ProfileQueries.UserNeuronsDTO = {
       userNeurons = neurons;
       totalMaxStaked;
@@ -345,7 +358,7 @@ actor class Self() = this {
 
   private func postUpgradeCallback() : async () {
     /*
-    
+
     let result1 = await IC.stop_canister({
       canister_id = Principal.fromText("a25ax-gaaaa-aaaal-qslsa-cai");
     });
@@ -357,7 +370,7 @@ actor class Self() = this {
     Debug.print(debug_show result2);
 
     //
-    
+
     // stable_unique_profile_canister_ids := Buffer.toArray(unique_Canister_ids);
 
     await updateProfileCanisterWasms();
