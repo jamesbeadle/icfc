@@ -9,6 +9,7 @@ import Text "mo:base/Text";
 import Timer "mo:base/Timer";
 import Debug "mo:base/Debug";
 import Buffer "mo:base/Buffer";
+import Array "mo:base/Array";
 import Enums "mo:waterway-mops/Enums";
 import BaseTypes "mo:waterway-mops/BaseTypes";
 import LeagueQueries "mo:waterway-mops/queries/football-queries/LeagueQueries";
@@ -20,6 +21,8 @@ import Management "mo:waterway-mops/Management";
 import BaseQueries "mo:waterway-mops/queries/BaseQueries";
 import CanisterUtilities "mo:waterway-mops/CanisterUtilities";
 import Account "mo:waterway-mops/Account";
+import CanisterQueries "mo:waterway-mops/canister-management/CanisterQueries";
+import CanisterManager "mo:waterway-mops/canister-management/CanisterManager";
 
 /* ----- Canister Definition Files ----- */
 
@@ -47,6 +50,7 @@ actor class Self() = this {
   private let profileManager = ProfileManager.ProfileManager();
   private let footballChannelManager = FootballChannelManager.FootballChannelManager();
   private let snsManager = SNSManager.SNSManager();
+  private let canisterManager = CanisterManager.CanisterManager();
 
   private var appStatus : BaseTypes.AppStatus = {
     onHold = false;
@@ -466,12 +470,74 @@ actor class Self() = this {
   };
 
   //functions for WWL backend to communicate
-  public shared ({ caller }) func getCanistersInfo() : async Result.Result<ProfileQueries.CanisterInfo, Enums.Error> {
+  public shared ({ caller }) func getProjectCanisters() : async Result.Result<CanisterQueries.ProjectCanisters, Enums.Error> {
     assert not Principal.isAnonymous(caller);
-    assert Principal.toText(caller) == CanisterIds.WATERWAY_LABS_BACKEND_CANISTER_ID;
-    let canisterId = Principal.toText(caller);
-    let canisterInfo = profileManager.getCanisterInfo(canisterId);
-    return #ok(canisterInfo);
+    // assert Principal.toText(caller) == CanisterIds.WATERWAY_LABS_BACKEND_CANISTER_ID;
+
+    var projectCanisters : [CanisterQueries.CanisterInfo] = [];
+
+    // profile canisters
+    let profileCanisterIds = profileManager.getStableUniqueCanisterIds();
+    for (canisterId in Iter.fromArray(profileCanisterIds)) {
+      let dto : CanisterQueries.GetCanisterInfo = {
+        canisterId = canisterId;
+        canisterType = #Dynamic;
+        canisterName = "Profile Canister";
+      };
+      let result = await canisterManager.getCanisterInfo(dto, #ICFC);
+      switch (result) {
+        case (#ok(canisterInfo)) {
+          projectCanisters := Array.append<CanisterQueries.CanisterInfo>(projectCanisters, [canisterInfo]);
+        };
+        case (#err(_)) {};
+      };
+    };
+
+    // backend canister
+    var backend_dto : CanisterQueries.GetCanisterInfo = {
+      // canisterId = CanisterIds.ICFC_BACKEND_CANISTER_ID;
+      canisterId = "bkyz2-fmaaa-aaaaa-qaaaq-cai";
+      canisterType = #Static;
+      canisterName = "ICFC Backend Canister";
+    };
+    let result = await canisterManager.getCanisterInfo(backend_dto, #ICFC);
+    switch (result) {
+      case (#ok(canisterInfo)) {
+        projectCanisters := Array.append<CanisterQueries.CanisterInfo>(projectCanisters, [canisterInfo]);
+      };
+      case (#err(_)) {};
+    };
+
+    // frontend canister
+    // let frontend_dto : WWLCanisterQueries.GetCanisterInfo = {
+    //   canisterId = CanisterIds.ICFC_FRONTEND_CANISTER_ID;
+    //   canisterType = #Static;
+    //   canisterName = "ICFC Frontend Canister";
+    // };
+    // let result2 = await wwlCanisterManager.getCanisterInfo(frontend_dto);
+    // switch (result2) {
+    //   case (#ok(canisterInfo)) {
+    //     projectCanisters := Array.append<WWLCanisterQueries.CanisterInfo>(projectCanisters, [canisterInfo]);
+    //   };
+    //   case (#err(_)) {};
+    // };
+
+    // sale canister
+    let saleCanister = actor ("be2us-64aaa-aaaaa-qaabq-cai") : actor {
+      getCanisterInfo : () -> async Result.Result<CanisterQueries.CanisterInfo, Enums.Error>;
+    };
+    let result3 = await saleCanister.getCanisterInfo();
+    switch (result3) {
+      case (#ok(canisterInfo)) {
+        projectCanisters := Array.append<CanisterQueries.CanisterInfo>(projectCanisters, [canisterInfo]);
+      };
+      case (#err(_)) {};
+    };
+
+    let res : CanisterQueries.ProjectCanisters = {
+      entries = projectCanisters;
+    };
+    return #ok(res);
   };
 
 };

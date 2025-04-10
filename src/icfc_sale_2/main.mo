@@ -2,9 +2,6 @@ import Result "mo:base/Result";
 import Principal "mo:base/Principal";
 import Timer "mo:base/Timer";
 import Debug "mo:base/Debug";
-import Blob "mo:base/Blob";
-import Iter "mo:base/Iter";
-import Text "mo:base/Text";
 import Nat "mo:base/Nat";
 import Nat8 "mo:base/Nat8";
 import T "./sale_types";
@@ -16,10 +13,13 @@ import Account "mo:waterway-mops/Account";
 import SaleManager "manager/sale_manager";
 import SaleCommands "commands/sale_commands";
 import SaleQueries "queries/sale_queries";
+import CanisterManager "mo:waterway-mops/canister-management/CanisterManager";
+import CanisterQueries "mo:waterway-mops/canister-management/CanisterQueries";
 
 actor class Self() = this {
 
     private let saleManager = SaleManager.SaleManager();
+    private let canisterManager = CanisterManager.CanisterManager();
 
     private var appStatus : Base.AppStatus = {
         onHold = false;
@@ -92,6 +92,17 @@ actor class Self() = this {
         saleManager.setStableICFCPacksRemaining(stable_icfcPacksRemaining);
         saleManager.setStableSaleParticipants(stable_saleParticipants);
         saleManager.setStableICFCDistributions(stable_icfcDistributions);
+    };
+
+    // canister management
+    public shared ({ caller }) func getCanisterInfo() : async Result.Result<CanisterQueries.CanisterInfo, Enums.Error> {
+        assert not Principal.isAnonymous(caller);
+        let dto : CanisterQueries.GetCanisterInfo = {
+            canisterId = "be2us-64aaa-aaaaa-qaabq-cai";
+            canisterName = "ICFC Sale 2";
+            canisterType = #Static;
+        };
+        return await canisterManager.getCanisterInfo(dto, #ICFC);
     };
 
 };
