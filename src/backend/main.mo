@@ -466,11 +466,12 @@ actor class Self() = this {
   };
 
   //functions for WWL backend to communicate
-  // public shared ({ caller }) getCanistersInfo() : async Result.Result<ProfileQueries.CanisterInfo, Enums.Error> {
-  /* assert not Principal.isAnonymous(caller); */
-  /* let canisterId = Principal.toText(caller); */
-  /* let canisterInfo = profileManager.getCanisterInfo(canisterId); */
-  /* return #ok(canisterInfo); */
-  // };
+  public shared ({ caller }) func getCanistersInfo() : async Result.Result<ProfileQueries.CanisterInfo, Enums.Error> {
+    assert not Principal.isAnonymous(caller);
+    assert Principal.toText(caller) == CanisterIds.WATERWAY_LABS_BACKEND_CANISTER_ID;
+    let canisterId = Principal.toText(caller);
+    let canisterInfo = profileManager.getCanisterInfo(canisterId);
+    return #ok(canisterInfo);
+  };
 
 };
