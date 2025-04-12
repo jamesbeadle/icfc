@@ -24,6 +24,7 @@ import Account "mo:waterway-mops/Account";
 import CanisterQueries "mo:waterway-mops/canister-management/CanisterQueries";
 import CanisterManager "mo:waterway-mops/canister-management/CanisterManager";
 import CanisterCommands "mo:waterway-mops/canister-management/CanisterCommands";
+import Countries "mo:waterway-mops/def/Countries";
 
 /* ----- Canister Definition Files ----- */
 
@@ -262,13 +263,9 @@ actor class Self() = this {
 
   public shared ({ caller }) func getCountries(dto : BaseQueries.GetCountries) : async Result.Result<BaseQueries.Countries, Enums.Error> {
     assert not Principal.isAnonymous(caller);
-    // TODO: Check caller is a member
-
-    let data_canister = actor (CanisterIds.ICFC_DATA_CANISTER_ID) : actor {
-      getCountries : (dto : BaseQueries.GetCountries) -> async Result.Result<BaseQueries.Countries, Enums.Error>;
-    };
-    let result = await data_canister.getCountries(dto);
-    return result;
+    return #ok({
+      countries = Countries.countries;
+    });
   };
 
   public shared ({ caller }) func getLeagues(dto : LeagueQueries.GetLeagues) : async Result.Result<LeagueQueries.Leagues, Enums.Error> {
