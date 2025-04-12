@@ -1,4 +1,4 @@
 [dependencies]
 base = "0.14.7"
-waterway-mops = "2.3.0"
+waterway-mops = "2.4.3"
 account-identifier = "1.0.2"

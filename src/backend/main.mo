@@ -23,6 +23,7 @@ import CanisterUtilities "mo:waterway-mops/CanisterUtilities";
 import Account "mo:waterway-mops/Account";
 import CanisterQueries "mo:waterway-mops/canister-management/CanisterQueries";
 import CanisterManager "mo:waterway-mops/canister-management/CanisterManager";
+import CanisterCommands "mo:waterway-mops/canister-management/CanisterCommands";
 
 /* ----- Canister Definition Files ----- */
 
@@ -113,8 +114,12 @@ actor class Self() = this {
     assert not Principal.isAnonymous(caller);
     let principalId = Principal.toText(caller);
 
-    let neurons = await snsManager.getUsersNeurons(caller);
-    let userEligibility : ProfileCommands.EligibleMembership = Utilities.getMembershipType(neurons);
+    // let neurons = await snsManager.getUsersNeurons(caller);
+    // let userEligibility : ProfileCommands.EligibleMembership = Utilities.getMembershipType(neurons);
+    let userEligibility : ProfileQueries.EligibleMembership = {
+      membershipType = #Lifetime;
+      eligibleNeuronIds = [];
+    };
 
     return await profileManager.createProfile(principalId, dto, userEligibility);
   };
@@ -347,20 +352,21 @@ actor class Self() = this {
     return profileManager.getStableUniqueCanisterIds();
   };
 
-  public shared func deleteCanister() : async () {
-    let IC : Management.Management = actor (CanisterIds.Default);
-    let result1 = await IC.stop_canister({
-      canister_id = Principal.fromText("a25ax-gaaaa-aaaal-qslsa-cai");
-    });
-    let result2 = await IC.delete_canister({
-      canister_id = Principal.fromText("a25ax-gaaaa-aaaal-qslsa-cai");
-    });
+  // public shared func deleteCanister() : async () {
+  //   let IC : Management.Management = actor (CanisterIds.Default);
+  //   let result1 = await IC.stop_canister({
+  //     canister_id = Principal.fromText("a25ax-gaaaa-aaaal-qslsa-cai");
+  //   });
+  //   let result2 = await IC.delete_canister({
+  //     canister_id = Principal.fromText("a25ax-gaaaa-aaaal-qslsa-cai");
+  //   });
 
-    Debug.print(debug_show result1);
-    Debug.print(debug_show result2);
-  };
+  //   Debug.print(debug_show result1);
+  //   Debug.print(debug_show result2);
+  // };
 
   private func postUpgradeCallback() : async () {
+    // await updateProfileCanisterWasms();
     /*
 
     let result1 = await IC.stop_canister({
@@ -377,7 +383,7 @@ actor class Self() = this {
 
     // stable_unique_profile_canister_ids := Buffer.toArray(unique_Canister_ids);
 
-    await updateProfileCanisterWasms();
+
     let manualProfileCanisterIds : [Ids.CanisterId] = [
       "drlwu-ayaaa-aaaal-qslyq-cai",
       "gnqmr-lqaaa-aaaal-qslha-cai",
@@ -523,7 +529,7 @@ actor class Self() = this {
     // };
 
     // sale canister
-    let saleCanister = actor ("be2us-64aaa-aaaaa-qaabq-cai") : actor {
+    let saleCanister = actor ("bd3sg-teaaa-aaaaa-qaaba-cai") : actor {
       getCanisterInfo : () -> async Result.Result<CanisterQueries.CanisterInfo, Enums.Error>;
     };
     let result3 = await saleCanister.getCanisterInfo();
@@ -538,6 +544,19 @@ actor class Self() = this {
       entries = projectCanisters;
     };
     return #ok(res);
+  };
+
+  public shared ({ caller }) func addController(dto : CanisterCommands.AddController) : async Result.Result<(), Enums.Error> {
+    assert not Principal.isAnonymous(caller);
+    // assert Principal.toText(caller) == CanisterIds.WATERWAY_LABS_BACKEND_CANISTER_ID;
+    let result = await canisterManager.addController(dto);
+    return result;
+  };
+  public shared ({ caller }) func removeController(dto : CanisterCommands.RemoveController) : async Result.Result<(), Enums.Error> {
+    assert not Principal.isAnonymous(caller);
+    // assert Principal.toText(caller) == CanisterIds.WATERWAY_LABS_BACKEND_CANISTER_ID;
+    let result = await canisterManager.removeController(dto);
+    return result;
   };
 
 };

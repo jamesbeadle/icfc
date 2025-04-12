@@ -233,7 +233,7 @@ module {
                     let dtoRecord : ProfileCommands.RemoveSubApp = {
                         subApp = subApp;
                     };
-                    let res = await profile_canister.removeSubApp(principalId,dtoRecord);
+                    let res = await profile_canister.removeSubApp(principalId, dtoRecord);
                     switch (res) {
                         case (#ok) {
                             let dto : ProfileCommands.NotifyAppofRemoveLink = {
@@ -813,7 +813,8 @@ module {
             };
 
             let IC : Management.Management = actor (CanisterIds.Default);
-            let principal = ?Principal.fromText(CanisterIds.ICFC_BACKEND_CANISTER_ID);
+            // let principal = ?Principal.fromText(CanisterIds.ICFC_BACKEND_CANISTER_ID);
+            let principal = ?Principal.fromText("bkyz2-fmaaa-aaaaa-qaaaq-cai");
             let _ = await CanisterUtilities.updateCanister_(canister, principal, IC);
         };
 

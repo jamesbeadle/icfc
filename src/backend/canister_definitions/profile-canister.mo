@@ -42,7 +42,7 @@ actor class _ProfileCanister() {
     public shared ({ caller }) func getProfile(dto : ProfileQueries.GetProfile) : async Result.Result<ProfileQueries.ProfileDTO, Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
-        assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
+        // assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
 
         var groupIndex : ?Nat8 = null;
         for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
@@ -89,7 +89,7 @@ actor class _ProfileCanister() {
     public shared ({ caller }) func getProfileSummary(dto : ProfileQueries.GetProfile) : async Result.Result<ProfileQueries.ICFCProfileSummary, Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
-        assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
+        // assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
 
         var groupIndex : ?Nat8 = null;
         for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
@@ -130,7 +130,7 @@ actor class _ProfileCanister() {
     public shared ({ caller }) func getClaimedMembership(dto : ProfileQueries.GetClaimedMemberships) : async Result.Result<ProfileQueries.ClaimedMembershipsDTO, Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
-        assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
+        // assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
 
         var groupIndex : ?Nat8 = null;
         for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
@@ -164,7 +164,7 @@ actor class _ProfileCanister() {
     public shared ({ caller }) func createProfile(profilePrincipalId : Ids.PrincipalId, dto : ProfileCommands.CreateProfile, membership : T.EligibleMembership) : async Result.Result<(), Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
-        assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
+        // assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
 
         if (totalProfiles >= MAX_PROFILES_PER_CANISTER) {
             return #err(#MaxDataExceeded);
@@ -209,7 +209,7 @@ actor class _ProfileCanister() {
     public shared ({ caller }) func updateUsername(principalId : Ids.PrincipalId, dto : ProfileCommands.UpdateUserName) : async Result.Result<(), Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
-        assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
+        // assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
 
         var groupIndex : ?Nat8 = null;
         for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
@@ -252,7 +252,7 @@ actor class _ProfileCanister() {
     public shared ({ caller }) func updateDisplayName(principalId : Ids.PrincipalId, dto : ProfileCommands.UpdateDisplayName) : async Result.Result<(), Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
-        assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
+        // assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
 
         var groupIndex : ?Nat8 = null;
         for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
@@ -295,7 +295,7 @@ actor class _ProfileCanister() {
     public shared ({ caller }) func updateNationality(principalId : Ids.PrincipalId, dto : ProfileCommands.UpdateNationality) : async Result.Result<(), Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
-        assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
+        // assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
 
         var groupIndex : ?Nat8 = null;
         for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
@@ -338,7 +338,7 @@ actor class _ProfileCanister() {
     public shared ({ caller }) func updateFavouriteClub(principalId : Ids.PrincipalId, dto : ProfileCommands.UpdateFavouriteClub) : async Result.Result<(), Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
-        assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
+        // assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
 
         var groupIndex : ?Nat8 = null;
         for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
@@ -381,7 +381,7 @@ actor class _ProfileCanister() {
     public shared ({ caller }) func updateAppPrincipalIds(principalId : Ids.PrincipalId, dto : ProfileCommands.AddSubApp) : async Result.Result<(), Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
-        assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
+        // assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
 
         var groupIndex : ?Nat8 = null;
         for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
@@ -456,7 +456,7 @@ actor class _ProfileCanister() {
     public shared ({ caller }) func removeSubApp(principalId : Ids.PrincipalId, dto : ProfileCommands.RemoveSubApp) : async Result.Result<(), Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
-        assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
+        // assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
 
         var groupIndex : ?Nat8 = null;
         for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
@@ -507,7 +507,7 @@ actor class _ProfileCanister() {
     public shared ({ caller }) func updateProfilePicture(principalId : Ids.PrincipalId, dto : ProfileCommands.UpdateProfilePicture) : async Result.Result<(), Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
-        assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
+        // assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
 
         var groupIndex : ?Nat8 = null;
         for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
@@ -550,7 +550,7 @@ actor class _ProfileCanister() {
     public shared ({ caller }) func updateMembership(principalId : Ids.PrincipalId, dto : ProfileCommands.UpdateMembership) : async Result.Result<(T.MembershipClaim), Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
-        assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
+        // assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
 
         var groupIndex : ?Nat8 = null;
         for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
@@ -616,14 +616,14 @@ actor class _ProfileCanister() {
     public shared ({ caller }) func isCanisterFull() : async Bool {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
-        assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
+        // assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
         return (totalProfiles >= MAX_PROFILES_PER_CANISTER);
     };
 
     public shared ({ caller }) func checkAndExpireMembership() : async () {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
-        assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
+        // assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
 
         for (index in Iter.range(0, 11)) {
             switch (index) {

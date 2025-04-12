@@ -98,7 +98,7 @@ actor class Self() = this {
     public shared ({ caller }) func getCanisterInfo() : async Result.Result<CanisterQueries.CanisterInfo, Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let dto : CanisterQueries.GetCanisterInfo = {
-            canisterId = "be2us-64aaa-aaaaa-qaabq-cai";
+            canisterId = "bd3sg-teaaa-aaaaa-qaaba-cai";
             canisterName = "ICFC Sale 2";
             canisterType = #Static;
         };
