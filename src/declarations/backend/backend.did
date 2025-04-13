@@ -1,3 +1,20 @@
+type WaterwayLabsApp = 
+ variant {
+   FootballGod;
+   ICF1;
+   ICFC;
+   ICGC;
+   ICPCasino;
+   ICPFA;
+   JeffBets;
+   OpenBook;
+   OpenCare;
+   OpenChef;
+   OpenFPL;
+   OpenWSL;
+   TransferKings;
+   WaterwayLabs;
+ };
 type VerifySubApp = 
  record {
    icfcPrincipalId: PrincipalId;
@@ -19,6 +36,12 @@ type UpdateFavouriteClub =
    favouriteLeagueId: LeagueId;
  };
 type UpdateDisplayName = record {displayName: text;};
+type TopupCanister = 
+ record {
+   app: WaterwayLabsApp;
+   canisterId: CanisterId;
+   cycles: nat;
+ };
 type TokenBalances = 
  record {
    ckBTCBalance: nat;
@@ -58,30 +81,33 @@ type ShirtType =
  };
 type Self = 
  service {
+   addController: (AddController) -> (Result);
    addSubApp: (AddSubApp) -> (Result);
-   claimMembership: () -> (Result_10);
+   claimMembership: () -> (Result_11);
    completeICFCPackPurchase: (PrincipalId, nat) -> (Result);
    createProfile: (CreateProfile) -> (Result);
-   deleteCanister: () -> ();
-   getAppStatus: () -> (Result_9) query;
+   getAppStatus: () -> (Result_10) query;
    getCanisterIds: () -> (vec CanisterId);
-   getClubs: (GetClubs) -> (Result_8);
-   getCountries: (GetCountries) -> (Result_7);
-   getICFCProfile: (GetICFCProfile) -> (Result_3);
-   getICFCProfileSummary: (GetICFCProfile) -> (Result_6);
-   getICPBalance: (PrincipalId) -> (Result_5);
-   getLeagues: (GetLeagues) -> (Result_4);
-   getProfile: () -> (Result_3);
+   getClubs: (GetClubs) -> (Result_9);
+   getCountries: (GetCountries) -> (Result_8);
+   getICFCProfile: (GetICFCProfile) -> (Result_4);
+   getICFCProfileSummary: (GetICFCProfile) -> (Result_7);
+   getICPBalance: (PrincipalId) -> (Result_6);
+   getLeagues: (GetLeagues) -> (Result_5);
+   getProfile: () -> (Result_4);
    getProfileCanisterIds: () -> (vec CanisterId);
    getProfileCanisterIndex: () -> (vec record {
                                          PrincipalId;
                                          CanisterId;
                                        });
+   getProjectCanisters: () -> (Result_3);
    getTokenBalances: () -> (Result_2);
    getUserNeurons: () -> (Result_1);
    isUsernameValid: (IsUsernameValid) -> (bool) query;
+   removeController: (RemoveController) -> (Result);
    removeNeuronsforExpiredMembership: (PrincipalId) -> ();
    removeSubApp: (SubApp__1) -> (Result);
+   transferCycles: (TopupCanister) -> (Result);
    updateDisplayName: (UpdateDisplayName) -> (Result);
    updateFavouriteClub: (UpdateFavouriteClub) -> (Result);
    updateNationality: (UpdateNationality) -> (Result);
@@ -92,47 +118,52 @@ type Self =
 type Result_9 = 
  variant {
    err: Error;
-   ok: AppStatus;
+   ok: Clubs;
  };
 type Result_8 = 
  variant {
    err: Error;
-   ok: Clubs;
+   ok: Countries;
  };
 type Result_7 = 
  variant {
    err: Error;
-   ok: Countries;
+   ok: ICFCProfileSummary;
  };
 type Result_6 = 
  variant {
    err: Error;
-   ok: ICFCProfileSummary;
+   ok: nat;
  };
 type Result_5 = 
  variant {
    err: Error;
-   ok: nat;
+   ok: Leagues;
  };
 type Result_4 = 
  variant {
    err: Error;
-   ok: Leagues;
+   ok: ProfileDTO;
  };
 type Result_3 = 
  variant {
    err: Error;
-   ok: ProfileDTO;
+   ok: ProjectCanisters;
  };
 type Result_2 = 
  variant {
    err: Error;
    ok: TokenBalances;
  };
-type Result_10 = 
+type Result_11 = 
  variant {
    err: Error;
    ok: MembershipClaim__1;
+ };
+type Result_10 = 
+ variant {
+   err: Error;
+   ok: AppStatus;
  };
 type Result_1 = 
  variant {
@@ -144,6 +175,13 @@ type Result =
    err: Error;
    ok;
  };
+type RemoveController = 
+ record {
+   app: WaterwayLabsApp;
+   canisterId: CanisterId;
+   controller: PrincipalId;
+ };
+type ProjectCanisters = record {entries: vec CanisterInfo;};
 type ProfileDTO = 
  record {
    appPrincipalIds: vec record {
@@ -340,6 +378,32 @@ type Club =
    shirtType: ShirtType;
    thirdColourHex: text;
  };
+type CanisterType = 
+ variant {
+   Dynamic;
+   SNS;
+   Static;
+ };
+type CanisterStatus = 
+ variant {
+   running;
+   stopped;
+   stopping;
+ };
+type CanisterInfo = 
+ record {
+   app: WaterwayLabsApp;
+   canisterId: CanisterId;
+   canisterName: text;
+   canisterStatus: CanisterStatus;
+   canisterType: CanisterType;
+   computeAllocation: nat;
+   controllers: vec PrincipalId;
+   cycles: nat;
+   freezeThreshold: nat;
+   memoryAllocation: nat;
+   memoryUsage: nat;
+ };
 type CanisterId = text;
 type AppStatus = 
  record {
@@ -350,6 +414,12 @@ type AddSubApp =
  record {
    subApp: SubApp;
    subAppUserPrincipalId: PrincipalId;
+ };
+type AddController = 
+ record {
+   app: WaterwayLabsApp;
+   canisterId: CanisterId;
+   controller: PrincipalId;
  };
 type Account = 
  record {

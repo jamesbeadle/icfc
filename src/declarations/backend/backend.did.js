@@ -1,15 +1,26 @@
 export const idlFactory = ({ IDL }) => {
-  const SubApp = IDL.Variant({
+  const WaterwayLabsApp = IDL.Variant({
     OpenFPL: IDL.Null,
     OpenWSL: IDL.Null,
+    ICPCasino: IDL.Null,
     FootballGod: IDL.Null,
+    ICF1: IDL.Null,
+    ICFC: IDL.Null,
+    ICGC: IDL.Null,
+    ICPFA: IDL.Null,
     TransferKings: IDL.Null,
     JeffBets: IDL.Null,
+    OpenBook: IDL.Null,
+    OpenCare: IDL.Null,
+    OpenChef: IDL.Null,
+    WaterwayLabs: IDL.Null,
   });
   const PrincipalId = IDL.Text;
-  const AddSubApp = IDL.Record({
-    subApp: SubApp,
-    subAppUserPrincipalId: PrincipalId,
+  const CanisterId = IDL.Text;
+  const AddController = IDL.Record({
+    app: WaterwayLabsApp,
+    controller: PrincipalId,
+    canisterId: CanisterId,
   });
   const Error = IDL.Variant({
     InvalidProfilePicture: IDL.Null,
@@ -36,6 +47,17 @@ export const idlFactory = ({ IDL }) => {
     InEligible: IDL.Null,
   });
   const Result = IDL.Variant({ ok: IDL.Null, err: Error });
+  const SubApp = IDL.Variant({
+    OpenFPL: IDL.Null,
+    OpenWSL: IDL.Null,
+    FootballGod: IDL.Null,
+    TransferKings: IDL.Null,
+    JeffBets: IDL.Null,
+  });
+  const AddSubApp = IDL.Record({
+    subApp: SubApp,
+    subAppUserPrincipalId: PrincipalId,
+  });
   const MembershipType__1 = IDL.Variant({
     Founding: IDL.Null,
     NotClaimed: IDL.Null,
@@ -50,7 +72,7 @@ export const idlFactory = ({ IDL }) => {
     purchasedOn: IDL.Int,
     membershipType: MembershipType__1,
   });
-  const Result_10 = IDL.Variant({ ok: MembershipClaim__1, err: Error });
+  const Result_11 = IDL.Variant({ ok: MembershipClaim__1, err: Error });
   const ClubId = IDL.Nat16;
   const LeagueId = IDL.Nat16;
   const CountryId = IDL.Nat16;
@@ -63,8 +85,7 @@ export const idlFactory = ({ IDL }) => {
     nationalityId: IDL.Opt(CountryId),
   });
   const AppStatus = IDL.Record({ version: IDL.Text, onHold: IDL.Bool });
-  const Result_9 = IDL.Variant({ ok: AppStatus, err: Error });
-  const CanisterId = IDL.Text;
+  const Result_10 = IDL.Variant({ ok: AppStatus, err: Error });
   const GetClubs = IDL.Record({ leagueId: LeagueId });
   const ShirtType = IDL.Variant({ Filled: IDL.Null, Striped: IDL.Null });
   const Club = IDL.Record({
@@ -78,7 +99,7 @@ export const idlFactory = ({ IDL }) => {
     primaryColourHex: IDL.Text,
   });
   const Clubs = IDL.Record({ clubs: IDL.Vec(Club), leagueId: LeagueId });
-  const Result_8 = IDL.Variant({ ok: Clubs, err: Error });
+  const Result_9 = IDL.Variant({ ok: Clubs, err: Error });
   const GetCountries = IDL.Record({});
   const Country = IDL.Record({
     id: CountryId,
@@ -86,7 +107,7 @@ export const idlFactory = ({ IDL }) => {
     name: IDL.Text,
   });
   const Countries = IDL.Record({ countries: IDL.Vec(Country) });
-  const Result_7 = IDL.Variant({ ok: Countries, err: Error });
+  const Result_8 = IDL.Variant({ ok: Countries, err: Error });
   const GetICFCProfile = IDL.Record({ principalId: PrincipalId });
   const MembershipType = IDL.Variant({
     Founding: IDL.Null,
@@ -125,7 +146,7 @@ export const idlFactory = ({ IDL }) => {
     nationalityId: IDL.Opt(CountryId),
     principalId: PrincipalId,
   });
-  const Result_3 = IDL.Variant({ ok: ProfileDTO, err: Error });
+  const Result_4 = IDL.Variant({ ok: ProfileDTO, err: Error });
   const ICFCProfileSummary = IDL.Record({
     username: IDL.Text,
     displayName: IDL.Text,
@@ -140,8 +161,8 @@ export const idlFactory = ({ IDL }) => {
     nationalityId: IDL.Opt(CountryId),
     principalId: PrincipalId,
   });
-  const Result_6 = IDL.Variant({ ok: ICFCProfileSummary, err: Error });
-  const Result_5 = IDL.Variant({ ok: IDL.Nat, err: Error });
+  const Result_7 = IDL.Variant({ ok: ICFCProfileSummary, err: Error });
+  const Result_6 = IDL.Variant({ ok: IDL.Nat, err: Error });
   const GetLeagues = IDL.Record({});
   const Gender = IDL.Variant({ Male: IDL.Null, Female: IDL.Null });
   const League = IDL.Record({
@@ -156,7 +177,32 @@ export const idlFactory = ({ IDL }) => {
     formed: IDL.Int,
   });
   const Leagues = IDL.Record({ leagues: IDL.Vec(League) });
-  const Result_4 = IDL.Variant({ ok: Leagues, err: Error });
+  const Result_5 = IDL.Variant({ ok: Leagues, err: Error });
+  const CanisterStatus = IDL.Variant({
+    stopped: IDL.Null,
+    stopping: IDL.Null,
+    running: IDL.Null,
+  });
+  const CanisterType = IDL.Variant({
+    SNS: IDL.Null,
+    Dynamic: IDL.Null,
+    Static: IDL.Null,
+  });
+  const CanisterInfo = IDL.Record({
+    app: WaterwayLabsApp,
+    canisterStatus: CanisterStatus,
+    controllers: IDL.Vec(PrincipalId),
+    canisterName: IDL.Text,
+    canisterType: CanisterType,
+    memoryUsage: IDL.Nat,
+    cycles: IDL.Nat,
+    memoryAllocation: IDL.Nat,
+    freezeThreshold: IDL.Nat,
+    computeAllocation: IDL.Nat,
+    canisterId: CanisterId,
+  });
+  const ProjectCanisters = IDL.Record({ entries: IDL.Vec(CanisterInfo) });
+  const Result_3 = IDL.Variant({ ok: ProjectCanisters, err: Error });
   const TokenBalances = IDL.Record({
     icgcBalance: IDL.Nat,
     icfcBalance: IDL.Nat,
@@ -213,12 +259,22 @@ export const idlFactory = ({ IDL }) => {
   });
   const Result_1 = IDL.Variant({ ok: UserNeuronsDTO, err: Error });
   const IsUsernameValid = IDL.Record({ username: IDL.Text });
+  const RemoveController = IDL.Record({
+    app: WaterwayLabsApp,
+    controller: PrincipalId,
+    canisterId: CanisterId,
+  });
   const SubApp__1 = IDL.Variant({
     OpenFPL: IDL.Null,
     OpenWSL: IDL.Null,
     FootballGod: IDL.Null,
     TransferKings: IDL.Null,
     JeffBets: IDL.Null,
+  });
+  const TopupCanister = IDL.Record({
+    app: WaterwayLabsApp,
+    cycles: IDL.Nat,
+    canisterId: CanisterId,
   });
   const UpdateDisplayName = IDL.Record({ displayName: IDL.Text });
   const UpdateFavouriteClub = IDL.Record({
@@ -236,31 +292,34 @@ export const idlFactory = ({ IDL }) => {
     subAppUserPrincipalId: PrincipalId,
   });
   const Self = IDL.Service({
+    addController: IDL.Func([AddController], [Result], []),
     addSubApp: IDL.Func([AddSubApp], [Result], []),
-    claimMembership: IDL.Func([], [Result_10], []),
+    claimMembership: IDL.Func([], [Result_11], []),
     completeICFCPackPurchase: IDL.Func([PrincipalId, IDL.Nat], [Result], []),
     createProfile: IDL.Func([CreateProfile], [Result], []),
-    deleteCanister: IDL.Func([], [], []),
-    getAppStatus: IDL.Func([], [Result_9], ["query"]),
+    getAppStatus: IDL.Func([], [Result_10], ["query"]),
     getCanisterIds: IDL.Func([], [IDL.Vec(CanisterId)], []),
-    getClubs: IDL.Func([GetClubs], [Result_8], []),
-    getCountries: IDL.Func([GetCountries], [Result_7], []),
-    getICFCProfile: IDL.Func([GetICFCProfile], [Result_3], []),
-    getICFCProfileSummary: IDL.Func([GetICFCProfile], [Result_6], []),
-    getICPBalance: IDL.Func([PrincipalId], [Result_5], []),
-    getLeagues: IDL.Func([GetLeagues], [Result_4], []),
-    getProfile: IDL.Func([], [Result_3], []),
+    getClubs: IDL.Func([GetClubs], [Result_9], []),
+    getCountries: IDL.Func([GetCountries], [Result_8], []),
+    getICFCProfile: IDL.Func([GetICFCProfile], [Result_4], []),
+    getICFCProfileSummary: IDL.Func([GetICFCProfile], [Result_7], []),
+    getICPBalance: IDL.Func([PrincipalId], [Result_6], []),
+    getLeagues: IDL.Func([GetLeagues], [Result_5], []),
+    getProfile: IDL.Func([], [Result_4], []),
     getProfileCanisterIds: IDL.Func([], [IDL.Vec(CanisterId)], []),
     getProfileCanisterIndex: IDL.Func(
       [],
       [IDL.Vec(IDL.Tuple(PrincipalId, CanisterId))],
       [],
     ),
+    getProjectCanisters: IDL.Func([], [Result_3], []),
     getTokenBalances: IDL.Func([], [Result_2], []),
     getUserNeurons: IDL.Func([], [Result_1], []),
     isUsernameValid: IDL.Func([IsUsernameValid], [IDL.Bool], ["query"]),
+    removeController: IDL.Func([RemoveController], [Result], []),
     removeNeuronsforExpiredMembership: IDL.Func([PrincipalId], [], []),
     removeSubApp: IDL.Func([SubApp__1], [Result], []),
+    transferCycles: IDL.Func([TopupCanister], [Result], []),
     updateDisplayName: IDL.Func([UpdateDisplayName], [Result], []),
     updateFavouriteClub: IDL.Func([UpdateFavouriteClub], [Result], []),
     updateNationality: IDL.Func([UpdateNationality], [Result], []),

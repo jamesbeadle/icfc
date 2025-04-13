@@ -346,7 +346,7 @@ actor class Self() = this {
   };
 
   private func postUpgradeCallback() : async () {
-    // await updateProfileCanisterWasms();
+    await updateProfileCanisterWasms();
     /*
 
     // stable_unique_profile_canister_ids := Buffer.toArray(unique_Canister_ids);

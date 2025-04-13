@@ -6,6 +6,25 @@ export interface AppStatus {
   version: string;
   onHold: boolean;
 }
+export type CanisterId = string;
+export interface CanisterInfo {
+  app: WaterwayLabsApp;
+  canisterStatus: CanisterStatus;
+  controllers: Array<PrincipalId>;
+  canisterName: string;
+  canisterType: CanisterType;
+  memoryUsage: bigint;
+  cycles: bigint;
+  memoryAllocation: bigint;
+  freezeThreshold: bigint;
+  computeAllocation: bigint;
+  canisterId: CanisterId;
+}
+export type CanisterStatus =
+  | { stopped: null }
+  | { stopping: null }
+  | { running: null };
+export type CanisterType = { SNS: null } | { Dynamic: null } | { Static: null };
 export type DistributionStatus = { Completed: null } | { Pending: null };
 export type Error =
   | { InvalidProfilePicture: null }
@@ -44,27 +63,50 @@ export interface PurchaseRecord {
   packsPurchased: bigint;
   purchaseId: bigint;
 }
-export type Result = { ok: Array<ICFCDistribution> } | { err: Error };
-export type Result_1 = { ok: UserParticipation } | { err: Error };
-export type Result_2 = { ok: SaleProgress } | { err: Error };
-export type Result_3 = { ok: AppStatus } | { err: Error };
-export type Result_4 = { ok: null } | { err: Error };
+export type Result = { ok: null } | { err: Error };
+export type Result_1 = { ok: Array<ICFCDistribution> } | { err: Error };
+export type Result_2 = { ok: UserParticipation } | { err: Error };
+export type Result_3 = { ok: SaleProgress } | { err: Error };
+export type Result_4 = { ok: CanisterInfo } | { err: Error };
+export type Result_5 = { ok: AppStatus } | { err: Error };
 export interface SaleProgress {
   remainingPacks: bigint;
   packCostinICP: bigint;
   totalPacks: bigint;
 }
 export interface Self {
-  claimICFCPacks: ActorMethod<[], Result_4>;
-  getAppStatus: ActorMethod<[], Result_3>;
-  getProgress: ActorMethod<[], Result_2>;
-  getUserParticipation: ActorMethod<[], Result_1>;
-  getUsersICFCDistributions: ActorMethod<[], Result>;
+  claimICFCPacks: ActorMethod<[], Result>;
+  getAppStatus: ActorMethod<[], Result_5>;
+  getCanisterInfo: ActorMethod<[], Result_4>;
+  getProgress: ActorMethod<[], Result_3>;
+  getUserParticipation: ActorMethod<[], Result_2>;
+  getUsersICFCDistributions: ActorMethod<[], Result_1>;
+  transferCycles: ActorMethod<[TopupCanister], Result>;
 }
 export type Time = bigint;
+export interface TopupCanister {
+  app: WaterwayLabsApp;
+  cycles: bigint;
+  canisterId: CanisterId;
+}
 export interface UserParticipation {
   participations: Array<PurchaseRecord>;
 }
+export type WaterwayLabsApp =
+  | { OpenFPL: null }
+  | { OpenWSL: null }
+  | { ICPCasino: null }
+  | { FootballGod: null }
+  | { ICF1: null }
+  | { ICFC: null }
+  | { ICGC: null }
+  | { ICPFA: null }
+  | { TransferKings: null }
+  | { JeffBets: null }
+  | { OpenBook: null }
+  | { OpenCare: null }
+  | { OpenChef: null }
+  | { WaterwayLabs: null };
 export interface _SERVICE extends Self {}
 export declare const idlFactory: IDL.InterfaceFactory;
 export declare const init: (args: { IDL: typeof IDL }) => IDL.Type[];

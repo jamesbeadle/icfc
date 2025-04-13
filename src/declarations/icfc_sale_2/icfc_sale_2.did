@@ -1,12 +1,37 @@
+type WaterwayLabsApp = 
+ variant {
+   FootballGod;
+   ICF1;
+   ICFC;
+   ICGC;
+   ICPCasino;
+   ICPFA;
+   JeffBets;
+   OpenBook;
+   OpenCare;
+   OpenChef;
+   OpenFPL;
+   OpenWSL;
+   TransferKings;
+   WaterwayLabs;
+ };
 type UserParticipation = record {participations: vec PurchaseRecord;};
+type TopupCanister = 
+ record {
+   app: WaterwayLabsApp;
+   canisterId: CanisterId;
+   cycles: nat;
+ };
 type Time = int;
 type Self = 
  service {
-   claimICFCPacks: () -> (Result_4);
-   getAppStatus: () -> (Result_3) query;
-   getProgress: () -> (Result_2);
-   getUserParticipation: () -> (Result_1);
-   getUsersICFCDistributions: () -> (Result);
+   claimICFCPacks: () -> (Result);
+   getAppStatus: () -> (Result_5) query;
+   getCanisterInfo: () -> (Result_4);
+   getProgress: () -> (Result_3);
+   getUserParticipation: () -> (Result_2);
+   getUsersICFCDistributions: () -> (Result_1);
+   transferCycles: (TopupCanister) -> (Result);
  };
 type SaleProgress = 
  record {
@@ -14,30 +39,35 @@ type SaleProgress =
    remainingPacks: nat;
    totalPacks: nat;
  };
-type Result_4 = 
- variant {
-   err: Error;
-   ok;
- };
-type Result_3 = 
+type Result_5 = 
  variant {
    err: Error;
    ok: AppStatus;
  };
-type Result_2 = 
+type Result_4 = 
+ variant {
+   err: Error;
+   ok: CanisterInfo;
+ };
+type Result_3 = 
  variant {
    err: Error;
    ok: SaleProgress;
  };
-type Result_1 = 
+type Result_2 = 
  variant {
    err: Error;
    ok: UserParticipation;
  };
-type Result = 
+type Result_1 = 
  variant {
    err: Error;
    ok: vec ICFCDistribution;
+ };
+type Result = 
+ variant {
+   err: Error;
+   ok;
  };
 type PurchaseRecord = 
  record {
@@ -85,6 +115,33 @@ type DistributionStatus =
    Completed;
    Pending;
  };
+type CanisterType = 
+ variant {
+   Dynamic;
+   SNS;
+   Static;
+ };
+type CanisterStatus = 
+ variant {
+   running;
+   stopped;
+   stopping;
+ };
+type CanisterInfo = 
+ record {
+   app: WaterwayLabsApp;
+   canisterId: CanisterId;
+   canisterName: text;
+   canisterStatus: CanisterStatus;
+   canisterType: CanisterType;
+   computeAllocation: nat;
+   controllers: vec PrincipalId;
+   cycles: nat;
+   freezeThreshold: nat;
+   memoryAllocation: nat;
+   memoryUsage: nat;
+ };
+type CanisterId = text;
 type AppStatus = 
  record {
    onHold: bool;
