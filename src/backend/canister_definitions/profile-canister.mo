@@ -1,6 +1,8 @@
 import Ids "mo:waterway-mops/Ids";
 import Enums "mo:waterway-mops/Enums";
 import CanisterIds "mo:waterway-mops/CanisterIds";
+import CanisterCommands "mo:waterway-mops/canister-management/CanisterCommands";
+import CanisterManager "mo:waterway-mops/canister-management/CanisterManager";
 import Result "mo:base/Result";
 import Principal "mo:base/Principal";
 import Iter "mo:base/Iter";
@@ -15,6 +17,8 @@ import ProfileCommands "../commands/profile_commands";
 import Utilities "../utilities/utilities";
 
 actor class _ProfileCanister() {
+    let canisterManager = CanisterManager.CanisterManager();
+
     private stable var stable_profile_group_indexes : [(Ids.PrincipalId, Nat8)] = [];
     private stable var profileGroup1 : [T.Profile] = [];
     private stable var profileGroup2 : [T.Profile] = [];
@@ -1159,6 +1163,20 @@ actor class _ProfileCanister() {
                 return 0;
             };
         };
+    };
+
+    public shared ({ caller }) func transferCycles(dto : CanisterCommands.TopupCanister) : async Result.Result<(), Enums.Error> {
+        assert Principal.toText(caller) == CanisterIds.WATERWAY_LABS_BACKEND_CANISTER_ID;
+        let result = await canisterManager.topupCanister(dto);
+        switch (result) {
+            case (#ok()) {
+                return #ok(());
+            };
+            case (#err(err)) {
+                return #err(err);
+            };
+        };
+
     };
 
     system func preupgrade() {};

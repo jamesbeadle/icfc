@@ -233,7 +233,7 @@ module {
                     let dtoRecord : ProfileCommands.RemoveSubApp = {
                         subApp = subApp;
                     };
-                    let res = await profile_canister.removeSubApp(principalId,dtoRecord);
+                    let res = await profile_canister.removeSubApp(principalId, dtoRecord);
                     switch (res) {
                         case (#ok) {
                             let dto : ProfileCommands.NotifyAppofRemoveLink = {

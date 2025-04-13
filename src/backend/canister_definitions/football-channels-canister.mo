@@ -9,8 +9,12 @@ import Buffer "mo:base/Buffer";
 import Enums "mo:waterway-mops/Enums";
 import CanisterIds "mo:waterway-mops/CanisterIds";
 import FootballChannelCommands "../commands/football_channel_commands";
+import CanisterManager "mo:waterway-mops/canister-management/CanisterManager";
+import CanisterCommands "mo:waterway-mops/canister-management/CanisterCommands";
 
 actor class _FootballChannelsCanister() {
+    private let canisterManager = CanisterManager.CanisterManager();
+
     private stable var MAX_PODCAST_CHANNELS_PER_GROUP : Nat = 10;
     private stable var MAX_PODCAST_CHANNELS_PER_CANISTER : Nat = 250;
 
@@ -1167,6 +1171,20 @@ actor class _FootballChannelsCanister() {
                 return 0;
             };
         };
+    };
+
+    public shared ({ caller }) func transferCycles(dto : CanisterCommands.TopupCanister) : async Result.Result<(), Enums.Error> {
+        assert Principal.toText(caller) == CanisterIds.WATERWAY_LABS_BACKEND_CANISTER_ID;
+        let result = await canisterManager.topupCanister(dto);
+        switch (result) {
+            case (#ok()) {
+                return #ok(());
+            };
+            case (#err(err)) {
+                return #err(err);
+            };
+        };
+
     };
 
 };

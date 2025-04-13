@@ -2,9 +2,6 @@ import Result "mo:base/Result";
 import Principal "mo:base/Principal";
 import Timer "mo:base/Timer";
 import Debug "mo:base/Debug";
-import Blob "mo:base/Blob";
-import Iter "mo:base/Iter";
-import Text "mo:base/Text";
 import Nat "mo:base/Nat";
 import Nat8 "mo:base/Nat8";
 import T "./sale_types";
@@ -16,10 +13,16 @@ import Account "mo:waterway-mops/Account";
 import SaleManager "manager/sale_manager";
 import SaleCommands "commands/sale_commands";
 import SaleQueries "queries/sale_queries";
+import CanisterManager "mo:waterway-mops/canister-management/CanisterManager";
+import CanisterQueries "mo:waterway-mops/canister-management/CanisterQueries";
+import CanisterCommands "mo:waterway-mops/canister-management/CanisterCommands";
+import CanisterIds "mo:waterway-mops/CanisterIds";
+import Environment "../backend/environment";
 
 actor class Self() = this {
 
     private let saleManager = SaleManager.SaleManager();
+    private let canisterManager = CanisterManager.CanisterManager();
 
     private var appStatus : Base.AppStatus = {
         onHold = false;
@@ -92,6 +95,31 @@ actor class Self() = this {
         saleManager.setStableICFCPacksRemaining(stable_icfcPacksRemaining);
         saleManager.setStableSaleParticipants(stable_saleParticipants);
         saleManager.setStableICFCDistributions(stable_icfcDistributions);
+    };
+
+    // canister management
+    public shared ({ caller }) func getCanisterInfo() : async Result.Result<CanisterQueries.CanisterInfo, Enums.Error> {
+        assert not Principal.isAnonymous(caller);
+        let dto : CanisterQueries.GetCanisterInfo = {
+            canisterId = Environment.ICFC_SALE_2_CANISTER_ID;
+            canisterName = "ICFC Sale 2";
+            canisterType = #Static;
+        };
+        return await canisterManager.getCanisterInfo(dto, #ICFC);
+    };
+
+    public shared ({ caller }) func transferCycles(dto : CanisterCommands.TopupCanister) : async Result.Result<(), Enums.Error> {
+        assert Principal.toText(caller) == CanisterIds.WATERWAY_LABS_BACKEND_CANISTER_ID;
+        let result = await canisterManager.topupCanister(dto);
+        switch (result) {
+            case (#ok()) {
+                return #ok(());
+            };
+            case (#err(err)) {
+                return #err(err);
+            };
+        };
+
     };
 
 };
