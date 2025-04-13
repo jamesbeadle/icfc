@@ -813,8 +813,7 @@ module {
             };
 
             let IC : Management.Management = actor (CanisterIds.Default);
-            // let principal = ?Principal.fromText(CanisterIds.ICFC_BACKEND_CANISTER_ID);
-            let principal = ?Principal.fromText("bkyz2-fmaaa-aaaaa-qaaaq-cai");
+            let principal = ?Principal.fromText(CanisterIds.ICFC_BACKEND_CANISTER_ID);
             let _ = await CanisterUtilities.updateCanister_(canister, principal, IC);
         };
 

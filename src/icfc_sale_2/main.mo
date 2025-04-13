@@ -15,6 +15,9 @@ import SaleCommands "commands/sale_commands";
 import SaleQueries "queries/sale_queries";
 import CanisterManager "mo:waterway-mops/canister-management/CanisterManager";
 import CanisterQueries "mo:waterway-mops/canister-management/CanisterQueries";
+import CanisterCommands "mo:waterway-mops/canister-management/CanisterCommands";
+import CanisterIds "mo:waterway-mops/CanisterIds";
+import Environment "../backend/environment";
 
 actor class Self() = this {
 
@@ -98,11 +101,25 @@ actor class Self() = this {
     public shared ({ caller }) func getCanisterInfo() : async Result.Result<CanisterQueries.CanisterInfo, Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let dto : CanisterQueries.GetCanisterInfo = {
-            canisterId = "bd3sg-teaaa-aaaaa-qaaba-cai";
+            canisterId = Environment.ICFC_SALE_2_CANISTER_ID;
             canisterName = "ICFC Sale 2";
             canisterType = #Static;
         };
         return await canisterManager.getCanisterInfo(dto, #ICFC);
+    };
+
+    public shared ({ caller }) func transferCycles(dto : CanisterCommands.TopupCanister) : async Result.Result<(), Enums.Error> {
+        assert Principal.toText(caller) == CanisterIds.WATERWAY_LABS_BACKEND_CANISTER_ID;
+        let result = await canisterManager.topupCanister(dto);
+        switch (result) {
+            case (#ok()) {
+                return #ok(());
+            };
+            case (#err(err)) {
+                return #err(err);
+            };
+        };
+
     };
 
 };

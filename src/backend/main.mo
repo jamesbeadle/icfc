@@ -475,7 +475,7 @@ actor class Self() = this {
   //functions for WWL backend to communicate
   public shared ({ caller }) func getProjectCanisters() : async Result.Result<CanisterQueries.ProjectCanisters, Enums.Error> {
     assert not Principal.isAnonymous(caller);
-    // assert Principal.toText(caller) == CanisterIds.WATERWAY_LABS_BACKEND_CANISTER_ID;
+    assert Principal.toText(caller) == CanisterIds.WATERWAY_LABS_BACKEND_CANISTER_ID;
 
     var projectCanisters : [CanisterQueries.CanisterInfo] = [];
 
@@ -498,8 +498,7 @@ actor class Self() = this {
 
     // backend canister
     var backend_dto : CanisterQueries.GetCanisterInfo = {
-      // canisterId = CanisterIds.ICFC_BACKEND_CANISTER_ID;
-      canisterId = "bkyz2-fmaaa-aaaaa-qaaaq-cai";
+      canisterId = CanisterIds.ICFC_BACKEND_CANISTER_ID;
       canisterType = #Static;
       canisterName = "ICFC Backend Canister";
     };
@@ -512,21 +511,21 @@ actor class Self() = this {
     };
 
     // frontend canister
-    // let frontend_dto : WWLCanisterQueries.GetCanisterInfo = {
-    //   canisterId = CanisterIds.ICFC_FRONTEND_CANISTER_ID;
-    //   canisterType = #Static;
-    //   canisterName = "ICFC Frontend Canister";
-    // };
-    // let result2 = await wwlCanisterManager.getCanisterInfo(frontend_dto);
-    // switch (result2) {
-    //   case (#ok(canisterInfo)) {
-    //     projectCanisters := Array.append<WWLCanisterQueries.CanisterInfo>(projectCanisters, [canisterInfo]);
-    //   };
-    //   case (#err(_)) {};
-    // };
+    let frontend_dto : CanisterQueries.GetCanisterInfo = {
+      canisterId = Environment.ICFC_FRONTEND_CANISTER_ID;
+      canisterType = #Static;
+      canisterName = "ICFC Frontend Canister";
+    };
+    let result2 = await canisterManager.getCanisterInfo(frontend_dto, #ICFC);
+    switch (result2) {
+      case (#ok(canisterInfo)) {
+        projectCanisters := Array.append<CanisterQueries.CanisterInfo>(projectCanisters, [canisterInfo]);
+      };
+      case (#err(_)) {};
+    };
 
     // sale canister
-    let saleCanister = actor ("bd3sg-teaaa-aaaaa-qaaba-cai") : actor {
+    let saleCanister = actor (Environment.ICFC_SALE_2_CANISTER_ID) : actor {
       getCanisterInfo : () -> async Result.Result<CanisterQueries.CanisterInfo, Enums.Error>;
     };
     let result3 = await saleCanister.getCanisterInfo();
@@ -545,15 +544,29 @@ actor class Self() = this {
 
   public shared ({ caller }) func addController(dto : CanisterCommands.AddController) : async Result.Result<(), Enums.Error> {
     assert not Principal.isAnonymous(caller);
-    // assert Principal.toText(caller) == CanisterIds.WATERWAY_LABS_BACKEND_CANISTER_ID;
+    assert Principal.toText(caller) == CanisterIds.WATERWAY_LABS_BACKEND_CANISTER_ID;
     let result = await canisterManager.addController(dto);
     return result;
   };
   public shared ({ caller }) func removeController(dto : CanisterCommands.RemoveController) : async Result.Result<(), Enums.Error> {
     assert not Principal.isAnonymous(caller);
-    // assert Principal.toText(caller) == CanisterIds.WATERWAY_LABS_BACKEND_CANISTER_ID;
+    assert Principal.toText(caller) == CanisterIds.WATERWAY_LABS_BACKEND_CANISTER_ID;
     let result = await canisterManager.removeController(dto);
     return result;
+  };
+
+  public shared ({ caller }) func transferCycles(dto : CanisterCommands.TopupCanister) : async Result.Result<(), Enums.Error> {
+    assert Principal.toText(caller) == CanisterIds.WATERWAY_LABS_BACKEND_CANISTER_ID;
+    let result = await canisterManager.topupCanister(dto);
+    switch (result) {
+      case (#ok()) {
+        return #ok(());
+      };
+      case (#err(err)) {
+        return #err(err);
+      };
+    };
+
   };
 
 };
