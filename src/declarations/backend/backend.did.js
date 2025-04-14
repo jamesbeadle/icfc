@@ -178,30 +178,18 @@ export const idlFactory = ({ IDL }) => {
   });
   const Leagues = IDL.Record({ leagues: IDL.Vec(League) });
   const Result_5 = IDL.Variant({ ok: Leagues, err: Error });
-  const CanisterStatus = IDL.Variant({
-    stopped: IDL.Null,
-    stopping: IDL.Null,
-    running: IDL.Null,
-  });
   const CanisterType = IDL.Variant({
     SNS: IDL.Null,
     Dynamic: IDL.Null,
     Static: IDL.Null,
   });
-  const CanisterInfo = IDL.Record({
+  const Canister = IDL.Record({
     app: WaterwayLabsApp,
-    canisterStatus: CanisterStatus,
-    controllers: IDL.Vec(PrincipalId),
     canisterName: IDL.Text,
     canisterType: CanisterType,
-    memoryUsage: IDL.Nat,
-    cycles: IDL.Nat,
-    memoryAllocation: IDL.Nat,
-    freezeThreshold: IDL.Nat,
-    computeAllocation: IDL.Nat,
     canisterId: CanisterId,
   });
-  const ProjectCanisters = IDL.Record({ entries: IDL.Vec(CanisterInfo) });
+  const ProjectCanisters = IDL.Record({ entries: IDL.Vec(Canister) });
   const Result_3 = IDL.Variant({ ok: ProjectCanisters, err: Error });
   const TokenBalances = IDL.Record({
     icgcBalance: IDL.Nat,

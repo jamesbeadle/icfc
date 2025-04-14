@@ -19,24 +19,13 @@ export interface AppStatus {
   version: string;
   onHold: boolean;
 }
-export type CanisterId = string;
-export interface CanisterInfo {
+export interface Canister {
   app: WaterwayLabsApp;
-  canisterStatus: CanisterStatus;
-  controllers: Array<PrincipalId>;
   canisterName: string;
   canisterType: CanisterType;
-  memoryUsage: bigint;
-  cycles: bigint;
-  memoryAllocation: bigint;
-  freezeThreshold: bigint;
-  computeAllocation: bigint;
   canisterId: CanisterId;
 }
-export type CanisterStatus =
-  | { stopped: null }
-  | { stopping: null }
-  | { running: null };
+export type CanisterId = string;
 export type CanisterType = { SNS: null } | { Dynamic: null } | { Static: null };
 export interface Club {
   id: ClubId;
@@ -218,7 +207,7 @@ export interface ProfileDTO {
   principalId: PrincipalId;
 }
 export interface ProjectCanisters {
-  entries: Array<CanisterInfo>;
+  entries: Array<Canister>;
 }
 export interface RemoveController {
   app: WaterwayLabsApp;

@@ -47,7 +47,7 @@ type Result_5 =
 type Result_4 = 
  variant {
    err: Error;
-   ok: CanisterInfo;
+   ok: Canister;
  };
 type Result_3 = 
  variant {
@@ -121,27 +121,14 @@ type CanisterType =
    SNS;
    Static;
  };
-type CanisterStatus = 
- variant {
-   running;
-   stopped;
-   stopping;
- };
-type CanisterInfo = 
+type CanisterId = text;
+type Canister = 
  record {
    app: WaterwayLabsApp;
    canisterId: CanisterId;
    canisterName: text;
-   canisterStatus: CanisterStatus;
    canisterType: CanisterType;
-   computeAllocation: nat;
-   controllers: vec PrincipalId;
-   cycles: nat;
-   freezeThreshold: nat;
-   memoryAllocation: nat;
-   memoryUsage: nat;
  };
-type CanisterId = text;
 type AppStatus = 
  record {
    onHold: bool;

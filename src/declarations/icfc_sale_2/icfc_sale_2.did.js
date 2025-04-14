@@ -42,32 +42,19 @@ export const idlFactory = ({ IDL }) => {
     OpenChef: IDL.Null,
     WaterwayLabs: IDL.Null,
   });
-  const CanisterStatus = IDL.Variant({
-    stopped: IDL.Null,
-    stopping: IDL.Null,
-    running: IDL.Null,
-  });
-  const PrincipalId = IDL.Text;
   const CanisterType = IDL.Variant({
     SNS: IDL.Null,
     Dynamic: IDL.Null,
     Static: IDL.Null,
   });
   const CanisterId = IDL.Text;
-  const CanisterInfo = IDL.Record({
+  const Canister = IDL.Record({
     app: WaterwayLabsApp,
-    canisterStatus: CanisterStatus,
-    controllers: IDL.Vec(PrincipalId),
     canisterName: IDL.Text,
     canisterType: CanisterType,
-    memoryUsage: IDL.Nat,
-    cycles: IDL.Nat,
-    memoryAllocation: IDL.Nat,
-    freezeThreshold: IDL.Nat,
-    computeAllocation: IDL.Nat,
     canisterId: CanisterId,
   });
-  const Result_4 = IDL.Variant({ ok: CanisterInfo, err: Error });
+  const Result_4 = IDL.Variant({ ok: Canister, err: Error });
   const SaleProgress = IDL.Record({
     remainingPacks: IDL.Nat,
     packCostinICP: IDL.Nat,
@@ -88,6 +75,7 @@ export const idlFactory = ({ IDL }) => {
     Completed: IDL.Null,
     Pending: IDL.Null,
   });
+  const PrincipalId = IDL.Text;
   const ICFCDistribution = IDL.Record({
     time: Time,
     installment: IDL.Nat,

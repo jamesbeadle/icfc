@@ -6,24 +6,13 @@ export interface AppStatus {
   version: string;
   onHold: boolean;
 }
-export type CanisterId = string;
-export interface CanisterInfo {
+export interface Canister {
   app: WaterwayLabsApp;
-  canisterStatus: CanisterStatus;
-  controllers: Array<PrincipalId>;
   canisterName: string;
   canisterType: CanisterType;
-  memoryUsage: bigint;
-  cycles: bigint;
-  memoryAllocation: bigint;
-  freezeThreshold: bigint;
-  computeAllocation: bigint;
   canisterId: CanisterId;
 }
-export type CanisterStatus =
-  | { stopped: null }
-  | { stopping: null }
-  | { running: null };
+export type CanisterId = string;
 export type CanisterType = { SNS: null } | { Dynamic: null } | { Static: null };
 export type DistributionStatus = { Completed: null } | { Pending: null };
 export type Error =
@@ -67,7 +56,7 @@ export type Result = { ok: null } | { err: Error };
 export type Result_1 = { ok: Array<ICFCDistribution> } | { err: Error };
 export type Result_2 = { ok: UserParticipation } | { err: Error };
 export type Result_3 = { ok: SaleProgress } | { err: Error };
-export type Result_4 = { ok: CanisterInfo } | { err: Error };
+export type Result_4 = { ok: Canister } | { err: Error };
 export type Result_5 = { ok: AppStatus } | { err: Error };
 export interface SaleProgress {
   remainingPacks: bigint;
