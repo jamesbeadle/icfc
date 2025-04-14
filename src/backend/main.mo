@@ -437,61 +437,48 @@ actor class Self() = this {
     assert not Principal.isAnonymous(caller);
     assert Principal.toText(caller) == CanisterIds.WATERWAY_LABS_BACKEND_CANISTER_ID;
 
-    var projectCanisters : [CanisterQueries.CanisterInfo] = [];
+    var projectCanisters : [CanisterQueries.Canister] = [];
 
     // profile canisters
     let profileCanisterIds = profileManager.getStableUniqueCanisterIds();
     for (canisterId in Iter.fromArray(profileCanisterIds)) {
-      let dto : CanisterQueries.GetCanisterInfo = {
+      let dto : CanisterQueries.Canister = {
+        app = #ICFC;
         canisterId = canisterId;
         canisterType = #Dynamic;
         canisterName = "Profile Canister";
       };
-      let result = await canisterManager.getCanisterInfo(dto, #ICFC);
-      switch (result) {
-        case (#ok(canisterInfo)) {
-          projectCanisters := Array.append<CanisterQueries.CanisterInfo>(projectCanisters, [canisterInfo]);
-        };
-        case (#err(_)) {};
-      };
+      projectCanisters := Array.append<CanisterQueries.Canister>(projectCanisters, [dto]);
+
     };
 
     // backend canister
-    var backend_dto : CanisterQueries.GetCanisterInfo = {
+    var backend_dto : CanisterQueries.Canister = {
       canisterId = CanisterIds.ICFC_BACKEND_CANISTER_ID;
       canisterType = #Static;
       canisterName = "ICFC Backend Canister";
+      app = #ICFC;
     };
-    let result = await canisterManager.getCanisterInfo(backend_dto, #ICFC);
-    switch (result) {
-      case (#ok(canisterInfo)) {
-        projectCanisters := Array.append<CanisterQueries.CanisterInfo>(projectCanisters, [canisterInfo]);
-      };
-      case (#err(_)) {};
-    };
+    projectCanisters := Array.append<CanisterQueries.Canister>(projectCanisters, [backend_dto]);
 
     // frontend canister
-    let frontend_dto : CanisterQueries.GetCanisterInfo = {
+    let frontend_dto : CanisterQueries.Canister = {
       canisterId = Environment.ICFC_FRONTEND_CANISTER_ID;
       canisterType = #Static;
       canisterName = "ICFC Frontend Canister";
+      app = #ICFC;
     };
-    let result2 = await canisterManager.getCanisterInfo(frontend_dto, #ICFC);
-    switch (result2) {
-      case (#ok(canisterInfo)) {
-        projectCanisters := Array.append<CanisterQueries.CanisterInfo>(projectCanisters, [canisterInfo]);
-      };
-      case (#err(_)) {};
-    };
+
+    projectCanisters := Array.append<CanisterQueries.Canister>(projectCanisters, [frontend_dto]);
 
     // sale canister
     let saleCanister = actor (Environment.ICFC_SALE_2_CANISTER_ID) : actor {
-      getCanisterInfo : () -> async Result.Result<CanisterQueries.CanisterInfo, Enums.Error>;
+      getCanisterInfo : () -> async Result.Result<CanisterQueries.Canister, Enums.Error>;
     };
     let result3 = await saleCanister.getCanisterInfo();
     switch (result3) {
       case (#ok(canisterInfo)) {
-        projectCanisters := Array.append<CanisterQueries.CanisterInfo>(projectCanisters, [canisterInfo]);
+        projectCanisters := Array.append<CanisterQueries.Canister>(projectCanisters, [canisterInfo]);
       };
       case (#err(_)) {};
     };
