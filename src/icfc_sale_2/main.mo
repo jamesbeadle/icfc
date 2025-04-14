@@ -98,14 +98,15 @@ actor class Self() = this {
     };
 
     // canister management
-    public shared ({ caller }) func getCanisterInfo() : async Result.Result<CanisterQueries.CanisterInfo, Enums.Error> {
+    public shared ({ caller }) func getCanisterInfo() : async Result.Result<CanisterQueries.Canister, Enums.Error> {
         assert not Principal.isAnonymous(caller);
-        let dto : CanisterQueries.GetCanisterInfo = {
+        let dto : CanisterQueries.Canister = {
             canisterId = Environment.ICFC_SALE_2_CANISTER_ID;
             canisterName = "ICFC Sale 2";
             canisterType = #Static;
+            app = #ICFC;
         };
-        return await canisterManager.getCanisterInfo(dto, #ICFC);
+        return #ok(dto);
     };
 
     public shared ({ caller }) func transferCycles(dto : CanisterCommands.TopupCanister) : async Result.Result<(), Enums.Error> {
