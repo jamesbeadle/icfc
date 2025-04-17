@@ -348,16 +348,6 @@ actor class Self() = this {
   private func postUpgradeCallback() : async () {
     // await updateProfileCanisterWasms();
 
-    // stable_unique_profile_canister_ids := Buffer.toArray(unique_Canister_ids);
-
-    // let manualProfileCanisterIds : [Ids.CanisterId] = [
-    //   "gnqmr-lqaaa-aaaal-qslha-cai",
-    //   "dyi5i-wqaaa-aaaal-qslza-cai",
-    //   "ai3xo-kqaaa-aaaal-qslra-cai",
-    //   "bfvta-fyaaa-aaaal-qslwq-cai",
-    //
-    // ];
-
     // let currentProfileCanisterIds = ["cjcdx-oyaaa-aaaal-qsl4q-cai"];
     // stable_unique_profile_canister_ids := currentProfileCanisterIds;
     // profileManager.setStableUniqueCanisterIds(stable_unique_profile_canister_ids);
