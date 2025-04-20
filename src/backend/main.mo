@@ -46,6 +46,8 @@ import SNSManager "managers/sns_manager";
 /* ----- Environment ----- */
 import Environment "environment";
 import Utilities "utilities/utilities";
+import PayoutCommands "commands/payout_commands";
+import MopsPayoutCommands "mops_payout_commands";
 
 actor class Self() = this {
 
@@ -273,6 +275,31 @@ actor class Self() = this {
     };
     let result = await data_canister.getLeagues(dto);
     return result;
+  };
+
+  /* ----- Calls from Applications requesting leaderboard payout ----- */
+
+  public shared ({ caller }) func requestLeaderboardPayout(dto: MopsPayoutCommands.LeaderboardPayoutRequest) : async Result.Result<(), Enums.Error> {
+    
+    //store the leaderboard payout request
+    
+    
+    return #ok();
+  };
+
+  public shared ({ caller }) func getLeaderboardRequests(dto: PayoutQueries.GetLeaderboardRequests) : async Result.Result<PayoutCommands.LeaderboardRequests>{
+
+  };
+
+  public shared ({ caller }) func payoutLeaderboard(dto: PayoutCommands.PayoutLeaderboard) : async () {
+    assert not Principal.isAnonymous(caller);
+    let principalId = Principal.toText(caller);
+    assert isDeveloperNeuron(principalId);
+    leaderboardManager.payoutLeaderboard();
+    var callbackCanister = actor (dto.callbackCanisterId) : actor {
+        leaderboardPaid : shared PayoutCommands.LeaderboardPaid -> async ();
+    };
+    callbackCanister.leaderboardPaid();
   };
 
   /* ----- Calls for Debug ----- */
