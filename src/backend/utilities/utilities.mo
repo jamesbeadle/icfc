@@ -9,6 +9,8 @@ import Ids "mo:waterway-mops/Ids";
 import CanisterIds "mo:waterway-mops/CanisterIds";
 import T "../icfc_types";
 import SNSGovernance "mo:waterway-mops/sns-wrappers/governance";
+import Enums "mo:waterway-mops/Enums";
+import Environment "../environment";
 
 module Utilities {
 
@@ -191,6 +193,48 @@ module Utilities {
             };
         };
         return false;
+    };
+
+    public func isDeveloperNeuron(caller : Ids.PrincipalId) : Bool {
+        let allowed = Environment.DEVELOPER_NEURONS;
+        for (principal in allowed.vals()) {
+            if (principal == caller) {
+                return true;
+            };
+        };
+        return false;
+    };
+
+    public func getAppCanisterId(app : Enums.WaterwayLabsApp) : ?Ids.PrincipalId {
+        switch (app) {
+            case (#OpenFPL) {
+                ?CanisterIds.OPENFPL_BACKEND_CANISTER_ID;
+            };
+            case (#OpenWSL) {
+                ?CanisterIds.OPENWSL_BACKEND_CANISTER_ID;
+            };
+            case (#JeffBets) {
+                ?CanisterIds.JEFF_BETS_BACKEND_CANISTER_ID;
+            };
+            case (#TransferKings) {
+                ?CanisterIds.TRANSFER_KINGS_BACKEND_CANISTER_ID;
+            };
+            case (_) { null };
+        };
+    };
+
+    public func isValidCanisterId(caller : Ids.CanisterId) : Bool {
+        let validCanisters = [
+            CanisterIds.OPENFPL_BACKEND_CANISTER_ID,
+            CanisterIds.OPENWSL_BACKEND_CANISTER_ID,
+            CanisterIds.JEFF_BETS_BACKEND_CANISTER_ID,
+            CanisterIds.TRANSFER_KINGS_BACKEND_CANISTER_ID,
+            CanisterIds.FOOTBALL_GOD_BACKEND_CANISTER_ID,
+        ];
+
+        return Array.find(validCanisters, func(x : Ids.CanisterId) : Bool {
+            x == caller
+        }) != null;
     };
 
 };

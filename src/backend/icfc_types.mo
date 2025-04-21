@@ -6,6 +6,10 @@ import Blob "mo:base/Blob";
 module ICFCTypes {
 
   public type FootballChannelId = Nat;
+  type Subaccount = Blob;
+  type Tokens = Nat;
+  type Timestamp = Nat64;
+  type BlockIndex = Nat;
 
   public type Profile = {
     principalId : Ids.PrincipalId;
@@ -80,5 +84,35 @@ module ICFCTypes {
 
   public type Manager = {
 
+  };
+
+  public type TransferError = {
+    #BadFee : { expected_fee : Tokens };
+    #BadBurn : { min_burn_amount : Tokens };
+    #InsufficientFunds : { balance : Tokens };
+    #TooOld;
+    #CreatedInFuture : { ledger_time : Timestamp };
+    #TemporarilyUnavailable;
+    #Duplicate : { duplicate_of : BlockIndex };
+    #GenericError : { error_code : Nat; message : Text };
+  };
+
+  public type TransferResult = {
+    #Ok : BlockIndex;
+    #Err : TransferError;
+  };
+
+  public type TransferArg = {
+    from_subaccount : ?Subaccount;
+    to : Account;
+    amount : Tokens;
+    fee : ?Tokens;
+    memo : ?Blob;
+    created_at_time : ?Timestamp;
+  };
+
+  public type Account = {
+    owner : Principal;
+    subaccount : ?Subaccount;
   };
 };
