@@ -24,7 +24,9 @@ import Account "mo:waterway-mops/Account";
 import CanisterQueries "mo:waterway-mops/canister-management/CanisterQueries";
 import CanisterManager "mo:waterway-mops/canister-management/CanisterManager";
 import CanisterCommands "mo:waterway-mops/canister-management/CanisterCommands";
+import LeaderboardPayoutCommands "mo:waterway-mops/football/LeaderboardPayoutCommands";
 import Countries "mo:waterway-mops/def/Countries";
+import ICFCTypes "mo:waterway-mops/ICFCTypes";
 
 /* ----- Canister Definition Files ----- */
 
@@ -33,9 +35,11 @@ import ProfileCanister "canister_definitions/profile-canister";
 /* ----- Queries ----- */
 import AppQueries "queries/app_queries";
 import ProfileQueries "queries/profile_queries";
+import PayoutQueries "queries/payout_queries";
 
 /* ----- Commands ----- */
 import ProfileCommands "commands/profile_commands";
+import PayoutCommands "commands/payout_commands";
 
 /* ----- Managers ----- */
 
@@ -46,13 +50,35 @@ import SNSManager "managers/sns_manager";
 /* ----- Environment ----- */
 import Environment "environment";
 import Utilities "utilities/utilities";
+import LeaderboardPayoutManager "managers/leaderboard_payout_manager";
 
 actor class Self() = this {
 
+  /* ----- Stable Canister Variables ----- */
+  private stable var stable_profile_canister_index : [(Ids.PrincipalId, Ids.CanisterId)] = [];
+  private stable var stable_active_profile_canister_id : Ids.CanisterId = "";
+  private stable var stable_usernames : [(Ids.PrincipalId, Text)] = [];
+  private stable var stable_unique_profile_canister_ids : [Ids.CanisterId] = [];
+  private stable var stable_total_profile : Nat = 0;
+  private stable var stable_neurons_used_for_membership : [(Blob, Ids.PrincipalId)] = [];
+
+  private stable var stable_podcast_channel_canister_index : [(Ids.FootballChannelId, Ids.CanisterId)] = [];
+  private stable var stable_active_podcast_channel_canister_id : Ids.CanisterId = "";
+  private stable var stable_podcast_channel_names : [(Ids.FootballChannelId, Text)] = [];
+  private stable var stable_unique_podcast_channel_canister_ids : [Ids.CanisterId] = [];
+  private stable var stable_total_podcast_channels : Nat = 0;
+  private stable var stable_next_podcast_channel_id : Nat = 0;
+
+  private stable var stable_leaderboard_payout_requests : [ICFCTypes.PayoutRequest] = [];
+
+  private stable var stable_membership_timer_id : Nat = 0;
+
+  /* ----- Domain Object Managers ----- */
   private let profileManager = ProfileManager.ProfileManager();
   private let footballChannelManager = FootballChannelManager.FootballChannelManager();
   private let snsManager = SNSManager.SNSManager();
   private let canisterManager = CanisterManager.CanisterManager();
+  private let leaderboardPayoutManager = LeaderboardPayoutManager.LeaderboardPayoutManager();
 
   private var appStatus : BaseTypes.AppStatus = {
     onHold = false;
@@ -275,6 +301,65 @@ actor class Self() = this {
     return result;
   };
 
+  /* ----- Calls from Applications requesting leaderboard payout ----- */
+
+  public shared ({ caller }) func requestLeaderboardPayout(dto : LeaderboardPayoutCommands.LeaderboardPayoutRequest) : async Result.Result<(), Enums.Error> {
+
+    assert not Principal.isAnonymous(caller);
+    let principalId = Principal.toText(caller);
+    assert Utilities.isValidCanisterId(principalId);
+
+    let res = await leaderboardPayoutManager.addLeaderboardPayoutRequest(dto);
+    return res;
+
+  };
+
+  public shared ({ caller }) func getLeaderboardRequests(_ : PayoutQueries.GetLeaderboardRequests) : async Result.Result<PayoutQueries.LeaderboardRequests, Enums.Error> {
+    assert not Principal.isAnonymous(caller);
+    let principalId = Principal.toText(caller);
+    assert Utilities.isDeveloperNeuron(principalId);
+    let result = leaderboardPayoutManager.getLeaderboardPayoutRequests();
+    return #ok({
+      requests = result;
+      totalEntries = Array.size(result);
+    });
+
+  };
+
+  public shared ({ caller }) func payoutLeaderboard(dto : PayoutCommands.PayoutLeaderboard) : async Result.Result<(), Enums.Error> {
+    assert not Principal.isAnonymous(caller);
+    let principalId = Principal.toText(caller);
+    assert Utilities.isDeveloperNeuron(principalId);
+
+    let appCanisterId = Utilities.getAppCanisterId(dto.app);
+    switch (appCanisterId) {
+      case (?canisterId) {
+        let res = await leaderboardPayoutManager.payoutLeaderboard(dto);
+        switch (res) {
+
+          case (#ok(_)) {
+            var callbackCanister = actor (canisterId) : actor {
+              leaderboardPaid : shared LeaderboardPayoutCommands.CompleteLeaderboardPayout -> async Result.Result<(), Enums.Error>;
+            };
+            await callbackCanister.leaderboardPaid({
+              seasonId = dto.seasonId;
+              gameweek = dto.gameweek;
+            });
+          };
+          case (#err(err)) {
+            return #err(err);
+          };
+
+        };
+
+      };
+      case (_) {
+        return #err(#NotAllowed);
+      };
+    };
+
+  };
+
   /* ----- Calls for Debug ----- */
   public shared ({ caller }) func getProfileCanisterIds() : async [Ids.CanisterId] {
     assert not Principal.isAnonymous(caller);
@@ -305,28 +390,12 @@ actor class Self() = this {
   //   return await data_canister.getCountries(dto);
   // };
 
-  // Stable Storage & System Functions:
-  private stable var stable_profile_canister_index : [(Ids.PrincipalId, Ids.CanisterId)] = [];
-  private stable var stable_active_profile_canister_id : Ids.CanisterId = "";
-  private stable var stable_usernames : [(Ids.PrincipalId, Text)] = [];
-  private stable var stable_unique_profile_canister_ids : [Ids.CanisterId] = [];
-  private stable var stable_total_profile : Nat = 0;
-  private stable var stable_neurons_used_for_membership : [(Blob, Ids.PrincipalId)] = [];
-
-  private stable var stable_podcast_channel_canister_index : [(Ids.FootballChannelId, Ids.CanisterId)] = [];
-  private stable var stable_active_podcast_channel_canister_id : Ids.CanisterId = "";
-  private stable var stable_podcast_channel_names : [(Ids.FootballChannelId, Text)] = [];
-  private stable var stable_unique_podcast_channel_canister_ids : [Ids.CanisterId] = [];
-  private stable var stable_total_podcast_channels : Nat = 0;
-  private stable var stable_next_podcast_channel_id : Nat = 0;
-
-  private stable var stable_membership_timer_id : Nat = 0;
-
   //System Backup and Upgrade Functions:
 
   system func preupgrade() {
     backupProfileData();
     backupFootballChannelData();
+    backupLeaderboardPayoutRequests();
 
     // stop membership timer
     if (stable_membership_timer_id != 0) {
@@ -337,6 +406,7 @@ actor class Self() = this {
   system func postupgrade() {
     setProfileData();
     setFootballChannelData();
+    setLeaderboardPayoutRequests();
     stable_membership_timer_id := Timer.recurringTimer<system>(#seconds(86_400), checkMembership);
     ignore Timer.setTimer<system>(#nanoseconds(Int.abs(1)), postUpgradeCallback);
   };
@@ -354,6 +424,13 @@ actor class Self() = this {
 
   };
 
+  private func backupLeaderboardPayoutRequests() {
+    stable_leaderboard_payout_requests := leaderboardPayoutManager.getStableLeaderboardPayoutRequests();
+  };
+  private func setLeaderboardPayoutRequests() {
+    leaderboardPayoutManager.setStableLeaderboardPayoutRequests(stable_leaderboard_payout_requests);
+  };
+
   private func backupProfileData() {
     stable_profile_canister_index := profileManager.getStableCanisterIndex();
     stable_active_profile_canister_id := profileManager.getStableActiveCanisterId();
@@ -361,7 +438,6 @@ actor class Self() = this {
     stable_unique_profile_canister_ids := profileManager.getStableUniqueCanisterIds();
     stable_total_profile := profileManager.getStableTotalProfiles();
     stable_neurons_used_for_membership := profileManager.getStableNeuronsUsedforMembership();
-
   };
 
   private func backupFootballChannelData() {
@@ -414,7 +490,7 @@ actor class Self() = this {
     };
   };
 
-  // call_backs for profile_canister
+  // callbacks for profile_canister
   public shared ({ caller }) func removeNeuronsforExpiredMembership(pofile_principal : Ids.PrincipalId) : async () {
     assert profileManager.isProfileCanister(Principal.toText(caller));
     await profileManager.removeNeuronsforExpiredMembership(pofile_principal);
