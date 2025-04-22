@@ -317,7 +317,7 @@ actor class Self() = this {
   public shared ({ caller }) func getLeaderboardRequests(_ : PayoutQueries.GetLeaderboardRequests) : async Result.Result<PayoutQueries.LeaderboardRequests, Enums.Error> {
     assert not Principal.isAnonymous(caller);
     let principalId = Principal.toText(caller);
-    assert Utilities.isDeveloperNeuron(principalId);
+    assert await Utilities.isDeveloperNeuron(principalId);
     let result = leaderboardPayoutManager.getLeaderboardPayoutRequests();
     return #ok({
       requests = result;
@@ -329,7 +329,7 @@ actor class Self() = this {
   public shared ({ caller }) func payoutLeaderboard(dto : PayoutCommands.PayoutLeaderboard) : async Result.Result<(), Enums.Error> {
     assert not Principal.isAnonymous(caller);
     let principalId = Principal.toText(caller);
-    assert Utilities.isDeveloperNeuron(principalId);
+    assert await Utilities.isDeveloperNeuron(principalId);
 
     let appCanisterId = Utilities.getAppCanisterId(dto.app);
     switch (appCanisterId) {

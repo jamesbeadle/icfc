@@ -6,5 +6,5 @@ module Environment {
   public let ICFC_SALE_2_CANISTER_ID = "fiex2-wyaaa-aaaal-qslmq-cai";
   public let ICFC_FRONTEND_CANISTER_ID = "cqh2i-5qaaa-aaaal-qshsa-cai";
 
-  public let DEVELOPER_NEURONS = [];
+  public let DEVELOPER_NEURON_ID = "d2ccf59abe1741c21c35da7e3863d5d14c97d9b82b36045f4a8d4c336864f6dc";
 };

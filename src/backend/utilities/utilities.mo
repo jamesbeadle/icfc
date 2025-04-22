@@ -5,12 +5,16 @@ import Float "mo:base/Float";
 import Time "mo:base/Time";
 import Int "mo:base/Int";
 import Array "mo:base/Array";
+import Principal "mo:base/Principal";
+import Blob "mo:base/Blob";
 import Ids "mo:waterway-mops/Ids";
 import CanisterIds "mo:waterway-mops/CanisterIds";
 import T "../icfc_types";
 import SNSGovernance "mo:waterway-mops/sns-wrappers/governance";
 import Enums "mo:waterway-mops/Enums";
 import Environment "../environment";
+import SNSManager "../managers/sns_manager";
+import SHA224 "mo:waterway-mops/SHA224";
 
 module Utilities {
 
@@ -195,14 +199,23 @@ module Utilities {
         return false;
     };
 
-    public func isDeveloperNeuron(caller : Ids.PrincipalId) : Bool {
-        let allowed = Environment.DEVELOPER_NEURONS;
-        for (principal in allowed.vals()) {
-            if (principal == caller) {
-                return true;
+    public func isDeveloperNeuron(caller : Ids.PrincipalId) : async Bool {
+        let snsManager = SNSManager.SNSManager();
+        let neurons = await snsManager.getUsersNeurons(Principal.fromText(caller));
+
+        for (neuron in neurons.vals()) {
+            switch (neuron.id) {
+                case (?neuronId) {
+                    let neuronIdHex = SHA224.byteArrayToHex(Blob.toArray(neuronId.id));
+                    if (neuronIdHex == Environment.DEVELOPER_NEURON_ID) {
+                        return true;
+                    };
+                };
+                case null {};
             };
         };
         return false;
+
     };
 
     public func getAppCanisterId(app : Enums.WaterwayLabsApp) : ?Ids.PrincipalId {
@@ -232,9 +245,12 @@ module Utilities {
             CanisterIds.FOOTBALL_GOD_BACKEND_CANISTER_ID,
         ];
 
-        return Array.find(validCanisters, func(x : Ids.CanisterId) : Bool {
-            x == caller
-        }) != null;
+        return Array.find(
+            validCanisters,
+            func(x : Ids.CanisterId) : Bool {
+                x == caller;
+            },
+        ) != null;
     };
 
 };
