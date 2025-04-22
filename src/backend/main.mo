@@ -10,6 +10,8 @@ import Timer "mo:base/Timer";
 import Debug "mo:base/Debug";
 import Buffer "mo:base/Buffer";
 import Array "mo:base/Array";
+import Nat64 "mo:base/Nat64";
+import Option "mo:base/Option";
 import Enums "mo:waterway-mops/Enums";
 import BaseTypes "mo:waterway-mops/BaseTypes";
 import LeagueQueries "mo:waterway-mops/queries/football-queries/LeagueQueries";
@@ -587,37 +589,45 @@ actor class Self() = this {
   public shared ({ caller }) func getAppicationLogs(dto : CanisterQueries.GetApplicationLogs) : async Result.Result<CanisterQueries.ApplicationLogs, Enums.Error> {
     assert Principal.toText(caller) == CanisterIds.WATERWAY_LABS_BACKEND_CANISTER_ID;
 
-    let logs : [CanisterQueries.SystemEvent] = [];
+    var logs : [CanisterQueries.SystemEvent] = [];
 
     let canisterLogsResult = await canisterManager.getCanisterLogs({
       app = dto.app;
       canisterId = CanisterIds.ICFC_BACKEND_CANISTER_ID;
     });
-    let #ok(canisterLogs) = canisterLogsResult else {
-      return canisterLogsResult;
-    };
 
-    let log_records = canisterLogs.canister_log_records;
-    for (log_record in Iter.fromArray(log_records)) {
-      var logText = Text.decodeUtf8(log_record.content);
-      if (logText == null) {
-        logText := "Unknown";
+    // let #ok(canisterLogs) = canisterLogsResult else {
+    //   return canisterLogsResult;
+    // };
+
+    switch (canisterLogsResult) {
+
+      case (#err(err)) {
+        return #err(err);
       };
+      case (#ok(canisterLogs)) {
+        let log_records = canisterLogs.canister_log_records;
+        for (log_record in Iter.fromArray(log_records)) {
+          var logText = Text.decodeUtf8(log_record.content);
 
-      let log : CanisterQueries.SystemEvent = {
-        eventId = log_record.idx;
-        eventTime = log_record.timestamp_nanos;
-        eventType = #Information;
-        eventTitle = "Canister Log";
-        eventDetail = logText;
+          let log : CanisterQueries.SystemEvent = {
+            eventId = Nat64.toNat(log_record.idx);
+            eventTime = Nat64.toNat(log_record.timestamp_nanos);
+            eventType = #Information;
+            eventTitle = "Canister Log";
+            eventDetail = Option.get(logText, "Unknown");
+          };
+          logs := Array.append<CanisterQueries.SystemEvent>(logs, [log]);
+        };
+
+        let result : CanisterQueries.ApplicationLogs = {
+          app = dto.app;
+          logs = logs;
+          totalEntries = Array.size(logs);
+        };
+        return #ok(result);
+
       };
-      logs := Array.append<CanisterQueries.SystemEvent>(logs, [log]);
-    };
-
-    let result : CanisterQueries.ApplicationLogs = {
-      app = dto.app;
-      logs = logs;
-      totalEntries = Array.size(logs);
     };
 
   };
