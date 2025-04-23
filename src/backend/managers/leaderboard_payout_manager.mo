@@ -14,6 +14,8 @@ import SNSLedger "mo:waterway-mops/def/Ledger";
 import LeaderboardPayoutCommands "mo:waterway-mops/football/LeaderboardPayoutCommands";
 import CanisterIds "mo:waterway-mops/CanisterIds";
 import Account "mo:waterway-mops/Account";
+import Utilities "../utilities/utilities";
+import PayoutQueries "../queries/payout_queries";
 
 module {
     public class LeaderboardPayoutManager() {
@@ -35,18 +37,9 @@ module {
 
             switch (request) {
                 case (null) {
-                    // add the request to the list
                     leaderboard_payout_requests := Array.append(
                         leaderboard_payout_requests,
-                        [{
-                            seasonId = dto.seasonId;
-                            gameweek = dto.gameweek;
-                            payoutStatus = #Pending;
-                            payoutDate = null;
-                            app = dto.app;
-                            entries = dto.entries;
-                            token = dto.token;
-                        }],
+                        [dto],
                     );
                     return #ok(());
                 };
@@ -56,7 +49,7 @@ module {
             };
         };
 
-        public func payoutLeaderboard(dto : PayoutCommands.PayoutLeaderboard) : async Result.Result<(), Enums.Error> {
+        public func payoutLeaderboard(dto : PayoutCommands.PayoutLeaderboard) : async Result.Result<ICFCTypes.PayoutRequest, Enums.Error> {
             // find the request in the list
             var request = Array.find(
                 leaderboard_payout_requests,
@@ -70,29 +63,89 @@ module {
                     return #err(#NotFound);
                 };
                 case (?request) {
-                    if (request.payoutStatus == #Paid) {
+                    if (request.totalEntries == request.totalPaid) {
                         return #err(#NotAllowed);
                     } else {
-                        // pay out the users
-                        for (entry : LeaderboardPayoutCommands.LeaderboardEntry in Iter.fromArray(request.entries)) {
-                            let principal = entry.principalId;
-                            let amount = entry.rewardAmount;
-                            switch (amount) {
-                                case (null) {
+                        let token = request.token;
+                        let ?ledgerCanisterID = Utilities.getTokenLedgerId(token) else {
+                            return #err(#InvalidData);
+                        };
 
+                        // get the ICFC links
+                        let appCanisterId = Utilities.getAppCanisterId(dto.app);
+                        var icfcLinks : [PayoutQueries.ICFCLinks] = [];
+                        switch (appCanisterId) {
+                            case (null) {
+                                return #err(#InvalidData);
+                            };
+                            case (?canisterId) {
+                                var appCanister = actor (canisterId) : actor {
+                                    getICFCProfileLinks : (dto : PayoutQueries.GetICFCLinks) -> async Result.Result<[PayoutQueries.ICFCLinks], Enums.Error>;
                                 };
-                                case (?amount) {
-                                    let res = await payoutUser(principal, amount);
-                                    switch (res) {
-                                        case (#ok(_)) {
 
-                                        };
-                                        case (#err(_)) {
-                                            return #err(#InvalidData);
-                                        };
+                                let res = await appCanister.getICFCProfileLinks({});
+                                switch (res) {
+                                    case (#ok(links)) {
+                                        icfcLinks := links;
+                                    };
+                                    case (#err(err)) {
+                                        return #err(err);
                                     };
                                 };
+                            };
+                        };
 
+                        // pay out the users
+                        var leaderboardPayout = request.leaderboard;
+                        var totalPaid = request.totalPaid;
+                        for (entry : LeaderboardPayoutCommands.LeaderboardEntry in Iter.fromArray(leaderboardPayout)) {
+                            let icfcProfileLink = Array.find(
+                                icfcLinks,
+                                func(link : PayoutQueries.ICFCLinks) : Bool {
+                                    link.subAppUserPrincipalId == entry.appPrincipalId;
+                                },
+                            );
+                            if (entry.payoutStatus == #Pending and isValidICFCProfile(icfcProfileLink)) {
+                                let appPrincipal = entry.appPrincipalId;
+                                let amount = entry.rewardAmount;
+                                switch (amount) {
+                                    case (null) {};
+                                    case (?amount) {
+                                        // payout to ICFC account
+                                        let icfcPrincipal = switch (icfcProfileLink) {
+                                            case (?link) link.icfcPrincipalId;
+                                            case (null) return #err(#InvalidData);
+                                        };
+                                        let res = await payoutUser(icfcPrincipal, amount, ledgerCanisterID);
+
+                                        switch (res) {
+                                            case (#ok(_)) {
+                                                // update the leaderboard entry
+                                                leaderboardPayout := Array.map(
+                                                    leaderboardPayout,
+                                                    func(entry : LeaderboardPayoutCommands.LeaderboardEntry) : LeaderboardPayoutCommands.LeaderboardEntry {
+                                                        if (entry.appPrincipalId == appPrincipal) {
+                                                            return {
+                                                                appPrincipalId = entry.appPrincipalId;
+                                                                rewardAmount = entry.rewardAmount;
+                                                                payoutStatus = #Paid;
+                                                                payoutDate = ?Int.abs(Time.now());
+                                                            };
+                                                        } else {
+                                                            return entry;
+                                                        };
+                                                    },
+                                                );
+                                                totalPaid += 1;
+
+                                            };
+                                            case (#err(_)) {
+                                                return #err(#IncorrectSetup);
+                                            };
+                                        };
+                                    };
+
+                                };
                             };
                         };
 
@@ -104,18 +157,26 @@ module {
                                     return {
                                         seasonId = entry.seasonId;
                                         gameweek = entry.gameweek;
-                                        payoutStatus = #Paid;
-                                        payoutDate = ?Int.abs(Time.now());
                                         app = entry.app;
-                                        entries = entry.entries;
+                                        leaderboard = leaderboardPayout;
                                         token = entry.token;
+                                        totalEntries = entry.totalEntries;
+                                        totalPaid = totalPaid;
                                     };
                                 } else {
                                     return entry;
                                 };
                             },
                         );
-                        return #ok(());
+                        return #ok({
+                            seasonId = dto.seasonId;
+                            gameweek = dto.gameweek;
+                            app = dto.app;
+                            leaderboard = leaderboardPayout;
+                            token = request.token;
+                            totalEntries = request.totalEntries;
+                            totalPaid = totalPaid;
+                        });
                     };
                 };
             };
@@ -129,10 +190,9 @@ module {
             leaderboard_payout_requests := requests;
         };
 
-        private func payoutUser(principal : Ids.PrincipalId, amount : Nat64) : async Result.Result<(), T.TransferError> {
-
-            let icfc_ledger : SNSLedger.Interface = actor (CanisterIds.ICFC_SNS_LEDGER_CANISTER_ID);
-            let transfer_fee = await icfc_ledger.icrc1_fee();
+        private func payoutUser(principal : Ids.PrincipalId, amount : Nat64, tokenledgerId : Text) : async Result.Result<(), T.TransferError> {
+            let token_ledger : SNSLedger.Interface = actor (tokenledgerId);
+            let transfer_fee = await token_ledger.icrc1_fee();
 
             let e8s_amount = amount;
 
@@ -147,7 +207,7 @@ module {
                 memo = null;
                 fee = ?transfer_fee;
             };
-            let res : T.TransferResult = await icfc_ledger.icrc1_transfer(transfer_dto);
+            let res : T.TransferResult = await token_ledger.icrc1_transfer(transfer_dto);
             switch (res) {
                 case (#Ok(_)) {
                     return #ok();
@@ -156,6 +216,31 @@ module {
                     return #err(err);
                 };
             };
+        };
+
+        private func isValidICFCProfile(profile : ?PayoutQueries.ICFCLinks) : Bool {
+            switch (profile) {
+                case (null) {
+                    return false;
+                };
+                case (?profile) {
+                    switch (profile.membershipType) {
+                        case (#Expired) {
+                            return false;
+                        };
+                        case (#NotClaimed) {
+                            return false;
+                        };
+                        case (#NotEligible) {
+                            return false;
+                        };
+                        case (_) {
+                            return true;
+                        };
+                    };
+                };
+            };
+
         };
 
     };

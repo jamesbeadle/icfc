@@ -323,7 +323,7 @@ actor class Self() = this {
     let result = leaderboardPayoutManager.getLeaderboardPayoutRequests();
     return #ok({
       requests = result;
-      totalEntries = Array.size(result);
+      totalRequest = Array.size(result);
     });
 
   };
@@ -339,13 +339,16 @@ actor class Self() = this {
         let res = await leaderboardPayoutManager.payoutLeaderboard(dto);
         switch (res) {
 
-          case (#ok(_)) {
+          case (#ok(paidRequest)) {
             var callbackCanister = actor (canisterId) : actor {
-              leaderboardPaid : shared LeaderboardPayoutCommands.CompleteLeaderboardPayout -> async Result.Result<(), Enums.Error>;
+              leaderboardPaid : (dto : LeaderboardPayoutCommands.CompleteLeaderboardPayout) -> async Result.Result<(), Enums.Error>;
             };
             await callbackCanister.leaderboardPaid({
-              seasonId = dto.seasonId;
-              gameweek = dto.gameweek;
+              seasonId = paidRequest.seasonId;
+              gameweek = paidRequest.gameweek;
+              totalEntries = paidRequest.totalEntries;
+              totalPaid = paidRequest.totalPaid;
+              leaderboard = paidRequest.leaderboard;
             });
           };
           case (#err(err)) {
