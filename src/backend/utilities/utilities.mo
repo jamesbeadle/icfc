@@ -236,6 +236,15 @@ module Utilities {
         };
     };
 
+    public func getTokenLedgerId(token : Text) : ?Ids.CanisterId {
+        switch (token) {
+            case ("ICFC") {
+                ?CanisterIds.ICFC_SNS_LEDGER_CANISTER_ID;
+            };
+            case (_) { null };
+        };
+    };
+
     public func isValidCanisterId(caller : Ids.CanisterId) : Bool {
         let validCanisters = [
             CanisterIds.OPENFPL_BACKEND_CANISTER_ID,
