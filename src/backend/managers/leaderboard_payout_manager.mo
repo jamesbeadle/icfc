@@ -12,7 +12,6 @@ import PayoutCommands "../commands/payout_commands";
 import T "../icfc_types";
 import SNSLedger "mo:waterway-mops/def/Ledger";
 import LeaderboardPayoutCommands "mo:waterway-mops/football/LeaderboardPayoutCommands";
-import CanisterIds "mo:waterway-mops/CanisterIds";
 import Account "mo:waterway-mops/Account";
 import Utilities "../utilities/utilities";
 import PayoutQueries "../queries/payout_queries";
