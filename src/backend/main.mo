@@ -7,11 +7,7 @@ import Principal "mo:base/Principal";
 import Result "mo:base/Result";
 import Text "mo:base/Text";
 import Timer "mo:base/Timer";
-import Debug "mo:base/Debug";
-import Buffer "mo:base/Buffer";
 import Array "mo:base/Array";
-import Nat64 "mo:base/Nat64";
-import Option "mo:base/Option";
 import Enums "mo:waterway-mops/Enums";
 import BaseTypes "mo:waterway-mops/BaseTypes";
 import LeagueQueries "mo:waterway-mops/queries/football-queries/LeagueQueries";
@@ -21,14 +17,13 @@ import SNSToken "mo:waterway-mops/sns-wrappers/ledger";
 import CanisterIds "mo:waterway-mops/CanisterIds";
 import Management "mo:waterway-mops/Management";
 import BaseQueries "mo:waterway-mops/queries/BaseQueries";
-import CanisterUtilities "mo:waterway-mops/CanisterUtilities";
 import Account "mo:waterway-mops/Account";
 import CanisterQueries "mo:waterway-mops/canister-management/CanisterQueries";
 import CanisterManager "mo:waterway-mops/canister-management/CanisterManager";
 import CanisterCommands "mo:waterway-mops/canister-management/CanisterCommands";
 import LeaderboardPayoutCommands "mo:waterway-mops/football/LeaderboardPayoutCommands";
 import Countries "mo:waterway-mops/def/Countries";
-import ICFCTypes "mo:waterway-mops/ICFCTypes";
+import AppTypes "./icfc_types";
 
 /* ----- Canister Definition Files ----- */
 
@@ -71,7 +66,7 @@ actor class Self() = this {
   private stable var stable_total_podcast_channels : Nat = 0;
   private stable var stable_next_podcast_channel_id : Nat = 0;
 
-  private stable var stable_leaderboard_payout_requests : [ICFCTypes.PayoutRequest] = [];
+  private stable var stable_leaderboard_payout_requests : [AppTypes.PayoutRequest] = [];
 
   private stable var stable_membership_timer_id : Nat = 0;
 
@@ -339,16 +334,14 @@ actor class Self() = this {
         let res = await leaderboardPayoutManager.payoutLeaderboard(dto);
         switch (res) {
 
-          case (#ok(paidRequest)) {
+          case (#ok(paidResult)) {
             var callbackCanister = actor (canisterId) : actor {
               leaderboardPaid : (dto : LeaderboardPayoutCommands.CompleteLeaderboardPayout) -> async Result.Result<(), Enums.Error>;
             };
             await callbackCanister.leaderboardPaid({
-              seasonId = paidRequest.seasonId;
-              gameweek = paidRequest.gameweek;
-              totalEntries = paidRequest.totalEntries;
-              totalPaid = paidRequest.totalPaid;
-              leaderboard = paidRequest.leaderboard;
+              seasonId = paidResult.seasonId;
+              gameweek = paidResult.gameweek;
+              leaderboard = paidResult.leaderboard;
             });
           };
           case (#err(err)) {

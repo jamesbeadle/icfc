@@ -1,4 +1,4 @@
-import ICFCTypes "mo:waterway-mops/ICFCTypes";
+import ICFCTypes "../icfc_types";
 import Enums "mo:waterway-mops/Enums";
 import Ids "mo:waterway-mops/Ids";
 import Array "mo:base/Array";
@@ -12,7 +12,6 @@ import PayoutCommands "../commands/payout_commands";
 import T "../icfc_types";
 import SNSLedger "mo:waterway-mops/def/Ledger";
 import LeaderboardPayoutCommands "mo:waterway-mops/football/LeaderboardPayoutCommands";
-import CanisterIds "mo:waterway-mops/CanisterIds";
 import Account "mo:waterway-mops/Account";
 import Utilities "../utilities/utilities";
 import PayoutQueries "../queries/payout_queries";
@@ -39,7 +38,15 @@ module {
                 case (null) {
                     leaderboard_payout_requests := Array.append(
                         leaderboard_payout_requests,
-                        [dto],
+                        [{
+                            seasonId = dto.seasonId;
+                            gameweek = dto.gameweek;
+                            app = dto.app;
+                            leaderboard = dto.leaderboard;
+                            token = dto.token;
+                            totalEntries = Array.size(dto.leaderboard);
+                            totalEntriesPaid = 0;
+                        }],
                     );
                     return #ok(());
                 };
@@ -63,7 +70,7 @@ module {
                     return #err(#NotFound);
                 };
                 case (?request) {
-                    if (request.totalEntries == request.totalPaid) {
+                    if (request.totalEntries == request.totalEntriesPaid) {
                         return #err(#NotAllowed);
                     } else {
                         let token = request.token;
@@ -97,7 +104,7 @@ module {
 
                         // pay out the users
                         var leaderboardPayout = request.leaderboard;
-                        var totalPaid = request.totalPaid;
+                        var totalPaid = request.totalEntriesPaid;
                         for (entry : LeaderboardPayoutCommands.LeaderboardEntry in Iter.fromArray(leaderboardPayout)) {
                             let icfcProfileLink = Array.find(
                                 icfcLinks,
@@ -161,7 +168,7 @@ module {
                                         leaderboard = leaderboardPayout;
                                         token = entry.token;
                                         totalEntries = entry.totalEntries;
-                                        totalPaid = totalPaid;
+                                        totalEntriesPaid = totalPaid;
                                     };
                                 } else {
                                     return entry;
@@ -175,7 +182,7 @@ module {
                             leaderboard = leaderboardPayout;
                             token = request.token;
                             totalEntries = request.totalEntries;
-                            totalPaid = totalPaid;
+                            totalEntriesPaid = totalPaid;
                         });
                     };
                 };
