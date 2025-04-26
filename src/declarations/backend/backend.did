@@ -7,6 +7,7 @@ type WaterwayLabsApp =
    ICPCasino;
    ICPFA;
    JeffBets;
+   OpenBeats;
    OpenBook;
    OpenCare;
    OpenChef;
@@ -83,16 +84,17 @@ type Self =
  service {
    addController: (AddController) -> (Result);
    addSubApp: (AddSubApp) -> (Result);
-   claimMembership: () -> (Result_11);
+   claimMembership: () -> (Result_12);
    completeICFCPackPurchase: (PrincipalId, nat) -> (Result);
    createProfile: (CreateProfile) -> (Result);
-   getAppStatus: () -> (Result_10) query;
+   getAppStatus: () -> (Result_11) query;
    getCanisterIds: () -> (vec CanisterId);
-   getClubs: (GetClubs) -> (Result_9);
-   getCountries: (GetCountries) -> (Result_8);
+   getClubs: (GetClubs) -> (Result_10);
+   getCountries: (GetCountries) -> (Result_9);
    getICFCProfile: (GetICFCProfile) -> (Result_4);
-   getICFCProfileSummary: (GetICFCProfile) -> (Result_7);
-   getICPBalance: (PrincipalId) -> (Result_6);
+   getICFCProfileSummary: (GetICFCProfile) -> (Result_8);
+   getICPBalance: (PrincipalId) -> (Result_7);
+   getLeaderboardRequests: (GetLeaderboardRequests) -> (Result_6);
    getLeagues: (GetLeagues) -> (Result_5);
    getProfile: () -> (Result_4);
    getProfileCanisterIds: () -> (vec CanisterId);
@@ -104,9 +106,11 @@ type Self =
    getTokenBalances: () -> (Result_2);
    getUserNeurons: () -> (Result_1);
    isUsernameValid: (IsUsernameValid) -> (bool) query;
+   payoutLeaderboard: (PayoutLeaderboard) -> (Result);
    removeController: (RemoveController) -> (Result);
    removeNeuronsforExpiredMembership: (PrincipalId) -> ();
    removeSubApp: (SubApp__1) -> (Result);
+   requestLeaderboardPayout: (LeaderboardPayoutRequest) -> (Result);
    transferCycles: (TopupCanister) -> (Result);
    updateDisplayName: (UpdateDisplayName) -> (Result);
    updateFavouriteClub: (UpdateFavouriteClub) -> (Result);
@@ -115,25 +119,26 @@ type Self =
    updateUsername: (UpdateUserName) -> (Result);
    verifySubApp: (VerifySubApp) -> (Result);
  };
+type SeasonId = nat16;
 type Result_9 = 
- variant {
-   err: Error;
-   ok: Clubs;
- };
-type Result_8 = 
  variant {
    err: Error;
    ok: Countries;
  };
-type Result_7 = 
+type Result_8 = 
  variant {
    err: Error;
    ok: ICFCProfileSummary;
  };
-type Result_6 = 
+type Result_7 = 
  variant {
    err: Error;
    ok: nat;
+ };
+type Result_6 = 
+ variant {
+   err: Error;
+   ok: LeaderboardRequests;
  };
 type Result_5 = 
  variant {
@@ -155,15 +160,20 @@ type Result_2 =
    err: Error;
    ok: TokenBalances;
  };
-type Result_11 = 
+type Result_12 = 
  variant {
    err: Error;
    ok: MembershipClaim__1;
  };
-type Result_10 = 
+type Result_11 = 
  variant {
    err: Error;
    ok: AppStatus;
+ };
+type Result_10 = 
+ variant {
+   err: Error;
+   ok: Clubs;
  };
 type Result_1 = 
  variant {
@@ -203,6 +213,27 @@ type ProfileDTO =
    username: text;
  };
 type PrincipalId = text;
+type PayoutStatus = 
+ variant {
+   Paid;
+   Pending;
+ };
+type PayoutRequest = 
+ record {
+   app: WaterwayLabsApp;
+   gameweek: GameweekNumber;
+   leaderboard: vec LeaderboardEntry;
+   seasonId: SeasonId;
+   token: text;
+   totalEntries: nat;
+   totalPaid: nat;
+ };
+type PayoutLeaderboard = 
+ record {
+   app: WaterwayLabsApp;
+   gameweek: GameweekNumber;
+   seasonId: SeasonId;
+ };
 type NeuronPermission = 
  record {
    permission_type: vec int32;
@@ -276,6 +307,28 @@ type League =
    relatedGender: Gender;
    teamCount: nat8;
  };
+type LeaderboardRequests = 
+ record {
+   requests: vec PayoutRequest;
+   totalRequest: nat;
+ };
+type LeaderboardPayoutRequest = 
+ record {
+   app: WaterwayLabsApp;
+   gameweek: GameweekNumber;
+   leaderboard: vec LeaderboardEntry;
+   seasonId: SeasonId;
+   token: text;
+   totalEntries: nat;
+   totalPaid: nat;
+ };
+type LeaderboardEntry = 
+ record {
+   appPrincipalId: PrincipalId;
+   payoutDate: opt int;
+   payoutStatus: PayoutStatus;
+   rewardAmount: opt nat64;
+ };
 type IsUsernameValid = record {username: text;};
 type ICFCProfileSummary = 
  record {
@@ -293,6 +346,7 @@ type ICFCProfileSummary =
    username: text;
  };
 type GetLeagues = record {};
+type GetLeaderboardRequests = record {};
 type GetICFCProfile = record {principalId: PrincipalId;};
 type GetCountries = record {};
 type GetClubs = record {leagueId: LeagueId;};
@@ -301,6 +355,7 @@ type Gender =
    Female;
    Male;
  };
+type GameweekNumber = nat8;
 type Followees = record {followees: vec NeuronId;};
 type Error = 
  variant {

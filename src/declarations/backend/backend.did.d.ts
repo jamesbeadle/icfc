@@ -98,6 +98,7 @@ export type Error =
 export interface Followees {
   followees: Array<NeuronId>;
 }
+export type GameweekNumber = number;
 export type Gender = { Male: null } | { Female: null };
 export interface GetClubs {
   leagueId: LeagueId;
@@ -106,6 +107,7 @@ export type GetCountries = {};
 export interface GetICFCProfile {
   principalId: PrincipalId;
 }
+export type GetLeaderboardRequests = {};
 export type GetLeagues = {};
 export interface ICFCProfileSummary {
   username: string;
@@ -123,6 +125,25 @@ export interface ICFCProfileSummary {
 }
 export interface IsUsernameValid {
   username: string;
+}
+export interface LeaderboardEntry {
+  payoutStatus: PayoutStatus;
+  rewardAmount: [] | [bigint];
+  appPrincipalId: PrincipalId;
+  payoutDate: [] | [bigint];
+}
+export interface LeaderboardPayoutRequest {
+  app: WaterwayLabsApp;
+  token: string;
+  totalEntries: bigint;
+  leaderboard: Array<LeaderboardEntry>;
+  seasonId: SeasonId;
+  totalPaid: bigint;
+  gameweek: GameweekNumber;
+}
+export interface LeaderboardRequests {
+  requests: Array<PayoutRequest>;
+  totalRequest: bigint;
 }
 export interface League {
   id: LeagueId;
@@ -189,6 +210,21 @@ export interface NeuronPermission {
   principal: [] | [Principal];
   permission_type: Int32Array | number[];
 }
+export interface PayoutLeaderboard {
+  app: WaterwayLabsApp;
+  seasonId: SeasonId;
+  gameweek: GameweekNumber;
+}
+export interface PayoutRequest {
+  app: WaterwayLabsApp;
+  token: string;
+  totalEntries: bigint;
+  leaderboard: Array<LeaderboardEntry>;
+  seasonId: SeasonId;
+  totalPaid: bigint;
+  gameweek: GameweekNumber;
+}
+export type PayoutStatus = { Paid: null } | { Pending: null };
 export type PrincipalId = string;
 export interface ProfileDTO {
   username: string;
@@ -216,29 +252,32 @@ export interface RemoveController {
 }
 export type Result = { ok: null } | { err: Error };
 export type Result_1 = { ok: UserNeuronsDTO } | { err: Error };
-export type Result_10 = { ok: AppStatus } | { err: Error };
-export type Result_11 = { ok: MembershipClaim__1 } | { err: Error };
+export type Result_10 = { ok: Clubs } | { err: Error };
+export type Result_11 = { ok: AppStatus } | { err: Error };
+export type Result_12 = { ok: MembershipClaim__1 } | { err: Error };
 export type Result_2 = { ok: TokenBalances } | { err: Error };
 export type Result_3 = { ok: ProjectCanisters } | { err: Error };
 export type Result_4 = { ok: ProfileDTO } | { err: Error };
 export type Result_5 = { ok: Leagues } | { err: Error };
-export type Result_6 = { ok: bigint } | { err: Error };
-export type Result_7 = { ok: ICFCProfileSummary } | { err: Error };
-export type Result_8 = { ok: Countries } | { err: Error };
-export type Result_9 = { ok: Clubs } | { err: Error };
+export type Result_6 = { ok: LeaderboardRequests } | { err: Error };
+export type Result_7 = { ok: bigint } | { err: Error };
+export type Result_8 = { ok: ICFCProfileSummary } | { err: Error };
+export type Result_9 = { ok: Countries } | { err: Error };
+export type SeasonId = number;
 export interface Self {
   addController: ActorMethod<[AddController], Result>;
   addSubApp: ActorMethod<[AddSubApp], Result>;
-  claimMembership: ActorMethod<[], Result_11>;
+  claimMembership: ActorMethod<[], Result_12>;
   completeICFCPackPurchase: ActorMethod<[PrincipalId, bigint], Result>;
   createProfile: ActorMethod<[CreateProfile], Result>;
-  getAppStatus: ActorMethod<[], Result_10>;
+  getAppStatus: ActorMethod<[], Result_11>;
   getCanisterIds: ActorMethod<[], Array<CanisterId>>;
-  getClubs: ActorMethod<[GetClubs], Result_9>;
-  getCountries: ActorMethod<[GetCountries], Result_8>;
+  getClubs: ActorMethod<[GetClubs], Result_10>;
+  getCountries: ActorMethod<[GetCountries], Result_9>;
   getICFCProfile: ActorMethod<[GetICFCProfile], Result_4>;
-  getICFCProfileSummary: ActorMethod<[GetICFCProfile], Result_7>;
-  getICPBalance: ActorMethod<[PrincipalId], Result_6>;
+  getICFCProfileSummary: ActorMethod<[GetICFCProfile], Result_8>;
+  getICPBalance: ActorMethod<[PrincipalId], Result_7>;
+  getLeaderboardRequests: ActorMethod<[GetLeaderboardRequests], Result_6>;
   getLeagues: ActorMethod<[GetLeagues], Result_5>;
   getProfile: ActorMethod<[], Result_4>;
   getProfileCanisterIds: ActorMethod<[], Array<CanisterId>>;
@@ -247,9 +286,11 @@ export interface Self {
   getTokenBalances: ActorMethod<[], Result_2>;
   getUserNeurons: ActorMethod<[], Result_1>;
   isUsernameValid: ActorMethod<[IsUsernameValid], boolean>;
+  payoutLeaderboard: ActorMethod<[PayoutLeaderboard], Result>;
   removeController: ActorMethod<[RemoveController], Result>;
   removeNeuronsforExpiredMembership: ActorMethod<[PrincipalId], undefined>;
   removeSubApp: ActorMethod<[SubApp__1], Result>;
+  requestLeaderboardPayout: ActorMethod<[LeaderboardPayoutRequest], Result>;
   transferCycles: ActorMethod<[TopupCanister], Result>;
   updateDisplayName: ActorMethod<[UpdateDisplayName], Result>;
   updateFavouriteClub: ActorMethod<[UpdateFavouriteClub], Result>;
@@ -331,6 +372,7 @@ export type WaterwayLabsApp =
   | { OpenBook: null }
   | { OpenCare: null }
   | { OpenChef: null }
+  | { OpenBeats: null }
   | { WaterwayLabs: null };
 export interface _SERVICE extends Self {}
 export declare const idlFactory: IDL.InterfaceFactory;

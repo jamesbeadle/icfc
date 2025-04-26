@@ -7,6 +7,7 @@ type WaterwayLabsApp =
    ICPCasino;
    ICPFA;
    JeffBets;
+   OpenBeats;
    OpenBook;
    OpenCare;
    OpenChef;

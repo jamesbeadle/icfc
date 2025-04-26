@@ -20,7 +20,7 @@ module PayoutQueries {
         leaderboard : [LeaderboardPayoutCommands.LeaderboardEntry];
         token : Text;
         totalEntries : Nat;
-        totalPaid : Nat;
+        totalEntriesPaid : Nat;
     };
 
     public type GetICFCLinks = {};
