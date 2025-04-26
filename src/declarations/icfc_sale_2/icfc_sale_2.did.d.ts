@@ -95,6 +95,7 @@ export type WaterwayLabsApp =
   | { OpenBook: null }
   | { OpenCare: null }
   | { OpenChef: null }
+  | { OpenBeats: null }
   | { WaterwayLabs: null };
 export interface _SERVICE extends Self {}
 export declare const idlFactory: IDL.InterfaceFactory;

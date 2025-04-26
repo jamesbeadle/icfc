@@ -40,6 +40,7 @@ export const idlFactory = ({ IDL }) => {
     OpenBook: IDL.Null,
     OpenCare: IDL.Null,
     OpenChef: IDL.Null,
+    OpenBeats: IDL.Null,
     WaterwayLabs: IDL.Null,
   });
   const CanisterType = IDL.Variant({
