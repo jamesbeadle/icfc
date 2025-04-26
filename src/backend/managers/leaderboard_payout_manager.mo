@@ -8,11 +8,13 @@ import Principal "mo:base/Principal";
 import Nat64 "mo:base/Nat64";
 import Int "mo:base/Int";
 import Time "mo:base/Time";
+import Text "mo:base/Text";
 import PayoutCommands "../commands/payout_commands";
 import T "../icfc_types";
 import SNSLedger "mo:waterway-mops/def/Ledger";
 import LeaderboardPayoutCommands "mo:waterway-mops/football/LeaderboardPayoutCommands";
 import Account "mo:waterway-mops/Account";
+import BaseUtilities "mo:waterway-mops/BaseUtilities";
 import Utilities "../utilities/utilities";
 import PayoutQueries "../queries/payout_queries";
 
@@ -58,10 +60,13 @@ module {
 
         public func payoutLeaderboard(dto : PayoutCommands.PayoutLeaderboard) : async Result.Result<ICFCTypes.PayoutRequest, Enums.Error> {
             // find the request in the list
+            let ?appText = BaseUtilities.appToText(dto.app)else{
+                return #err(#NotFound);
+            };
             var request = Array.find(
                 leaderboard_payout_requests,
                 func(entry : ICFCTypes.PayoutRequest) : Bool {
-                    entry.seasonId == dto.seasonId and entry.gameweek == dto.gameweek and entry.app == dto.app
+                    entry.seasonId == dto.seasonId and entry.gameweek == dto.gameweek and Text.equal(entry.app, appText)
                 },
             );
 
@@ -79,26 +84,22 @@ module {
                         };
 
                         // get the ICFC links
-                        let appCanisterId = Utilities.getAppCanisterId(dto.app);
+                        let ?appCanisterId = BaseUtilities.getAppCanisterId(dto.app) else {
+                            return #err(#NotFound);
+                        };
                         var icfcLinks : [PayoutQueries.ICFCLinks] = [];
-                        switch (appCanisterId) {
-                            case (null) {
-                                return #err(#InvalidData);
-                            };
-                            case (?canisterId) {
-                                var appCanister = actor (canisterId) : actor {
-                                    getICFCProfileLinks : (dto : PayoutQueries.GetICFCLinks) -> async Result.Result<[PayoutQueries.ICFCLinks], Enums.Error>;
-                                };
 
-                                let res = await appCanister.getICFCProfileLinks({});
-                                switch (res) {
-                                    case (#ok(links)) {
-                                        icfcLinks := links;
-                                    };
-                                    case (#err(err)) {
-                                        return #err(err);
-                                    };
-                                };
+                        var appCanister = actor (appCanisterId) : actor {
+                            getICFCProfileLinks : (dto : PayoutQueries.GetICFCLinks) -> async Result.Result<[PayoutQueries.ICFCLinks], Enums.Error>;
+                        };
+
+                        let res = await appCanister.getICFCProfileLinks({});
+                        switch (res) {
+                            case (#ok(links)) {
+                                icfcLinks := links;
+                            };
+                            case (#err(err)) {
+                                return #err(err);
                             };
                         };
 
@@ -160,7 +161,7 @@ module {
                         leaderboard_payout_requests := Array.map(
                             leaderboard_payout_requests,
                             func(entry : ICFCTypes.PayoutRequest) : ICFCTypes.PayoutRequest {
-                                if (entry.seasonId == dto.seasonId and entry.gameweek == dto.gameweek and entry.app == dto.app) {
+                                if (entry.seasonId == dto.seasonId and entry.gameweek == dto.gameweek and Text.equal(entry.app, appText)) {
                                     return {
                                         seasonId = entry.seasonId;
                                         gameweek = entry.gameweek;
@@ -178,7 +179,7 @@ module {
                         return #ok({
                             seasonId = dto.seasonId;
                             gameweek = dto.gameweek;
-                            app = dto.app;
+                            app = appText;
                             leaderboard = leaderboardPayout;
                             token = request.token;
                             totalEntries = request.totalEntries;

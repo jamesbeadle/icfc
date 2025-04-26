@@ -23,6 +23,7 @@ import CanisterManager "mo:waterway-mops/canister-management/CanisterManager";
 import CanisterCommands "mo:waterway-mops/canister-management/CanisterCommands";
 import LeaderboardPayoutCommands "mo:waterway-mops/football/LeaderboardPayoutCommands";
 import Countries "mo:waterway-mops/def/Countries";
+import BaseUtilities "mo:waterway-mops/BaseUtilities";
 import AppTypes "./icfc_types";
 
 /* ----- Canister Definition Files ----- */
@@ -280,7 +281,7 @@ actor class Self() = this {
 
   /* ----- Calls to Data Canister ----- */
 
-  public shared ({ caller }) func getCountries(dto : BaseQueries.GetCountries) : async Result.Result<BaseQueries.Countries, Enums.Error> {
+  public shared ({ caller }) func getCountries(_ : BaseQueries.GetCountries) : async Result.Result<BaseQueries.Countries, Enums.Error> {
     assert not Principal.isAnonymous(caller);
     return #ok({
       countries = Countries.countries;
@@ -328,32 +329,26 @@ actor class Self() = this {
     let principalId = Principal.toText(caller);
     assert await Utilities.isDeveloperNeuron(principalId);
 
-    let appCanisterId = Utilities.getAppCanisterId(dto.app);
-    switch (appCanisterId) {
-      case (?canisterId) {
-        let res = await leaderboardPayoutManager.payoutLeaderboard(dto);
-        switch (res) {
+    let ?appCanisterId = BaseUtilities.getAppCanisterId(dto.app) else {
+      return #err(#NotFound);
+    };
 
-          case (#ok(paidResult)) {
-            var callbackCanister = actor (canisterId) : actor {
-              leaderboardPaid : (dto : LeaderboardPayoutCommands.CompleteLeaderboardPayout) -> async Result.Result<(), Enums.Error>;
-            };
-            await callbackCanister.leaderboardPaid({
-              seasonId = paidResult.seasonId;
-              gameweek = paidResult.gameweek;
-              leaderboard = paidResult.leaderboard;
-            });
-          };
-          case (#err(err)) {
-            return #err(err);
-          };
-
+    let res = await leaderboardPayoutManager.payoutLeaderboard(dto);
+    switch (res) {
+      case (#ok(paidResult)) {
+        var callbackCanister = actor (appCanisterId) : actor {
+          leaderboardPaid : (dto : LeaderboardPayoutCommands.CompleteLeaderboardPayout) -> async Result.Result<(), Enums.Error>;
         };
+        await callbackCanister.leaderboardPaid({
+          seasonId = paidResult.seasonId;
+          gameweek = paidResult.gameweek;
+          leaderboard = paidResult.leaderboard;
+        });
+      };
+      case (#err(err)) {
+        return #err(err);
+      };
 
-      };
-      case (_) {
-        return #err(#NotAllowed);
-      };
     };
 
   };
