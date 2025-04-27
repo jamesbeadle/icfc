@@ -1,10 +1,13 @@
 <script lang="ts">
-	import type { ICFCDistribution, UserParticipation } from '../../../../../../declarations/icfc_sale_2/icfc_sale_2.did.js';
+	import type { ICFCDistribution, UserParticipation } from '../../../../../declarations/icfc_sale_2/icfc_sale_2.did.js';
 	import { saleStore } from '$lib/stores/sale-store';
     import { onMount } from 'svelte';
     import { toasts } from '$lib/stores/toasts-store';
     import { fromUnixDateTimeToReadable } from '$lib/utils/helpers';
     import LocalSpinner from '$lib/components/shared/local-spinner.svelte';
+    import type { ProfileDTO } from '../../../../../declarations/backend/backend.did.js';
+
+    let { profile } = $props<{ profile: ProfileDTO }>();
 
     let participation: UserParticipation | undefined = $state(undefined);
     let distributions: ICFCDistribution[] | undefined = $state(undefined);

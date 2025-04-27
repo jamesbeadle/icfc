@@ -135,10 +135,8 @@ export interface LeaderboardEntry {
 export interface LeaderboardPayoutRequest {
   app: WaterwayLabsApp;
   token: string;
-  totalEntries: bigint;
   leaderboard: Array<LeaderboardEntry>;
   seasonId: SeasonId;
-  totalPaid: bigint;
   gameweek: GameweekNumber;
 }
 export interface LeaderboardRequests {
@@ -221,7 +219,7 @@ export interface PayoutRequest {
   totalEntries: bigint;
   leaderboard: Array<LeaderboardEntry>;
   seasonId: SeasonId;
-  totalPaid: bigint;
+  totalEntriesPaid: bigint;
   gameweek: GameweekNumber;
 }
 export type PayoutStatus = { Paid: null } | { Pending: null };

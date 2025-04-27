@@ -1,7 +1,6 @@
 <script lang="ts">
     import { userStore } from "$lib/stores/user-store";
     import { onMount } from "svelte";
-    import type { ProfileDTO } from "../../../../../declarations/backend/backend.did";
     import { goto } from "$app/navigation";
     import { toasts } from "$lib/stores/toasts-store";
     import { getImageURL } from "$lib/utils/helpers";
@@ -11,6 +10,7 @@
     import ProfileMembership from "$lib/components/profile/profile-membership.svelte";
     import ProfileLinkedApps from "$lib/components/profile/profile-linked-apps.svelte";
     import UpdateRequiredDetailsModal from "$lib/components/profile/update-modals/update-required-details-modal.svelte";
+    import SaleParticipation from "$lib/components/profile/sale-participation.svelte";
     
     let isLoading = $state(false);
     let loadingMessage = $state("");
@@ -26,6 +26,7 @@
         { id: "details", label: "Details" },
         { id: "membership", label: "Membership" },
         { id: "linkedApps", label: "Linked Apps" },
+        { id: "saleParticipation", label: "Sale Participation" },
     ];
 
     function setActiveTab(tab: string): void {
@@ -97,6 +98,10 @@
                     {#if activeTab == "linkedApps"}
                         <ProfileLinkedApps {profile} />
                     {/if}
+                    {#if activeTab == "saleParticipation"}
+                        <SaleParticipation {profile} />
+                    {/if}
+
                 </div>
             </div>
         </div>
