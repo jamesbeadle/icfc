@@ -180,7 +180,7 @@ export const idlFactory = ({ IDL }) => {
     totalEntries: IDL.Nat,
     leaderboard: IDL.Vec(LeaderboardEntry),
     seasonId: SeasonId,
-    totalPaid: IDL.Nat,
+    totalEntriesPaid: IDL.Nat,
     gameweek: GameweekNumber,
   });
   const LeaderboardRequests = IDL.Record({
@@ -292,10 +292,8 @@ export const idlFactory = ({ IDL }) => {
   const LeaderboardPayoutRequest = IDL.Record({
     app: WaterwayLabsApp,
     token: IDL.Text,
-    totalEntries: IDL.Nat,
     leaderboard: IDL.Vec(LeaderboardEntry),
     seasonId: SeasonId,
-    totalPaid: IDL.Nat,
     gameweek: GameweekNumber,
   });
   const TopupCanister = IDL.Record({

@@ -226,7 +226,7 @@ type PayoutRequest =
    seasonId: SeasonId;
    token: text;
    totalEntries: nat;
-   totalPaid: nat;
+   totalEntriesPaid: nat;
  };
 type PayoutLeaderboard = 
  record {
@@ -319,8 +319,6 @@ type LeaderboardPayoutRequest =
    leaderboard: vec LeaderboardEntry;
    seasonId: SeasonId;
    token: text;
-   totalEntries: nat;
-   totalPaid: nat;
  };
 type LeaderboardEntry = 
  record {
