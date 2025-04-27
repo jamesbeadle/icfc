@@ -1,7 +1,6 @@
 import Ids "mo:waterway-mops/Ids";
 import FootballIds "mo:waterway-mops/football/FootballIds";
 import FootballDefinitions "mo:waterway-mops/football/FootballDefinitions";
-import Enums "mo:waterway-mops/Enums";
 import LeaderboardPayoutCommands "mo:waterway-mops/football/LeaderboardPayoutCommands";
 import Blob "mo:base/Blob";
 //import ckBTCLedger "canister:ckbtc_ledger"; // TODO Use for ckBTC sale Q3 2025
@@ -122,7 +121,7 @@ module ICFCTypes {
   public type PayoutRequest = {
     seasonId : FootballIds.SeasonId;
     gameweek : FootballDefinitions.GameweekNumber;
-    app : Enums.WaterwayLabsApp;
+    app : Text;
     leaderboard : [LeaderboardPayoutCommands.LeaderboardEntry];
     token : Text;
     totalEntries : Nat;
