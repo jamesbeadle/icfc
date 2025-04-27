@@ -24,6 +24,7 @@ import CanisterCommands "mo:waterway-mops/canister-management/CanisterCommands";
 import LeaderboardPayoutCommands "mo:waterway-mops/football/LeaderboardPayoutCommands";
 import Countries "mo:waterway-mops/def/Countries";
 import BaseUtilities "mo:waterway-mops/BaseUtilities";
+import FootballIds "mo:waterway-mops/football/FootballIds";
 import AppTypes "./icfc_types";
 
 /* ----- Canister Definition Files ----- */
@@ -60,9 +61,9 @@ actor class Self() = this {
   private stable var stable_total_profile : Nat = 0;
   private stable var stable_neurons_used_for_membership : [(Blob, Ids.PrincipalId)] = [];
 
-  private stable var stable_podcast_channel_canister_index : [(Ids.FootballChannelId, Ids.CanisterId)] = [];
+  private stable var stable_podcast_channel_canister_index : [(FootballIds.FootballChannelId, Ids.CanisterId)] = [];
   private stable var stable_active_podcast_channel_canister_id : Ids.CanisterId = "";
-  private stable var stable_podcast_channel_names : [(Ids.FootballChannelId, Text)] = [];
+  private stable var stable_podcast_channel_names : [(FootballIds.FootballChannelId, Text)] = [];
   private stable var stable_unique_podcast_channel_canister_ids : [Ids.CanisterId] = [];
   private stable var stable_total_podcast_channels : Nat = 0;
   private stable var stable_next_podcast_channel_id : Nat = 0;

@@ -1,6 +1,5 @@
 import FootballIds "mo:waterway-mops/football/FootballIds";
 import FootballDefinitions "mo:waterway-mops/football/FootballDefinitions";
-import Enums "mo:waterway-mops/Enums";
 import ICFCEnums "mo:waterway-mops/ICFCEnums";
 import LeaderboardPayoutCommands "mo:waterway-mops/football/LeaderboardPayoutCommands";
 import Ids "mo:waterway-mops/Ids";
