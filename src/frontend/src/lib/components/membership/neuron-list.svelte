@@ -6,7 +6,7 @@
     import type { MembershipType, Neuron, UserNeuronsDTO } from "../../../../../declarations/backend/backend.did";
 
     import NeuronCard from './neuron-card.svelte';
-    import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
+    import LocalSpinner from "$lib/components/shared/global/local-spinner.svelte";
     import type { NeuronSummary } from "$lib/types/neuron-types";
     import { Principal } from "@dfinity/principal";
     import { toasts } from "$lib/stores/toasts-store";
@@ -16,7 +16,11 @@
     import { authStore } from "$lib/stores/auth-store";
     import CopyIcon from "$lib/icons/CopyIcon.svelte";
 
-    export let neurons: Neuron[];
+    interface Props {
+        neurons: Neuron[];
+    }
+
+    let { neurons } : Props = $props();
 
     let isLoading: boolean = true;
     let showHowToClaimModal = false;

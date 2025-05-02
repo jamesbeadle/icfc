@@ -1,6 +1,11 @@
 <script lang="ts">
-    export let className: string = "";
-</script>
+
+    interface Props {
+      className: string;
+    }
+  
+    let { className } : Props = $props();
+  </script>
 
 <svg class={className} aria-hidden="true" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g clip-path="url(#clip0_136_2249)">

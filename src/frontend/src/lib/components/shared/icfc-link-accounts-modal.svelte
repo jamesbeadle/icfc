@@ -1,8 +1,10 @@
 <script lang="ts">
-    import { createEventDispatcher } from "svelte";
-  
-    export let isOpen: boolean = false;
-    const dispatch = createEventDispatcher();
+
+    interface Props {
+      isOpen: boolean
+    }
+
+    let { isOpen } : Props = $props();
   
     const closeModal = () => {
       dispatch("close");

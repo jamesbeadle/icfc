@@ -3,13 +3,16 @@
     import { toasts } from '$lib/stores/toasts-store';
     import { saleStore } from '$lib/stores/sale-store';
     import { formatTokenBalance, isError } from '$lib/utils/helpers';
-    import Modal from '../shared/modal.svelte';
+    import Modal from '../shared/global/modal.svelte';
     import CopyPrincipal from '../profile/copy-principal.svelte';
     import IcfcCoinIcon from "$lib/icons/ICFCCoinIcon.svelte";
-    import LocalSpinner from '../shared/local-spinner.svelte';
-    
-    export let showModal: boolean;
-    export let onClose: () => void;
+    import LocalSpinner from '../shared/global/local-spinner.svelte';
+
+    interface Props {
+        onClose: () => void;
+    }
+
+    let { onClose } : Props = $props();
 
     let userBalance = 0n;
     let contributionAmount = 0n;
@@ -193,117 +196,115 @@
     }
 </script>
 
-{#if showModal}
-    <Modal onClose={handleClose} title="Buy ICFC Packs">
-        {#if isLoading}
-            <LocalSpinner message={loadingMessage} />
-        {:else}
-            <div class="w-full max-w-2xl mx-auto space-y-4">
-                <div class="flex items-center justify-between">
-                    <h3 class="text-xl text-white cta-text">Purchase Details</h3>
-                    <button
-                        onclick={refreshUserBalance}
-                        class="px-4 py-1 text-white transition border rounded-lg bg-BrandBlueComp hover:bg-BrandBlack/50 hover:border-BrandBlue/80"
-                        disabled={isLoading}
-                    >
-                        Refresh Balance
-                    </button>
-                </div>
-                <div class="space-y-2">
-                    <label for="packs" class="block text-sm text-BrandGrayShade2">
-                        1 Pack = {formatTokenBalance(packCost)} ICP = 10,000 ICFC
-                    </label>
-                    <input
-                        id="packs"
-                        min={1}
-                        max={Number(packsRemaining)}
-                        oninput={handleInput} 
-                        step="1"
-                        type="number"
-                        bind:value={packsToBuy}
-                        class="w-full px-4 py-3 text-white border rounded-lg border-BrandGrayShade3 bg-white/5 focus:outline-none focus:border-BrandBlue"
-                        placeholder="Enter number of packs"
-                    />
-                </div>
-                <label for="principal" class="block text-sm text-BrandGrayShade2">
-                    ICFC Principal ID
-                </label>
-                <CopyPrincipal bgColor="bg-white/5" borderColor="border-BrandGrayShade3" />
-
-                <div class="p-4 space-y-3 rounded-lg bg-white/5">
-                    <div class="flex justify-between">
-                        <span class="text-BrandGrayShade2">Packs Remaining:</span>
-                        <span class="font-medium text-white">{packsRemaining}</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-BrandGrayShade2">Cost per Packs:</span>
-                        <span class="font-medium text-white">{formatTokenBalance(packCost)} ICP</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-BrandGrayShade2">Packs to buy:</span>
-                        <span class="font-medium text-white">{packsToBuy}</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-BrandGrayShade2">Total cost:</span>
-                        <span class="font-medium text-white">{formatTokenBalance(contributionAmount)} ICP</span>
-                    </div>
-                    <div class="flex justify-between pt-2 border-t border-BrandGrayShade3">
-                        <span class="text-BrandGrayShade2">Your ICP balance:</span>
-                        <span class="font-medium text-white">{formatTokenBalance(userBalance)} ICP</span>
-                    </div>
-                </div>
-
-                {#if packsToBuy && packsToBuy > 0}
-                    <div class="mt-4">
-                        <h4 class="text-lg text-white">Distribution Schedule</h4>
-                        <p class="text-sm text-BrandGrayShade2">
-                            The ICFC tokens will be distributed in 6 equal installments starting 3 months from now, with subsequent installments every 6 months.
-                        </p>
-                        <div class="flex flex-col items-center justify-center w-full pt-2 space-y-2">
-                            {#each installments as installment, index}
-                                <div class="lg:flex lg:flex-row justify-between lg:w-[90%] w-full text-sm items-center text-white pb-2">                               
-                                    <div class="flex-row lg:text-sm text-[10px]">   
-                                        <div>{installment.toLocaleDateString('en-US', { day: 'numeric',month: 'short', year: 'numeric' })}</div>
-                                        <div>ICFC Membership Sale (Disbursement {index + 1}/6)</div>
-                                    </div>
-                                    <div class="flex pt-1 lg:pt-0">  
-                                        <IcfcCoinIcon className="w-6 mr-2" /> 
-                                        <div><p class="text-[16px] font-200">{addNumberCommas(amountPerInstallment.toFixed(2))} ICFC</p></div>
-                                    </div> 
-                                </div>
-                            {/each}
-                        </div>
-                    </div>
-                {/if}
-
-                <div class="flex gap-4 pt-4">
-                    <button
-                        onclick={handleClose}
-                        class="flex-1 px-4 py-3 text-white transition border rounded-lg bg-BrandError/50 border-BrandGrayShade3 cta-text hover:bg-BrandBlack/50 hover:border-BrandError/80"
-                        disabled={isLoading}
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        onclick={showConfirmation}
-                        class="flex-1 px-4 py-3 text-white transition border rounded-lg brand-button hover:bg-BrandBlack/50 hover:border-BrandBlue/80"
-                        disabled={isLoading}
-                    >
-                        Buy ICFC Packs
-                    </button>
-                </div>
-
-                {#if showConfirm}
-                    <div class="flex items-center">
-                        <button
-                            class="w-full px-4 py-3 text-white transition border rounded-lg brand-button hover:bg-BrandBlack/50 hover:border-BrandBlue/80"
-                            onclick={handleSubmit}
-                        >
-                            Confirm Purchase
-                        </button>
-                    </div>
-                {/if}
+<Modal onClose={handleClose} title="Buy ICFC Packs">
+    {#if isLoading}
+        <LocalSpinner message={loadingMessage} />
+    {:else}
+        <div class="w-full max-w-2xl mx-auto space-y-4">
+            <div class="flex items-center justify-between">
+                <h3 class="text-xl text-white cta-text">Purchase Details</h3>
+                <button
+                    onclick={refreshUserBalance}
+                    class="px-4 py-1 text-white transition border rounded-lg bg-BrandBlueComp hover:bg-BrandBlack/50 hover:border-BrandBlue/80"
+                    disabled={isLoading}
+                >
+                    Refresh Balance
+                </button>
             </div>
-        {/if}
-    </Modal>
-{/if}
+            <div class="space-y-2">
+                <label for="packs" class="block text-sm text-BrandGrayShade2">
+                    1 Pack = {formatTokenBalance(packCost)} ICP = 10,000 ICFC
+                </label>
+                <input
+                    id="packs"
+                    min={1}
+                    max={Number(packsRemaining)}
+                    oninput={handleInput} 
+                    step="1"
+                    type="number"
+                    bind:value={packsToBuy}
+                    class="w-full px-4 py-3 text-white border rounded-lg border-BrandGrayShade3 bg-white/5 focus:outline-none focus:border-BrandBlue"
+                    placeholder="Enter number of packs"
+                />
+            </div>
+            <label for="principal" class="block text-sm text-BrandGrayShade2">
+                ICFC Principal ID
+            </label>
+            <CopyPrincipal bgColor="bg-white/5" borderColor="border-BrandGrayShade3" />
+
+            <div class="p-4 space-y-3 rounded-lg bg-white/5">
+                <div class="flex justify-between">
+                    <span class="text-BrandGrayShade2">Packs Remaining:</span>
+                    <span class="font-medium text-white">{packsRemaining}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-BrandGrayShade2">Cost per Packs:</span>
+                    <span class="font-medium text-white">{formatTokenBalance(packCost)} ICP</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-BrandGrayShade2">Packs to buy:</span>
+                    <span class="font-medium text-white">{packsToBuy}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-BrandGrayShade2">Total cost:</span>
+                    <span class="font-medium text-white">{formatTokenBalance(contributionAmount)} ICP</span>
+                </div>
+                <div class="flex justify-between pt-2 border-t border-BrandGrayShade3">
+                    <span class="text-BrandGrayShade2">Your ICP balance:</span>
+                    <span class="font-medium text-white">{formatTokenBalance(userBalance)} ICP</span>
+                </div>
+            </div>
+
+            {#if packsToBuy && packsToBuy > 0}
+                <div class="mt-4">
+                    <h4 class="text-lg text-white">Distribution Schedule</h4>
+                    <p class="text-sm text-BrandGrayShade2">
+                        The ICFC tokens will be distributed in 6 equal installments starting 3 months from now, with subsequent installments every 6 months.
+                    </p>
+                    <div class="flex flex-col items-center justify-center w-full pt-2 space-y-2">
+                        {#each installments as installment, index}
+                            <div class="lg:flex lg:flex-row justify-between lg:w-[90%] w-full text-sm items-center text-white pb-2">                               
+                                <div class="flex-row lg:text-sm text-[10px]">   
+                                    <div>{installment.toLocaleDateString('en-US', { day: 'numeric',month: 'short', year: 'numeric' })}</div>
+                                    <div>ICFC Membership Sale (Disbursement {index + 1}/6)</div>
+                                </div>
+                                <div class="flex pt-1 lg:pt-0">  
+                                    <IcfcCoinIcon className="w-6 mr-2" /> 
+                                    <div><p class="text-[16px] font-200">{addNumberCommas(amountPerInstallment.toFixed(2))} ICFC</p></div>
+                                </div> 
+                            </div>
+                        {/each}
+                    </div>
+                </div>
+            {/if}
+
+            <div class="flex gap-4 pt-4">
+                <button
+                    onclick={handleClose}
+                    class="flex-1 px-4 py-3 text-white transition border rounded-lg bg-BrandError/50 border-BrandGrayShade3 cta-text hover:bg-BrandBlack/50 hover:border-BrandError/80"
+                    disabled={isLoading}
+                >
+                    Cancel
+                </button>
+                <button
+                    onclick={showConfirmation}
+                    class="flex-1 px-4 py-3 text-white transition border rounded-lg brand-button hover:bg-BrandBlack/50 hover:border-BrandBlue/80"
+                    disabled={isLoading}
+                >
+                    Buy ICFC Packs
+                </button>
+            </div>
+
+            {#if showConfirm}
+                <div class="flex items-center">
+                    <button
+                        class="w-full px-4 py-3 text-white transition border rounded-lg brand-button hover:bg-BrandBlack/50 hover:border-BrandBlue/80"
+                        onclick={handleSubmit}
+                    >
+                        Confirm Purchase
+                    </button>
+                </div>
+            {/if}
+        </div>
+    {/if}
+</Modal>

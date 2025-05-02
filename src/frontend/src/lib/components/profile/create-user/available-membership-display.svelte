@@ -5,7 +5,11 @@
     import FoundingMembershipIcon from "$lib/icons/FoundingMembershipIcon.svelte";
     import type { MembershipType } from "../../../../../../declarations/backend/backend.did";
 
-    export let availableMembership: MembershipType;
+    interface Props {
+        availableMembership: MembershipType;
+    }
+
+    let { availableMembership } : Props = $props();
 </script>
 
 

@@ -1,10 +1,13 @@
 <script lang="ts">
-    import Modal from "../shared/modal.svelte";
+    import Modal from "../shared/global/modal.svelte";
     import StepPanel from "../membership/step-panel.svelte";
     import TabContainer from "../shared/tab-container.svelte";
 
-    export let onClose: () => void;
-    export let showModal: boolean;
+    interface Props {
+        onClose: () => void;
+    }
+
+    let { onClose } : Props = $props();
     
     let depositICP = [
         {
@@ -68,7 +71,6 @@
     }
 </script>
 
-{#if showModal}
 <Modal {onClose} title="How To Purhcase ICFC Packs">
    <div class="flex flex-col h-full">
         <div class="flex-none">
@@ -87,4 +89,3 @@
         </div>
    </div>
 </Modal>
-{/if}

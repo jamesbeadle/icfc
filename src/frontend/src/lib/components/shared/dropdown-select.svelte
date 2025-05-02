@@ -6,15 +6,19 @@
     import ArrowDownIcon from "$lib/icons/ArrowDownIcon.svelte";
     import SearchIcon from "$lib/icons/SearchIcon.svelte";
 
-    export let value: any;
-    export let options: Array<{ id: number | string | bigint; label: string }> = [];
-    export let placeholder = "Select...";
-    export let compact = false;
-    export let onChange: ((value: any) => void) | undefined = undefined;
-    export let allOptionText: string | undefined = undefined;
-    export let scrollOnOpen = false;
-    export let searchOn = false;
-    export let disabled = false;
+    interface Props {
+        value: any;
+        options: Array<{ id: number | string | bigint; label: string }>;
+        placeholder: string;
+        compact: boolean;
+        onChange: ((value: any) => void) | undefined;
+        allOptionText: string | undefined;
+        scrollOnOpen: boolean;
+        searchOn: boolean;
+        disabled: boolean;
+    }
+
+    let { value, options, placeholder, compact, onChange, allOptionText, scrollOnOpen, searchOn, disabled  } : Props = $props();
 
     const dropdownId = Math.random().toString(36).substring(7);
     let isDropdownOpen = false;
@@ -27,11 +31,11 @@
         }
     });
 
-    $: allOptions = allOptionText 
+    let allOptions = allOptionText 
         ? [{ id: BigInt(0), label: `All ${allOptionText}` }, ...options]
         : options;
-    $: selectedOption = allOptions.find(opt => opt.id === value);
-    $: filteredOptions = searchOn 
+    let selectedOption = allOptions.find(opt => opt.id === value);
+    let filteredOptions = searchOn 
         ? allOptions.filter(opt => 
             opt.label.toLowerCase().includes(searchTerm.toLowerCase())
           )

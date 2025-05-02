@@ -1,11 +1,17 @@
 <script lang="ts">
-    export let isFlipped: boolean = false;
-    export let onFlip: (id: string, e: MouseEvent | KeyboardEvent) => void;
-    export let id: string;
-    export let isModal: boolean = false;
-    export let disableFlip: boolean = false;
-    export let frontClasses: string = "";
-    export let backClasses: string = "";
+
+    interface Props {
+        isFlipped: boolean;
+        onFlip: (id: string, e: MouseEvent | KeyboardEvent) => void;
+        id: string;
+        isModal: boolean;
+        disableFlip: boolean;
+        frontClasses: string;
+        backClasses: string;
+    }
+  
+    let { isFlipped, onFlip, id, isModal, disableFlip, frontClasses, backClasses  } : Props = $props();
+    
 </script>
 
 <div 

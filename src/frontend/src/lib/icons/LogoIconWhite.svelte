@@ -1,9 +1,14 @@
-<script>
-  export let className = "";
-  export let borderFill = "white";
-  export let icfcFill = "white";
-  export let innerFill = "white";
-  export let ballFill = "white";
+<script lang="ts">
+
+  interface Props {
+    className: string;
+    borderFill: string;
+    icfcFill: string;
+    innerFill: string;
+    ballFill: string;
+  }
+
+  let { className, borderFill, icfcFill, innerFill, ballFill } : Props = $props();
 </script>
 
 <svg class={className} viewBox="0 0 712 922"

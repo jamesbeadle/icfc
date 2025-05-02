@@ -1,26 +1,32 @@
 <script lang="ts">
-    export let value: number;
-    export let label: string;
+
+    interface Props {
+        value: number;
+        label: string;
+    }
+  
+    let { value, label } : Props = $props();
     
     let previousValue = value;
     let isFlipping = false;
+    let digits = $state([]);
+    let previousDigits = $state([]);
     
     function padNumber(num: number): string {
         return num.toString().padStart(2, '0');
     }
 
-    $: {
+    $effect(() => {
         if (value !== previousValue) {
             isFlipping = true;
             setTimeout(() => {
                 previousValue = value;
                 isFlipping = false;
             }, 300);
+            digits = padNumber(value).split('');
+            previousDigits = padNumber(previousValue).split('');
         }
-    }
-
-    $: digits = padNumber(value).split('');
-    $: previousDigits = padNumber(previousValue).split('');
+    });
 </script>
 
 <div class="flex flex-col items-center">

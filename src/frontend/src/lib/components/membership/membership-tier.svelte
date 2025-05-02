@@ -5,16 +5,20 @@
     import InfoIcon from '$lib/icons/InfoIcon.svelte';
     import CloseIcon from '$lib/icons/CloseIcon.svelte';
     import BulletPointIcon from '$lib/icons/BulletPointIcon.svelte';
-    
-    export let tier: {
-        name: string;
-        stakingRequirement: string;
-        stakingPeriod: string;
-        freeBets: number;
-        freeBetsFrequency: string;
-        benefits: string[];
-    };
 
+    interface Props {
+        tier: {
+            name: string;
+            stakingRequirement: string;
+            stakingPeriod: string;
+            freeBets: number;
+            freeBetsFrequency: string;
+            benefits: string[];
+        };
+    }
+
+    let { tier  } : Props = $props();
+    
     const backgroundProperties = {
         opacity: "opacity-[0.10]",
         size: "w-[100%] h-[100%]",

@@ -2,7 +2,11 @@
     import { writable } from 'svelte/store';
     import { onMount, setContext } from 'svelte';
 
-    export let defaultValue: string;
+    interface Props {
+        defaultValue: string;
+    }
+
+    let { defaultValue } : Props = $props();
 
     const activeTab = writable(defaultValue);
     setContext('activeTab', activeTab);

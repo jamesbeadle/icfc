@@ -11,7 +11,7 @@
   import "../app.css";
   
   import Toasts from "$lib/components/toasts/toasts.svelte";
-  import FullScreenSpinner from "$lib/components/shared/full-screen-spinner.svelte";
+  import FullScreenSpinner from "$lib/components/shared/global/full-screen-spinner.svelte";
   import PortalHost from 'svelte-portal';
   import HeaderController from "$lib/components/shared/header/header-controller.svelte";
 

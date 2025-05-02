@@ -1,8 +1,10 @@
 <script lang="ts">
-    export let activeTab: string;
-    export let setActiveTab: (tabName: string) => void;
 
-    export let tabs:  { id: string; label: string}[];
+    interface Props {
+        tabs:  { id: string; label: string}[];
+        activeTab: string;
+        setActiveTab: (tabName: string) => void;
+    }
 
 </script>
 

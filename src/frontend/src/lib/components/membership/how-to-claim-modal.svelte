@@ -1,9 +1,13 @@
 <script lang="ts">
-    import Modal from "../shared/modal.svelte";
+    import Modal from "../shared/global/modal.svelte";
     import StepPanel from "./step-panel.svelte";
     import TabContainer from "../shared/tab-container.svelte";
 
-    export let onClose: () => void;
+    interface Props {
+        onClose: () => void;
+    }
+
+    let { onClose } : Props = $props();
 
     let getICPSteps = [
         {

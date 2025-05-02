@@ -8,7 +8,7 @@
     import IcpCoinIcon from "$lib/icons/ICPCoinIcon.svelte";
     import CkbtcCoinIcon from "$lib/icons/CKBTCCoinIcon.svelte";
     import IcgcCoinIcon from "$lib/icons/ICGCCoinIcon.svelte";
-    import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
+    import LocalSpinner from "$lib/components/shared/global/local-spinner.svelte";
 
     let isLoading = true;
     let tokenBalances: TokenBalances | null = null;

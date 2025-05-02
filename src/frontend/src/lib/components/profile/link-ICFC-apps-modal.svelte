@@ -2,9 +2,13 @@
     import IcfcAppsModal from "../shared/icfc-apps-modal.svelte";
     import PrincipalIdModal from "./principal-id-modal.svelte";
     import type { SubApp } from "../../../../../declarations/backend/backend.did";
-    
-    export let isOpen = false;
-    export let onClose: () => void;
+
+    interface Props {
+        isOpen: boolean;
+        onClose: () => void;
+    }
+
+    let { isOpen, onClose } : Props = $props();
 
     let selectedApp: { name: string; id: string } | null = null;
     let showPrincipalModal = false;

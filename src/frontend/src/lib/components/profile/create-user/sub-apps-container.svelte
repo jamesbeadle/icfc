@@ -1,7 +1,11 @@
 <script lang="ts">
     import { isPrincipalValid } from "$lib/utils/helpers";
 
-    export let openFplPrincipalId: string;
+    interface Props {
+        openFplPrincipalId: string;
+    }
+
+    let { openFplPrincipalId } : Props = $props();
 </script>
 
 

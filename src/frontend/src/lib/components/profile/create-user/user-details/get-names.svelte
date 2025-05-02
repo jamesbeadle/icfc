@@ -1,11 +1,14 @@
 <script lang="ts">
     import { isUsernameValid } from "$lib/utils/helpers";
     import { userStore } from "$lib/stores/user-store";
-    
-    export let username: string;
-    export let displayName: string;
-    export let store: typeof userStore;
-    export let usernameAvailable: boolean;
+
+    interface Props {
+        username: string;
+        displayName: string;
+        usernameAvailable: boolean;
+    }
+
+    let { username, displayName, usernameAvailable } : Props = $props();
 
     let isCheckingUsername = false;
     let usernameError = "";

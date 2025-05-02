@@ -2,8 +2,8 @@
     import { onMount } from "svelte";
     import { userStore } from "$lib/stores/user-store";
     import type { ProfileDTO } from "../../../../../declarations/backend/backend.did";
-    import Modal from "../shared/modal.svelte";
-    import LocalSpinner from "../shared/local-spinner.svelte";
+    import Modal from "../shared/global/modal.svelte";
+    import LocalSpinner from "../shared/global/local-spinner.svelte";
     import MembershipCard from "./membership-card.svelte";
     import { getCurrentLevelIndex } from "$lib/utils/helpers";
     import IcfcCoinIcon from "$lib/icons/ICFCCoinIcon.svelte";
@@ -11,8 +11,12 @@
     import { membershipStore } from "$lib/stores/membership-store";
     import CopyPrincipal from "../profile/copy-principal.svelte";
 
-    export let closeClaimMembership: (reload: boolean) => void;
-    export let totalStakedICFC: number;
+    interface Props {
+        closeClaimMembership: (reload: boolean) => void;
+        totalStakedICFC: number;
+    }
+
+    let { closeClaimMembership, totalStakedICFC } : Props = $props();
 
     let isLoading = true;
     let profile: ProfileDTO | undefined = undefined;

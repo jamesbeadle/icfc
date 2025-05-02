@@ -5,7 +5,7 @@
     import { getCurrentLevelIndex } from "$lib/utils/helpers";
     import { userStore } from "$lib/stores/user-store";
     import MembershipCard from "../membership/membership-card.svelte";
-    import LocalSpinner from "../shared/local-spinner.svelte";
+    import LocalSpinner from "../shared/global/local-spinner.svelte";
     
     let {profile, maxStakedICFC, refreshNeurons} = 
         $props<{ 

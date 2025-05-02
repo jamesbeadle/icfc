@@ -3,9 +3,14 @@
     import { authStore } from "$lib/stores/auth-store";
     import { toasts } from "$lib/stores/toasts-store";
 
-    export let bgColor = "bg-BrandGray";
-    export let borderColor = "border-BrandGrayShade3";
-    export let isProfile = false;
+    interface Props {
+        bgColor: string;
+        borderColor: string;
+        isProfile: boolean;
+    }
+
+    let { bgColor, borderColor, isProfile } : Props = $props();
+    let principalId = $state("")
 
     async function copyTextAndShowToast(text: string) {
         try {
@@ -20,7 +25,9 @@
         }
     }
 
-    $: principalId = $authStore.identity?.getPrincipal().toString() ?? "Not available";
+    $effect(() => {
+        principalId = $authStore.identity?.getPrincipal().toString() ?? "Not available";
+    });
 </script>
 
 <div class="flex items-center w-full {isProfile ? 'max-w-[600px]' : 'max-w-full'} gap-2 px-4 py-2 border rounded-lg {bgColor} {borderColor}">
@@ -30,7 +37,7 @@
         </p>
     </div>
     <button 
-        on:click={() => { copyTextAndShowToast(principalId) }}
+        onclick={() => { copyTextAndShowToast(principalId) }}
         class="flex-shrink-0 p-2 text-white transition-colors duration-200 rounded-lg hover:bg-BrandGrayShade2"
         title="Copy Principal ID"
     >

@@ -5,10 +5,13 @@
     import InfoIcon from '$lib/icons/InfoIcon.svelte';
     import CloseIcon from '$lib/icons/CloseIcon.svelte';
     import type { NeuronSummary } from '$lib/types/neuron-types';
-    
-    export let neuron: NeuronSummary;
 
-    export let copyToClipboard: (id: string) => void;
+    interface Props {
+        neuron: NeuronSummary;
+        copyToClipboard: (id: string) => void;
+    }
+
+    let { neuron, copyToClipboard } : Props = $props();
 
     const backgroundProperties = {
         opacity: "opacity-[0.10]",

@@ -5,16 +5,18 @@
     import GetNames from "./get-names.svelte";
     import type { ClubId, CountryId, LeagueId } from "../../../../../../../declarations/backend/backend.did";
 
-    export let file: File | null = null;
-    
-    export let nationalityId: CountryId | null;
-    export let favouriteLeagueId: LeagueId | null;
-    export let favouriteClubId: ClubId | null;
-    
-    export let username: string;
-    export let usernameAvailable: boolean;
-    export let displayName: string;
-    export let store: typeof userStore;
+    interface Props {
+        file: File | null;
+        nationalityId: CountryId | null;
+        favouriteLeagueId: LeagueId | null;
+        favouriteClubId: ClubId | null;
+        username: string;
+        usernameAvailable: boolean;
+        displayName: string;
+    }
+
+    let { file, nationalityId, favouriteLeagueId, favouriteClubId, username, usernameAvailable, displayName } : Props = $props();
+
 </script>
 
 <p class="mb-8 text-xl text-white cta-text">User Details</p>

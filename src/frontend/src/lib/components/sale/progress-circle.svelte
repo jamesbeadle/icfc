@@ -1,5 +1,10 @@
 <script lang="ts">
-    export let percentage: number;
+
+    interface Props {
+        percentage: number;
+    }
+  
+    let { percentage } : Props = $props();
 
     const radius = 36;
     const mobileRadius = 28;

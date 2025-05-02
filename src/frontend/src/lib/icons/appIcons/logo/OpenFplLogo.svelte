@@ -1,7 +1,12 @@
 <script lang="ts">
-    export let className: string = "";
-    export let fill: string = "currentColor";
-</script>
+
+    interface Props {
+      className: string;
+      fill: string;
+    }
+  
+    let { className, fill } : Props = $props();
+  </script>
 
 
 <svg class={className} aria-hidden="true" viewBox="0 0 35 48" fill="{fill}" xmlns="http://www.w3.org/2000/svg">

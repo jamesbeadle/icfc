@@ -6,13 +6,18 @@
     import SeasonalMembershipIcon from '$lib/icons/SeasonalMembershipIcon.svelte';
     import LifetimeMembershipIcon from '$lib/icons/LifetimeMembershipIcon.svelte';
     import FoundingMembershipIcon from '$lib/icons/FoundingMembershipIcon.svelte';
-  
-    export let membership: { type: string; tokensRequired: number; key: string };
-    export let levelIndex: number;
-    export let currentLevelIndex: number;
-    export let totalStakedICFC: number;
-    export let handleClaimMembership: () => void;
 
+
+    interface Props {
+        membership: { type: string; tokensRequired: number; key: string };
+        levelIndex: number;
+        currentLevelIndex: number;
+        totalStakedICFC: number;
+        handleClaimMembership: () => void;
+    }
+
+    let { membership, levelIndex, currentLevelIndex, totalStakedICFC, handleClaimMembership  } : Props = $props();
+  
     const backgroundProperties = {
         size: "w-[110%] h-[110%]",
         frontPosition: "-bottom-1 -right-[10rem]",

@@ -1,9 +1,13 @@
 <script lang="ts">
     import StepPanel from "./step-panel.svelte";
-    import Modal from "../shared/modal.svelte";
-    
-    export let showModal: boolean;
-    export let onClose: () => void;
+    import Modal from "../shared/global/modal.svelte";
+
+
+    interface Props {
+        onClose: () => void;
+    }
+
+    let { onClose } : Props = $props();
 
     let steps = [
         {
@@ -19,20 +23,17 @@
     ]
 </script>
 
-{#if showModal}
-    <Modal onClose={onClose}>
-        <h2 class="text-2xl text-white cta-text">How To Add ICFC</h2>
-        <div class="flex flex-col w-full h-full max-w-2xl mx-auto">
-            <div class="relative flex flex-col flex-1 w-full bg-ModalBackground rounded-xl">
+<Modal onClose={onClose} title="How To Add ICFC">
+    <div class="flex flex-col w-full h-full max-w-2xl mx-auto">
+        <div class="relative flex flex-col flex-1 w-full bg-ModalBackground rounded-xl">
 
-                <div class="flex-1 p-6 overflow-y-auto">
-                    <div class="flex flex-col space-y-4">
-                        {#each steps as step}
-                            <StepPanel {...step} />
-                        {/each}
-                    </div>
+            <div class="flex-1 p-6 overflow-y-auto">
+                <div class="flex flex-col space-y-4">
+                    {#each steps as step}
+                        <StepPanel {...step} />
+                    {/each}
                 </div>
             </div>
         </div>
-    </Modal>
-{/if}
+    </div>
+</Modal>

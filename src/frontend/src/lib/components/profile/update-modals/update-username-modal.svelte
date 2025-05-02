@@ -1,14 +1,17 @@
 <script lang="ts">
-    import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
-    import Modal from "$lib/components/shared/modal.svelte";
+    import LocalSpinner from "$lib/components/shared/global/local-spinner.svelte";
+    import Modal from "$lib/components/shared/global/modal.svelte";
     import { toasts } from "$lib/stores/toasts-store";
     import { userStore } from "$lib/stores/user-store";
     import { isUsernameValid } from "$lib/utils/helpers";
     import type { PrincipalId, UpdateUserName } from "../../../../../../declarations/backend/backend.did";
 
-    export let visible: boolean = false;
-    export let username: string;
-    export let principalId: PrincipalId;
+    interface Props {
+        username: string;
+        principalId: PrincipalId;
+    }
+
+    let { username, principalId } : Props = $props();
 
     let newUsername = username;
     let isLoading = false;

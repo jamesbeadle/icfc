@@ -1,6 +1,6 @@
 <script lang="ts">
-  import LocalSpinner from '$lib/components/shared/local-spinner.svelte';
-  import Modal from '$lib/components/shared/modal.svelte';
+  import LocalSpinner from '$lib/components/shared/global/local-spinner.svelte';
+  import Modal from '$lib/components/shared/global/modal.svelte';
   import { toasts } from '$lib/stores/toasts-store';
   import { userStore } from '$lib/stores/user-store';
   import { onMount } from 'svelte';
@@ -14,9 +14,12 @@
   import { clubStore } from '$lib/stores/club-store';
   import { leagueStore } from '$lib/stores/league-store';
 
-  export let visible: boolean = false;
-  export let favouriteLeagueId: LeagueId;
-  export let favouriteClubId: ClubId;
+  interface Props {
+    favouriteLeagueId: LeagueId;
+    favouriteClubId: ClubId;
+  }
+
+  let { favouriteLeagueId, favouriteClubId } : Props = $props();
 
   let isLoading = false;
   let clubsLoading = false;

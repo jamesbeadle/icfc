@@ -1,10 +1,14 @@
 <script lang="ts">
     import ArrowDown from "$lib/icons/ArrowDownIcon.svelte";
 
-    export let step: number;
-    export let title: string;
-    export let description: string;
+    interface Props {
+        step: number;
+        title: string;
+        description: string;
+    }
 
+    let { step, title, description } : Props = $props();
+    
     let isExpanded = false;
 
     function toggleExpansion() {

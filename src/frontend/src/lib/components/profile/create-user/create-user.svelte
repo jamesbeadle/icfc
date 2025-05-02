@@ -8,7 +8,7 @@
   import { getFileExtensionFromFile, sortByHighestNeuron } from "$lib/utils/helpers";
   import type { CreateProfile, EligibleMembership, Neuron, LeagueId, ClubId, CountryId, Country, League } from "../../../../../../declarations/backend/backend.did";
 
-  import LocalSpinner from "../../shared/local-spinner.svelte";
+  import LocalSpinner from "../../shared/global/local-spinner.svelte";
   import AvailableMembership from "../../membership/available-membership.svelte";
   import CopyPrincipal from "../copy-principal.svelte";
   import CreateUserHeader from "./create-user-header.svelte";

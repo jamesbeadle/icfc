@@ -1,16 +1,19 @@
 <script lang="ts">
-    import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
-    import Modal from "$lib/components/shared/modal.svelte";
+    import LocalSpinner from "$lib/components/shared/global/local-spinner.svelte";
+    import Modal from "$lib/components/shared/global/modal.svelte";
     import EditIcon from "$lib/icons/EditIcon.svelte";
     import { toasts } from "$lib/stores/toasts-store";
     import { userStore } from "$lib/stores/user-store";
     import { isDisplayNameValid, isUsernameValid } from "$lib/utils/helpers";
     import type { PrincipalId, UpdateDisplayName, UpdateUserName, UpdateProfilePicture } from "../../../../../../declarations/backend/backend.did";
 
-    export let visible: boolean = false;
-    export let username: string;
-    export let displayName: string;
-    export let profileSrc: string;
+    interface Props {
+        username: string;
+        displayName: string;
+        profileSrc: string;
+    }
+
+    let { username, displayName, profileSrc } : Props = $props();
 
     let isLoading = false;
     let loadingMessage = ("");

@@ -2,9 +2,13 @@
     import { onMount, onDestroy } from 'svelte';
     import FlipNumber from './flip-number.svelte';
 
-    export let saleStatus: string;
-    export let saleTimeRemaining: { days: number, hours: number, minutes: number, seconds: number };
-    export let isSaleComplete: boolean;
+    interface Props {
+        saleStatus: string;
+        saleTimeRemaining: { days: number, hours: number, minutes: number, seconds: number };
+        isSaleComplete: boolean;
+    }
+
+    let { saleStatus, saleTimeRemaining, isSaleComplete } : Props = $props();
     
     let intervalId: ReturnType<typeof setInterval>;
     let timeLeft = saleTimeRemaining;

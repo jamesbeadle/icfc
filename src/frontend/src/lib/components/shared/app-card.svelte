@@ -3,24 +3,27 @@
     import InfoIcon from "$lib/icons/InfoIcon.svelte";
     import CloseIcon from "$lib/icons/CloseIcon.svelte";
 
-    export let app: {
-        id: string;
-        name: string;
-        background: any;
-        logo: any;
-        color: string;
-        textColor: string;
-        description: string;
-        link: string;
-        backgroundOpacity: string;
-        backgroundSize: string;
-        backgroundPosition: string;
-    };
+    interface Props {
+        app: {
+            id: string;
+            name: string;
+            background: any;
+            logo: any;
+            color: string;
+            textColor: string;
+            description: string;
+            link: string;
+            backgroundOpacity: string;
+            backgroundSize: string;
+            backgroundPosition: string;
+        };
+        isFlipped: boolean;
+        onFlip: (id: string, e: MouseEvent | KeyboardEvent) => void;
+        isModal: boolean;
+        disableFlip: boolean;
+    }
 
-    export let isFlipped: boolean;
-    export let onFlip: (id: string, e: MouseEvent | KeyboardEvent) => void;
-    export let isModal: boolean = false;
-    export let disableFlip: boolean = false;
+    let { app, isFlipped, onFlip, isModal, disableFlip } : Props = $props();
 </script>
 
 <Card 

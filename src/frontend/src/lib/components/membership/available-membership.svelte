@@ -6,15 +6,19 @@
     import { toasts } from "$lib/stores/toasts-store";
 
     import NeuronCard from './neuron-card.svelte';
-    import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
+    import LocalSpinner from "$lib/components/shared/global/local-spinner.svelte";
     import HowToClaimModal from "./how-to-claim-modal.svelte";
     import IcfcInfoContainer from "$lib/components/profile/create-user/icfc-info-container.svelte";
 
-    export let neurons: Neuron[];
-    export let refreshNeurons: () => void;
-    export let availableMembership: MembershipType;
-    export let maxStakedICFC: bigint;
-    export let isProfile = false;
+    interface Props {
+        neurons: Neuron[];
+        refreshNeurons: () => void;
+        availableMembership: MembershipType;
+        maxStakedICFC: bigint;
+        isProfile: boolean;
+    }
+
+    let { neurons, refreshNeurons, availableMembership, maxStakedICFC, isProfile } : Props = $props();
 
     let isLoading: boolean = false;
     let showHowToClaimModal = false;

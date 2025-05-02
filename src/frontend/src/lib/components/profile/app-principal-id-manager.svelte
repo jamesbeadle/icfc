@@ -1,8 +1,12 @@
 <script lang="ts">
     import type { PrincipalId, SubApp } from "../../../../../declarations/backend/backend.did";
     import DropdownSelect from "../shared/dropdown-select.svelte";
-  
-    export let appPrincipalIds: Array<[SubApp, PrincipalId]> = [];
+
+    interface Props {
+        appPrincipalIds: Array<[SubApp, PrincipalId]>;
+    }
+
+    let { appPrincipalIds } : Props = $props();
   
     let isOpen = false;
     let selectedApp: SubApp | null = null;

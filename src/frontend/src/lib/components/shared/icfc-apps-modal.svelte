@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Modal from "./modal.svelte";
+  import Modal from "./global/modal.svelte";
   import FootballGodBackground from "$lib/icons/appIcons/background/FootballGodIcon.svelte";
   import OpenFplBackground from "$lib/icons/appIcons/background/OpenFplIcon.svelte";
   import TransferKingsBackground from "$lib/icons/appIcons/background/TransferKingsIcon.svelte";
@@ -11,10 +11,14 @@
   import AppCard from "$lib/components/shared/app-card.svelte";
   import CloseIcon from "$lib/icons/CloseIcon.svelte";
 
-  export let isOpen: boolean;
-  export let onClose: () => void;
-  export let flippedCards: Set<string> = new Set();
-  export let onAppClick: (app: { name: string; id: string }) => void = () => {};
+  interface Props {
+    isOpen: boolean;
+    onClose: () => void;
+    flippedCards: Set<string>;
+    onAppClick: (app: { name: string; id: string }) => void;
+  }
+
+  let { isOpen, onClose, flippedCards, onAppClick } : Props = $props();
 
   const apps = [
         {

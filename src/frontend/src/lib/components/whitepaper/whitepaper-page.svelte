@@ -1,7 +1,11 @@
 <script lang="ts">
 
-    export let title: string;
-    export let intro: string;
+    interface Props {
+        title: string;
+        intro: string;
+    }
+  
+    let { title, intro } : Props = $props();
 
 </script>
 <div class="flex flex-col mb-4 space-y-4 text-lg">

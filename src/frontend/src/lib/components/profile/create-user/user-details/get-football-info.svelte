@@ -1,17 +1,18 @@
 <script lang="ts">
+    import type { ClubId, CountryId, LeagueId } from "../../../../../../../declarations/backend/backend.did";
     import { countryStore } from "$lib/stores/country-store";
     import { leagueStore } from "$lib/stores/league-store";
     import { clubStore } from "$lib/stores/club-store";
     import { busy } from "$lib/stores/busy-store";
     import { toasts } from "$lib/stores/toasts-store";
 
-    import type { ClubId, CountryId, LeagueId } from "../../../../../../../declarations/backend/backend.did";
-    
-    export let nationalityId: CountryId | null;
-    export let favouriteLeagueId: LeagueId | null;
-    export let favouriteClubId: ClubId | null;
+    interface Props {
+        nationalityId: CountryId | null;
+        favouriteLeagueId: LeagueId | null;
+        favouriteClubId: ClubId | null;
+    }
 
-    $: clubs = $clubStore;
+    let { nationalityId, favouriteLeagueId, favouriteClubId } : Props = $props();
 
     let lastFetchedLeagueId: LeagueId | null = null;
     let loadingClubs = false;
@@ -21,10 +22,8 @@
             loadingClubs = true;
             const clubsResult = await clubStore.getClubs(favouriteLeagueId!);
             if (clubsResult) {
-                clubs = clubsResult.clubs;
                 clubStore.setClubs(clubs);
             } else {
-                clubs = [];
                 clubStore.setClubs([]);
             }
         } catch (error) {

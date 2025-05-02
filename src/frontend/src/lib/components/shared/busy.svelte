@@ -4,7 +4,7 @@
 	import { busy } from '$lib/stores/busy-store';
 	import { handleKeyPress } from '$lib/utils/keyboard.utils';
 
-    import LocalSpinner from './local-spinner.svelte';
+    import LocalSpinner from './global/local-spinner.svelte';
 
 	const close = () => {
 		if (isNullish($busy) || !$busy.close) {

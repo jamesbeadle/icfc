@@ -8,7 +8,7 @@
     import { toasts } from "$lib/stores/toasts-store";
     
     import CopyPrincipal from "./copy-principal.svelte";
-    import LocalSpinner from "../shared/local-spinner.svelte";
+    import LocalSpinner from "../shared/global/local-spinner.svelte";
     import UpdateFavouriteClubModal from "./update-modals/update-favourite-club-modal.svelte";
     import UpdateNationalityModal from "./update-modals/update-nationality-modal.svelte";
   

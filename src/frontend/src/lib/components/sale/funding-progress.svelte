@@ -1,9 +1,13 @@
 <script lang="ts">
     import ParticipateModal from './participate-modal.svelte';
     import HowItWorksModal from './how-it-works-modal.svelte';
-    
-    export let packCost: bigint;
-    export let remainingPacks: bigint;
+
+    interface Props {
+        packCost: bigint;
+        remainingPacks: bigint;
+    }
+
+    let { packCost, remainingPacks } : Props = $props();
 
     let showParticipateModal = false;
     let showHowItWorksModal = false;
@@ -57,13 +61,11 @@
 
 {#if showHowItWorksModal}
     <HowItWorksModal 
-        showModal={showHowItWorksModal}
         onClose={closeHowItWorksModal}
     />
 {/if}
 {#if showParticipateModal}
     <ParticipateModal 
-        showModal={showParticipateModal}
         onClose={closeParticipateModal}
     /> 
 {/if}

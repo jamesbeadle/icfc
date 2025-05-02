@@ -1,7 +1,11 @@
 <script lang="ts">
     import { toasts } from "$lib/stores/toasts-store";
 
-    export let file: File | null = null;
+    interface Props {
+        file: File | null
+    }
+
+    let { file } : Props = $props();
 
     let fileInput: HTMLInputElement;
     let profileSrc = '/profile_placeholder.png';

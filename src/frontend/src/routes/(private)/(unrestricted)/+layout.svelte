@@ -6,7 +6,7 @@
   import { goto } from '$app/navigation';
   import { toasts } from '$lib/stores/toasts-store';
 
-  import FullScreenSpinner from '$lib/components/shared/full-screen-spinner.svelte';
+  import FullScreenSpinner from '$lib/components/shared/global/full-screen-spinner.svelte';
 
   const { children } = $props<{
     children: Snippet;

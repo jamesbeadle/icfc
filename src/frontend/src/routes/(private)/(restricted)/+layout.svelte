@@ -4,7 +4,7 @@
     import { get } from 'svelte/store';
     import { onMount, type Snippet } from 'svelte';
     import { goto } from '$app/navigation';
-    import FullScreenSpinner from '$lib/components/shared/full-screen-spinner.svelte';
+    import FullScreenSpinner from '$lib/components/shared/global/full-screen-spinner.svelte';
 
     const { children } = $props<{
       children: Snippet;

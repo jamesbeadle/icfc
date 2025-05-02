@@ -1,7 +1,11 @@
 <script lang="ts">
-    import LogoIcon from "$lib/icons/LogoIcon.svelte";
+  import LogoIcon from "$lib/icons/LogoIcon.svelte";
 
-    export let toggleMenu: () => void;
+  interface Props {
+    toggleMenu: () => void;
+  }
+
+  let { toggleMenu } : Props = $props();
 
 </script>
 
