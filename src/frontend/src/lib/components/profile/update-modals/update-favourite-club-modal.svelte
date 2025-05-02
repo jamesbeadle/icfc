@@ -126,62 +126,60 @@
     }
 </script>
 
-{#if visible}
-  <Modal onClose={cancelModal} title="Update Favourite League & Club">
-    {#if isLoading}
-      <LocalSpinner message={loadingMessage} />
-    {:else}
-      <div
-        class="flex flex-col p-4 space-y-4 md:justify-between md:flex-row md:space-y-0"
-      >
-        <form class="flex flex-col w-full space-y-4">
-          <div class="flex flex-col space-y-2">
-            <p class="form-title">Your Favourite League</p>
-            <p class="form-hint">Select to find your favourite club.</p>
-            <select bind:value={newFavouriteLeagueId} class="w-full brand-input">
-              <option value={null}>Select...</option>
-              {#each $leagueStore.sort( (a, b) => a.name.localeCompare(b.name) ) as league}
-                <option value={league.id}>{league.name}</option>
-              {/each}
+<Modal onClose={cancelModal} title="Update Favourite League & Club">
+  {#if isLoading}
+    <LocalSpinner message={loadingMessage} />
+  {:else}
+    <div
+      class="flex flex-col p-4 space-y-4 md:justify-between md:flex-row md:space-y-0"
+    >
+      <form class="flex flex-col w-full space-y-4">
+        <div class="flex flex-col space-y-2">
+          <p class="form-title">Your Favourite League</p>
+          <p class="form-hint">Select to find your favourite club.</p>
+          <select bind:value={newFavouriteLeagueId} class="w-full brand-input">
+            <option value={null}>Select...</option>
+            {#each $leagueStore.sort( (a, b) => a.name.localeCompare(b.name) ) as league}
+              <option value={league.id}>{league.name}</option>
+            {/each}
+          </select>
+        </div>
+        <div class="flex flex-col w-full space-y-2">
+          <p class="form-title">Your Favourite Club</p>
+          <p class="form-hint">Select to enable club based rewards.</p>
+          {#if clubsLoading}
+            <LocalSpinner message="Loading clubs" />
+          {:else}
+            <select
+              bind:value={newFavouriteClubId}
+              disabled={!newFavouriteLeagueId}
+              class="w-full brand-input disabled:opacity-50"
+            >
+            <option value={null}>Select...</option>
+            {#each $clubStore.sort( (a, b) => a.friendlyName.localeCompare(b.friendlyName) ) as club}
+              <option value={club.id}>{club.friendlyName}</option>
+            {/each}
             </select>
-          </div>
-          <div class="flex flex-col w-full space-y-2">
-            <p class="form-title">Your Favourite Club</p>
-            <p class="form-hint">Select to enable club based rewards.</p>
-            {#if clubsLoading}
-              <LocalSpinner message="Loading clubs" />
-            {:else}
-              <select
-                bind:value={newFavouriteClubId}
-                disabled={!newFavouriteLeagueId}
-                class="w-full brand-input disabled:opacity-50"
-              >
-              <option value={null}>Select...</option>
-              {#each $clubStore.sort( (a, b) => a.friendlyName.localeCompare(b.friendlyName) ) as club}
-                <option value={club.id}>{club.friendlyName}</option>
-              {/each}
-              </select>
-            {/if}
-          </div>
-          <div class="flex flex-row items-center py-3 space-x-4">
-            <button
-              class="w-1/2 brand-button"
-              type="button"
-              on:click={cancelModal}
-              disabled={isLoading}
-            >
-              Cancel
-            </button>
-            <button
-              class="w-1/2 brand-button"
-              disabled={isSubmitDisabled}
-              on:click={handleSubmit}
-            >
-              Update Favourite Club
-            </button>
-          </div>
-        </form>
-      </div>
-    {/if}
-  </Modal>
-{/if}
+          {/if}
+        </div>
+        <div class="flex flex-row items-center py-3 space-x-4">
+          <button
+            class="w-1/2 brand-button"
+            type="button"
+            onclick={cancelModal}
+            disabled={isLoading}
+          >
+            Cancel
+          </button>
+          <button
+            class="w-1/2 brand-button"
+            disabled={isSubmitDisabled}
+            onclick={handleSubmit}
+          >
+            Update Favourite Club
+          </button>
+        </div>
+      </form>
+    </div>
+  {/if}
+</Modal>

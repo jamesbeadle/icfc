@@ -8,9 +8,9 @@
     let { value, label } : Props = $props();
     
     let previousValue = value;
-    let isFlipping = false;
-    let digits = $state([]);
-    let previousDigits = $state([]);
+    let isFlipping = $state(false);
+    let digits: string[] = $state([]);
+    let previousDigits: string[] = $state([]);
     
     function padNumber(num: number): string {
         return num.toString().padStart(2, '0');

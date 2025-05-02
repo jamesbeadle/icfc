@@ -38,15 +38,13 @@
     ]
 </script>
 
-<Modal onClose={onClose}>
+<Modal title="How To Stake ICFC" onClose={onClose}>
     <div class="flex flex-col w-full h-full max-w-2xl mx-auto">
-        <h2 class="text-2xl text-white cta-text">How To Stake ICFC</h2>
         <div class="relative flex flex-col flex-1 w-full bg-ModalBackground rounded-xl">
             <div class="p-6 border-b border-white/10">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-2xl text-white cta-text md:text-3xl">How to Stake ICFC</h3>
                     <button 
-                        on:click={onClose}
+                        onclick={onClose}
                         class="p-2 transition-colors duration-300 rounded-lg hover:bg-white/10"
                     >
                         <CloseIcon className="w-6 h-6" fill="white" />

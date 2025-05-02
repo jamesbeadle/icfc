@@ -20,7 +20,7 @@
         backPosition: "-bottom-1 -left-[10rem]"
     };
 
-    let isFlipped = false;
+    let isFlipped = $state(false);
 
     function handleFlip(id: string) {
         isFlipped = !isFlipped;
@@ -39,7 +39,7 @@
         <div class="flex items-center justify-between">
             <ICFCCoinIcon className="w-12 h-12" />
             <button
-                on:click|stopPropagation={() => handleFlip(neuron.id)}
+                onclick={() => handleFlip(neuron.id)}
                 class="z-30 flex items-center justify-center transition-transform duration-300 hover:scale-110"
             >
                 <InfoIcon className="w-7 h-7" fill="currentColor" />
@@ -53,7 +53,7 @@
         <div class="relative z-10 mt-auto">
             <div class="flex items-center gap-2">
                 <p class="mb-1 text-lg opacity-75 xxs:text-xl cta-text">Neuron</p>
-                <button on:click={() => copyToClipboard(neuron.id)} class="text-sm text-BrandGrayShade4">#{neuron.displayId}</button>
+                <button onclick={() => copyToClipboard(neuron.id)} class="text-sm text-BrandGrayShade4">#{neuron.displayId}</button>
             </div>
             <h3 class="text-base mini:text-lg md:text-xl lg:text-2xl">{neuron.stakedAmount} ICFC</h3>
         </div>
@@ -63,7 +63,7 @@
         <div class="flex items-center justify-between mb-4">
             <ICFCCoinIcon className="w-12 h-12" />
             <button
-                on:click|stopPropagation={() => handleFlip(neuron.id)}
+                onclick={() => handleFlip(neuron.id)}
                 class="z-30 flex items-center justify-center transition-transform duration-300 hover:scale-110"
             >
                 <CloseIcon className="w-7 h-7" fill="currentColor" />

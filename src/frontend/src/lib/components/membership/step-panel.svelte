@@ -9,7 +9,7 @@
 
     let { step, title, description } : Props = $props();
     
-    let isExpanded = false;
+    let isExpanded = $state(false);
 
     function toggleExpansion() {
         isExpanded = !isExpanded;
@@ -25,7 +25,7 @@
     <button
         type="button"
         class="flex items-center justify-between w-full p-4 text-left transition-colors duration-300 rounded-md hover:bg-white/5"
-        on:click={toggleExpansion}
+        onclick={toggleExpansion}
     >
         <div class="flex gap-3">
             <span class="text-base font-bold text-white md:text-lg">

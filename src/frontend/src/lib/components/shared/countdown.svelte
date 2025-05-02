@@ -11,34 +11,33 @@
     let { saleStatus, saleTimeRemaining, isSaleComplete } : Props = $props();
     
     let intervalId: ReturnType<typeof setInterval>;
-    let timeLeft = saleTimeRemaining;
 
     function decrementTime() {
-        if (timeLeft.days === 0 && timeLeft.hours === 0 && 
-            timeLeft.minutes === 0 && timeLeft.seconds === 0) {
+        if (saleTimeRemaining.days === 0 && saleTimeRemaining.hours === 0 && 
+            saleTimeRemaining.minutes === 0 && saleTimeRemaining.seconds === 0) {
             clearInterval(intervalId);
             return;
         }
 
-        if (timeLeft.seconds > 0) {
-            timeLeft.seconds--;
+        if (saleTimeRemaining.seconds > 0) {
+            saleTimeRemaining.seconds--;
         } else {
-            timeLeft.seconds = 59;
-            if (timeLeft.minutes > 0) {
-                timeLeft.minutes--;
+            saleTimeRemaining.seconds = 59;
+            if (saleTimeRemaining.minutes > 0) {
+                saleTimeRemaining.minutes--;
             } else {
-                timeLeft.minutes = 59;
-                if (timeLeft.hours > 0) {
-                    timeLeft.hours--;
+                saleTimeRemaining.minutes = 59;
+                if (saleTimeRemaining.hours > 0) {
+                    saleTimeRemaining.hours--;
                 } else {
-                    timeLeft.hours = 23;
-                    if (timeLeft.days > 0) {
-                        timeLeft.days--;
+                    saleTimeRemaining.hours = 23;
+                    if (saleTimeRemaining.days > 0) {
+                        saleTimeRemaining.days--;
                     }
                 }
             }
         }
-        timeLeft = { ...timeLeft };
+        saleTimeRemaining = { ...saleTimeRemaining };
     }
 
     onMount(() => {
@@ -61,25 +60,25 @@
         <p class="text-lg lg:text-base cta-text">Sale date TBC:</p>
         <!--
         <div class="flex flex-col items-center gap-4 md:flex-row lg:gap-2 xl:gap-4">
-            <FlipNumber value={timeLeft.days} label="Days" />
+            <FlipNumber value={saleTimeRemaining.days} label="Days" />
             <span class="hidden mb-6 text-xl font-bold text-BrandGrayShade2 md:block lg:mb-4">:</span>
-            <FlipNumber value={timeLeft.hours} label="Hours" />
+            <FlipNumber value={saleTimeRemaining.hours} label="Hours" />
             <span class="hidden mb-6 text-xl font-bold text-BrandGrayShade2 md:block lg:mb-4">:</span>
-            <FlipNumber value={timeLeft.minutes} label="Minutes" />
+            <FlipNumber value={saleTimeRemaining.minutes} label="Minutes" />
             <span class="hidden mb-6 text-xl font-bold text-BrandGrayShade2 md:block lg:mb-4">:</span>
-            <FlipNumber value={timeLeft.seconds} label="Seconds" />
+            <FlipNumber value={saleTimeRemaining.seconds} label="Seconds" />
         </div>
         -->
     {:else if saleStatus === "active"}
         <p class="text-lg font-semibold lg:text-base">Sale ends in:</p>
         <div class="flex flex-col items-center gap-4 md:flex-row lg:gap-2 xl:gap-4">
-            <FlipNumber value={timeLeft.days} label="Days" />
+            <FlipNumber value={saleTimeRemaining.days} label="Days" />
             <span class="hidden mb-6 text-xl font-bold text-BrandGrayShade2 md:block lg:mb-4">:</span>
-            <FlipNumber value={timeLeft.hours} label="Hours" />
+            <FlipNumber value={saleTimeRemaining.hours} label="Hours" />
             <span class="hidden mb-6 text-xl font-bold text-BrandGrayShade2 md:block lg:mb-4">:</span>
-            <FlipNumber value={timeLeft.minutes} label="Minutes" />
+            <FlipNumber value={saleTimeRemaining.minutes} label="Minutes" />
             <span class="hidden mb-6 text-xl font-bold text-BrandGrayShade2 md:block lg:mb-4">:</span>
-            <FlipNumber value={timeLeft.seconds} label="Seconds" />
+            <FlipNumber value={saleTimeRemaining.seconds} label="Seconds" />
         </div>
     {/if}
 </div> 

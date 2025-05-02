@@ -50,7 +50,7 @@
         }
     ]
 
-    let activeTab: string = "stakeICFC";
+    let activeTab: string = $state("stakeICFC");
 
     const tabs = [
         { id: "stakeICFC", label: "Stake ICFC" },

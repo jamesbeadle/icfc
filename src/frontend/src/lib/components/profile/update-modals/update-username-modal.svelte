@@ -4,21 +4,25 @@
     import { toasts } from "$lib/stores/toasts-store";
     import { userStore } from "$lib/stores/user-store";
     import { isUsernameValid } from "$lib/utils/helpers";
-    import type { PrincipalId, UpdateUserName } from "../../../../../../declarations/backend/backend.did";
+    import type { UpdateUserName } from "../../../../../../declarations/backend/backend.did";
 
     interface Props {
         username: string;
-        principalId: PrincipalId;
+        onClose: () => void;
     }
 
-    let { username, principalId } : Props = $props();
+    let { username, onClose } : Props = $props();
 
-    let newUsername = username;
-    let isLoading = false;
-    let isCheckingUsername = false;
-    let usernameError = "";
-    $: isSubmitDisabled = !newUsername || isCheckingUsername || !!usernameError;
-
+    let isLoading = $state(false);
+    let newUsername = $state(username);
+    let isCheckingUsername = $state(false);
+    let usernameError = $state("");
+    let isSubmitDisabled = $state(true);
+    
+    $effect(() => {
+        isSubmitDisabled = !newUsername || isCheckingUsername || !!usernameError;
+    });
+    
     const validateUsername = async (): Promise<boolean> => {
         if (!isUsernameValid(newUsername)) {
             usernameError = "Username must be between 5 and 20 characters.";
@@ -46,12 +50,11 @@
         isLoading = true;
         try {
             let dto: UpdateUserName =  {
-                username: newUsername,
-                principalId
+                username: newUsername
             }
             await userStore.updateUsername(dto);
             await userStore.sync();
-            visible = false;
+            onClose();
             toasts.addToast({
                 message: "Username updated.",
                 type: "success",
@@ -70,25 +73,23 @@
 
     const cancelModal = () => {
         newUsername = username;
-        visible = false;
+        onClose();
     };
 </script>
 
-{#if visible}
-    <Modal onClose={cancelModal}>
+<Modal title="Update Username" onClose={cancelModal}>
         {#if isLoading}
-            <LocalSpinner />
+            <LocalSpinner message="Loading" />
         {:else}
             <div class="flex flex-col space-y-6">
-                <h2 class="text-2xl text-white cta-text">Update Username</h2>
-                <form on:submit={handleSubmit}>
+                <div>
                     <div class="mt-4">
                         <input
                             type="text"
                             class="w-full px-4 py-2 text-black border rounded-md focus:outline-none focus:ring-2 focus:ring-BrandBlue"
                             placeholder="New Username"
                             bind:value={newUsername}
-                            on:input={validateUsername}
+                            oninput={validateUsername}
                             disabled={isCheckingUsername}
                         />
                         {#if usernameError}
@@ -99,7 +100,7 @@
                         <button
                             class="px-4 py-2 default-button fpl-cancel-btn"
                             type="button"
-                            on:click={cancelModal}
+                            onclick={cancelModal}
                             disabled={isLoading}
                         >
                             Cancel
@@ -108,14 +109,13 @@
                             class="px-4 py-2 default-button"
                             class:bg-BrandGrayShade3={isSubmitDisabled}
                             class:bg-BrandPurple={!isSubmitDisabled}
-                            type="submit"
                             disabled={isSubmitDisabled}
+                            onclick={handleSubmit}
                         >
                             Update
                         </button>
                     </div>
-                </form>
+                </div>
             </div>
         {/if}
-    </Modal>
-{/if}
+</Modal>

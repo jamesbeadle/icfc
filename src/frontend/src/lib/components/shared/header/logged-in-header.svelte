@@ -20,7 +20,7 @@
 
   <div class="flex items-center gap-4">
     <button
-      on:click={toggleMenu}
+      onclick={toggleMenu}
       class="fixed z-50 p-2 text-white transition-colors rounded-md bg-BrandBlueComp top-4 right-4 hover:bg-BrandBlue"
       aria-label="Toggle menu"
     >

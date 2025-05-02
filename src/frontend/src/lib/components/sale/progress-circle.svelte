@@ -11,9 +11,9 @@
     const circumference = radius * 2 * Math.PI;
     const mobileCircumference = mobileRadius * 2 * Math.PI;
 
-    $: displayPercentage = Math.min(percentage, 100);
-    $: offset = circumference - (displayPercentage / 100) * circumference;
-    $: mobileOffset = mobileCircumference - (displayPercentage / 100) * mobileCircumference;
+    let displayPercentage = Math.min(percentage, 100);
+    let offset = circumference - (displayPercentage / 100) * circumference;
+    let mobileOffset = mobileCircumference - (displayPercentage / 100) * mobileCircumference;
 </script>
 
 <div class="relative inline-flex">

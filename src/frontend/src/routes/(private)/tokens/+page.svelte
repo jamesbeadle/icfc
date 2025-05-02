@@ -28,7 +28,7 @@
 
 </script>
     {#if isLoading}
-        <LocalSpinner />
+        <LocalSpinner message="Loading ICFC DAO Tokens" />
     {:else}
     <div class="min-h-screen bg-BrandBlackShade1">
         <div class="p-4 mx-auto">
@@ -48,7 +48,7 @@
                     <CkbtcCoinIcon className="w-6 mx-2" /> {formatTokenBalance(tokenBalances?.ckBTCBalance ?? 0n)} ckBTC
                 </p>
                 <p class="flex flex-row items-center">
-                    <IcgcCoinIcon className="w-6 mx-2" /> {formatTokenBalance(tokenBalances?.icgcBalance ?? 0n)} ICGC
+                    <IcgcCoinIcon fill="white" className="w-6 mx-2" /> {formatTokenBalance(tokenBalances?.icgcBalance ?? 0n)} ICGC
                 </p>
             </div>
         </div>

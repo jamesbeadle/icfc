@@ -28,6 +28,7 @@
             <MultiLineContentSection 
                 title='Governance Data: Football God'
                 titleColor="FootballGodBackground"
+                secondTitleColor="white"
                 content={[
                     "Football God is the brain of the ICFC ecosystem, distributing messages to each ICFC application, allowing them to react to data updates in real time. ", 
                     "As our dataset becomes the single source of truth for all football data, other projects can integrate Football God’s dataset by purchasing API access to this valuable asset. This revenue generation model allows third-party developers to tap into this football data resource, reinforcing ICFC’s position at the forefront of decentralised football data.   ",
@@ -47,6 +48,7 @@
              <MultiLineContentSection 
                 title='Trading Cards: Transfer Kings'
                 titleColor="TransferKingsBackground"
+                secondTitleColor="white"
                 content={[
                     "Transfer Kings is our official ICFC digital trading card game, modernising the excitement of collecting rare football cards through utilising new and exciting technology. ",
                     "These real-time, up-to-date football cards allow fans to build their collections with unique rarity stats, linked to their form. ",
@@ -56,6 +58,7 @@
             <MultiLineContentSection 
                 title='Betting: Jeff Bets' 
                 titleColor="JeffBetsBackground"
+                secondTitleColor="white"
                 content={[
                     "Jeff Bets is our fully denetralised fixed-odds betting platform (gambling license pending). The odds on Jeff Bets are calculated in real time by the verification of data through the ICFC DAO, allowing users to bet on games in any league. ",
                     "With Jeff Bets, you don’t need to risk your own money. Win tokens through ICFC’s fantasy football leagues and use them to place bets, creating a sustainable, risk-free model designed to protect fans. ",
@@ -66,7 +69,8 @@
         </WhitepaperSection> 
 </WhitepaperPage>
 
-<IcfcAppsModal 
-    isOpen={showApps} 
-    onClose={() => showApps = false} 
-/>
+{#if showApps}
+    <IcfcAppsModal 
+        onClose={() => showApps = false} 
+    />
+{/if}

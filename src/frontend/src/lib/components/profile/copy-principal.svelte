@@ -4,12 +4,11 @@
     import { toasts } from "$lib/stores/toasts-store";
 
     interface Props {
-        bgColor: string;
+        backgroundColour: string;
         borderColor: string;
-        isProfile: boolean;
     }
 
-    let { bgColor, borderColor, isProfile } : Props = $props();
+    let { backgroundColour, borderColor } : Props = $props();
     let principalId = $state("")
 
     async function copyTextAndShowToast(text: string) {
@@ -30,7 +29,7 @@
     });
 </script>
 
-<div class="flex items-center w-full {isProfile ? 'max-w-[600px]' : 'max-w-full'} gap-2 px-4 py-2 border rounded-lg {bgColor} {borderColor}">
+<div class="flex items-center w-full  gap-2 px-4 py-2 border rounded-lg {backgroundColour} {borderColor}">
     <div class="flex-1 min-w-0">
         <p class="font-mono text-sm truncate text-BrandGrayShade5">
             {principalId}

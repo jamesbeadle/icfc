@@ -1,12 +1,15 @@
 <script lang="ts">
+    import type { Snippet } from "svelte";
+
 
   interface Props {
     text: string;
+    children: Snippet;
   }
 
-  let { text } : Props = $props();
+  let { text, children } : Props = $props();
   
-  let tooltipVisible = false;
+  let tooltipVisible = $state(false);
 
   function toggleTooltip() {
     tooltipVisible = !tooltipVisible;
@@ -19,7 +22,7 @@
   onmouseleave={() => (tooltipVisible = false)}
   onclick={toggleTooltip}
 >
-  <slot />
+{@render children()}  
   {#if tooltipVisible}
     <button
     aria-label=""

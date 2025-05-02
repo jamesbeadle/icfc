@@ -50,7 +50,7 @@
         <input
             type="text"
             bind:value={username}
-            on:input={handleUsernameInput}
+            oninput={handleUsernameInput}
             class="w-full brand-input"
             placeholder="Enter username"
         />

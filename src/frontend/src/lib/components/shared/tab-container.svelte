@@ -6,6 +6,8 @@
         setActiveTab: (tabName: string) => void;
     }
 
+    let { tabs, activeTab, setActiveTab } : Props = $props();
+
 </script>
 
 <div class="flex w-full rounded-t-lg bg-light-gray">
@@ -17,7 +19,7 @@
                         ${activeTab === tab.id 
                             ? 'text-white cta-text' 
                             : 'text-gray-400 cta-text hover:text-gray-200'}`}
-                    on:click={() => setActiveTab(tab.id)}
+                    onclick={() => setActiveTab(tab.id)}
                 >
                     {tab.label}
                     {#if activeTab === tab.id}

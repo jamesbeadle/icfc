@@ -8,7 +8,7 @@
     let { file } : Props = $props();
 
     let fileInput: HTMLInputElement;
-    let profileSrc = '/profile_placeholder.png';
+    let profileSrc = $state('/profile_placeholder.png');
 
     function clickFileInput() {
         fileInput.click();
@@ -51,7 +51,7 @@
     
     <button 
         class="w-full mt-auto brand-button"
-        on:click={clickFileInput}
+        onclick={clickFileInput}
     >
         Upload Photo
     </button>
@@ -61,7 +61,7 @@
         id="profile-image"
         accept="image/*"
         bind:this={fileInput}
-        on:change={handleFileChange}
+        onchange={handleFileChange}
         class="hidden"
     />
 </div>

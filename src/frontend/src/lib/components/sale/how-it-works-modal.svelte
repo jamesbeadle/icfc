@@ -60,11 +60,11 @@
         }
     ]
 
-    let activeTab: string = "depositICP";
+    let activeTab: string = $state("deposit-icp");
 
     const tabs = [
-        { id: "depositICP", label: "Deposit ICP" },
-        { id: "purchaseICFCPack", label: "Purchase ICFC Packs" },
+        { id: "deposit-icp", label: "Deposit ICP" },
+        { id: "purchase-icp-pack", label: "Purchase ICFC Packs" },
     ];
     function setActiveTab(tab: string): void {
         activeTab = tab;
@@ -77,11 +77,11 @@
             <TabContainer {tabs} {activeTab} {setActiveTab} />
         </div>
         <div class="flex-1 mt-4">
-            {#if activeTab === "depositICP"}
+            {#if activeTab === "deposit-icp"}
                 {#each depositICP as step}
                     <StepPanel {...step} />
                 {/each}
-            {:else if activeTab === "purchaseICFCPack"}
+            {:else if activeTab === "purchase-icp-pack"}
                 {#each purchaseICFCPack as step}
                     <StepPanel {...step} />
                 {/each}

@@ -19,13 +19,12 @@
     }
 </script>
 {#if isOpen}
-<Modal title="Link ICFC App Principal IDs" {onClose}>
+<Modal title={`Link ${appName} Account`} {onClose}>
     <div class="flex flex-col w-full h-full">
         <div class="top-0 p-6 pb-2 border-b border-BrandGrayShade3 z-60 bg-ModalBackground">
             <div class="flex items-center justify-between">
-                <h2 class="text-2xl text-white cta-text">Link {appName} Account</h2>
                 <button 
-                    on:click={onClose}
+                    onclick={onClose}
                     class="p-2 transition-colors duration-300 rounded-lg hover:bg-white/10"
                 >
                     <CloseIcon className="w-8 h-8" fill="white" />
@@ -34,7 +33,7 @@
         </div>
 
         <div class="flex-1 p-6">
-            <form on:submit|preventDefault={handleSubmit} class="flex flex-col gap-4">
+            <div class="flex flex-col gap-4">
                 <div class="flex flex-col gap-2">
                     <label for="principalId" class="text-white">Enter your Principal ID:</label>
                     <input
@@ -46,12 +45,12 @@
                     />
                 </div>
                 <button
-                    type="submit"
+                    onclick={handleSubmit}
                     class="px-4 py-2 text-white transition-colors bg-BrandBlue rounded-lg hover:bg-BrandInfo"
                 >
                     Link Account
                 </button>
-            </form>
+            </div>
         </div>
     </div>
 </Modal> 

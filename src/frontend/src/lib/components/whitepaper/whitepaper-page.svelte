@@ -1,11 +1,14 @@
 <script lang="ts">
+    import type { Snippet } from "svelte";
+
 
     interface Props {
         title: string;
         intro: string;
+        children: Snippet;
     }
   
-    let { title, intro } : Props = $props();
+    let { title, intro, children } : Props = $props();
 
 </script>
 <div class="flex flex-col mb-4 space-y-4 text-lg">
@@ -13,12 +16,11 @@
         <p class="section-title">
             {title}
         </p>
-        <slot name="action" />
     </div>
     
     <p class="page-intro">
         {intro}
     </p>
 
-    <slot></slot>
+    {@render children()}  
 </div>

@@ -8,10 +8,10 @@
 
     let { appPrincipalIds } : Props = $props();
   
-    let isOpen = false;
-    let selectedApp: SubApp | null = null;
-    let principalId: string = "";
-    let errorMessage: string = "";
+    let isOpen = $state(false);
+    let selectedApp: SubApp | null = $state(null);
+    let principalId: string = $state("");
+    let errorMessage: string = $state("");
   
     const availableApps = [
       { value: { OpenFPL: null }, label: "OpenFPL" },
@@ -93,7 +93,7 @@
       <div class="border border-ModalBorder rounded-lg shadow-lg bg-ModalBackground bg-opacity-90 backdrop-blur-sm">
         <button 
           class="w-full p-4 text-left bg-BrandBlack rounded-t-lg flex justify-between items-center hover:bg-BrandGray transition-all duration-300"
-          on:click={toggleAccordion}
+          onclick={toggleAccordion}
         >
           <h3 class="text-xl font-semibold !text-white">App Principal IDs (Optional)</h3>
           <span class="text-BrandBlue">{isOpen ? '▼' : '▶'}</span>
@@ -137,7 +137,7 @@
               {/if}
   
               <button
-                on:click={addAppPrincipal}
+                onclick={addAppPrincipal}
                 class="w-full md:w-auto px-6 py-3 text-base font-semibold !text-white bg-BrandBlue rounded-lg hover:bg-BrandBlueComp transition-all duration-300 shadow-md hover:shadow-lg"
               >
                 Add Principal ID
@@ -159,7 +159,7 @@
                         </span>
                       </div>
                       <button
-                        on:click={() => removeAppPrincipal(app)}
+                        onclick={() => removeAppPrincipal(app)}
                         class="text-BrandRed hover:text-BrandError transition-colors duration-200"
                       >
                         Remove

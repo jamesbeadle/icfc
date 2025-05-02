@@ -14,23 +14,25 @@
 
     let { onClose } : Props = $props();
 
-    let userBalance = 0n;
-    let contributionAmount = 0n;
-    let maxContributionAmount = 0n;
-    let packCost = 0n;
-    let packsToBuy: number | null = null;
-    let packsRemaining = 0n;
-    let showConfirm: boolean = false;
-    let isLoading: boolean = false;
-    let loadingMessage: string = "Loading";
+    let userBalance = $state(0n);
+    let contributionAmount = $state(0n);
+    let maxContributionAmount = $state(0n);
+    let packCost = $state(0n);
+    let packsToBuy: number | null = $state(null);
+    let packsRemaining = $state(0n);
+    let showConfirm: boolean = $state(false);
+    let isLoading: boolean = $state(false);
+    let loadingMessage: string = $state("Loading");
+    let amountPerInstallment = $state(0);
 
-    $: contributionAmount = packCost * BigInt(packsToBuy ?? 0);
+    $effect(() => {
+        contributionAmount = packCost * BigInt(packsToBuy ?? 0);
+        let totalICFC = packsToBuy ? packsToBuy * 10000 : 0;
+        amountPerInstallment = totalICFC / 6;
+    });
 
-    $: totalICFC = packsToBuy ? packsToBuy * 10000 : 0;
-    $: amountPerInstallment = totalICFC / 6;
-    $: now = new Date();
-    $: installments = Array.from({ length: 6 }, (_, i) => {
-        const nowInNanoseconds = BigInt(now.getTime()) * 1_000_000n;
+    let installments = Array.from({ length: 6 }, (_, i) => {
+        const nowInNanoseconds = BigInt((new Date()).getTime()) * 1_000_000n;
         const threeMonthsInNanoseconds = BigInt(3 * 30 * 24 * 60 * 60 * 1_000_000_000); 
         const sixMonthsInNanoseconds = BigInt(6 * 30 * 24 * 60 * 60 * 1_000_000_000);
         const installmentTimeInNanoseconds = nowInNanoseconds + threeMonthsInNanoseconds + BigInt(i) * sixMonthsInNanoseconds;
@@ -230,7 +232,7 @@
             <label for="principal" class="block text-sm text-BrandGrayShade2">
                 ICFC Principal ID
             </label>
-            <CopyPrincipal bgColor="bg-white/5" borderColor="border-BrandGrayShade3" />
+            <CopyPrincipal backgroundColour="bg-BrandBlackShade1" borderColor="border-none" />
 
             <div class="p-4 space-y-3 rounded-lg bg-white/5">
                 <div class="flex justify-between">

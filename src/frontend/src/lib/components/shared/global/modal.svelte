@@ -114,7 +114,6 @@
   });
 </script>
 
-{#if visible}
   <div
     class="modal-background"
     use:modal={{
@@ -154,4 +153,3 @@
 </div>
   </div>
   </div>
-{/if}

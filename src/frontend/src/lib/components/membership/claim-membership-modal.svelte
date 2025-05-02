@@ -18,9 +18,9 @@
 
     let { closeClaimMembership, totalStakedICFC } : Props = $props();
 
-    let isLoading = true;
+    let isLoading = $state(true);
     let profile: ProfileDTO | undefined = undefined;
-    let submittingClaim = false;
+    let submittingClaim = $state(false);
 
     const membershipLevels = [
         { type: "Monthly", tokensRequired: 1000, key: "Monthly" },
@@ -29,7 +29,11 @@
         { type: "Founding", tokensRequired: 1000000, key: "Founding" }
     ];
 
-    $: currentLevelIndex = profile ? getCurrentLevelIndex(profile.membershipType) : -1;
+    $effect(() => {
+        currentLevelIndex = profile ? getCurrentLevelIndex(profile.membershipType) : -1;
+    });
+
+    let currentLevelIndex = $state(-1);
 
     onMount(async () => {
         await loadProfile();
@@ -87,12 +91,11 @@
     }
 </script>
 
-<Modal {onClose}>
+<Modal title="Claim Membership" {onClose}>
     {#if isLoading}
-        <LocalSpinner />
+        <LocalSpinner message="Loading Membership Information" />
     {:else}
         <div class="flex flex-col space-y-6">
-            <h2 class="text-2xl text-white cta-text">Claim Membership</h2>
             <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
                 <div class="flex flex-row items-center gap-2">
                     <IcfcCoinIcon className="w-5 h-5" />
@@ -101,7 +104,7 @@
                     </p>
                 </div>
                 <button 
-                    on:click={handleRefresh}
+                    onclick={handleRefresh}
                     class="brand-button"
                 >
                     Refresh
@@ -111,12 +114,12 @@
                 <div class="flex flex-col gap-2">
                     <h3 class="text-lg text-white font-semibold">Your Principal ID</h3>
                     <p class="text-xs">Add this hotkey to any neurons staked for 2 years that you would like to claim membership for.</p>
-                   <CopyPrincipal />
+                    <CopyPrincipal backgroundColour="bg-BrandBlackShade1" borderColor="border-none" />
                 </div>
             </div>
 
             {#if submittingClaim}
-                <LocalSpinner />
+                <LocalSpinner message="Submitting Membership Claim" />
             {:else}
                 <div class="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
                     {#each membershipLevels as level, index}
@@ -126,7 +129,6 @@
                                 levelIndex={index}
                                 {currentLevelIndex} 
                                 {totalStakedICFC}
-                                on:claim={() => submittingClaim = true}
                                 {handleClaimMembership}
                             />
                         </div>

@@ -9,10 +9,10 @@
 
     let { packCost, remainingPacks } : Props = $props();
 
-    let showParticipateModal = false;
-    let showHowItWorksModal = false;
+    let showParticipateModal = $state(false);
+    let showHowItWorksModal = $state(false);
 
-    $: packCostInICP = Number(packCost)
+    let packCostInICP = Number(packCost)
 
     function openParticipateModal() {
         showParticipateModal = true;
@@ -45,14 +45,14 @@
     <div class="flex flex-col gap-3">
         <button 
             class="flex-1 px-4 py-3 text-white transition border rounded-lg border-BrandGrayShade3 brand-button hover:bg-BrandBlack hover:border-BrandBlue/80"
-            on:click={openParticipateModal}
+            onclick={openParticipateModal}
             disabled={remainingPacks <= 0}
         >
             Buy ICFC Packs
         </button>
         <button 
             class="flex-1 px-4 py-3 text-white transition border rounded-lg border-BrandGrayShade3 brand-button hover:bg-BrandBlack hover:border-BrandBlue/80"
-            on:click={openHowItWorksModal}
+            onclick={openHowItWorksModal}
         >
             How It Works
         </button>

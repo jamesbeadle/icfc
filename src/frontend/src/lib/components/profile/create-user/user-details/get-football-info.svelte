@@ -17,28 +17,11 @@
     let lastFetchedLeagueId: LeagueId | null = null;
     let loadingClubs = false;
 
-    async function getClubs() {
-        try {
-            loadingClubs = true;
-            const clubsResult = await clubStore.getClubs(favouriteLeagueId!);
-            if (clubsResult) {
-                clubStore.setClubs(clubs);
-            } else {
-                clubStore.setClubs([]);
-            }
-        } catch (error) {
-            console.error("Error fetching clubs:", error);
-            toasts.addToast({ type: 'error', message: 'Failed to load clubs' });
-            clubs = [];
-            clubStore.setClubs([]);
-        } finally {
-            loadingClubs = false;
-        } 
-    }
-
-    $: if (favouriteLeagueId) {
-        favouriteClubId = null;
-    }
+    $effect(() => {
+        if (favouriteLeagueId) {
+            favouriteClubId = null;
+        }
+    }); 
 
     $: if (favouriteLeagueId && favouriteLeagueId !== lastFetchedLeagueId) {
       lastFetchedLeagueId = favouriteLeagueId;

@@ -38,11 +38,11 @@
     <div slot="front" class="flex flex-col h-full">
         <div class="flex items-center justify-between">
             <div class="relative z-20 w-12 h-12">
-                <svelte:component this={app.logo} className="w-full h-full" />
+                <app.logo className="w-full h-full" />
             </div>
             {#if !isModal}
                 <button
-                    on:click|stopPropagation={(e) => onFlip(app.id, e)}
+                    onclick={(e) => onFlip(app.id, e)}
                     class="z-30 flex items-center justify-center transition-transform duration-300 hover:scale-110"
                 >
                     <InfoIcon className="w-7 h-7" fill="currentColor" />
@@ -51,7 +51,7 @@
         </div>
 
         <div class="absolute transform {app.backgroundPosition} {app.backgroundOpacity}">
-            <svelte:component this={app.background} className={app.backgroundSize} />
+            <app.background className={app.backgroundSize} />
         </div>
         
         <div class="relative z-10 mt-auto">
@@ -66,7 +66,7 @@
                 <svelte:component this={app.logo} className="w-full h-full" />
             </div>
             <button
-                on:click|stopPropagation={(e) => onFlip(app.id, e)}
+                onclick={(e) => onFlip(app.id, e)}
                 class="z-30 flex items-center justify-center transition-transform duration-300 hover:scale-110"
             >
                 <CloseIcon className="w-8 h-8" fill="currentColor" />
@@ -85,7 +85,7 @@
             <a 
                 href={app.link}
                 target="_blank"
-                on:click|stopPropagation
+                onclick
                 class={`px-6 py-3 mt-auto border text-center transition-colors duration-300 bg-transparent transform rounded-md shadow-md ${
                     app.textColor === 'text-white' 
                         ? 'border-BrandGrayShade6 hover:bg-BrandGrayShade6' 

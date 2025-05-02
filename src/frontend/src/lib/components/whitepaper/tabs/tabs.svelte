@@ -1,12 +1,13 @@
 <script lang="ts">
     import { writable } from 'svelte/store';
-    import { onMount, setContext } from 'svelte';
+    import { onMount, setContext, type Snippet } from 'svelte';
 
     interface Props {
         defaultValue: string;
+        children: Snippet;
     }
 
-    let { defaultValue } : Props = $props();
+    let { defaultValue, children } : Props = $props();
 
     const activeTab = writable(defaultValue);
     setContext('activeTab', activeTab);
@@ -17,5 +18,5 @@
 </script>
 
 <div class="w-full">
-	<slot />
+    {@render children()}  
 </div>

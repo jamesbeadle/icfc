@@ -108,7 +108,7 @@
     <button
         {disabled}
         class="flex items-center justify-between w-full rounded-lg border border-BrandGrayShade3 hover:border-BrandBlueComp  focus:border-BrandBlueComp focus:ring-1 focus:ring-BrandBlueComp/30 {compact ? ' bg-BrandGray/5  hover:bg-BrandGray/10' : 'px-2 py-3 bg-BrandBlack hover:bg-BrandBlack/50'}"
-        on:click={e => toggleDropdown(e)}
+        onclick={e => toggleDropdown(e)}
     >
         <span class="truncate {!selectedOption ? 'text-BrandGrayShade2' : 'text-BrandDarkGray'}">
             {selectedOption?.label ?? placeholder}
@@ -149,7 +149,7 @@
                         <button
                             {disabled}
                             class={`w-full px-4 py-2 text-left transition-colors duration-150 flex items-center justify-between ${value === option.id ? "text-white bg-BrandBlueComp/50" : "text-BrandGrayShade2 hover:text-white bg-BrandBlack hover:bg-BrandBlueComp"}`}
-                            on:click={e => selectOption(option.id, e)}
+                            onclick={e => selectOption(option.id, e)}
                         >
                             <span class="truncate">{option.label}</span>
                             {#if value === option.id}

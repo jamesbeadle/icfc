@@ -44,7 +44,7 @@
         <div class="flex items-center justify-between">
             <ICFCCoinIcon className="w-12 h-12" />
             <button
-                on:click|stopPropagation={() => handleFlip(tier.name)}
+                onclick={() => handleFlip(tier.name)}
                 class="z-30 flex items-center justify-center transition-transform duration-300 hover:scale-110"
             >
                 <InfoIcon className="w-7 h-7" fill="currentColor" />
@@ -66,7 +66,7 @@
         <div class="flex items-center justify-between mb-4">
             <ICFCCoinIcon className="w-12 h-12" />
             <button
-                on:click|stopPropagation={() => handleFlip(tier.name)}
+                onclick={() => handleFlip(tier.name)}
                 class="z-30 flex items-center justify-center transition-transform duration-300 hover:scale-110"
             >
                 <CloseIcon className="w-7 h-7" fill="currentColor" />

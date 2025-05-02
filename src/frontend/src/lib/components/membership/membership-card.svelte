@@ -1,11 +1,11 @@
 <script lang="ts">
     import Card from '../shared/card.svelte';
-    import ICFCCoinIcon from '$lib/icons/ICFCCoinIcon.svelte';
     import LogoIcon from '$lib/icons/LogoIcon.svelte';
     import MonthlyMembershipIcon from '$lib/icons/MonthlyMembershipIcon.svelte';
     import SeasonalMembershipIcon from '$lib/icons/SeasonalMembershipIcon.svelte';
     import LifetimeMembershipIcon from '$lib/icons/LifetimeMembershipIcon.svelte';
     import FoundingMembershipIcon from '$lib/icons/FoundingMembershipIcon.svelte';
+    import IcfcCoinIcon from '$lib/icons/ICFCCoinIcon.svelte';
 
 
     interface Props {
@@ -31,11 +31,12 @@
         return amount.toLocaleString();
     }
 
-    $: status = getLevelStatus();
-    $: canClaim = status === "Claim" || status === "Upgrade";
-    $: needsMoreTokens = status.startsWith("Need");
 
-    $: cardClass = (() => {
+    let status = getLevelStatus();
+    let canClaim = status === "Claim" || status === "Upgrade";
+    let needsMoreTokens = status.startsWith("Need");
+
+    let cardClass = (() => {
         switch (membership.type.toLowerCase()) {
             case 'monthly':
                 return 'border-MonthlyPrimary bg-MonthlyTertiary text-MonthlySecondary border-2 ';
@@ -51,7 +52,7 @@
     })();
 
 
-    $: buttonClass = (() => {
+    let buttonClass = (() => {
         const baseClasses = {
             'monthly': 'bg-MonthlyPrimary border-MonthlySecondary',
             'seasonal': 'bg-SeasonalPrimary border-SeasonalSecondary',
@@ -93,8 +94,8 @@
     id={membership.key} 
     isModal={false} 
     disableFlip={true}
-    frontClasses="{cardClass} relative overflow-hidden"
-    backClasses="{cardClass}"
+    frontClasses={`${cardClass} relative overflow-hidden`}
+    backClasses={cardClass}
 >
     <div slot="front" class="relative flex flex-col h-full">
         <div class="absolute inset-0 pointer-events-none">
@@ -107,19 +108,19 @@
             <div class="flex items-center justify-between">
                 <div class="flex items-center justify-center">
                     {#if membership.type == "Monthly"}
-                        <MonthlyMembershipIcon className="w-11" />
+                        <MonthlyMembershipIcon fill='white' className="w-11" />
                     {/if}
                     {#if membership.type == "Seasonal"}
-                        <SeasonalMembershipIcon className="w-11" />
+                        <SeasonalMembershipIcon fill='white' className="w-11" />
                     {/if}
                     {#if membership.type == "Lifetime"}
-                        <LifetimeMembershipIcon className="w-11" />
+                        <LifetimeMembershipIcon fill='white' className="w-11" />
                     {/if}
                     {#if membership.type == "Founding"}
-                        <FoundingMembershipIcon className="w-11" />
+                        <FoundingMembershipIcon fill='white' className="w-11" />
                     {/if}
                 </div>
-                <ICFCCoinIcon className="w-10 h-10" />
+                <IcfcCoinIcon className="w-10 h-10" />
             </div>
 
             <div class="mt-auto space-y-2">
@@ -138,14 +139,14 @@
                     </div>
                 {:else if status === "Claim" || status === "Upgrade"}
                     <button 
-                        on:click={claimMembership}
+                        onclick={claimMembership}
                         class="w-full font-medium transition-colors small-brand-button {buttonClass}"
                     >
                         {status}
                     </button>
                 {:else if needsMoreTokens}
                     <button 
-                        on:click={loadNNS}
+                        onclick={loadNNS}
                         class="w-full font-medium transition-colors nns-button {buttonClass}"
                     >
                         <span class="block text-sm">Stake</span>

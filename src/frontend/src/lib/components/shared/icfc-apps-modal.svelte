@@ -9,16 +9,14 @@
   import TransferKingsLogo from "$lib/icons/appIcons/logo/TransferKingsLogo.svelte";
   import JeffBetsLogo from "$lib/icons/appIcons/logo/JeffBetsLogo.svelte";
   import AppCard from "$lib/components/shared/app-card.svelte";
-  import CloseIcon from "$lib/icons/CloseIcon.svelte";
 
   interface Props {
-    isOpen: boolean;
     onClose: () => void;
     flippedCards: Set<string>;
     onAppClick: (app: { name: string; id: string }) => void;
   }
 
-  let { isOpen, onClose, flippedCards, onAppClick } : Props = $props();
+  let { onClose, flippedCards, onAppClick } : Props = $props();
 
   const apps = [
         {
@@ -104,25 +102,22 @@
   }
 </script>
 
-{#if isOpen}
-  <Modal {onClose}>
-    <h2 class="text-2xl text-white cta-text">ICFC Apps</h2>
-    <div class="flex-1 overflow-y-auto">
-      <div class="p-6 pt-4">
-        <div class="flex flex-col gap-3 md:flex-row md:overflow-x-auto">
-          {#each apps as app}
-          <button on:click={() => handleCardClick(app)} class="cursor-pointer">
-            <AppCard 
-                {app}
-                isFlipped={false}
-                onFlip={() => {}}
-                isModal={true}
-                disableFlip={true}
-            />
-          </button>
-          {/each}
-        </div>
+<Modal title="ICFC Apps" {onClose}>
+  <div class="flex-1 overflow-y-auto">
+    <div class="p-6 pt-4">
+      <div class="flex flex-col gap-3 md:flex-row md:overflow-x-auto">
+        {#each apps as app}
+        <button onclick={() => handleCardClick(app)} class="cursor-pointer">
+          <AppCard 
+              {app}
+              isFlipped={false}
+              onFlip={() => {}}
+              isModal={true}
+              disableFlip={true}
+          />
+        </button>
+        {/each}
       </div>
     </div>
-  </Modal>
-{/if}
+  </div>
+</Modal>

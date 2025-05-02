@@ -67,7 +67,6 @@
                         levelIndex={index}
                         {currentLevelIndex} 
                         totalStakedICFC={Number(maxStakedICFC)}
-                        on:claim={() => submittingClaim = true}
                         {handleClaimMembership}
                     />
                 </div>

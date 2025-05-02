@@ -4,14 +4,13 @@
     import type { SubApp } from "../../../../../declarations/backend/backend.did";
 
     interface Props {
-        isOpen: boolean;
         onClose: () => void;
     }
 
-    let { isOpen, onClose } : Props = $props();
+    let { onClose } : Props = $props();
 
-    let selectedApp: { name: string; id: string } | null = null;
-    let showPrincipalModal = false;
+    let selectedApp: { name: string; id: string } | null = $state(null);
+    let showPrincipalModal = $state(false);
 
     function getSubApp(appName: string): SubApp {
         switch (appName) {
@@ -50,7 +49,7 @@
     }
 </script>
 
-<IcfcAppsModal {isOpen} {onClose} onAppClick={handleAppClick} />
+<IcfcAppsModal {onClose} onAppClick={handleAppClick} />
 
 {#if showPrincipalModal && selectedApp}
     <PrincipalIdModal

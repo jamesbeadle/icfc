@@ -14,14 +14,14 @@
 
   interface Props {
     nationalityId: CountryId;
+    closeModal: () => void;
   }
 
   let { nationalityId } : Props = $props();
 
-  let isLoading = false;
-  let loadingMessage = '';
-  let newNationalityId: CountryId = nationalityId;
-  let countries: Country[] = [];
+  let isLoading = $state(false);
+  let loadingMessage = $state('');
+  let newNationalityId: CountryId = $state(nationalityId);
 
   onMount(async () => {
     try {
@@ -44,11 +44,15 @@
     }
   });
 
-  $: isSubmitDisabled = newNationalityId < 0 || newNationalityId === nationalityId;
+  let isSubmitDisabled = $state(true);
+  
+  $effect(() => {
+    isSubmitDisabled = newNationalityId < 0 || newNationalityId === nationalityId;
+  });
 
   const cancelModal = () => {
     newNationalityId = nationalityId;
-    visible = false;
+    closeModal();
   };
 
   async function handleSubmit() {
@@ -78,30 +82,28 @@
   }
 </script>
 
-{#if visible}
-  <Modal onClose={cancelModal} title="Update National Team">
-    {#if isLoading}
-      <LocalSpinner message={loadingMessage} />
-    {:else}
-      <div class="flex flex-col p-4 space-y-2">
-        <p class="form-title">National Team</p>
-        <p class="form-hint">
-          Select to participate in nationwide football competitions.
-        </p>
-        <select bind:value={newNationalityId} class="w-full brand-input">
-          <option value={null}>Select...</option>
-          {#each $countryStore.sort((a, b) => a.name.localeCompare(b.name)) as country}
-            <option value={country.id}>{country.name}</option>
-          {/each}
-        </select>
-        <button
-          class="w-full brand-button"
-          on:click={handleSubmit}
-          disabled={isSubmitDisabled}
-        >
-          Update National Team
-        </button>
-      </div>
-    {/if}
-  </Modal>
-{/if}
+<Modal onClose={cancelModal} title="Update National Team">
+  {#if isLoading}
+    <LocalSpinner message={loadingMessage} />
+  {:else}
+    <div class="flex flex-col p-4 space-y-2">
+      <p class="form-title">National Team</p>
+      <p class="form-hint">
+        Select to participate in nationwide football competitions.
+      </p>
+      <select bind:value={newNationalityId} class="w-full brand-input">
+        <option value={null}>Select...</option>
+        {#each $countryStore.sort((a, b) => a.name.localeCompare(b.name)) as country}
+          <option value={country.id}>{country.name}</option>
+        {/each}
+      </select>
+      <button
+        class="w-full brand-button"
+        onclick={handleSubmit}
+        disabled={isSubmitDisabled}
+      >
+        Update National Team
+      </button>
+    </div>
+  {/if}
+</Modal>
