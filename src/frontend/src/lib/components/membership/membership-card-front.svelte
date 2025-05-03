@@ -1,5 +1,4 @@
 <script lang="ts">
-    import Card from '../shared/card.svelte';
     import LogoIcon from '$lib/icons/LogoIcon.svelte';
     import MonthlyMembershipIcon from '$lib/icons/MonthlyMembershipIcon.svelte';
     import SeasonalMembershipIcon from '$lib/icons/SeasonalMembershipIcon.svelte';
@@ -36,22 +35,6 @@
     let canClaim = status === "Claim" || status === "Upgrade";
     let needsMoreTokens = status.startsWith("Need");
 
-    let cardClass = (() => {
-        switch (membership.type.toLowerCase()) {
-            case 'monthly':
-                return 'border-MonthlyPrimary bg-MonthlyTertiary text-MonthlySecondary border-2 ';
-            case 'seasonal':
-                return 'border-SeasonalPrimary bg-SeasonalTertiary text-SeasonalSecondary border-2 ';
-            case 'lifetime':
-                return 'border-LifetimePrimary bg-LifetimeTertiary text-LifetimeSecondary border-2 ';
-            case 'founding':
-                return 'border-FoundingPrimary bg-FoundingTertiary text-FoundingSecondary border-2 ';
-            default:
-                return 'border-BrandGrayShade3';
-        }
-    })();
-
-
     let buttonClass = (() => {
         const baseClasses = {
             'monthly': 'bg-MonthlyPrimary border-MonthlySecondary',
@@ -87,32 +70,62 @@
     }
 
 </script>
-<!--
-<Card 
-    isFlipped={false} 
-    onFlip={()=>('')} 
-    id={membership.key} 
-    disableFlip={true}
-    frontClasses={`${cardClass} relative overflow-hidden`}
-    backClasses={cardClass}
->
-</Card>
- -->   
+<div class="relative flex flex-col h-full">
+    <div class="absolute inset-0 pointer-events-none">
+        <div class="absolute transform {backgroundProperties.frontPosition} opacity-20">
+            <LogoIcon className={backgroundProperties.size} />
+        </div>
+    </div>
 
-<style>
-    .perspective {
-        perspective: 1000px;
-    }
-    
-    .transform-style-3d {
-        transform-style: preserve-3d;
-    }
-    
-    .backface-hidden {
-        backface-visibility: hidden;
-    }
-    
-    .rotate-y-180 {
-        transform: rotateY(180deg);
-    }
-</style> 
+    <div class="relative flex flex-col h-full">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center justify-center">
+                {#if membership.type == "Monthly"}
+                    <MonthlyMembershipIcon fill='white' className="w-11" />
+                {/if}
+                {#if membership.type == "Seasonal"}
+                    <SeasonalMembershipIcon fill='white' className="w-11" />
+                {/if}
+                {#if membership.type == "Lifetime"}
+                    <LifetimeMembershipIcon fill='white' className="w-11" />
+                {/if}
+                {#if membership.type == "Founding"}
+                    <FoundingMembershipIcon fill='white' className="w-11" />
+                {/if}
+            </div>
+            <IcfcCoinIcon className="w-10 h-10" />
+        </div>
+
+        <div class="mt-auto space-y-2">
+            <p class="text-lg tracking-wider uppercase cta-text">{membership.type}</p>
+            <div class="flex flex-row items-baseline gap-2">
+                <h3 class="text-2xl font-bold">{membership.tokensRequired.toLocaleString()}</h3>
+                <span class="text-sm">ICFC Required</span>
+            </div>
+            {#if status === "Already Claimed"}
+                <div class="w-full font-medium already-claimed-membership-badge {buttonClass} cursor-default">
+                    {status}
+                </div>
+            {:else if status === "Auto-Claimed"}
+                <div class="w-full font-medium auto-claimed-membership-badge {buttonClass} cursor-default">
+                    {status}
+                </div>
+            {:else if status === "Claim" || status === "Upgrade"}
+                <button 
+                    onclick={claimMembership}
+                    class="w-full font-medium transition-colors small-brand-button {buttonClass}"
+                >
+                    {status}
+                </button>
+            {:else if needsMoreTokens}
+                <button 
+                    onclick={loadNNS}
+                    class="w-full font-medium transition-colors nns-button {buttonClass}"
+                >
+                    <span class="block text-sm">Stake</span>
+                    <span class="block font-bold">{(membership.tokensRequired - totalStakedICFC).toLocaleString()} ICFC</span>
+                </button>
+            {/if}
+        </div>
+    </div>
+</div>
