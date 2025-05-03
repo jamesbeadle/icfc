@@ -12,11 +12,9 @@
 
   interface Props {
     onClose: () => void;
-    flippedCards: Set<string>;
-    onAppClick: (app: { name: string; id: string }) => void;
   }
 
-  let { onClose, flippedCards, onAppClick } : Props = $props();
+  let { onClose } : Props = $props();
 
   const apps = [
         {
@@ -85,21 +83,6 @@
             backgroundPosition: "-bottom-10 -right-12"
         }
   ];
-
-  const toggleFlip = (id: string, event: MouseEvent | KeyboardEvent) => {
-    event.preventDefault();
-    if (!flippedCards) return;
-    
-    if (flippedCards.has(id)) {
-      flippedCards.delete(id);
-    } else {
-      flippedCards.add(id);
-    }
-  };
-
-  function handleCardClick(app: { name: string; id: string }) {
-    onAppClick(app);
-  }
 </script>
 
 <Modal title="ICFC Apps" {onClose}>
@@ -107,7 +90,7 @@
     <div class="p-6 pt-4">
       <div class="flex flex-col gap-3 md:flex-row md:overflow-x-auto">
         {#each apps as app}
-        <button onclick={() => handleCardClick(app)} class="cursor-pointer">
+        <button onclick={() => /*handleCardClick(app) // todo  */{}} >
           <AppCard 
               {app}
               isFlipped={false}

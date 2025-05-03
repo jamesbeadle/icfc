@@ -10,8 +10,8 @@
 
     let { username, displayName, usernameAvailable } : Props = $props();
 
-    let isCheckingUsername = false;
-    let usernameError = "";
+    let isCheckingUsername = $state(false);
+    let usernameError = $state("");
     
     let usernameTimeout: NodeJS.Timeout;
 
@@ -21,7 +21,7 @@
             if(!isUsernameValid(username)){
                 usernameError = "Username must be between 5 and 20 characters.";
             }
-            const available = await store.isUsernameAvailable(username);
+            const available = await userStore.isUsernameAvailable(username);
             usernameAvailable = available;
             usernameError = available ? "" : "Username is already taken";
         } catch (error) {

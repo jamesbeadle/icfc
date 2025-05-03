@@ -19,7 +19,8 @@
       { value: { FootballGod: null }, label: "Football God" },
       { value: { TransferKings: null }, label: "Transfer Kings" },
       { value: { JeffBets: null }, label: "Jeff Bets" },
-    ];
+    ].filter(app => !isAppAdded(app.value))
+    .map(app => ({ id: app.label, label: app.label }));
   
     function isAppAdded(app: SubApp): boolean {
       return appPrincipalIds.some(([existingApp]) => 
@@ -104,20 +105,18 @@
             <div class="space-y-8">
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label for="select-app" class="block mb-2 !text-white !font-medium">Select App:</label>
-                  <div class="relative">
-                    <DropdownSelect
-                      options={availableApps
-                        .filter(app => !isAppAdded(app.value))
-                        .map(app => ({ id: app.label, label: app.label }))}
-                      value={selectedApp ? Object.keys(selectedApp)[0] : null}
-                      onChange={(value: string) => {
-                        selectedApp = availableApps.find(app => app.label === value)?.value || null;
-                      }}
-                      placeholder="Select an app"
-                    />
-                    <span class="absolute right-3 top-1/2 transform -translate-y-1/2 text-BrandBlue">▼</span>
-                  </div>
+                  <p class="block mb-2 !text-white !font-medium">Select App:</p>
+                  <select 
+                      bind:value={selectedApp}
+                      class="border p-2 rounded w-full"
+                  >
+                      <option value="0">SELECT APP</option>
+                      {#each availableApps as app}
+                          <option value={app.id}>
+                              {app.label}
+                          </option>
+                      {/each}
+                  </select>
                 </div>
   
                 <div>
@@ -155,7 +154,7 @@
                       <div class="flex items-center">
                         <span class="w-4 h-4 rounded-full mr-2 {getAppBackground(app)}"></span>
                         <span class="!text-white">
-                          {availableApps.find(a => JSON.stringify(a.value) === JSON.stringify(app))?.label}: {pid}
+                          {availableApps.find(a => JSON.stringify(a.label) === JSON.stringify(app))?.label}: {pid}
                         </span>
                       </div>
                       <button

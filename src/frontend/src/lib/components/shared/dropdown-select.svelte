@@ -21,9 +21,9 @@
     let { value, options, placeholder, compact, onChange, allOptionText, scrollOnOpen, searchOn, disabled  } : Props = $props();
 
     const dropdownId = Math.random().toString(36).substring(7);
-    let isDropdownOpen = false;
+    let isDropdownOpen = $state(false);
     let dropdownElement: HTMLDivElement;
-    let searchTerm = '';
+    let searchTerm = $state('');
 
     activeDropdownId.subscribe((id) => {
         if (id !== dropdownId) {
@@ -115,9 +115,9 @@
         </span>
         <span class="w-4 h-4">
             {#if isDropdownOpen}
-                <ArrowUpIcon fill="white" />
+                <ArrowUpIcon className="w-6" fill="white" />
             {:else}
-                <ArrowDownIcon fill="white" />
+                <ArrowDownIcon className="w-6" fill="white" />
             {/if}
         </span>
     </button>
@@ -153,7 +153,7 @@
                         >
                             <span class="truncate">{option.label}</span>
                             {#if value === option.id}
-                                <CheckmarkIcon className="w-4 h-4" />
+                                <CheckmarkIcon fill='white' className="w-4 h-4" />
                             {/if}
                         </button>
                     </li>

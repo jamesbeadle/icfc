@@ -17,18 +17,19 @@
   interface Props {
     favouriteLeagueId: LeagueId;
     favouriteClubId: ClubId;
+    closeModal: () => void;
   }
 
-  let { favouriteLeagueId, favouriteClubId } : Props = $props();
+  let { favouriteLeagueId, favouriteClubId, closeModal } : Props = $props();
 
-  let isLoading = false;
-  let clubsLoading = false;
-  let loadingMessage = '';
-  let newFavouriteLeagueId: LeagueId;
-  let newFavouriteClubId: ClubId;
-  let clubs: Club[] = [];
-  let leagues: League[] = [];
-  let lastFetchedLeagueId = favouriteLeagueId;
+  let isLoading = $state(false);
+  let clubsLoading = $state(false);
+  let loadingMessage = $state('');
+  let newFavouriteLeagueId: LeagueId = $state(0);
+  let newFavouriteClubId: ClubId = $state(0);
+  let clubs: Club[] = $state([]);
+  let leagues: League[] = $state([]);
+  let lastFetchedLeagueId = $state(favouriteLeagueId);
 
   onMount(async () => {
     try {
@@ -75,15 +76,19 @@
     } 
   }
 
-  $: isSubmitDisabled =
-    newFavouriteLeagueId < 0 &&
-    newFavouriteClubId < 0 &&
-    newFavouriteClubId == favouriteClubId;
+  let isSubmitDisabled = $state(true);
+  
+  $effect(() => {
+    isSubmitDisabled =
+      newFavouriteLeagueId < 0 &&
+      newFavouriteClubId < 0 &&
+      newFavouriteClubId == favouriteClubId;
+  });
 
   const cancelModal = () => {
     newFavouriteLeagueId = favouriteLeagueId;
     newFavouriteClubId = newFavouriteClubId;
-    visible = false;
+    closeModal();
   };
 
   const handleSubmit = async (e: Event) => {
@@ -98,7 +103,7 @@
       };
       await userStore.updateFavouriteClub(dto);
       await userStore.sync();
-      visible = false;
+      closeModal();
       toasts.addToast({
         message: 'Favourite club and league updated.',
         type: 'success',
@@ -115,15 +120,20 @@
       isLoading = false;
     }
   };
-
-  $: if (newFavouriteLeagueId) {
+  
+  $effect(() => {
+    if (newFavouriteLeagueId) {
         newFavouriteClubId = -1;
     }
-
-    $: if (newFavouriteLeagueId && newFavouriteLeagueId !== lastFetchedLeagueId) {
+  });
+  
+  $effect(() => {
+    if (newFavouriteLeagueId && newFavouriteLeagueId !== lastFetchedLeagueId) {
       lastFetchedLeagueId = newFavouriteLeagueId;
       getClubs(newFavouriteLeagueId);
     }
+  });
+
 </script>
 
 <Modal onClose={cancelModal} title="Update Favourite League & Club">

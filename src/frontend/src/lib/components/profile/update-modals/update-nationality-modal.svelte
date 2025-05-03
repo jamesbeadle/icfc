@@ -17,11 +17,12 @@
     closeModal: () => void;
   }
 
-  let { nationalityId } : Props = $props();
+  let { nationalityId, closeModal } : Props = $props();
 
   let isLoading = $state(false);
   let loadingMessage = $state('');
   let newNationalityId: CountryId = $state(nationalityId);
+  let countries: Country[] = [];
 
   onMount(async () => {
     try {
@@ -64,7 +65,7 @@
       };
       await userStore.updateNationality(dto);
       await userStore.sync();
-      visible = false;
+      closeModal();
       toasts.addToast({
         message: 'National Team updated.',
         type: 'success',

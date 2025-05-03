@@ -16,7 +16,6 @@
         ensuring they can form their own community within our football ecosystem.">
 
     <button 
-        slot="action"
         class="flex items-center gap-2 px-4 py-2 text-white transition bg-BrandBlue rounded-md hover:bg-BrandInfo"
         onclick={() => showApps = true}
     >

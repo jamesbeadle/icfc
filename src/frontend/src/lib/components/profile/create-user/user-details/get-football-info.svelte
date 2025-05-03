@@ -1,9 +1,8 @@
 <script lang="ts">
-    import type { ClubId, CountryId, LeagueId } from "../../../../../../../declarations/backend/backend.did";
+    import type { Club, ClubId, CountryId, LeagueId } from "../../../../../../../declarations/backend/backend.did";
     import { countryStore } from "$lib/stores/country-store";
     import { leagueStore } from "$lib/stores/league-store";
     import { clubStore } from "$lib/stores/club-store";
-    import { busy } from "$lib/stores/busy-store";
     import { toasts } from "$lib/stores/toasts-store";
 
     interface Props {
@@ -14,19 +13,45 @@
 
     let { nationalityId, favouriteLeagueId, favouriteClubId } : Props = $props();
 
+    let clubs: Club[] = $state([]);
+    
     let lastFetchedLeagueId: LeagueId | null = null;
-    let loadingClubs = false;
+    let loadingClubs = $state(false);
+
+    async function getClubs() {
+        try {
+            loadingClubs = true;
+            const clubsResult = await clubStore.getClubs(favouriteLeagueId!);
+            if (clubsResult) {
+                clubs = clubsResult.clubs;
+                clubStore.setClubs(clubs);
+            } else {
+                clubs = [];
+                clubStore.setClubs([]);
+            }
+        } catch (error) {
+            console.error("Error fetching clubs:", error);
+            toasts.addToast({ type: 'error', message: 'Failed to load clubs' });
+            clubs = [];
+            clubStore.setClubs([]);
+        } finally {
+            loadingClubs = false;
+        } 
+    }
 
     $effect(() => {
         if (favouriteLeagueId) {
             favouriteClubId = null;
         }
-    }); 
+    });
 
-    $: if (favouriteLeagueId && favouriteLeagueId !== lastFetchedLeagueId) {
-      lastFetchedLeagueId = favouriteLeagueId;
-      getClubs();
-    }
+    $effect(() => {
+        if (favouriteLeagueId && favouriteLeagueId !== lastFetchedLeagueId) {
+            lastFetchedLeagueId = favouriteLeagueId;
+            getClubs();
+        }
+    });
+
 </script>
 
 <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
