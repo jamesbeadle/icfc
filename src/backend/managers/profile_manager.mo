@@ -107,10 +107,10 @@ module {
                 case (?foundCanisterId) {
 
                     let profile_canister = actor (foundCanisterId) : actor {
-                        getICFCProfileSummary : (dto : ProfileCommands.GetICFCProfile) -> async Result.Result<ProfileQueries.ICFCProfileSummary, Enums.Error>;
+                        getProfileSummary : (dto : ProfileCommands.GetICFCProfile) -> async Result.Result<ProfileQueries.ICFCProfileSummary, Enums.Error>;
                     };
 
-                    let profile = await profile_canister.getICFCProfileSummary(dto);
+                    let profile = await profile_canister.getProfileSummary(dto);
                     return profile;
                 };
                 case (null) {
