@@ -2,10 +2,15 @@
     import AvailableMembershipDisplay from "./available-membership-display.svelte";
     import IcfcInfo from "./icfc-info.svelte";
     import type { MembershipType } from "../../../../../../declarations/backend/backend.did";
+
+    interface Props {
+        availableMembership: MembershipType;
+        maxStakedICFC: bigint;
+        formatICFC: (amount: bigint) => string;
+    }
+
+    let { availableMembership, maxStakedICFC, formatICFC } : Props = $props();
     
-    export let availableMembership: MembershipType;
-    export let maxStakedICFC: bigint;
-    export let formatICFC: (amount: bigint) => string;
 </script>
 
 

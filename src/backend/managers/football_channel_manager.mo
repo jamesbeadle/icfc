@@ -21,29 +21,29 @@ import CanisterUtilities "mo:waterway-mops/CanisterUtilities";
 module {
     public class FootballChannelManager() {
 
-        private var footballChannelCanisterIndex : TrieMap.TrieMap<T.FootballChannelId, Ids.CanisterId> = TrieMap.TrieMap<T.FootballChannelId, Ids.CanisterId>(BaseUtilities.eqNat, BaseUtilities.hashNat);
+        private var footballChannelCanisterIndex : TrieMap.TrieMap<Ids.FootballChannelId, Ids.CanisterId> = TrieMap.TrieMap<Ids.FootballChannelId, Ids.CanisterId>(BaseUtilities.eqNat, BaseUtilities.hashNat);
         private var activeCanisterId : Ids.CanisterId = "";
-        private var footballChannelNames : TrieMap.TrieMap<T.FootballChannelId, Text> = TrieMap.TrieMap<T.FootballChannelId, Text>(BaseUtilities.eqNat, BaseUtilities.hashNat);
+        private var footballChannelNames : TrieMap.TrieMap<Ids.FootballChannelId, Text> = TrieMap.TrieMap<Ids.FootballChannelId, Text>(BaseUtilities.eqNat, BaseUtilities.hashNat);
         private var uniqueFootballChannelCanisterIds : List.List<Ids.CanisterId> = List.nil();
         private var totalFootballChannels : Nat = 0;
-        private var nextFootballChannelId : T.FootballChannelId = 1;
+        private var nextFootballChannelId : Ids.FootballChannelId = 1;
 
-        public func channelExists(channelId : T.FootballChannelId) : Bool {
+        public func channelExists(channelId : Ids.FootballChannelId) : Bool {
             let channel = footballChannelCanisterIndex.get(channelId);
             return Option.isSome(channel);
         };
 
         public func getFootballChannels(dto : FootballChannelQueries.GetFootballChannels) : async Result.Result<FootballChannelQueries.FootballChannels, Enums.Error> {
             let searchTerm = dto.searchTerm;
-            let filteredEntries = List.filter<(T.FootballChannelId, Text)>(
-                Iter.toList<(T.FootballChannelId, Text)>(footballChannelNames.entries()),
-                func(entry : (T.FootballChannelId, Text)) : Bool {
+            let filteredEntries = List.filter<(Ids.FootballChannelId, Text)>(
+                Iter.toList<(Ids.FootballChannelId, Text)>(footballChannelNames.entries()),
+                func(entry : (Ids.FootballChannelId, Text)) : Bool {
                     Text.startsWith(entry.1, #text searchTerm);
                 },
             );
 
-            let droppedEntries = List.drop<(T.FootballChannelId, Text)>(filteredEntries, 0); //TODO USE PAGE
-            let paginatedEntries = List.take<(T.FootballChannelId, Text)>(droppedEntries, 10);
+            let droppedEntries = List.drop<(Ids.FootballChannelId, Text)>(filteredEntries, 0); //TODO USE PAGE
+            let paginatedEntries = List.take<(Ids.FootballChannelId, Text)>(droppedEntries, 10);
 
             let channelsBuffer = Buffer.fromArray<FootballChannelQueries.FootballChannel>([]);
 
@@ -147,15 +147,15 @@ module {
             return false;
         };
 
-        public func createFootballChannel(dto : FootballChannelCommands.CreateFootballChannel) : async Result.Result<T.FootballChannelId, Enums.Error> {
+        public func createFootballChannel(dto : FootballChannelCommands.CreateFootballChannel) : async Result.Result<Ids.FootballChannelId, Enums.Error> {
 
             if (Text.size(dto.name) > 100) {
                 return #err(#InvalidProperty);
             };
 
             var football_channel_canister = actor (activeCanisterId) : actor {
-                createFootballChannel : (dto : FootballChannelCommands.CreateFootballChannel) -> async Result.Result<T.FootballChannelId, Enums.Error>;
-                getLatestId : () -> async T.FootballChannelId;
+                createFootballChannel : (dto : FootballChannelCommands.CreateFootballChannel) -> async Result.Result<Ids.FootballChannelId, Enums.Error>;
+                getLatestId : () -> async Ids.FootballChannelId;
                 isCanisterFull : () -> async Bool;
             };
 
@@ -163,8 +163,8 @@ module {
                 case "" {
                     await createNewCanister(totalFootballChannels + 1);
                     football_channel_canister := actor (activeCanisterId) : actor {
-                        createFootballChannel : (dto : FootballChannelCommands.CreateFootballChannel) -> async Result.Result<T.FootballChannelId, Enums.Error>;
-                        getLatestId : () -> async T.FootballChannelId;
+                        createFootballChannel : (dto : FootballChannelCommands.CreateFootballChannel) -> async Result.Result<Ids.FootballChannelId, Enums.Error>;
+                        getLatestId : () -> async Ids.FootballChannelId;
                         isCanisterFull : () -> async Bool;
                     };
                 };
@@ -172,11 +172,11 @@ module {
                     let isCanisterFull = await football_channel_canister.isCanisterFull();
                     if (isCanisterFull) {
                         let latestId = await football_channel_canister.getLatestId();
-                        let nextId : T.FootballChannelId = latestId + 1;
+                        let nextId : Ids.FootballChannelId = latestId + 1;
                         await createNewCanister(nextId);
                         football_channel_canister := actor (activeCanisterId) : actor {
-                            createFootballChannel : (dto : FootballChannelCommands.CreateFootballChannel) -> async Result.Result<T.FootballChannelId, Enums.Error>;
-                            getLatestId : () -> async T.FootballChannelId;
+                            createFootballChannel : (dto : FootballChannelCommands.CreateFootballChannel) -> async Result.Result<Ids.FootballChannelId, Enums.Error>;
+                            getLatestId : () -> async Ids.FootballChannelId;
                             isCanisterFull : () -> async Bool;
                         };
                     };
@@ -362,12 +362,12 @@ module {
 
         //stable storage getters and setters
 
-        public func getStableCanisterIndex() : [(T.FootballChannelId, Ids.CanisterId)] {
+        public func getStableCanisterIndex() : [(Ids.FootballChannelId, Ids.CanisterId)] {
             return Iter.toArray(footballChannelCanisterIndex.entries());
         };
 
-        public func setStableCanisterIndex(stable_football_channel_canister_index : [(T.FootballChannelId, Ids.CanisterId)]) {
-            let canisterIds : TrieMap.TrieMap<T.FootballChannelId, Ids.CanisterId> = TrieMap.TrieMap<T.FootballChannelId, Ids.CanisterId>(BaseUtilities.eqNat, BaseUtilities.hashNat);
+        public func setStableCanisterIndex(stable_football_channel_canister_index : [(Ids.FootballChannelId, Ids.CanisterId)]) {
+            let canisterIds : TrieMap.TrieMap<Ids.FootballChannelId, Ids.CanisterId> = TrieMap.TrieMap<Ids.FootballChannelId, Ids.CanisterId>(BaseUtilities.eqNat, BaseUtilities.hashNat);
 
             for (canisterId in Iter.fromArray(stable_football_channel_canister_index)) {
                 canisterIds.put(canisterId);
@@ -383,12 +383,12 @@ module {
             activeCanisterId := stable_active_canister_id;
         };
 
-        public func getStableFootballChannelNames() : [(T.FootballChannelId, Text)] {
+        public func getStableFootballChannelNames() : [(Ids.FootballChannelId, Text)] {
             return Iter.toArray(footballChannelNames.entries());
         };
 
-        public func setStableFootballChannelNames(stable_channel_names : [(T.FootballChannelId, Text)]) : () {
-            let football_channel_map : TrieMap.TrieMap<T.FootballChannelId, Ids.CanisterId> = TrieMap.TrieMap<T.FootballChannelId, Ids.CanisterId>(BaseUtilities.eqNat, BaseUtilities.hashNat);
+        public func setStableFootballChannelNames(stable_channel_names : [(Ids.FootballChannelId, Text)]) : () {
+            let football_channel_map : TrieMap.TrieMap<Ids.FootballChannelId, Ids.CanisterId> = TrieMap.TrieMap<Ids.FootballChannelId, Ids.CanisterId>(BaseUtilities.eqNat, BaseUtilities.hashNat);
 
             for (channelName in Iter.fromArray(stable_channel_names)) {
                 football_channel_map.put(channelName);
@@ -417,17 +417,17 @@ module {
             totalFootballChannels := stable_total_football_channels;
         };
 
-        public func getStableNextFootballChannelId() : T.FootballChannelId {
+        public func getStableNextFootballChannelId() : Ids.FootballChannelId {
             return nextFootballChannelId;
         };
 
-        public func setStableNextFootballChannelId(stable_next_football_channel_id : T.FootballChannelId) : () {
+        public func setStableNextFootballChannelId(stable_next_football_channel_id : Ids.FootballChannelId) : () {
             nextFootballChannelId := stable_next_football_channel_id;
         };
 
         //TODO WHEN?!
 
-        private func createNewCanister(nextId : T.FootballChannelId) : async () {
+        private func createNewCanister(nextId : Ids.FootballChannelId) : async () {
             Cycles.add<system>(10_000_000_000_000);
             let canister = await FootballChannelsCanister._FootballChannelsCanister();
             let IC : Management.Management = actor (CanisterIds.Default);
@@ -442,7 +442,7 @@ module {
             };
 
             var new_canister = actor (canisterId) : actor {
-                updateNextId : (nextId : T.FootballChannelId) -> async ();
+                updateNextId : (nextId : Ids.FootballChannelId) -> async ();
             };
 
             await new_canister.updateNextId(nextId);

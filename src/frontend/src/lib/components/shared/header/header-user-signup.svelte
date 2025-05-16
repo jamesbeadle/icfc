@@ -20,7 +20,7 @@
           <span class="hidden text-xl text-white cta-text sm:block">ICFC</span>
       </a>
     <button 
-        on:click={handleDisconnect}
+        onclick={handleDisconnect}
         class="px-4 py-2 text-sm font-medium text-white transition-all duration-200 border-2 border-white rounded-lg sm:text-base hover:bg-white/10 hover:scale-105 active:scale-95"
     >
         Disconnect

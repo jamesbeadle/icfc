@@ -6,20 +6,24 @@
     import ArrowDownIcon from "$lib/icons/ArrowDownIcon.svelte";
     import SearchIcon from "$lib/icons/SearchIcon.svelte";
 
-    export let value: any;
-    export let options: Array<{ id: number | string | bigint; label: string }> = [];
-    export let placeholder = "Select...";
-    export let compact = false;
-    export let onChange: ((value: any) => void) | undefined = undefined;
-    export let allOptionText: string | undefined = undefined;
-    export let scrollOnOpen = false;
-    export let searchOn = false;
-    export let disabled = false;
+    interface Props {
+        value: any;
+        options: Array<{ id: number | string | bigint; label: string }>;
+        placeholder: string;
+        compact: boolean;
+        onChange: ((value: any) => void) | undefined;
+        allOptionText: string | undefined;
+        scrollOnOpen: boolean;
+        searchOn: boolean;
+        disabled: boolean;
+    }
+
+    let { value, options, placeholder, compact, onChange, allOptionText, scrollOnOpen, searchOn, disabled  } : Props = $props();
 
     const dropdownId = Math.random().toString(36).substring(7);
-    let isDropdownOpen = false;
+    let isDropdownOpen = $state(false);
     let dropdownElement: HTMLDivElement;
-    let searchTerm = '';
+    let searchTerm = $state('');
 
     activeDropdownId.subscribe((id) => {
         if (id !== dropdownId) {
@@ -27,11 +31,11 @@
         }
     });
 
-    $: allOptions = allOptionText 
+    let allOptions = allOptionText 
         ? [{ id: BigInt(0), label: `All ${allOptionText}` }, ...options]
         : options;
-    $: selectedOption = allOptions.find(opt => opt.id === value);
-    $: filteredOptions = searchOn 
+    let selectedOption = allOptions.find(opt => opt.id === value);
+    let filteredOptions = searchOn 
         ? allOptions.filter(opt => 
             opt.label.toLowerCase().includes(searchTerm.toLowerCase())
           )
@@ -104,16 +108,16 @@
     <button
         {disabled}
         class="flex items-center justify-between w-full rounded-lg border border-BrandGrayShade3 hover:border-BrandBlueComp  focus:border-BrandBlueComp focus:ring-1 focus:ring-BrandBlueComp/30 {compact ? ' bg-BrandGray/5  hover:bg-BrandGray/10' : 'px-2 py-3 bg-BrandBlack hover:bg-BrandBlack/50'}"
-        on:click={e => toggleDropdown(e)}
+        onclick={e => toggleDropdown(e)}
     >
         <span class="truncate {!selectedOption ? 'text-BrandGrayShade2' : 'text-BrandDarkGray'}">
             {selectedOption?.label ?? placeholder}
         </span>
         <span class="w-4 h-4">
             {#if isDropdownOpen}
-                <ArrowUpIcon fill="white" />
+                <ArrowUpIcon className="w-6" fill="white" />
             {:else}
-                <ArrowDownIcon fill="white" />
+                <ArrowDownIcon className="w-6" fill="white" />
             {/if}
         </span>
     </button>
@@ -145,11 +149,11 @@
                         <button
                             {disabled}
                             class={`w-full px-4 py-2 text-left transition-colors duration-150 flex items-center justify-between ${value === option.id ? "text-white bg-BrandBlueComp/50" : "text-BrandGrayShade2 hover:text-white bg-BrandBlack hover:bg-BrandBlueComp"}`}
-                            on:click={e => selectOption(option.id, e)}
+                            onclick={e => selectOption(option.id, e)}
                         >
                             <span class="truncate">{option.label}</span>
                             {#if value === option.id}
-                                <CheckmarkIcon className="w-4 h-4" />
+                                <CheckmarkIcon fill='white' className="w-4 h-4" />
                             {/if}
                         </button>
                     </li>

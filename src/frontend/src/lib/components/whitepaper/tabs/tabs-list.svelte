@@ -1,6 +1,16 @@
+<script lang="ts">
+    import type { Snippet } from "svelte";
+
+    interface Props {
+        children: Snippet
+    }
+
+    let { children } : Props = $props();
+    
+</script>
 <div class="border-b border-BrandGrayShade2 dark:border-BrandGrayShade3 overflow-x-auto whitespace-nowrap">
     <div class="flex items-center">
-        <slot />
+        {@render children()}  
     </div>
 </div>
 

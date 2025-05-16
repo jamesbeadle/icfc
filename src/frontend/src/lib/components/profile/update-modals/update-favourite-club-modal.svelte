@@ -1,6 +1,6 @@
 <script lang="ts">
-  import LocalSpinner from '$lib/components/shared/local-spinner.svelte';
-  import Modal from '$lib/components/shared/modal.svelte';
+  import LocalSpinner from '$lib/components/shared/global/local-spinner.svelte';
+  import Modal from '$lib/components/shared/global/modal.svelte';
   import { toasts } from '$lib/stores/toasts-store';
   import { userStore } from '$lib/stores/user-store';
   import { onMount } from 'svelte';
@@ -14,18 +14,22 @@
   import { clubStore } from '$lib/stores/club-store';
   import { leagueStore } from '$lib/stores/league-store';
 
-  export let visible: boolean = false;
-  export let favouriteLeagueId: LeagueId;
-  export let favouriteClubId: ClubId;
+  interface Props {
+    favouriteLeagueId: LeagueId;
+    favouriteClubId: ClubId;
+    closeModal: () => void;
+  }
 
-  let isLoading = false;
-  let clubsLoading = false;
-  let loadingMessage = '';
-  let newFavouriteLeagueId: LeagueId;
-  let newFavouriteClubId: ClubId;
-  let clubs: Club[] = [];
-  let leagues: League[] = [];
-  let lastFetchedLeagueId = favouriteLeagueId;
+  let { favouriteLeagueId, favouriteClubId, closeModal } : Props = $props();
+
+  let isLoading = $state(false);
+  let clubsLoading = $state(false);
+  let loadingMessage = $state('');
+  let newFavouriteLeagueId: LeagueId = $state(0);
+  let newFavouriteClubId: ClubId = $state(0);
+  let clubs: Club[] = $state([]);
+  let leagues: League[] = $state([]);
+  let lastFetchedLeagueId = $state(favouriteLeagueId);
 
   onMount(async () => {
     try {
@@ -72,15 +76,19 @@
     } 
   }
 
-  $: isSubmitDisabled =
-    newFavouriteLeagueId < 0 &&
-    newFavouriteClubId < 0 &&
-    newFavouriteClubId == favouriteClubId;
+  let isSubmitDisabled = $state(true);
+  
+  $effect(() => {
+    isSubmitDisabled =
+      newFavouriteLeagueId < 0 &&
+      newFavouriteClubId < 0 &&
+      newFavouriteClubId == favouriteClubId;
+  });
 
   const cancelModal = () => {
     newFavouriteLeagueId = favouriteLeagueId;
     newFavouriteClubId = newFavouriteClubId;
-    visible = false;
+    closeModal();
   };
 
   const handleSubmit = async (e: Event) => {
@@ -95,7 +103,7 @@
       };
       await userStore.updateFavouriteClub(dto);
       await userStore.sync();
-      visible = false;
+      closeModal();
       toasts.addToast({
         message: 'Favourite club and league updated.',
         type: 'success',
@@ -112,73 +120,76 @@
       isLoading = false;
     }
   };
-
-  $: if (newFavouriteLeagueId) {
+  
+  $effect(() => {
+    if (newFavouriteLeagueId) {
         newFavouriteClubId = -1;
     }
-
-    $: if (newFavouriteLeagueId && newFavouriteLeagueId !== lastFetchedLeagueId) {
+  });
+  
+  $effect(() => {
+    if (newFavouriteLeagueId && newFavouriteLeagueId !== lastFetchedLeagueId) {
       lastFetchedLeagueId = newFavouriteLeagueId;
       getClubs(newFavouriteLeagueId);
     }
+  });
+
 </script>
 
-{#if visible}
-  <Modal onClose={cancelModal} title="Update Favourite League & Club">
-    {#if isLoading}
-      <LocalSpinner message={loadingMessage} />
-    {:else}
-      <div
-        class="flex flex-col p-4 space-y-4 md:justify-between md:flex-row md:space-y-0"
-      >
-        <form class="flex flex-col w-full space-y-4">
-          <div class="flex flex-col space-y-2">
-            <p class="form-title">Your Favourite League</p>
-            <p class="form-hint">Select to find your favourite club.</p>
-            <select bind:value={newFavouriteLeagueId} class="w-full brand-input">
-              <option value={null}>Select...</option>
-              {#each $leagueStore.sort( (a, b) => a.name.localeCompare(b.name) ) as league}
-                <option value={league.id}>{league.name}</option>
-              {/each}
+<Modal onClose={cancelModal} title="Update Favourite League & Club">
+  {#if isLoading}
+    <LocalSpinner message={loadingMessage} />
+  {:else}
+    <div
+      class="flex flex-col p-4 space-y-4 md:justify-between md:flex-row md:space-y-0"
+    >
+      <form class="flex flex-col w-full space-y-4">
+        <div class="flex flex-col space-y-2">
+          <p class="form-title">Your Favourite League</p>
+          <p class="form-hint">Select to find your favourite club.</p>
+          <select bind:value={newFavouriteLeagueId} class="w-full brand-input">
+            <option value={null}>Select...</option>
+            {#each $leagueStore.sort( (a, b) => a.name.localeCompare(b.name) ) as league}
+              <option value={league.id}>{league.name}</option>
+            {/each}
+          </select>
+        </div>
+        <div class="flex flex-col w-full space-y-2">
+          <p class="form-title">Your Favourite Club</p>
+          <p class="form-hint">Select to enable club based rewards.</p>
+          {#if clubsLoading}
+            <LocalSpinner message="Loading clubs" />
+          {:else}
+            <select
+              bind:value={newFavouriteClubId}
+              disabled={!newFavouriteLeagueId}
+              class="w-full brand-input disabled:opacity-50"
+            >
+            <option value={null}>Select...</option>
+            {#each $clubStore.sort( (a, b) => a.friendlyName.localeCompare(b.friendlyName) ) as club}
+              <option value={club.id}>{club.friendlyName}</option>
+            {/each}
             </select>
-          </div>
-          <div class="flex flex-col w-full space-y-2">
-            <p class="form-title">Your Favourite Club</p>
-            <p class="form-hint">Select to enable club based rewards.</p>
-            {#if clubsLoading}
-              <LocalSpinner message="Loading clubs" />
-            {:else}
-              <select
-                bind:value={newFavouriteClubId}
-                disabled={!newFavouriteLeagueId}
-                class="w-full brand-input disabled:opacity-50"
-              >
-              <option value={null}>Select...</option>
-              {#each $clubStore.sort( (a, b) => a.friendlyName.localeCompare(b.friendlyName) ) as club}
-                <option value={club.id}>{club.friendlyName}</option>
-              {/each}
-              </select>
-            {/if}
-          </div>
-          <div class="flex flex-row items-center py-3 space-x-4">
-            <button
-              class="w-1/2 brand-button"
-              type="button"
-              on:click={cancelModal}
-              disabled={isLoading}
-            >
-              Cancel
-            </button>
-            <button
-              class="w-1/2 brand-button"
-              disabled={isSubmitDisabled}
-              on:click={handleSubmit}
-            >
-              Update Favourite Club
-            </button>
-          </div>
-        </form>
-      </div>
-    {/if}
-  </Modal>
-{/if}
+          {/if}
+        </div>
+        <div class="flex flex-row items-center py-3 space-x-4">
+          <button
+            class="w-1/2 brand-button"
+            type="button"
+            onclick={cancelModal}
+            disabled={isLoading}
+          >
+            Cancel
+          </button>
+          <button
+            class="w-1/2 brand-button"
+            disabled={isSubmitDisabled}
+            onclick={handleSubmit}
+          >
+            Update Favourite Club
+          </button>
+        </div>
+      </form>
+    </div>
+  {/if}
+</Modal>

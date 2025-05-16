@@ -1,5 +1,5 @@
 <script lang="ts">
-    import FullScreenSpinner from '$lib/components/shared/full-screen-spinner.svelte';
+    import FullScreenSpinner from '$lib/components/shared/global/full-screen-spinner.svelte';
     import {onMount, type  Snippet } from 'svelte';
     import { authStore } from '$lib/stores/auth-store';
     import { toasts } from '$lib/stores/toasts-store';

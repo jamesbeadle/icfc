@@ -1,10 +1,16 @@
 <script lang="ts">
-export let title: string;
-export let content: string[];
-export let titleColor: string = '';
-export let secondTitleColor: string = '';
 
-$: parts = title.split(/: |& /).map(t => t.trim());
+
+    interface Props {
+        title: string;
+        content: string[];
+        titleColor: string;
+        secondTitleColor: string;
+    }
+
+    let { title, content, titleColor, secondTitleColor } : Props = $props();
+
+    let parts = title.split(/: |& /).map(t => t.trim());
 </script>
 
 <div class="flex flex-col mb-8">

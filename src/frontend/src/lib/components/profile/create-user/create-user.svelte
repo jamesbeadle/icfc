@@ -8,7 +8,7 @@
   import { getFileExtensionFromFile, sortByHighestNeuron } from "$lib/utils/helpers";
   import type { CreateProfile, EligibleMembership, Neuron, LeagueId, ClubId, CountryId, Country, League } from "../../../../../../declarations/backend/backend.did";
 
-  import LocalSpinner from "../../shared/local-spinner.svelte";
+  import LocalSpinner from "../../shared/global/local-spinner.svelte";
   import AvailableMembership from "../../membership/available-membership.svelte";
   import CopyPrincipal from "../copy-principal.svelte";
   import CreateUserHeader from "./create-user-header.svelte";
@@ -161,7 +161,7 @@
       {#if loadingDropdownData}
         <LocalSpinner message="Loading Countries and Leagues" />
       {:else}
-        <UserDetailsLayout bind:file bind:nationalityId bind:favouriteLeagueId bind:favouriteClubId bind:username bind:usernameAvailable bind:displayName store={userStore} />
+        <UserDetailsLayout {file} {nationalityId} {favouriteLeagueId} {favouriteClubId} {username} {usernameAvailable} {displayName} />
       {/if}
       
       <div class="flex flex-col mt-8 space-y-6">
@@ -169,7 +169,7 @@
         <p class="text-BrandGrayShade5">
           To join the ICFC you need to have a non-dissolving NNS neuron with at least 1,000 ICFC staked, max staked for 2 years. Add your ICFC Principal as a hotkey to any ICFC NNS neuron over 1,000 ICFC to continue:
         </p>
-        <CopyPrincipal />
+        <CopyPrincipal backgroundColour="bg-BrandBlackShade1" borderColor="border-none" />
         {#if loadingNeurons}
           <LocalSpinner message="Loading Neurons" />
         {:else}
@@ -183,7 +183,7 @@
       </div>
       <button 
         class="w-full my-8 transition brand-button bg-BrandBlue hover:bg-BrandInfo disabled:bg-BrandGrayShade3" 
-        on:click={createProfile} 
+        onclick={createProfile} 
         disabled={isSubmitDisabled}
       >
         JOIN ICFC

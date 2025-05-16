@@ -1,6 +1,6 @@
 <script lang="ts">
-  import LocalSpinner from '$lib/components/shared/local-spinner.svelte';
-  import Modal from '$lib/components/shared/modal.svelte';
+  import LocalSpinner from '$lib/components/shared/global/local-spinner.svelte';
+  import Modal from '$lib/components/shared/global/modal.svelte';
   import { toasts } from '$lib/stores/toasts-store';
   import { userStore } from '$lib/stores/user-store';
   import { onMount } from 'svelte';
@@ -12,12 +12,16 @@
     UpdateNationality,
   } from '../../../../../../declarations/backend/backend.did';
 
-  export let visible: boolean = false;
-  export let nationalityId: CountryId;
+  interface Props {
+    nationalityId: CountryId;
+    closeModal: () => void;
+  }
 
-  let isLoading = false;
-  let loadingMessage = '';
-  let newNationalityId: CountryId = nationalityId;
+  let { nationalityId, closeModal } : Props = $props();
+
+  let isLoading = $state(false);
+  let loadingMessage = $state('');
+  let newNationalityId: CountryId = $state(nationalityId);
   let countries: Country[] = [];
 
   onMount(async () => {
@@ -41,11 +45,15 @@
     }
   });
 
-  $: isSubmitDisabled = newNationalityId < 0 || newNationalityId === nationalityId;
+  let isSubmitDisabled = $state(true);
+  
+  $effect(() => {
+    isSubmitDisabled = newNationalityId < 0 || newNationalityId === nationalityId;
+  });
 
   const cancelModal = () => {
     newNationalityId = nationalityId;
-    visible = false;
+    closeModal();
   };
 
   async function handleSubmit() {
@@ -57,7 +65,7 @@
       };
       await userStore.updateNationality(dto);
       await userStore.sync();
-      visible = false;
+      closeModal();
       toasts.addToast({
         message: 'National Team updated.',
         type: 'success',
@@ -75,30 +83,28 @@
   }
 </script>
 
-{#if visible}
-  <Modal onClose={cancelModal} title="Update National Team">
-    {#if isLoading}
-      <LocalSpinner message={loadingMessage} />
-    {:else}
-      <div class="flex flex-col p-4 space-y-2">
-        <p class="form-title">National Team</p>
-        <p class="form-hint">
-          Select to participate in nationwide football competitions.
-        </p>
-        <select bind:value={newNationalityId} class="w-full brand-input">
-          <option value={null}>Select...</option>
-          {#each $countryStore.sort((a, b) => a.name.localeCompare(b.name)) as country}
-            <option value={country.id}>{country.name}</option>
-          {/each}
-        </select>
-        <button
-          class="w-full brand-button"
-          on:click={handleSubmit}
-          disabled={isSubmitDisabled}
-        >
-          Update National Team
-        </button>
-      </div>
-    {/if}
-  </Modal>
-{/if}
+<Modal onClose={cancelModal} title="Update National Team">
+  {#if isLoading}
+    <LocalSpinner message={loadingMessage} />
+  {:else}
+    <div class="flex flex-col p-4 space-y-2">
+      <p class="form-title">National Team</p>
+      <p class="form-hint">
+        Select to participate in nationwide football competitions.
+      </p>
+      <select bind:value={newNationalityId} class="w-full brand-input">
+        <option value={null}>Select...</option>
+        {#each $countryStore.sort((a, b) => a.name.localeCompare(b.name)) as country}
+          <option value={country.id}>{country.name}</option>
+        {/each}
+      </select>
+      <button
+        class="w-full brand-button"
+        onclick={handleSubmit}
+        disabled={isSubmitDisabled}
+      >
+        Update National Team
+      </button>
+    </div>
+  {/if}
+</Modal>

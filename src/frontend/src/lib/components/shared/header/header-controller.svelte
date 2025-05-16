@@ -13,7 +13,7 @@
     import LoggedOutHeader from './logged-out-header.svelte';
     import Sidebar from './sidebar.svelte';
     import CreateUser from '$lib/components/profile/create-user/create-user.svelte';
-    import FullScreenSpinner from '../full-screen-spinner.svelte';
+    import FullScreenSpinner from '../global/full-screen-spinner.svelte';
     import SignupChoice from '$lib/components/shared/signup-choice.svelte';
     
     interface Props {

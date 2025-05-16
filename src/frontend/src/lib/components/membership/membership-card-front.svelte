@@ -1,0 +1,131 @@
+<script lang="ts">
+    import LogoIcon from '$lib/icons/LogoIcon.svelte';
+    import MonthlyMembershipIcon from '$lib/icons/MonthlyMembershipIcon.svelte';
+    import SeasonalMembershipIcon from '$lib/icons/SeasonalMembershipIcon.svelte';
+    import LifetimeMembershipIcon from '$lib/icons/LifetimeMembershipIcon.svelte';
+    import FoundingMembershipIcon from '$lib/icons/FoundingMembershipIcon.svelte';
+    import IcfcCoinIcon from '$lib/icons/ICFCCoinIcon.svelte';
+
+
+    interface Props {
+        membership: { type: string; tokensRequired: number; key: string };
+        levelIndex: number;
+        currentLevelIndex: number;
+        totalStakedICFC: number;
+        handleClaimMembership: () => void;
+    }
+
+    let { membership, levelIndex, currentLevelIndex, totalStakedICFC, handleClaimMembership  } : Props = $props();
+  
+    const backgroundProperties = {
+        size: "w-[110%] h-[110%]",
+        frontPosition: "-bottom-1 -right-[10rem]",
+        backPosition: "-bottom-1 -left-[12.5rem]"
+    };
+    
+    function formatStakeAmount(amount: number): string {
+        if (amount >= 1000) {
+            return `${(amount / 1000)}K`;
+        }
+        return amount.toLocaleString();
+    }
+
+
+    let status = getLevelStatus();
+    let canClaim = status === "Claim" || status === "Upgrade";
+    let needsMoreTokens = status.startsWith("Need");
+
+    let buttonClass = (() => {
+        const baseClasses = {
+            'monthly': 'bg-MonthlyPrimary border-MonthlySecondary',
+            'seasonal': 'bg-SeasonalPrimary border-SeasonalSecondary',
+            'lifetime': 'bg-LifetimePrimary border-LifetimeSecondary',
+            'founding': 'bg-FoundingPrimary border-white text-black',
+        }[membership.type.toLowerCase()] || 'bg-BrandGrayShade3';
+        
+        const hoverClasses = status === "Already Claimed" || status === "Auto-Claimed" 
+            ? ''
+            : 'hover:bg-opacity-80 hover:border-opacity-80';
+
+        return `${baseClasses} border ${hoverClasses}`;
+    })();
+
+    function getLevelStatus() {
+        if (levelIndex === currentLevelIndex) return "Already Claimed";
+        if (levelIndex < currentLevelIndex) return "Auto-Claimed";
+        if (totalStakedICFC >= membership.tokensRequired) {
+            return currentLevelIndex >= 0 ? "Upgrade" : "Claim";
+        }
+        const tokensNeeded = Math.max(membership.tokensRequired - totalStakedICFC, 0);
+        return `Need ${formatStakeAmount(tokensNeeded)} more ICFC`;
+    }
+
+    function loadNNS(){
+        window.open("https://nns.ic0.app/neurons/?u=gyito-zyaaa-aaaaq-aacpq-cai/", "_blank");
+    }
+
+    function claimMembership(){
+        if(!canClaim) {return}
+        handleClaimMembership();
+    }
+
+</script>
+<div class="relative flex flex-col h-full">
+    <div class="absolute inset-0 pointer-events-none">
+        <div class="absolute transform {backgroundProperties.frontPosition} opacity-20">
+            <LogoIcon className={backgroundProperties.size} />
+        </div>
+    </div>
+
+    <div class="relative flex flex-col h-full">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center justify-center">
+                {#if membership.type == "Monthly"}
+                    <MonthlyMembershipIcon fill='white' className="w-11" />
+                {/if}
+                {#if membership.type == "Seasonal"}
+                    <SeasonalMembershipIcon fill='white' className="w-11" />
+                {/if}
+                {#if membership.type == "Lifetime"}
+                    <LifetimeMembershipIcon fill='white' className="w-11" />
+                {/if}
+                {#if membership.type == "Founding"}
+                    <FoundingMembershipIcon fill='white' className="w-11" />
+                {/if}
+            </div>
+            <IcfcCoinIcon className="w-10 h-10" />
+        </div>
+
+        <div class="mt-auto space-y-2">
+            <p class="text-lg tracking-wider uppercase cta-text">{membership.type}</p>
+            <div class="flex flex-row items-baseline gap-2">
+                <h3 class="text-2xl font-bold">{membership.tokensRequired.toLocaleString()}</h3>
+                <span class="text-sm">ICFC Required</span>
+            </div>
+            {#if status === "Already Claimed"}
+                <div class="w-full font-medium already-claimed-membership-badge {buttonClass} cursor-default">
+                    {status}
+                </div>
+            {:else if status === "Auto-Claimed"}
+                <div class="w-full font-medium auto-claimed-membership-badge {buttonClass} cursor-default">
+                    {status}
+                </div>
+            {:else if status === "Claim" || status === "Upgrade"}
+                <button 
+                    onclick={claimMembership}
+                    class="w-full font-medium transition-colors small-brand-button {buttonClass}"
+                >
+                    {status}
+                </button>
+            {:else if needsMoreTokens}
+                <button 
+                    onclick={loadNNS}
+                    class="w-full font-medium transition-colors nns-button {buttonClass}"
+                >
+                    <span class="block text-sm">Stake</span>
+                    <span class="block font-bold">{(membership.tokensRequired - totalStakedICFC).toLocaleString()} ICFC</span>
+                </button>
+            {/if}
+        </div>
+    </div>
+</div>

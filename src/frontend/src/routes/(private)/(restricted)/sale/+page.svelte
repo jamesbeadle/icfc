@@ -3,8 +3,8 @@
     import { onMount } from "svelte";
     import { saleStore } from "$lib/stores/sale-store";
 
-    import FullScreenSpinner from "$lib/components/shared/full-screen-spinner.svelte";
-    import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
+    import FullScreenSpinner from "$lib/components/shared/global/full-screen-spinner.svelte";
+    import LocalSpinner from "$lib/components/shared/global/local-spinner.svelte";
     import ICFCCoinIcon from "$lib/icons/ICFCCoinIcon.svelte";
     import FundingProgress from "$lib/components/sale/funding-progress.svelte";
 

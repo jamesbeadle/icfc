@@ -1,4 +1,3 @@
-import T "../icfc_types";
 import Ids "mo:waterway-mops/Ids";
 
 module FootballChannelQueries {
@@ -18,39 +17,39 @@ module FootballChannelQueries {
     };
 
     public type GetFootballChannel = {
-        channelId : T.FootballChannelId;
+        channelId : Ids.FootballChannelId;
     };
 
     public type FootballChannel = {
         name : Text;
-        channelId : T.FootballChannelId;
+        channelId : Ids.FootballChannelId;
     };
 
     public type GetFootballChannelVideos = {
-        channelId : T.FootballChannelId;
+        channelId : Ids.FootballChannelId;
         page : Nat;
     };
 
     public type FootballChannelVideos = {
-        channelId : T.FootballChannelId;
+        channelId : Ids.FootballChannelId;
     };
 
     public type GetFootballChannelVideo = {
-        channelId : T.FootballChannelId;
+        channelId : Ids.FootballChannelId;
     };
 
     public type FootballChannelVideo = {
-        channelId : T.FootballChannelId;
+        channelId : Ids.FootballChannelId;
     };
 
     public type IsChannelOwner = {
         principalId : Ids.PrincipalId;
-        channelId : T.FootballChannelId;
+        channelId : Ids.FootballChannelId;
     };
 
     public type IsSubscribed = {
         principalId : Ids.PrincipalId;
-        channelId : T.FootballChannelId;
+        channelId : Ids.FootballChannelId;
     };
 
 };

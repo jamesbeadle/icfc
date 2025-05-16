@@ -1,19 +1,26 @@
 <script lang="ts">
-    import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
-    import Modal from "$lib/components/shared/modal.svelte";
+    import LocalSpinner from "$lib/components/shared/global/local-spinner.svelte";
+    import Modal from "$lib/components/shared/global/modal.svelte";
     import { toasts } from "$lib/stores/toasts-store";
     import { userStore } from "$lib/stores/user-store";
     import { isDisplayNameValid } from "$lib/utils/helpers";
     import type { PrincipalId, UpdateDisplayName } from "../../../../../../declarations/backend/backend.did";
 
-    export let visible: boolean = false;
-    export let displayName: string;
-    export let principalId: PrincipalId;
+    interface Props {
+        displayName: string;
+        onClose: () => void;
+    }
 
-    let newDisplayName = displayName;
-    let isLoading = false;
-    let displayNameError = "";
-    $: isSubmitDisabled = !newDisplayName || !!displayNameError;
+    let { displayName, onClose } : Props = $props();
+
+    let newDisplayName = $state(displayName);
+    let isLoading = $state(false);
+    let displayNameError = $state("");
+    let isSubmitDisabled = $state(false);
+
+    $effect(() => {
+        isSubmitDisabled = !newDisplayName || !!displayNameError;
+    });
 
     const validateDisplayName = async (): Promise<boolean> => {
         if (!isDisplayNameValid(newDisplayName)) {
@@ -30,12 +37,11 @@
         isLoading = true;
         try {
             let dto: UpdateDisplayName =  {
-                displayName: newDisplayName,
-                principalId
+                displayName: newDisplayName
             }
             await userStore.updateDisplayName(dto);
             await userStore.sync();
-            visible = false;
+            onClose();
             toasts.addToast({
                 message: "Display name updated.",
                 type: "success",
@@ -54,51 +60,47 @@
 
     const cancelModal = () => {
         newDisplayName = displayName;
-        visible = false;
     };
 </script>
 
-{#if visible}
-    <Modal onClose={cancelModal}>
-        {#if isLoading}
-            <LocalSpinner />
-        {:else}
-            <div class="flex flex-col space-y-6">
-                <h2 class="text-2xl text-white cta-text">Update Display Name</h2>
-                <form on:submit={handleSubmit}>
-                    <div class="mt-4">
-                        <input
-                            type="text"
-                            class="w-full px-4 py-2 text-black border rounded-md focus:outline-none focus:ring-2 focus:ring-BrandBlue"
-                            placeholder="New Display Name"
-                            bind:value={newDisplayName}
-                            on:input={validateDisplayName}
-                        />
-                        {#if displayNameError}
-                            <p class="mt-1 text-sm text-red-500">{displayNameError}</p>
-                        {/if}
-                    </div>
-                    <div class="flex flex-row items-center py-3 space-x-4">
-                        <button
-                            class="px-4 py-2 default-button fpl-cancel-btn"
-                            type="button"
-                            on:click={cancelModal}
-                            disabled={isLoading}
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            class="px-4 py-2 default-button"
-                            class:bg-BrandGrayShade3={isSubmitDisabled}
-                            class:bg-BrandPurple={!isSubmitDisabled}
-                            type="submit"
-                            disabled={isSubmitDisabled}
-                        >
-                            Update
-                        </button>
-                    </div>
-                </form>
+<Modal title="Update Display Name" onClose={cancelModal}>
+    {#if isLoading}
+        <LocalSpinner message="Updateing Display Name" />
+    {:else}
+        <div class="flex flex-col space-y-6">
+            <div>
+                <div class="mt-4">
+                    <input
+                        type="text"
+                        class="w-full px-4 py-2 text-black border rounded-md focus:outline-none focus:ring-2 focus:ring-BrandBlue"
+                        placeholder="New Display Name"
+                        bind:value={newDisplayName}
+                        oninput={validateDisplayName}
+                    />
+                    {#if displayNameError}
+                        <p class="mt-1 text-sm text-red-500">{displayNameError}</p>
+                    {/if}
+                </div>
+                <div class="flex flex-row items-center py-3 space-x-4">
+                    <button
+                        class="px-4 py-2 default-button fpl-cancel-btn"
+                        type="button"
+                        onclick={cancelModal}
+                        disabled={isLoading}
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        class="px-4 py-2 default-button"
+                        class:bg-BrandGrayShade3={isSubmitDisabled}
+                        class:bg-BrandPurple={!isSubmitDisabled}
+                        onclick={handleSubmit}
+                        disabled={isSubmitDisabled}
+                    >
+                        Update
+                    </button>
+                </div>
             </div>
-        {/if}
-    </Modal>
-{/if}
+        </div>
+    {/if}
+</Modal>

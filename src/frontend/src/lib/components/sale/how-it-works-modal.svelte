@@ -1,10 +1,13 @@
 <script lang="ts">
-    import Modal from "../shared/modal.svelte";
+    import Modal from "../shared/global/modal.svelte";
     import StepPanel from "../membership/step-panel.svelte";
     import TabContainer from "../shared/tab-container.svelte";
 
-    export let onClose: () => void;
-    export let showModal: boolean;
+    interface Props {
+        onClose: () => void;
+    }
+
+    let { onClose } : Props = $props();
     
     let depositICP = [
         {
@@ -57,29 +60,28 @@
         }
     ]
 
-    let activeTab: string = "depositICP";
+    let activeTab: string = $state("deposit-icp");
 
     const tabs = [
-        { id: "depositICP", label: "Deposit ICP" },
-        { id: "purchaseICFCPack", label: "Purchase ICFC Packs" },
+        { id: "deposit-icp", label: "Deposit ICP" },
+        { id: "purchase-icp-pack", label: "Purchase ICFC Packs" },
     ];
     function setActiveTab(tab: string): void {
         activeTab = tab;
     }
 </script>
 
-{#if showModal}
 <Modal {onClose} title="How To Purhcase ICFC Packs">
    <div class="flex flex-col h-full">
         <div class="flex-none">
             <TabContainer {tabs} {activeTab} {setActiveTab} />
         </div>
         <div class="flex-1 mt-4">
-            {#if activeTab === "depositICP"}
+            {#if activeTab === "deposit-icp"}
                 {#each depositICP as step}
                     <StepPanel {...step} />
                 {/each}
-            {:else if activeTab === "purchaseICFCPack"}
+            {:else if activeTab === "purchase-icp-pack"}
                 {#each purchaseICFCPack as step}
                     <StepPanel {...step} />
                 {/each}
@@ -87,4 +89,3 @@
         </div>
    </div>
 </Modal>
-{/if}

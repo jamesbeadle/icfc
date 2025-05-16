@@ -1,28 +1,32 @@
 <script lang="ts">
-    import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
-    import Modal from "$lib/components/shared/modal.svelte";
+    import LocalSpinner from "$lib/components/shared/global/local-spinner.svelte";
+    import Modal from "$lib/components/shared/global/modal.svelte";
     import EditIcon from "$lib/icons/EditIcon.svelte";
     import { toasts } from "$lib/stores/toasts-store";
     import { userStore } from "$lib/stores/user-store";
     import { isDisplayNameValid, isUsernameValid } from "$lib/utils/helpers";
-    import type { PrincipalId, UpdateDisplayName, UpdateUserName, UpdateProfilePicture } from "../../../../../../declarations/backend/backend.did";
+    import type { UpdateDisplayName, UpdateUserName, UpdateProfilePicture } from "../../../../../../declarations/backend/backend.did";
 
-    export let visible: boolean = false;
-    export let username: string;
-    export let displayName: string;
-    export let profileSrc: string;
+    interface Props {
+        username: string;
+        displayName: string;
+        profileSrc: string;
+        closeModal: () => void;
+    }
 
-    let isLoading = false;
-    let loadingMessage = ("");
-    let newUsername = username;
-    let newDisplayName = displayName;
-    let isCheckingUsername = false;
-    let usernameError = "";
-    let displayNameError = "";
+    let { username, displayName, profileSrc, closeModal } : Props = $props();
+
+    let isLoading = $state(false);
+    let loadingMessage = $state("");
+    let newUsername = $state(username);
+    let newDisplayName = $state(displayName);
+    let isCheckingUsername = $state(false);
+    let usernameError = $state("");
+    let displayNameError = $state("");
     let newProfilePic: File | null = null;
     let profilePicError = "";
-    let previewUrl: string = profileSrc;
-    let fileInput: HTMLInputElement;
+    let previewUrl: string = $state(profileSrc);
+    let fileInput: HTMLInputElement | undefined = $state(undefined);
 
     const validateDisplayName = async (): Promise<boolean> => {
         if (!isDisplayNameValid(newDisplayName)) {
@@ -50,10 +54,6 @@
             isCheckingUsername = false;
         }
     };
-
-    function clickFileInput() {
-        fileInput.click();
-    } 
 
     function handleFileChange(event: Event) {
         const input = event.target as HTMLInputElement;
@@ -83,7 +83,7 @@
             }
             await userStore.updateUsername(dto);
             await userStore.cacheProfile();
-            visible = false;
+            closeModal();
             toasts.addToast({
                 message: "Username updated.",
                 type: "success",
@@ -110,7 +110,7 @@
             }
             await userStore.updateDisplayName(dto);
             await userStore.cacheProfile();
-            visible = false;
+            closeModal();
             toasts.addToast({
                 message: "Display name updated.",
                 type: "success",
@@ -136,7 +136,7 @@
             await userStore.updateProfilePicture(newProfilePic);
             await userStore.cacheProfile();
             
-            visible = false;
+            closeModal();
             toasts.addToast({
                 message: "Profile picture updated!",
                 type: "success",
@@ -157,7 +157,7 @@
         newUsername = username;
         newDisplayName = displayName;
         newProfilePic = null;
-        visible = false;
+        closeModal();
     };
     
     function hasChanges(field: 'username' | 'displayName' | 'profilePic'): boolean {
@@ -173,103 +173,116 @@
         }
     }
 
-    $: isUsernameSubmitDisabled = !newUsername || isCheckingUsername || !!usernameError || !hasChanges('username');
-    $: isDisplayNameSubmitDisabled = !newDisplayName || !!displayNameError || !hasChanges('displayName');
-    $: isProfilePicSubmitDisabled = !newProfilePic || !!profilePicError || !hasChanges('profilePic');
+    let isUsernameSubmitDisabled = $state(true);
+    let isDisplayNameSubmitDisabled = $state(true);
+    let isProfilePicSubmitDisabled = $state(true);
+
+    $effect(() => {
+        isUsernameSubmitDisabled = !newUsername || isCheckingUsername || !!usernameError || !hasChanges('username');
+    });
+
+    $effect(() => {
+        isDisplayNameSubmitDisabled = !newDisplayName || !!displayNameError || !hasChanges('displayName');
+    });
+
+    $effect(() => {
+        isProfilePicSubmitDisabled = !newProfilePic || !!profilePicError || !hasChanges('profilePic');
+    });
 
 </script>
 
-{#if visible}
-    <Modal onClose={cancelModal} title="Update Required Details">
-        {#if isLoading}
-            <LocalSpinner message={loadingMessage} />
-        {:else}
-            <div class="flex flex-col p-4 space-y-6">
-                <form on:submit|preventDefault={handleSubmitProfilePicture} class="space-y-4">
-                    <div class="flex items-center space-x-4">
-                        <div class="relative">
-                            <img 
-                                src={previewUrl} 
-                                alt="Profile Preview" 
-                                class="object-cover w-16 h-16 border-2 rounded-full border-BrandBlue"
+<Modal onClose={cancelModal} title="Update Required Details">
+    {#if isLoading}
+        <LocalSpinner message={loadingMessage} />
+    {:else}
+        <div class="flex flex-col p-4 space-y-6">
+            <div class="space-y-4">
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <img 
+                            src={previewUrl} 
+                            alt="Profile Preview" 
+                            class="object-cover w-16 h-16 border-2 rounded-full border-BrandBlue"
+                        />
+                        <label class="absolute p-1 rounded-full cursor-pointer -bottom-2 -right-2 bg-BrandBlue">
+                            <input 
+                                type="file"
+                                bind:this={fileInput}
+                                class="hidden"
+                                accept="image/*"
+                                onchange={handleFileChange}
                             />
-                            <label class="absolute p-1 rounded-full cursor-pointer -bottom-2 -right-2 bg-BrandBlue">
-                                <input 
-                                    type="file"
-                                    bind:this={fileInput}
-                                    class="hidden"
-                                    accept="image/*"
-                                    on:change={handleFileChange}
-                                />
-                                <EditIcon className="w-5 h-5 ml-2 mt-1" fill="white" />
-                            </label>
-                        </div>
-                        <div class="flex-1">
-                            <p class="text-sm text-BrandGrayShade3">
-                                Supported formats: JPG, JPEG, PNG
-                                <br>
-                                Max size: 1MB
-                            </p>
-                            {#if profilePicError}
-                                <p class="mt-1 text-sm text-BrandRed">{profilePicError}</p>
-                            {/if}
-                        </div>
+                            <EditIcon className="w-5 h-5 ml-2 mt-1" fill="white" />
+                        </label>
                     </div>
-                    <button
-                        class="w-full brand-button"
-                        disabled={isProfilePicSubmitDisabled}
-                    >
-                        Update Profile Picture
-                    </button>
-                </form>
-
-                <form on:submit|preventDefault={handleSubmitUsername} class="space-y-2">
-                    <label class="block text-sm font-medium text-BrandGrayShade3">
-                        Username
-                        <input
-                            type="text"
-                            bind:value={newUsername}
-                            class="w-full mt-1 brand-input"
-                            placeholder="Enter new username"
-                            on:input={validateUsername}
-                        />
-                    </label>
-                    {#if usernameError}
-                        <p class="text-sm text-BrandRed">{usernameError}</p>
-                    {/if}
-                    {#if isCheckingUsername}
-                        <p class="text-sm text-BrandGrayShade3">Checking availability...</p>
-                    {/if}
-                    <button
-                        class="w-full brand-button"
-                        disabled={isUsernameSubmitDisabled}
-                    >
-                        Update Username
-                    </button>
-                </form>
-
-                <form on:submit|preventDefault={handleSubmitDisplayName} class="space-y-2">
-                    <label class="block text-sm font-medium text-BrandGrayShade3">
-                        Display Name
-                        <input
-                            type="text"
-                            bind:value={newDisplayName}
-                            on:input={validateDisplayName}
-                            class="w-full mt-1 brand-input"
-                            placeholder="Enter new display name"
-                        />
-                    </label>
-                    {#if displayNameError}
-                        <p class="text-sm text-BrandRed">{displayNameError}</p>
-                    {/if}
-                    <button
-                        class="w-full brand-button"
-                        disabled={isDisplayNameSubmitDisabled}
-                    >
-                        Update Display Name
-                    </button>
-                </form>
+                    <div class="flex-1">
+                        <p class="text-sm text-BrandGrayShade3">
+                            Supported formats: JPG, JPEG, PNG
+                            <br>
+                            Max size: 1MB
+                        </p>
+                        {#if profilePicError}
+                            <p class="mt-1 text-sm text-BrandRed">{profilePicError}</p>
+                        {/if}
+                    </div>
+                </div>
+                <button
+                    class="w-full brand-button"
+                    disabled={isProfilePicSubmitDisabled}
+                    onclick={handleSubmitProfilePicture}
+                >
+                    Update Profile Picture
+                </button>
             </div>
-        {/if}
-    </Modal>
-{/if}
+
+            <div class="space-y-2">
+                <label class="block text-sm font-medium text-BrandGrayShade3">
+                    Username
+                    <input
+                        type="text"
+                        bind:value={newUsername}
+                        class="w-full mt-1 brand-input"
+                        placeholder="Enter new username"
+                        oninput={validateUsername}
+                    />
+                </label>
+                {#if usernameError}
+                    <p class="text-sm text-BrandRed">{usernameError}</p>
+                {/if}
+                {#if isCheckingUsername}
+                    <p class="text-sm text-BrandGrayShade3">Checking availability...</p>
+                {/if}
+                <button
+                    class="w-full brand-button"
+                    disabled={isUsernameSubmitDisabled}
+                    onclick={handleSubmitUsername}
+                >
+                    Update Username
+                </button>
+            </div>
+
+            <form class="space-y-2">
+                <label class="block text-sm font-medium text-BrandGrayShade3">
+                    Display Name
+                    <input
+                        type="text"
+                        bind:value={newDisplayName}
+                        oninput={validateDisplayName}
+                        class="w-full mt-1 brand-input"
+                        placeholder="Enter new display name"
+                    />
+                </label>
+                {#if displayNameError}
+                    <p class="text-sm text-BrandRed">{displayNameError}</p>
+                {/if}
+                <button
+                    class="w-full brand-button"
+                    disabled={isDisplayNameSubmitDisabled}
+                    onclick={handleSubmitDisplayName}
+                >
+                    Update Display Name
+                </button>
+            </form>
+        </div>
+    {/if}
+</Modal>

@@ -1,8 +1,13 @@
 <script lang="ts">
     import IcfcCoinIcon from "$lib/icons/ICFCCoinIcon.svelte";
+
+    interface Props {
+        formatICFC: (amount: bigint) => string;
+        maxStakedICFC: bigint;
+    }
+
+    let { formatICFC, maxStakedICFC } : Props = $props();
     
-    export let formatICFC: (amount: bigint) => string;
-    export let maxStakedICFC: bigint;
 </script>
 <div class="flex flex-col items-center justify-center w-full p-4 space-y-2 text-center md:w-1/2">
     <p class="text-xl text-white">Total ICFC Staked:</p>

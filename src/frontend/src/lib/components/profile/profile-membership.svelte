@@ -4,7 +4,7 @@
     import type { EligibleMembership, Neuron, ProfileDTO } from "../../../../../declarations/backend/backend.did";
     import { sortByHighestNeuron } from "$lib/utils/helpers";
     import { membershipStore } from "$lib/stores/membership-store";
-    import LocalSpinner from "../shared/local-spinner.svelte";
+    import LocalSpinner from "../shared/global/local-spinner.svelte";
     import AvailableMembership from "../membership/available-membership.svelte";
     import ProfileMembershipStatus from "./profile-membership-status.svelte";
     import TabContainer from "../shared/tab-container.svelte";

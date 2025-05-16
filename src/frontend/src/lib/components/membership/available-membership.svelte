@@ -4,20 +4,20 @@
     import type { NeuronSummary } from "$lib/types/neuron-types";
     import { Principal } from "@dfinity/principal";
     import { toasts } from "$lib/stores/toasts-store";
-
     import NeuronCard from './neuron-card.svelte';
-    import LocalSpinner from "$lib/components/shared/local-spinner.svelte";
     import HowToClaimModal from "./how-to-claim-modal.svelte";
     import IcfcInfoContainer from "$lib/components/profile/create-user/icfc-info-container.svelte";
 
-    export let neurons: Neuron[];
-    export let refreshNeurons: () => void;
-    export let availableMembership: MembershipType;
-    export let maxStakedICFC: bigint;
-    export let isProfile = false;
+    interface Props {
+        neurons: Neuron[];
+        refreshNeurons: () => void;
+        availableMembership: MembershipType;
+        maxStakedICFC: bigint;
+    }
 
-    let isLoading: boolean = false;
-    let showHowToClaimModal = false;
+    let { neurons, refreshNeurons, availableMembership, maxStakedICFC } : Props = $props();
+
+    let showHowToClaimModal = $state(false);
 
     function formatICFC(amount: bigint): string {
         return Number(amount).toLocaleString('en-US', { maximumFractionDigits: 0 });
@@ -75,47 +75,43 @@
     }
 </script>
 
-{#if isLoading}
-    <LocalSpinner />
-{:else}
-    <div class="flex flex-col p-4 mt-4 space-y-6 {isProfile ? 'border rounded-lg border-BrandGrayShade3/50' : ''}">
-        <div class="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center">
-            <h1 class="text-2xl text-white cta-text {isProfile ? 'px-2 lg:text-2xl' : 'lg:text-3xl'}">Your Neurons</h1>
-            <button 
-                class="w-full sm:w-auto border-BrandGrayShade3 border {isProfile ? 'p-3 text-lg text-center text-white rounded-lg cta-text bg-BrandBlueComp hover:bg-BrandBlack/50 hover:border-BrandBlue/80': 'brand-button '} "
-                on:click={() => showHowToClaimModal = true}
-            >
-                How To Claim Membership
-            </button>
-        </div>
-        {#if neurons.length === 0}
-            <div class="flex flex-col items-center justify-center w-full p-6 text-center border rounded-lg bg-BrandGray border-BrandGrayShade3">
-                <p class="mb-1 text-xl text-white">No Neurons Found</p>
-                <p class="mb-2 text-lg text-BrandGrayShade2">Click how to claim membership to learn more.</p>
-            </div>
-        {:else}
-            <div class="border-t horizontal-divider border-BrandGrayShade3"></div>
-            <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
-                {#each neurons as neuron}
-                    <NeuronCard neuron={formatNeuronForCard(neuron)} {copyToClipboard} />
-                {/each}
-            </div>
-        {/if}
-        {#if !isProfile}
-            <IcfcInfoContainer {availableMembership} {maxStakedICFC} {formatICFC} />
-        {/if}
 
-        <div class="border-t horizontal-divider border-BrandGrayShade3"></div>
-        <div class="flex justify-center w-full">
-            <button 
-                class="px-4 py-2 text-white transition border rounded-lg brand-button hover:bg-BrandBlack/50 hover:border-BrandBlue/80"
-                on:click={refreshNeurons}
-            >
-                Refresh
-            </button>
-        </div>
+<div class="flex flex-col p-4 mt-4 space-y-6">
+    <div class="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center">
+        <h1 class="text-2xl text-white cta-text lg:text-3xl">Your Neurons</h1>
+        <button 
+            class="w-full sm:w-auto border-BrandGrayShade3 border brand-button"
+            onclick={() => showHowToClaimModal = true}
+        >
+            How To Claim Membership
+        </button>
     </div>
-{/if}
+    {#if neurons.length === 0}
+        <div class="flex flex-col items-center justify-center w-full p-6 text-center border rounded-lg bg-BrandGray border-BrandGrayShade3">
+            <p class="mb-1 text-xl text-white">No Neurons Found</p>
+            <p class="mb-2 text-lg text-BrandGrayShade2">Click how to claim membership to learn more.</p>
+        </div>
+    {:else}
+        <div class="border-t horizontal-divider border-BrandGrayShade3"></div>
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
+            {#each neurons as neuron}
+                <NeuronCard neuron={formatNeuronForCard(neuron)} {copyToClipboard} />
+            {/each}
+        </div>
+    {/if}
+    
+    <IcfcInfoContainer {availableMembership} {maxStakedICFC} {formatICFC} />
+    
+    <div class="border-t horizontal-divider border-BrandGrayShade3"></div>
+    <div class="flex justify-center w-full">
+        <button 
+            class="px-4 py-2 text-white transition border rounded-lg brand-button hover:bg-BrandBlack/50 hover:border-BrandBlue/80"
+            onclick={refreshNeurons}
+        >
+            Refresh
+        </button>
+    </div>
+</div>
 
 {#if showHowToClaimModal}
     <HowToClaimModal onClose={() => showHowToClaimModal = false} />

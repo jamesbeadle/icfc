@@ -1,14 +1,17 @@
 <script lang="ts">
     import { isUsernameValid } from "$lib/utils/helpers";
     import { userStore } from "$lib/stores/user-store";
-    
-    export let username: string;
-    export let displayName: string;
-    export let store: typeof userStore;
-    export let usernameAvailable: boolean;
 
-    let isCheckingUsername = false;
-    let usernameError = "";
+    interface Props {
+        username: string;
+        displayName: string;
+        usernameAvailable: boolean;
+    }
+
+    let { username, displayName, usernameAvailable } : Props = $props();
+
+    let isCheckingUsername = $state(false);
+    let usernameError = $state("");
     
     let usernameTimeout: NodeJS.Timeout;
 
@@ -18,7 +21,7 @@
             if(!isUsernameValid(username)){
                 usernameError = "Username must be between 5 and 20 characters.";
             }
-            const available = await store.isUsernameAvailable(username);
+            const available = await userStore.isUsernameAvailable(username);
             usernameAvailable = available;
             usernameError = available ? "" : "Username is already taken";
         } catch (error) {
@@ -47,7 +50,7 @@
         <input
             type="text"
             bind:value={username}
-            on:input={handleUsernameInput}
+            oninput={handleUsernameInput}
             class="w-full brand-input"
             placeholder="Enter username"
         />

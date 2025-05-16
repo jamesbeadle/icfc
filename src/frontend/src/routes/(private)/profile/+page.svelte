@@ -4,7 +4,7 @@
     import { goto } from "$app/navigation";
     import { toasts } from "$lib/stores/toasts-store";
     import { getImageURL } from "$lib/utils/helpers";
-    import FullScreenSpinner from '$lib/components/shared/full-screen-spinner.svelte';
+    import FullScreenSpinner from '$lib/components/shared/global/full-screen-spinner.svelte';
     import TabContainer from "$lib/components/shared/tab-container.svelte";
     import ProfileDetails from "$lib/components/profile/profile-details.svelte";
     import ProfileMembership from "$lib/components/profile/profile-membership.svelte";

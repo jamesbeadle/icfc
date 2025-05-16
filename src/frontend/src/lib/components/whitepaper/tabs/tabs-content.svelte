@@ -1,8 +1,13 @@
 <script lang="ts">
-	import { getContext } from 'svelte';
+	import { getContext, type Snippet } from 'svelte';
 	import { derived, type Writable } from 'svelte/store';
 
-	export let value: string;
+	interface Props {
+		value: string;
+		children: Snippet;
+	}
+
+	let { value, children } : Props = $props();
 
 	const activeTab = getContext<Writable<string>>('activeTab');
 	const isActive = derived(activeTab, ($activeTab) => $activeTab === value);
@@ -10,6 +15,6 @@
 
 {#if $isActive}
 	<div class="mt-4">
-		<slot />
+		{@render children()}  
 	</div>
 {/if}

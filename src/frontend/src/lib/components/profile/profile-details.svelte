@@ -8,7 +8,7 @@
     import { toasts } from "$lib/stores/toasts-store";
     
     import CopyPrincipal from "./copy-principal.svelte";
-    import LocalSpinner from "../shared/local-spinner.svelte";
+    import LocalSpinner from "../shared/global/local-spinner.svelte";
     import UpdateFavouriteClubModal from "./update-modals/update-favourite-club-modal.svelte";
     import UpdateNationalityModal from "./update-modals/update-nationality-modal.svelte";
   
@@ -120,7 +120,7 @@
 
   <div class="flex flex-col items-start lg:items-center lg:flex-row">
     <h2 class="text-lg text-white cta-text">Principal ID:</h2>
-    <CopyPrincipal bgColor="bg-BrandBlackShade1" borderColor="border-none" />
+    <CopyPrincipal backgroundColour="bg-BrandBlackShade1" borderColor="border-none" />
   </div>
   <div class="flex flex-col space-y-2">
     <h2 class="text-lg text-white cta-text">Football Preferences: </h2>
@@ -186,7 +186,6 @@
 {#if showUpdateNationalityModal}
   <UpdateNationalityModal 
       {nationalityId}
-      bind:visible={showUpdateNationalityModal} 
   />
 {/if}
 
@@ -194,6 +193,5 @@
   <UpdateFavouriteClubModal
       {favouriteLeagueId}
       {favouriteClubId}
-      bind:visible={showUpdateFavouriteClubModal} 
   />
 {/if}

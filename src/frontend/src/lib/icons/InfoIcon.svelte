@@ -1,6 +1,11 @@
-<script>
-  export let className = "";
-  export let fill = "white";
+<script lang="ts">
+
+  interface Props {
+    className: string;
+    fill: string;
+  }
+
+  let { className, fill } : Props = $props();
 </script>
 
 <svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill={fill} class={className} viewBox="0 0 24 24" >

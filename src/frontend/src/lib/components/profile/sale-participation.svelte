@@ -4,7 +4,7 @@
     import { onMount } from 'svelte';
     import { toasts } from '$lib/stores/toasts-store';
     import { fromUnixDateTimeToReadable } from '$lib/utils/helpers';
-    import LocalSpinner from '$lib/components/shared/local-spinner.svelte';
+    import LocalSpinner from '$lib/components/shared/global/local-spinner.svelte';
     import type { ProfileDTO } from '../../../../../declarations/backend/backend.did.js';
 
     let { profile } = $props<{ profile: ProfileDTO }>();

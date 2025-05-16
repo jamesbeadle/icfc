@@ -1,5 +1,5 @@
 <script lang="ts">
-  import LocalSpinner from "./local-spinner.svelte";
+  import LocalSpinner from "./global/local-spinner.svelte";
 
   const { onFull, onSale, processing } = $props<{
     onFull: () => void;

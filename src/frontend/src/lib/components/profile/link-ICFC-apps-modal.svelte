@@ -2,12 +2,15 @@
     import IcfcAppsModal from "../shared/icfc-apps-modal.svelte";
     import PrincipalIdModal from "./principal-id-modal.svelte";
     import type { SubApp } from "../../../../../declarations/backend/backend.did";
-    
-    export let isOpen = false;
-    export let onClose: () => void;
 
-    let selectedApp: { name: string; id: string } | null = null;
-    let showPrincipalModal = false;
+    interface Props {
+        onClose: () => void;
+    }
+
+    let { onClose } : Props = $props();
+
+    let selectedApp: { name: string; id: string } | null = $state(null);
+    let showPrincipalModal = $state(false);
 
     function getSubApp(appName: string): SubApp {
         switch (appName) {
@@ -46,7 +49,7 @@
     }
 </script>
 
-<IcfcAppsModal {isOpen} {onClose} onAppClick={handleAppClick} />
+<IcfcAppsModal {onClose} onAppClick={handleAppClick} />
 
 {#if showPrincipalModal && selectedApp}
     <PrincipalIdModal

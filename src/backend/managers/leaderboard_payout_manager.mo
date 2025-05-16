@@ -1,6 +1,6 @@
 import ICFCTypes "../icfc_types";
-import Enums "mo:waterway-mops/Enums";
-import Ids "mo:waterway-mops/Ids";
+import Enums "mo:waterway-mops/base/Enums";
+import Ids "mo:waterway-mops/base/Ids";
 import Array "mo:base/Array";
 import Result "mo:base/Result";
 import Iter "mo:base/Iter";
@@ -11,10 +11,9 @@ import Time "mo:base/Time";
 import Text "mo:base/Text";
 import PayoutCommands "../commands/payout_commands";
 import T "../icfc_types";
-import SNSLedger "mo:waterway-mops/def/Ledger";
-import LeaderboardPayoutCommands "mo:waterway-mops/football/LeaderboardPayoutCommands";
-import Account "mo:waterway-mops/Account";
-import BaseUtilities "mo:waterway-mops/BaseUtilities";
+import SNSLedger "mo:waterway-mops/base/def/sns-wrappers/ledger";
+import InterAppCallCommands "mo:waterway-mops/product/icfc/InterAppCallCommands";
+import Account "mo:waterway-mops/base/def/Account";
 import Utilities "../utilities/utilities";
 import PayoutQueries "../queries/payout_queries";
 
@@ -113,7 +112,7 @@ module {
                                     link.subAppUserPrincipalId == entry.appPrincipalId;
                                 },
                             );
-                            if (entry.payoutStatus == #Pending and isValidICFCProfile(icfcProfileLink)) {
+                            if (entry.payoutStatus == #Pending and hasValidSubscription(icfcProfileLink)) {
                                 let appPrincipal = entry.appPrincipalId;
                                 let amount = entry.rewardAmount;
                                 switch (amount) {
@@ -226,30 +225,40 @@ module {
             };
         };
 
-        private func isValidICFCProfile(profile : ?PayoutQueries.ICFCLinks) : Bool {
-            switch (profile) {
-                case (null) {
-                    return false;
-                };
-                case (?profile) {
-                    switch (profile.membershipType) {
-                        case (#Expired) {
-                            return false;
-                        };
-                        case (#NotClaimed) {
-                            return false;
-                        };
-                        case (#NotEligible) {
-                            return false;
-                        };
-                        case (_) {
-                            return true;
+        private func hasValidSubscription(profile : ?PayoutQueries.ICFCLinks) : Bool{
+            return false; // TODO
+        };
+
+        /*
+
+            Moving away from membership based ICRC SNS token to subscription based ckBTC - So this code can be removed for now.
+
+            private func isValidICFCProfile(profile : ?PayoutQueries.ICFCLinks) : Bool {
+                switch (profile) {
+                    case (null) {
+                        return false;
+                    };
+                    case (?profile) {
+                        switch (profile.membershipType) {
+                            case (#Expired) {
+                                return false;
+                            };
+                            case (#NotClaimed) {
+                                return false;
+                            };
+                            case (#NotEligible) {
+                                return false;
+                            };
+                            case (_) {
+                                return true;
+                            };
                         };
                     };
                 };
+
             };
 
-        };
+        */
 
     };
 

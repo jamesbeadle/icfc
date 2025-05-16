@@ -42,7 +42,7 @@ actor class _ProfileCanister() {
 
     //Public endpoints
 
-    public shared ({ caller }) func getProfile(dto : ProfileQueries.GetProfile) : async Result.Result<ProfileQueries.ProfileDTO, Enums.Error> {
+    public shared ({ caller }) func getProfile(dto : ProfileQueries.GetProfile) : async Result.Result<ProfileQueries.Profile, Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
         assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
@@ -63,14 +63,14 @@ actor class _ProfileCanister() {
                         let recent_5_membership_claims = List.take<T.MembershipClaim>(List.reverse(List.fromArray(foundProfile.membershipClaims)), 5);
                         let membershipArray = List.toArray(recent_5_membership_claims);
 
-                        let dto : ProfileQueries.ProfileDTO = {
+                        let dto : ProfileQueries.Profile = {
                             principalId = foundProfile.principalId;
                             username = foundProfile.username;
                             profilePicture = foundProfile.profilePicture;
                             displayName = foundProfile.displayName;
                             termsAgreed = foundProfile.termsAgreed;
                             appPrincipalIds = foundProfile.appPrincipalIds;
-                            podcastIds = foundProfile.podcastIds;
+                            subscribedChannelIds = foundProfile.subscribedChannelIds;
                             membershipType = foundProfile.membershipType;
                             membershipClaims = membershipArray;
                             createdOn = foundProfile.createdOn;
@@ -189,7 +189,7 @@ actor class _ProfileCanister() {
             displayName = dto.displayName;
             termsAgreed = false;
             appPrincipalIds = [];
-            podcastIds = [];
+            subscribedChannelIds = [];
             membershipType = membership.membershipType;
             membershipClaims = [{
                 purchasedOn = Time.now();
@@ -236,7 +236,7 @@ actor class _ProfileCanister() {
                             profilePicture = foundProfile.profilePicture;
                             termsAgreed = foundProfile.termsAgreed;
                             appPrincipalIds = foundProfile.appPrincipalIds;
-                            podcastIds = foundProfile.podcastIds;
+                            subscribedChannelIds = foundProfile.subscribedChannelIds;
                             membershipExpiryTime = foundProfile.membershipExpiryTime;
                             favouriteLeagueId = foundProfile.favouriteLeagueId;
                             favouriteClubId = foundProfile.favouriteClubId;
@@ -279,7 +279,7 @@ actor class _ProfileCanister() {
                             profilePicture = foundProfile.profilePicture;
                             termsAgreed = foundProfile.termsAgreed;
                             appPrincipalIds = foundProfile.appPrincipalIds;
-                            podcastIds = foundProfile.podcastIds;
+                            subscribedChannelIds = foundProfile.subscribedChannelIds;
                             membershipExpiryTime = foundProfile.membershipExpiryTime;
                             favouriteLeagueId = foundProfile.favouriteLeagueId;
                             favouriteClubId = foundProfile.favouriteClubId;
@@ -322,7 +322,7 @@ actor class _ProfileCanister() {
                             profilePicture = foundProfile.profilePicture;
                             termsAgreed = foundProfile.termsAgreed;
                             appPrincipalIds = foundProfile.appPrincipalIds;
-                            podcastIds = foundProfile.podcastIds;
+                            subscribedChannelIds = foundProfile.subscribedChannelIds;
                             membershipExpiryTime = foundProfile.membershipExpiryTime;
                             favouriteLeagueId = foundProfile.favouriteLeagueId;
                             favouriteClubId = foundProfile.favouriteClubId;
@@ -365,7 +365,7 @@ actor class _ProfileCanister() {
                             profilePicture = foundProfile.profilePicture;
                             termsAgreed = foundProfile.termsAgreed;
                             appPrincipalIds = foundProfile.appPrincipalIds;
-                            podcastIds = foundProfile.podcastIds;
+                            subscribedChannelIds = foundProfile.subscribedChannelIds;
                             membershipExpiryTime = foundProfile.membershipExpiryTime;
                             favouriteLeagueId = ?dto.favouriteLeagueId;
                             favouriteClubId = ?dto.favouriteClubId;
@@ -440,7 +440,7 @@ actor class _ProfileCanister() {
                             profilePicture = foundProfile.profilePicture;
                             termsAgreed = foundProfile.termsAgreed;
                             appPrincipalIds = Buffer.toArray(appPrincipalIdsBuffer);
-                            podcastIds = foundProfile.podcastIds;
+                            subscribedChannelIds = foundProfile.subscribedChannelIds;
                             membershipExpiryTime = foundProfile.membershipExpiryTime;
                             favouriteLeagueId = foundProfile.favouriteLeagueId;
                             favouriteClubId = foundProfile.favouriteClubId;
@@ -491,7 +491,7 @@ actor class _ProfileCanister() {
                             profilePicture = foundProfile.profilePicture;
                             termsAgreed = foundProfile.termsAgreed;
                             appPrincipalIds = updatedAppPrincipalIds;
-                            podcastIds = foundProfile.podcastIds;
+                            subscribedChannelIds = foundProfile.subscribedChannelIds;
                             membershipExpiryTime = foundProfile.membershipExpiryTime;
                             favouriteLeagueId = foundProfile.favouriteLeagueId;
                             favouriteClubId = foundProfile.favouriteClubId;
@@ -534,7 +534,7 @@ actor class _ProfileCanister() {
                             profilePicture = dto.profilePicture;
                             termsAgreed = foundProfile.termsAgreed;
                             appPrincipalIds = foundProfile.appPrincipalIds;
-                            podcastIds = foundProfile.podcastIds;
+                            subscribedChannelIds = foundProfile.subscribedChannelIds;
                             membershipExpiryTime = foundProfile.membershipExpiryTime;
                             favouriteLeagueId = foundProfile.favouriteLeagueId;
                             favouriteClubId = foundProfile.favouriteClubId;
@@ -587,7 +587,7 @@ actor class _ProfileCanister() {
                             profilePicture = foundProfile.profilePicture;
                             termsAgreed = foundProfile.termsAgreed;
                             appPrincipalIds = foundProfile.appPrincipalIds;
-                            podcastIds = foundProfile.podcastIds;
+                            subscribedChannelIds = foundProfile.subscribedChannelIds;
                             membershipExpiryTime = switch (newClaim.expiresOn) {
                                 case (?expiryTime) {
                                     expiryTime;
@@ -745,7 +745,7 @@ actor class _ProfileCanister() {
                             profilePicture = foundProfile.profilePicture;
                             termsAgreed = foundProfile.termsAgreed;
                             appPrincipalIds = foundProfile.appPrincipalIds;
-                            podcastIds = foundProfile.podcastIds;
+                            subscribedChannelIds = foundProfile.subscribedChannelIds;
                             membershipExpiryTime = 0;
                             favouriteLeagueId = foundProfile.favouriteLeagueId;
                             favouriteClubId = foundProfile.favouriteClubId;

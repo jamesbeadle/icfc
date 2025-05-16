@@ -3,7 +3,7 @@
     import { userStore } from "$lib/stores/user-store";
     import { isPrincipalValid } from "$lib/utils/helpers";
     import type { PrincipalId, ProfileDTO, SubApp, AddSubApp } from "../../../../../declarations/backend/backend.did";
-    import LocalSpinner from "../shared/local-spinner.svelte";
+    import LocalSpinner from "../shared/global/local-spinner.svelte";
     import { onMount } from 'svelte';
 
     let { profile } = $props<{ profile: ProfileDTO }>();

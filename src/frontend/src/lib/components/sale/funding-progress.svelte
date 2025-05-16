@@ -1,14 +1,18 @@
 <script lang="ts">
     import ParticipateModal from './participate-modal.svelte';
     import HowItWorksModal from './how-it-works-modal.svelte';
-    
-    export let packCost: bigint;
-    export let remainingPacks: bigint;
 
-    let showParticipateModal = false;
-    let showHowItWorksModal = false;
+    interface Props {
+        packCost: bigint;
+        remainingPacks: bigint;
+    }
 
-    $: packCostInICP = Number(packCost)
+    let { packCost, remainingPacks } : Props = $props();
+
+    let showParticipateModal = $state(false);
+    let showHowItWorksModal = $state(false);
+
+    let packCostInICP = Number(packCost)
 
     function openParticipateModal() {
         showParticipateModal = true;
@@ -41,14 +45,14 @@
     <div class="flex flex-col gap-3">
         <button 
             class="flex-1 px-4 py-3 text-white transition border rounded-lg border-BrandGrayShade3 brand-button hover:bg-BrandBlack hover:border-BrandBlue/80"
-            on:click={openParticipateModal}
+            onclick={openParticipateModal}
             disabled={remainingPacks <= 0}
         >
             Buy ICFC Packs
         </button>
         <button 
             class="flex-1 px-4 py-3 text-white transition border rounded-lg border-BrandGrayShade3 brand-button hover:bg-BrandBlack hover:border-BrandBlue/80"
-            on:click={openHowItWorksModal}
+            onclick={openHowItWorksModal}
         >
             How It Works
         </button>
@@ -57,13 +61,11 @@
 
 {#if showHowItWorksModal}
     <HowItWorksModal 
-        showModal={showHowItWorksModal}
         onClose={closeHowItWorksModal}
     />
 {/if}
 {#if showParticipateModal}
     <ParticipateModal 
-        showModal={showParticipateModal}
         onClose={closeParticipateModal}
     /> 
 {/if}

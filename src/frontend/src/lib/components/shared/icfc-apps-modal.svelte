@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Modal from "./modal.svelte";
+  import Modal from "./global/modal.svelte";
   import FootballGodBackground from "$lib/icons/appIcons/background/FootballGodIcon.svelte";
   import OpenFplBackground from "$lib/icons/appIcons/background/OpenFplIcon.svelte";
   import TransferKingsBackground from "$lib/icons/appIcons/background/TransferKingsIcon.svelte";
@@ -9,12 +9,12 @@
   import TransferKingsLogo from "$lib/icons/appIcons/logo/TransferKingsLogo.svelte";
   import JeffBetsLogo from "$lib/icons/appIcons/logo/JeffBetsLogo.svelte";
   import AppCard from "$lib/components/shared/app-card.svelte";
-  import CloseIcon from "$lib/icons/CloseIcon.svelte";
 
-  export let isOpen: boolean;
-  export let onClose: () => void;
-  export let flippedCards: Set<string> = new Set();
-  export let onAppClick: (app: { name: string; id: string }) => void = () => {};
+  interface Props {
+    onClose: () => void;
+  }
+
+  let { onClose } : Props = $props();
 
   const apps = [
         {
@@ -83,42 +83,24 @@
             backgroundPosition: "-bottom-10 -right-12"
         }
   ];
-
-  const toggleFlip = (id: string, event: MouseEvent | KeyboardEvent) => {
-    event.preventDefault();
-    if (!flippedCards) return;
-    
-    if (flippedCards.has(id)) {
-      flippedCards.delete(id);
-    } else {
-      flippedCards.add(id);
-    }
-  };
-
-  function handleCardClick(app: { name: string; id: string }) {
-    onAppClick(app);
-  }
 </script>
 
-{#if isOpen}
-  <Modal {onClose}>
-    <h2 class="text-2xl text-white cta-text">ICFC Apps</h2>
-    <div class="flex-1 overflow-y-auto">
-      <div class="p-6 pt-4">
-        <div class="flex flex-col gap-3 md:flex-row md:overflow-x-auto">
-          {#each apps as app}
-          <button on:click={() => handleCardClick(app)} class="cursor-pointer">
-            <AppCard 
-                {app}
-                isFlipped={false}
-                onFlip={() => {}}
-                isModal={true}
-                disableFlip={true}
-            />
-          </button>
-          {/each}
-        </div>
+<Modal title="ICFC Apps" {onClose}>
+  <div class="flex-1 overflow-y-auto">
+    <div class="p-6 pt-4">
+      <div class="flex flex-col gap-3 md:flex-row md:overflow-x-auto">
+        {#each apps as app}
+        <button onclick={() => /*handleCardClick(app) // todo  */{}} >
+          <AppCard 
+              {app}
+              isFlipped={false}
+              onFlip={() => {}}
+              isModal={true}
+              disableFlip={true}
+          />
+        </button>
+        {/each}
       </div>
     </div>
-  </Modal>
-{/if}
+  </div>
+</Modal>
