@@ -1,0 +1,12 @@
+
+/*
+
+  "icfc_sale_2": {
+    "ic": "fiex2-wyaaa-aaaal-qslmq-cai"
+  },
+  "old_backend": {
+    "ic": "clcgn-hiaaa-aaaal-qshqq-cai"
+  },
+*/
+
+

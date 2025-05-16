@@ -1,9 +1,8 @@
 import Blob "mo:base/Blob";
-import Ids "mo:waterway-mops/Ids";
-import FootballIds "mo:waterway-mops/football/FootballIds";
-import Enums "mo:waterway-mops/Enums";
-import FootballDefinitions "mo:waterway-mops/football/FootballDefinitions";
-import LeaderboardPayoutCommands "mo:waterway-mops/football/LeaderboardPayoutCommands";
+import Ids "mo:waterway-mops/base/Ids";
+import AppIds "./Ids";
+import FootballIds "mo:waterway-mops/domain/football/Ids";
+import FootballDefinitions "mo:waterway-mops/domain/football/Definitions";
 //import ckBTCLedger "canister:ckbtc_ledger"; // TODO Use for ckBTC subscription
 
 module ICFCTypes {
@@ -19,14 +18,14 @@ module ICFCTypes {
     profilePicture : ?Blob;
     termsAgreed : Bool;
     appPrincipalIds : [(SubApp, Ids.PrincipalId)];
-    subscribedChannelIds : [Ids.FootballChannelId];
+    subscribedChannelIds : [AppIds.FootballChannelId];
     favouriteLeagueId : ?FootballIds.LeagueId;
     favouriteClubId : ?FootballIds.ClubId;
     nationalityId : ?Ids.CountryId;
   };
 
   public type FootballChannel = {
-    id : Ids.FootballChannelId;
+    id : AppIds.FootballChannelId;
     name : Text;
     createdBy : Ids.PrincipalId;
     createdOn : Int;
@@ -87,9 +86,13 @@ module ICFCTypes {
     seasonId : FootballIds.SeasonId;
     gameweek : FootballDefinitions.GameweekNumber;
     app : Text;
-    leaderboard : [LeaderboardPayoutCommands.LeaderboardEntry];
+    leaderboard : [LeaderboardEntry];
     token : Text;
     totalEntries : Nat;
     totalEntriesPaid : Nat;
+  };
+
+  public type LeaderboardEntry = {
+      amount : Nat64;
   };
 };

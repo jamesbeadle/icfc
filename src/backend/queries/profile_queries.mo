@@ -1,8 +1,9 @@
-import Ids "mo:waterway-mops/Ids";
-import FootballIds "mo:waterway-mops/football/FootballIds";
-import IcfcEnums "mo:waterway-mops/ICFCEnums";
+import Ids "mo:waterway-mops/base/Ids";
+import AppIds "../Ids";
+import FootballIds "mo:waterway-mops/domain/football/Ids";
+import IcfcEnums "mo:waterway-mops/product/icfc/Enums";
 import T "../icfc_types";
-import SNSGovernance "mo:waterway-mops/sns-wrappers/governance";
+import SNSGovernance "mo:waterway-mops/base/def/sns-wrappers/governance";
 
 module ProfileQueries {
     public type GetProfile = {
@@ -19,7 +20,7 @@ module ProfileQueries {
         profilePicture : ?Blob;
         termsAgreed : Bool;
         appPrincipalIds : [(T.SubApp, Ids.PrincipalId)];
-        subscribedChannelIds : [Ids.FootballChannelId];
+        subscribedChannelIds : [AppIds.FootballChannelId];
         membershipExpiryTime : Int;
         favouriteLeagueId : ?FootballIds.LeagueId;
         favouriteClubId : ?FootballIds.ClubId;

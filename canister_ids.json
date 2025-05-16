@@ -5,12 +5,6 @@
   "frontend": {
     "ic": "cqh2i-5qaaa-aaaal-qshsa-cai"
   },
-  "icfc_sale_2": {
-    "ic": "fiex2-wyaaa-aaaal-qslmq-cai"
-  },
-  "old_backend": {
-    "ic": "clcgn-hiaaa-aaaal-qshqq-cai"
-  },
   "data_canister": {
     "ic": "52fzd-2aaaa-aaaal-qmzsa-cai"
   }

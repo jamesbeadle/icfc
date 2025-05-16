@@ -5,17 +5,16 @@ import { message } "mo:base/Error";
 import CanisterIds "mo:waterway-mops/product/wwl/CanisterIds";
 import Enums "mo:waterway-mops/base/Enums";
 import Ids "mo:waterway-mops/base/Ids";
-import FootballEnums "mo:waterway-mops/domain/football/Enums";
 import ICFCEnums "mo:waterway-mops/product/icfc/Enums";
 import NotificationCommands "mo:waterway-mops/product/icfc/data-canister-notification-commands/NotificationCommands";
 import LeagueNotificationCommands "mo:waterway-mops/product/icfc/data-canister-notification-commands/LeagueNotificationCommands";
 import PlayerNotificationCommands "mo:waterway-mops/product/icfc/data-canister-notification-commands/PlayerNotificationCommands";
-import LogsManager "mo:waterway-mops/product/wwl/logs/LogsManager";
+import LogManager "mo:waterway-mops/product/wwl/log-management/LogManager";
 
 module {
 
     public class NotificationManager() {
-        let logsManager = LogsManager.LogsManager();
+        let logsManager = LogManager.LogManager();
 
         // Add all application_canister function definitions to all apps, implement and if not required then create different groups than the default notification group
 

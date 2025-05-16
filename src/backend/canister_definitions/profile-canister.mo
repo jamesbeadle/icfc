@@ -1,8 +1,8 @@
-import Ids "mo:waterway-mops/Ids";
-import Enums "mo:waterway-mops/Enums";
-import CanisterIds "mo:waterway-mops/CanisterIds";
-import CanisterCommands "mo:waterway-mops/canister-management/CanisterCommands";
-import CanisterManager "mo:waterway-mops/canister-management/CanisterManager";
+import Ids "mo:waterway-mops/base/Ids";
+import Enums "mo:waterway-mops/base/Enums";
+import CanisterIds "mo:waterway-mops/product/wwl/CanisterIds";
+import CanisterCommands "mo:waterway-mops/product/wwl/canister-management/CanisterCommands";
+import CanisterManager "mo:waterway-mops/product/wwl/canister-management/CanisterManager";
 import Result "mo:base/Result";
 import Principal "mo:base/Principal";
 import Iter "mo:base/Iter";

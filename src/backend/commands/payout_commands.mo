@@ -1,12 +1,12 @@
-import FootballIds "mo:waterway-mops/football/FootballIds";
-import FootballDefinitions "mo:waterway-mops/football/FootballDefinitions";
-import Enums "mo:waterway-mops/Enums";
+import FootballIds "mo:waterway-mops/domain/football/Ids";
+import FootballDefinitions "mo:waterway-mops/domain/football/Definitions";
+import Enums "mo:waterway-mops/product/icfc/Enums";
 
 module PayoutCommands {
     public type PayoutLeaderboard = {
         seasonId : FootballIds.SeasonId;
         gameweek : FootballDefinitions.GameweekNumber;
-        app : Enums.WaterwayLabsApp;
+        app : Enums.App;
     };
 
     public type Leaderboard = {

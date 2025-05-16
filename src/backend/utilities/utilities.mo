@@ -7,14 +7,14 @@ import Int "mo:base/Int";
 import Array "mo:base/Array";
 import Principal "mo:base/Principal";
 import Blob "mo:base/Blob";
-import Ids "mo:waterway-mops/Ids";
-import CanisterIds "mo:waterway-mops/CanisterIds";
+import Ids "mo:waterway-mops/base/Ids";
+import CanisterIds "mo:waterway-mops/product/wwl/CanisterIds";
 import T "../icfc_types";
-import SNSGovernance "mo:waterway-mops/sns-wrappers/governance";
-import Enums "mo:waterway-mops/Enums";
+import SNSGovernance "mo:waterway-mops/base/def/sns-wrappers/governance";
+import Enums "mo:waterway-mops/base/Enums";
 import Environment "../environment";
 import SNSManager "../managers/sns_manager";
-import SHA224 "mo:waterway-mops/SHA224";
+import SHA224 "mo:waterway-mops/base/def/SHA224";
 
 module Utilities {
 

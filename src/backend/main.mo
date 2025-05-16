@@ -8,23 +8,22 @@ import Result "mo:base/Result";
 import Text "mo:base/Text";
 import Timer "mo:base/Timer";
 import Array "mo:base/Array";
-import Enums "mo:waterway-mops/Enums";
-import BaseTypes "mo:waterway-mops/BaseTypes";
-import LeagueQueries "mo:waterway-mops/queries/football-queries/LeagueQueries";
-import ClubQueries "mo:waterway-mops/queries/football-queries/ClubQueries";
-import Ids "mo:waterway-mops/Ids";
-import SNSToken "mo:waterway-mops/sns-wrappers/ledger";
-import CanisterIds "mo:waterway-mops/CanisterIds";
-import Management "mo:waterway-mops/Management";
-import BaseQueries "mo:waterway-mops/queries/BaseQueries";
-import Account "mo:waterway-mops/Account";
-import CanisterQueries "mo:waterway-mops/canister-management/CanisterQueries";
-import CanisterManager "mo:waterway-mops/canister-management/CanisterManager";
-import CanisterCommands "mo:waterway-mops/canister-management/CanisterCommands";
-import LeaderboardPayoutCommands "mo:waterway-mops/football/LeaderboardPayoutCommands";
-import Countries "mo:waterway-mops/def/Countries";
-import BaseUtilities "mo:waterway-mops/BaseUtilities";
-import FootballIds "mo:waterway-mops/football/FootballIds";
+import Enums "mo:waterway-mops/base/Enums";
+import BaseTypes "mo:waterway-mops/base/Types";
+import LeagueQueries "mo:waterway-mops/product/icfc/data-canister-queries/LeagueQueries";
+import ClubQueries "mo:waterway-mops/product/icfc/data-canister-queries/ClubQueries";
+import Ids "mo:waterway-mops/base/Ids";
+import SNSToken "mo:waterway-mops/base/def/sns-wrappers/ledger";
+import CanisterIds "mo:waterway-mops/product/wwl/CanisterIds";
+import Management "mo:waterway-mops/base/def/Management";
+import BaseQueries "mo:waterway-mops/base/BaseQueries";
+import Account "mo:waterway-mops/base/def/Account";
+import CanisterQueries "mo:waterway-mops/product/wwl/canister-management/CanisterQueries";
+import CanisterManager "mo:waterway-mops/product/wwl/canister-management/CanisterManager";
+import CanisterCommands "mo:waterway-mops/product/wwl/canister-management/CanisterCommands";
+import InterAppCallCommands "mo:waterway-mops/product/icfc/InterAppCallCommands";
+import Countries "mo:waterway-mops/base/Countries";
+import FootballIds "mo:waterway-mops/domain/football/Ids";
 import AppTypes "./icfc_types";
 
 /* ----- Canister Definition Files ----- */
@@ -235,47 +234,6 @@ actor class Self() = this {
     });
   };
 
-  public shared ({ caller }) func getICPBalance(user_principal : Ids.PrincipalId) : async Result.Result<Nat, Enums.Error> {
-    assert not Principal.isAnonymous(caller);
-    assert Principal.toText(caller) == Environment.ICFC_SALE_2_CANISTER_ID;
-
-    let icp_ledger : SNSToken.Interface = actor (CanisterIds.NNS_LEDGER_CANISTER_ID);
-    let icp_tokens = await icp_ledger.icrc1_balance_of({
-      owner = Principal.fromText(CanisterIds.ICFC_BACKEND_CANISTER_ID);
-      subaccount = ?Account.principalToSubaccount(Principal.fromText(user_principal));
-    });
-
-    return #ok(icp_tokens);
-  };
-
-  public shared ({ caller }) func completeICFCPackPurchase(user_principal : Ids.PrincipalId, amount : Nat) : async Result.Result<(), Enums.Error> {
-    assert not Principal.isAnonymous(caller);
-    assert Principal.toText(caller) == Environment.ICFC_SALE_2_CANISTER_ID;
-
-    let icp_ledger : SNSToken.Interface = actor (CanisterIds.NNS_LEDGER_CANISTER_ID);
-
-    let res = await icp_ledger.icrc1_transfer({
-      to = {
-        owner = Principal.fromText(CanisterIds.ICFC_BACKEND_CANISTER_ID);
-        subaccount = null;
-      };
-      from_subaccount = ?Account.principalToSubaccount(Principal.fromText(user_principal));
-      amount = amount - 10_000;
-      fee = ?10_000;
-      memo = ?"0";
-      created_at_time = null;
-    });
-
-    switch (res) {
-      case (#Ok(_)) {
-        return #ok(());
-      };
-      case (#Err(_)) {
-        return #err(#FailedInterCanisterCall);
-      };
-    };
-  };
-
   public shared ({ caller }) func getICFCProfile(dto : ProfileCommands.GetICFCProfile) : async Result.Result<ProfileQueries.ProfileDTO, Enums.Error> {
     assert not Principal.isAnonymous(caller);
     assert Utilities.isSubApp(Principal.toText(caller));
@@ -310,7 +268,7 @@ actor class Self() = this {
 
   /* ----- Calls from Applications requesting leaderboard payout ----- */
 
-  public shared ({ caller }) func requestLeaderboardPayout(dto : LeaderboardPayoutCommands.LeaderboardPayoutRequest) : async Result.Result<(), Enums.Error> {
+  public shared ({ caller }) func requestLeaderboardPayout(dto : InterAppCallCommands.LeaderboardPayoutRequest) : async Result.Result<(), Enums.Error> {
 
     assert not Principal.isAnonymous(caller);
     let principalId = Principal.toText(caller);
@@ -540,18 +498,6 @@ actor class Self() = this {
     };
 
     projectCanisters := Array.append<CanisterQueries.Canister>(projectCanisters, [frontend_dto]);
-
-    // sale canister
-    let saleCanister = actor (Environment.ICFC_SALE_2_CANISTER_ID) : actor {
-      getCanisterInfo : () -> async Result.Result<CanisterQueries.Canister, Enums.Error>;
-    };
-    let result3 = await saleCanister.getCanisterInfo();
-    switch (result3) {
-      case (#ok(canisterInfo)) {
-        projectCanisters := Array.append<CanisterQueries.Canister>(projectCanisters, [canisterInfo]);
-      };
-      case (#err(_)) {};
-    };
 
     let res : CanisterQueries.ProjectCanisters = {
       entries = projectCanisters;

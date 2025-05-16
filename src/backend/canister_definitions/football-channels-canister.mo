@@ -6,12 +6,12 @@ import Iter "mo:base/Iter";
 import Time "mo:base/Time";
 import Array "mo:base/Array";
 import Buffer "mo:base/Buffer";
-import Enums "mo:waterway-mops/Enums";
-import CanisterIds "mo:waterway-mops/CanisterIds";
+import Enums "mo:waterway-mops/base/Enums";
+import CanisterIds "mo:waterway-mops/product/wwl/CanisterIds";
 import FootballChannelCommands "../commands/football_channel_commands";
-import CanisterManager "mo:waterway-mops/canister-management/CanisterManager";
-import CanisterCommands "mo:waterway-mops/canister-management/CanisterCommands";
-import Ids "mo:waterway-mops/Ids";
+import CanisterManager "mo:waterway-mops/product/wwl/canister-management/CanisterManager";
+import CanisterCommands "mo:waterway-mops/product/wwl/canister-management/CanisterCommands";
+import Ids "mo:waterway-mops/base/Ids";
 
 actor class _FootballChannelsCanister() {
     private let canisterManager = CanisterManager.CanisterManager();
