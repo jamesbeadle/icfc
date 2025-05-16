@@ -1,27 +1,28 @@
-import Text "mo:base/Text";
-import T "../icfc_types";
-import TrieMap "mo:base/TrieMap";
-import List "mo:base/List";
-import Result "mo:base/Result";
 import Array "mo:base/Array";
 import Blob "mo:base/Blob";
-import Principal "mo:base/Principal";
 import Buffer "mo:base/Buffer";
-import ProfileQueries "../queries/profile_queries";
-import ProfileCommands "../commands/profile_commands";
-import ProfileCanister "../canister_definitions/profile-canister";
-import CanisterIds "mo:waterway-mops/CanisterIds";
+import Char "mo:base/Char";
 import Cycles "mo:base/ExperimentalCycles";
 import Iter "mo:base/Iter";
+import List "mo:base/List";
+import Principal "mo:base/Principal";
+import Result "mo:base/Result";
+import Text "mo:base/Text";
 import Time "mo:base/Time";
-import Char "mo:base/Char";
-import SNSManager "sns_manager";
-import SNSGovernance "mo:waterway-mops/sns-wrappers/governance";
-import Ids "mo:waterway-mops/Ids";
-import Enums "mo:waterway-mops/Enums";
-import BaseUtilities "mo:waterway-mops/BaseUtilities";
-import Management "mo:waterway-mops/Management";
-import CanisterUtilities "mo:waterway-mops/CanisterUtilities";
+import TrieMap "mo:base/TrieMap";
+
+import CanisterIds "mo:waterway-mops/product/wwl/canister-ids";
+import CanisterUtilities "mo:waterway-mops/product/wwl/canister-management/utilities";
+import Enums "mo:waterway-mops/base/enums";
+import Ids "mo:waterway-mops/base/ids";
+import Management "mo:waterway-mops/base/def/management";
+import SNSGovernance "mo:waterway-mops/base/def/sns-wrappers/governance";
+
+import ProfileQueries "../queries/profile-queries";
+import ProfileCommands "../commands/profile-commands";
+import ProfileCanister "../canister-definitions/profile-canister";
+import SNSManager "sns-manager";
+import T "../types";
 import Utilities "../utilities/utilities";
 
 module {

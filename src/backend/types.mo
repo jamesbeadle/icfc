@@ -1,8 +1,9 @@
 import Blob "mo:base/Blob";
-import Ids "mo:waterway-mops/base/Ids";
+
 import AppIds "./Ids";
-import FootballIds "mo:waterway-mops/domain/football/Ids";
-import FootballDefinitions "mo:waterway-mops/domain/football/Definitions";
+import Ids "mo:waterway-mops/base/ids";
+import FootballIds "mo:waterway-mops/domain/football/ids";
+import FootballDefinitions "mo:waterway-mops/domain/football/definitions";
 //import ckBTCLedger "canister:ckbtc_ledger"; // TODO Use for ckBTC subscription
 
 module ICFCTypes {

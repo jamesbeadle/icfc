@@ -1,4 +1,5 @@
-import Ids "mo:waterway-mops/base/Ids";
+import Ids "mo:waterway-mops/base/ids";
+
 import AppIds "../Ids";
 
 module FootballChannelCommands {
@@ -19,34 +20,28 @@ module FootballChannelCommands {
 
     public type DeleteFootballChannel = {
         channelId: AppIds.FootballChannelId;
-
     };
 
     public type SubscribeToFootballChannel = {
         principalId: Ids.PrincipalId;
         channelId: AppIds.FootballChannelId;
-
     };
 
     public type UnsubscribeFromFootballChannel = {
         principalId: Ids.PrincipalId;
         channelId: AppIds.FootballChannelId;
-
     };
 
     public type UploadFootballChannelVideo = {
         channelId: AppIds.FootballChannelId;
-
     };
 
     public type UpdateFootballChannelVideo = {
         channelId: AppIds.FootballChannelId;
-
     };
 
     public type RemoveFootballChannelVideo = {
         channelId: AppIds.FootballChannelId;
-
     };
 
 }

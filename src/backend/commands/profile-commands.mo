@@ -1,6 +1,6 @@
-import Ids "mo:waterway-mops/base/Ids";
-import FootballIds "mo:waterway-mops/domain/football/Ids";
-import ICFCEnums "mo:waterway-mops/product/icgc/Enums";
+import FootballIds "mo:waterway-mops/domain/football/ids";
+import ICFCEnums "mo:waterway-mops/product/icfc/enums";
+import Ids "mo:waterway-mops/base/ids";
 
 module ProfileCommands {
 

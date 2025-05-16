@@ -1,5 +1,5 @@
-import Ids "mo:waterway-mops/Ids";
-import T "../icfc_types";
+import Ids "mo:waterway-mops/base/ids";
+import T "../types";
 
 module {
     public type CanisterInfo = {

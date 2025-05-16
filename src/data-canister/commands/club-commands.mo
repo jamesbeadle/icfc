@@ -1,5 +1,6 @@
-import FootballIds "mo:waterway-mops/domain/football/Ids";
-import FootballEnums "mo:waterway-mops/domain/football/Enums";
+import Enums "mo:waterway-mops/base/enums";
+import FootballIds "mo:waterway-mops/domain/football/ids";
+import FootballEnums "mo:waterway-mops/domain/football/enums";
 
 module ClubCommands {
 
@@ -12,6 +13,7 @@ module ClubCommands {
     thirdColourHex : Text;
     abbreviatedName : Text;
     shirtType : FootballEnums.ShirtType;
+    gender: Enums.Gender;
   };
   
   public type UpdateClub = {

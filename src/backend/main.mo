@@ -1,4 +1,6 @@
+
 /* ----- Mops Packages ----- */
+
 import Blob "mo:base/Blob";
 import Int "mo:base/Int";
 import Iter "mo:base/Iter";
@@ -8,55 +10,58 @@ import Result "mo:base/Result";
 import Text "mo:base/Text";
 import Timer "mo:base/Timer";
 import Array "mo:base/Array";
-import Enums "mo:waterway-mops/base/Enums";
-import BaseTypes "mo:waterway-mops/base/Types";
-import LeagueQueries "mo:waterway-mops/product/icfc/data-canister-queries/LeagueQueries";
-import ClubQueries "mo:waterway-mops/product/icfc/data-canister-queries/ClubQueries";
-import Ids "mo:waterway-mops/base/Ids";
+
+/* ----- WWL Mops Packages ----- */
+
+import Account "mo:waterway-mops/base/def/account";
+import BaseQueries "mo:waterway-mops/base/queries";
+import CanisterIds "mo:waterway-mops/product/wwl/canister-ids";
+import CanisterCommands "mo:waterway-mops/product/wwl/canister-management/commands";
+import CanisterManager "mo:waterway-mops/product/wwl/canister-management/manager";
+import CanisterQueries "mo:waterway-mops/product/wwl/canister-management/queries";
+import ClubQueries "mo:waterway-mops/product/icfc/data-canister-queries/club-queries";
+import Countries "mo:waterway-mops/base/countries";
+import Enums "mo:waterway-mops/base/enums";
+import FootballIds "mo:waterway-mops/domain/football/ids";
+import Ids "mo:waterway-mops/base/ids";
+import InterAppCallCommands "mo:waterway-mops/product/icfc/inter-app-call-commands";
+import LeagueQueries "mo:waterway-mops/product/icfc/data-canister-queries/league-queries";
+import Management "mo:waterway-mops/base/def/management";
 import SNSToken "mo:waterway-mops/base/def/sns-wrappers/ledger";
-import CanisterIds "mo:waterway-mops/product/wwl/CanisterIds";
-import Management "mo:waterway-mops/base/def/Management";
-import BaseQueries "mo:waterway-mops/base/BaseQueries";
-import Account "mo:waterway-mops/base/def/Account";
-import CanisterQueries "mo:waterway-mops/product/wwl/canister-management/CanisterQueries";
-import CanisterManager "mo:waterway-mops/product/wwl/canister-management/CanisterManager";
-import CanisterCommands "mo:waterway-mops/product/wwl/canister-management/CanisterCommands";
-import InterAppCallCommands "mo:waterway-mops/product/icfc/InterAppCallCommands";
-import Countries "mo:waterway-mops/base/Countries";
-import FootballIds "mo:waterway-mops/domain/football/Ids";
-import AppTypes "./icfc_types";
 
 /* ----- Canister Definition Files ----- */
 
-import ProfileCanister "canister_definitions/profile-canister";
+import ProfileCanister "canister-definitions/profile-canister";
 
 /* ----- Queries ----- */
-import AppQueries "queries/app_queries";
-import ProfileQueries "queries/profile_queries";
-import PayoutQueries "queries/payout_queries";
+import AppQueries "queries/app-queries";
+import ProfileQueries "queries/profile-queries";
+import PayoutQueries "queries/payout-queries";
 
 
-import AppQueries "../data_canister/queries/app_queries";
-import ClubQueries "../data_canister/queries/club_queries";
-import SeasonQueries "../data_canister/queries/season_queries";
-import PlayerQueries "../data_canister/queries/player_queries";
-import LeagueQueries "../data_canister/queries/league_queries";
-import FixtureQueries "../data_canister/queries/fixture_queries";
+import AppQueries "../data-canister/queries/app-queries";
+import ClubQueries "../data-canister/queries/club-queries";
+import SeasonQueries "../data-canister/queries/season-queries";
+import PlayerQueries "../data-canister/queries/player-queries";
+import LeagueQueries "../data-canister/queries/league-queries";
+import FixtureQueries "../data-canister/queries/fixture-queries";
 
 /* ----- Commands ----- */
-import ProfileCommands "commands/profile_commands";
-import PayoutCommands "commands/payout_commands";
+import ProfileCommands "commands/profile-commands";
+import PayoutCommands "commands/payout-commands";
 
 /* ----- Managers ----- */
 
-import ProfileManager "managers/profile_manager";
-import FootballChannelManager "managers/football_channel_manager";
-import SNSManager "managers/sns_manager";
+import ProfileManager "managers/profile-manager";
+import FootballChannelManager "managers/football-channel-manager";
+import SNSManager "managers/sns-manager";
 
 /* ----- Environment ----- */
 import Environment "environment";
 import Utilities "utilities/utilities";
-import LeaderboardPayoutManager "managers/leaderboard_payout_manager";
+import LeaderboardPayoutManager "managers/leaderboard-payout-manager";
+
+import AppTypes "./types";
 
 actor class Self() = this {
 
@@ -480,7 +485,6 @@ actor class Self() = this {
 
     };
 
-    // backend canister
     var backend_dto : CanisterQueries.Canister = {
       canisterId = CanisterIds.ICFC_BACKEND_CANISTER_ID;
       canisterType = #Static;
@@ -489,7 +493,6 @@ actor class Self() = this {
     };
     projectCanisters := Array.append<CanisterQueries.Canister>(projectCanisters, [backend_dto]);
 
-    // frontend canister
     let frontend_dto : CanisterQueries.Canister = {
       canisterId = Environment.ICFC_FRONTEND_CANISTER_ID;
       canisterType = #Static;
@@ -530,9 +533,6 @@ actor class Self() = this {
       };
     };
   };
-
-  //transferred from football god
-
 
 
   /* ----- Data Canister Calls -----  */

@@ -1,21 +1,23 @@
-import ICFCTypes "../icfc_types";
-import Enums "mo:waterway-mops/base/Enums";
-import Ids "mo:waterway-mops/base/Ids";
 import Array "mo:base/Array";
-import Result "mo:base/Result";
-import Iter "mo:base/Iter";
-import Principal "mo:base/Principal";
-import Nat64 "mo:base/Nat64";
 import Int "mo:base/Int";
+import Iter "mo:base/Iter";
+import Nat64 "mo:base/Nat64";
+import Principal "mo:base/Principal";
+import Result "mo:base/Result";
 import Time "mo:base/Time";
 import Text "mo:base/Text";
-import PayoutCommands "../commands/payout_commands";
-import T "../icfc_types";
-import SNSLedger "mo:waterway-mops/base/def/sns-wrappers/ledger";
-import InterAppCallCommands "mo:waterway-mops/product/icfc/InterAppCallCommands";
-import Account "mo:waterway-mops/base/def/Account";
+
+import Account "mo:waterway-mops/base/def/account";
+import Enums "mo:waterway-mops/base/enums";
+import Ids "mo:waterway-mops/base/ids";
+import InterAppCallCommands "mo:waterway-mops/product/icfc/inter-app-call-commands";
+import Ledger "mo:waterway-mops/base/def/sns-wrappers/ledger";
+
+import ICFCTypes "../types";
+import PayoutCommands "../commands/payout-commands";
+import PayoutQueries "../queries/payout-queries";
 import Utilities "../utilities/utilities";
-import PayoutQueries "../queries/payout_queries";
+import T "../types";
 
 module {
     public class LeaderboardPayoutManager() {
@@ -26,7 +28,7 @@ module {
             return leaderboard_payout_requests;
         };
 
-        public func addLeaderboardPayoutRequest(dto : LeaderboardPayoutCommands.LeaderboardPayoutRequest) : async Result.Result<(), Enums.Error> {
+        public func addLeaderboardPayoutRequest(dto : InterAppCallCommands.LeaderboardPayoutRequest) : async Result.Result<(), Enums.Error> {
             // check if the request already exists
             var request = Array.find(
                 leaderboard_payout_requests,
@@ -197,7 +199,7 @@ module {
             leaderboard_payout_requests := requests;
         };
 
-        private func payoutUser(principal : Ids.PrincipalId, amount : Nat64, tokenledgerId : Text) : async Result.Result<(), T.TransferError> {
+        private func payoutUser(principal : Ids.PrincipalId, amount : Nat64, tokenledgerId : Text) : async Result.Result<(), Ledger.TransferError> {
             let token_ledger : SNSLedger.Interface = actor (tokenledgerId);
             let transfer_fee = await token_ledger.icrc1_fee();
 

@@ -1,6 +1,6 @@
-import FootballIds "mo:waterway-mops/domain/football/Ids";
-import FootballEnums "mo:waterway-mops/domain/football/Enums";
-import FootballDefinitions "mo:waterway-mops/domain/football/Definitions";
+import FootballDefinitions "mo:waterway-mops/domain/football/definitions";
+import FootballEnums "mo:waterway-mops/domain/football/enums";
+import FootballIds "mo:waterway-mops/domain/football/ids";
 
 module FixtureCommands {
 

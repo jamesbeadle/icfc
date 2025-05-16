@@ -1,4 +1,5 @@
-import Ids "mo:waterway-mops/Ids";
+import AppIds "../Ids";
+import Ids "mo:waterway-mops/base/ids";
 
 module FootballChannelQueries {
 
@@ -17,39 +18,39 @@ module FootballChannelQueries {
     };
 
     public type GetFootballChannel = {
-        channelId : Ids.FootballChannelId;
+        channelId : AppIds.FootballChannelId;
     };
 
     public type FootballChannel = {
         name : Text;
-        channelId : Ids.FootballChannelId;
+        channelId : AppIds.FootballChannelId;
     };
 
     public type GetFootballChannelVideos = {
-        channelId : Ids.FootballChannelId;
+        channelId : AppIds.FootballChannelId;
         page : Nat;
     };
 
     public type FootballChannelVideos = {
-        channelId : Ids.FootballChannelId;
+        channelId : AppIds.FootballChannelId;
     };
 
     public type GetFootballChannelVideo = {
-        channelId : Ids.FootballChannelId;
+        channelId : AppIds.FootballChannelId;
     };
 
     public type FootballChannelVideo = {
-        channelId : Ids.FootballChannelId;
+        channelId : AppIds.FootballChannelId;
     };
 
     public type IsChannelOwner = {
         principalId : Ids.PrincipalId;
-        channelId : Ids.FootballChannelId;
+        channelId : AppIds.FootballChannelId;
     };
 
     public type IsSubscribed = {
         principalId : Ids.PrincipalId;
-        channelId : Ids.FootballChannelId;
+        channelId : AppIds.FootballChannelId;
     };
 
 };

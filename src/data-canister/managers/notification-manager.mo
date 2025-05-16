@@ -2,14 +2,14 @@ import Iter "mo:base/Iter";
 import Result "mo:base/Result";
 import { message } "mo:base/Error";
 
-import CanisterIds "mo:waterway-mops/product/wwl/CanisterIds";
-import Enums "mo:waterway-mops/base/Enums";
-import Ids "mo:waterway-mops/base/Ids";
-import ICFCEnums "mo:waterway-mops/product/icfc/Enums";
-import NotificationCommands "mo:waterway-mops/product/icfc/data-canister-notification-commands/NotificationCommands";
-import LeagueNotificationCommands "mo:waterway-mops/product/icfc/data-canister-notification-commands/LeagueNotificationCommands";
-import PlayerNotificationCommands "mo:waterway-mops/product/icfc/data-canister-notification-commands/PlayerNotificationCommands";
-import LogManager "mo:waterway-mops/product/wwl/log-management/LogManager";
+import CanisterIds "mo:waterway-mops/product/wwl/canister-ids";
+import Enums "mo:waterway-mops/base/enums";
+import Ids "mo:waterway-mops/base/ids";
+import ICFCEnums "mo:waterway-mops/product/icfc/enums";
+import NotificationCommands "mo:waterway-mops/product/icfc/data-canister-notification-commands/notification-commands";
+import LeagueNotificationCommands "mo:waterway-mops/product/icfc/data-canister-notification-commands/league-notification-commands";
+import PlayerNotificationCommands "mo:waterway-mops/product/icfc/data-canister-notification-commands/player-notification-commands";
+import LogManager "mo:waterway-mops/product/wwl/log-management/manager";
 
 module {
 

@@ -1,18 +1,20 @@
-import Ids "mo:waterway-mops/base/Ids";
-import Enums "mo:waterway-mops/base/Enums";
-import CanisterIds "mo:waterway-mops/product/wwl/CanisterIds";
-import CanisterCommands "mo:waterway-mops/product/wwl/canister-management/CanisterCommands";
-import CanisterManager "mo:waterway-mops/product/wwl/canister-management/CanisterManager";
-import Result "mo:base/Result";
-import Principal "mo:base/Principal";
-import Iter "mo:base/Iter";
-import Time "mo:base/Time";
 import Array "mo:base/Array";
 import Buffer "mo:base/Buffer";
+import Iter "mo:base/Iter";
 import List "mo:base/List";
-import T "../icfc_types";
-import ProfileQueries "../queries/profile_queries";
-import ProfileCommands "../commands/profile_commands";
+import Result "mo:base/Result";
+import Principal "mo:base/Principal";
+import Time "mo:base/Time";
+
+import CanisterCommands "mo:waterway-mops/product/wwl/canister-management/commands";
+import CanisterIds "mo:waterway-mops/product/wwl/canister-ids";
+import CanisterManager "mo:waterway-mops/product/wwl/canister-management/manager";
+import Enums "mo:waterway-mops/base/enums";
+import Ids "mo:waterway-mops/base/ids";
+
+import ProfileQueries "../queries/profile-queries";
+import ProfileCommands "../commands/profile-commands";
+import T "../types";
 import Utilities "../utilities/utilities";
 
 actor class _ProfileCanister() {

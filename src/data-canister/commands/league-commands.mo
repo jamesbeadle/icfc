@@ -1,6 +1,6 @@
-import Ids "mo:waterway-mops/base/Ids";
-import FootballIds "mo:waterway-mops/domain/football/Ids";
-import Enums "mo:waterway-mops/base/Enums";
+import Enums "mo:waterway-mops/base/enums";
+import FootballIds "mo:waterway-mops/domain/football/ids";
+import Ids "mo:waterway-mops/base/ids";
 
 module LeagueCommands {
 

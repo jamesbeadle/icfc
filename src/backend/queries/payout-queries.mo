@@ -1,8 +1,8 @@
-import FootballIds "mo:waterway-mops/football/FootballIds";
-import FootballDefinitions "mo:waterway-mops/football/FootballDefinitions";
-import ICFCEnums "mo:waterway-mops/ICFCEnums";
-import LeaderboardPayoutCommands "mo:waterway-mops/football/LeaderboardPayoutCommands";
-import Ids "mo:waterway-mops/Ids";
+import FootballIds "mo:waterway-mops/domain/football/ids";
+import FootballDefinitions "mo:waterway-mops/domain/football/definitions";
+import ICFCEnums "mo:waterway-mops/product/icfc/enums";
+import Ids "mo:waterway-mops/base/ids";
+import LeaderboardPayoutCommands "mo:waterway-mops/product/icfc/inter-app-call-commands";
 
 module PayoutQueries {
     public type GetLeaderboardRequests = {};

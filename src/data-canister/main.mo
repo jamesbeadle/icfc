@@ -32,8 +32,9 @@ import CanisterIds "mo:waterway-mops/product/wwl/CanisterIds";
 import FootballIds "mo:waterway-mops/domain/football/Ids";
 import FootballDefinitions "mo:waterway-mops/domain/football/Definitions";
 import FootballEnums "mo:waterway-mops/domain/football/Enums";
-import BaseDefinitions "mo:waterway-mops/domain/football/Definitions";
+import BaseDefinitions "mo:waterway-mops/base/Definitions";
 import DateTimeUtilities "mo:waterway-mops/base/utilities/DateTimeUtilities";
+import Utilities "utilities";
 
 /* ----- Queries ----- */
 import PlayerQueries "queries/player_queries";
@@ -59,8 +60,11 @@ import Management "mo:waterway-mops/base/def/Management";
 import CanisterQueries "mo:waterway-mops/product/wwl/canister-management/CanisterQueries";
 import CanisterCommands "mo:waterway-mops/product/wwl/canister-management/CanisterCommands";
 import CanisterManager "mo:waterway-mops/product/wwl/canister-management/CanisterManager";
-import LogsManager "mo:waterway-mops/product/wwl/logs/LogsManager";
-import LogsCommands "mo:waterway-mops/product/wwl/logs/LogCommands";
+import LogManager "mo:waterway-mops/product/wwl/log-management/LogManager";
+import LogCommands "mo:waterway-mops/product/wwl/log-management/LogCommands";
+import ComparisonUtilties "mo:waterway-mops/base/utilities/ComparisonUtilties";
+
+import FootballTypes "./types";
 
 actor Self {
 
@@ -69,18 +73,22 @@ actor Self {
   private stable var leagues : [FootballTypes.League] = [];
   private stable var leagueStatuses : [FootballTypes.LeagueStatus] = [];
   private stable var leagueSeasons : [(FootballIds.LeagueId, [FootballTypes.Season])] = [];
-  private stable var leagueClubs : [(FootballIds.LeagueId, [FootballTypes.Club])] = [];
+  private stable var leagueClubs : [(FootballIds.LeagueId, [FootballTypes.FootballClub])] = [];
   private stable var leaguePlayers : [(FootballIds.LeagueId, [FootballTypes.Player])] = [];
   private stable var freeAgents : [FootballTypes.Player] = [];
   private stable var retiredLeaguePlayers : [(FootballIds.LeagueId, [FootballTypes.Player])] = [];
+  
   private stable var nextLeagueId : FootballIds.LeagueId = 0;
   private stable var nextClubId : FootballIds.ClubId = 0;
   private stable var nextPlayerId : FootballIds.PlayerId = 0;
+  
   private stable var leagueDataHashes : [(FootballIds.LeagueId, [BaseTypes.DataHash])] = [];
   private stable var leagueTables : [FootballTypes.LeagueTable] = [];
   private stable var leagueClubsRequiringData : [(FootballIds.LeagueId, [FootballIds.ClubId])] = [];
+  
   private stable var clubSummaries : [SummaryTypes.ClubSummary] = [];
   private stable var playerSummaries : [SummaryTypes.PlayerSummary] = [];
+  
   private stable var dataTotals : SummaryTypes.DataTotals = {
     totalClubs = 0;
     totalGovernanceRewards = 0;
@@ -106,7 +114,7 @@ actor Self {
 
   private let notificationManager = NotificationManager.NotificationManager();
   private let canisterManager = CanisterManager.CanisterManager();
-  private let logsManager = LogsManager.LogsManager();
+  private let logsManager = LogManager.LogManager();
 
   /* ----- General App Queries ----- */
 
@@ -150,9 +158,9 @@ actor Self {
 
       switch (leagueClubsRequiringDataResult) {
         case (?leagueClubsRequiringDataEntry) {
-          let foundLeagueClubs = Array.find<(FootballIds.LeagueId, [FootballTypes.Club])>(
+          let foundLeagueClubs = Array.find<(FootballIds.LeagueId, [FootballTypes.FootballClub])>(
             leagueClubs,
-            func(entry : (FootballIds.LeagueId, [FootballTypes.Club])) : Bool {
+            func(entry : (FootballIds.LeagueId, [FootballTypes.FootballClub])) : Bool {
               entry.0 == league.id;
             },
           );
@@ -526,7 +534,7 @@ actor Self {
   public shared query ({ caller }) func getPlayersMap(dto : PlayerQueries.GetPlayersMap) : async Result.Result<PlayerQueries.PlayersMap, Enums.Error> {
     assert callerAllowed(caller);
 
-    var playersMap : TrieMap.TrieMap<Nat16, PlayerQueries.PlayerScore> = TrieMap.TrieMap<Nat16, PlayerQueries.PlayerScore>(BaseUtilities.eqNat16, BaseUtilities.hashNat16);
+    var playersMap : TrieMap.TrieMap<Nat16, PlayerQueries.PlayerScore> = TrieMap.TrieMap<Nat16, PlayerQueries.PlayerScore>(ComparisonUtilties.eqNat16, ComparisonUtilties.hashNat16);
 
     let filteredLeaguePlayers = Array.find<(FootballIds.LeagueId, [FootballTypes.Player])>(
       leaguePlayers,
@@ -873,18 +881,18 @@ actor Self {
 
   public shared ({ caller }) func getClubs(dto : ClubQueries.GetClubs) : async Result.Result<ClubQueries.Clubs, Enums.Error> {
     assert callerAllowed(caller);
-    let filteredLeagueClubs = Array.find<(FootballIds.LeagueId, [FootballTypes.Club])>(
+    let filteredLeagueClubs = Array.find<(FootballIds.LeagueId, [FootballTypes.FootballClub])>(
       leagueClubs,
-      func(leagueClubs : (FootballIds.LeagueId, [FootballTypes.Club])) : Bool {
+      func(leagueClubs : (FootballIds.LeagueId, [FootballTypes.FootballClub])) : Bool {
         leagueClubs.0 == dto.leagueId;
       },
     );
 
     switch (filteredLeagueClubs) {
       case (?foundLeagueClubs) {
-        let sortedArray = Array.sort<FootballTypes.Club>(
+        let sortedArray = Array.sort<FootballTypes.FootballClub>(
           foundLeagueClubs.1,
-          func(a : FootballTypes.Club, b : FootballTypes.Club) : Order.Order {
+          func(a : FootballTypes.FootballClub, b : FootballTypes.FootballClub) : Order.Order {
             if (a.friendlyName < b.friendlyName) { return #less };
             if (a.friendlyName == b.friendlyName) { return #equal };
             return #greater;
@@ -1422,7 +1430,7 @@ actor Self {
     leagues := Buffer.toArray(leaguesBuffer);
 
     let leagueSeasonsBuffer = Buffer.fromArray<(FootballIds.LeagueId, [FootballTypes.Season])>(leagueSeasons);
-    let leaguesClubsBuffer = Buffer.fromArray<(FootballIds.LeagueId, [FootballTypes.Club])>(leagueClubs);
+    let leaguesClubsBuffer = Buffer.fromArray<(FootballIds.LeagueId, [FootballTypes.FootballClub])>(leagueClubs);
     let leaguePlayersBuffer = Buffer.fromArray<(FootballIds.LeagueId, [FootballTypes.Player])>(leaguePlayers);
 
     leagueSeasonsBuffer.add((nextLeagueId, []));
@@ -1763,7 +1771,7 @@ actor Self {
       return false;
     };
 
-    let playerEventsMap : TrieMap.TrieMap<FootballIds.PlayerId, List.List<FootballTypes.PlayerEventData>> = TrieMap.TrieMap<FootballIds.PlayerId, List.List<FootballTypes.PlayerEventData>>(BaseUtilities.eqNat16, BaseUtilities.hashNat16);
+    let playerEventsMap : TrieMap.TrieMap<FootballIds.PlayerId, List.List<FootballTypes.PlayerEventData>> = TrieMap.TrieMap<FootballIds.PlayerId, List.List<FootballTypes.PlayerEventData>>(ComparisonUtilties.eqNat16, ComparisonUtilties.hashNat16);
 
     for (playerEvent in Iter.fromArray(playerEvents)) {
       switch (playerEventsMap.get(playerEvent.playerId)) {
@@ -2061,7 +2069,7 @@ actor Self {
     var homeGoalsCount : Nat8 = 0;
     var awayGoalsCount : Nat8 = 0;
 
-    let playerEventsMap : TrieMap.TrieMap<FootballIds.PlayerId, [FootballTypes.PlayerEventData]> = TrieMap.TrieMap<FootballIds.PlayerId, [FootballTypes.PlayerEventData]>(BaseUtilities.eqNat16, BaseUtilities.hashNat16);
+    let playerEventsMap : TrieMap.TrieMap<FootballIds.PlayerId, [FootballTypes.PlayerEventData]> = TrieMap.TrieMap<FootballIds.PlayerId, [FootballTypes.PlayerEventData]>(ComparisonUtilties.eqNat16, ComparisonUtilties.hashNat16);
 
     for (event in Iter.fromArray(playerEvents)) {
       switch (event.eventType) {
@@ -2095,7 +2103,7 @@ actor Self {
       };
     };
 
-    let playerScoresMap : TrieMap.TrieMap<Nat16, Int16> = TrieMap.TrieMap<Nat16, Int16>(BaseUtilities.eqNat16, BaseUtilities.hashNat16);
+    let playerScoresMap : TrieMap.TrieMap<Nat16, Int16> = TrieMap.TrieMap<Nat16, Int16>(ComparisonUtilties.eqNat16, ComparisonUtilties.hashNat16);
     for ((playerId, events) in playerEventsMap.entries()) {
       let currentPlayer = Array.find<PlayerQueries.Player>(
         players,
@@ -2111,11 +2119,11 @@ actor Self {
             events,
             0,
             func(acc : Int16, event : FootballTypes.PlayerEventData) : Int16 {
-              return acc + BaseUtilities.calculateIndividualScoreForEvent(event, foundPlayer.position);
+              return acc + Utilities.calculateIndividualScoreForEvent(event, foundPlayer.position);
             },
           );
 
-          let aggregateScore = BaseUtilities.calculateAggregatePlayerEvents(events, foundPlayer.position);
+          let aggregateScore = Utilities.calculateAggregatePlayerEvents(events, foundPlayer.position);
           playerScoresMap.put(playerId, totalScore + aggregateScore);
         };
       };
@@ -2237,7 +2245,7 @@ actor Self {
   private func addEventsToPlayers(leagueId : FootballIds.LeagueId, playerEventData : [FootballTypes.PlayerEventData], seasonId : FootballIds.SeasonId, gameweek : FootballDefinitions.GameweekNumber, fixtureId : FootballIds.FixtureId) {
 
     var updatedSeasons : List.List<FootballTypes.PlayerSeason> = List.nil<FootballTypes.PlayerSeason>();
-    let playerEventsMap : TrieMap.TrieMap<Nat16, [FootballTypes.PlayerEventData]> = TrieMap.TrieMap<Nat16, [FootballTypes.PlayerEventData]>(BaseUtilities.eqNat16, BaseUtilities.hashNat16);
+    let playerEventsMap : TrieMap.TrieMap<Nat16, [FootballTypes.PlayerEventData]> = TrieMap.TrieMap<Nat16, [FootballTypes.PlayerEventData]>(ComparisonUtilties.eqNat16, ComparisonUtilties.hashNat16);
 
     for (event in Iter.fromArray(playerEventData)) {
       let playerId : Nat16 = event.playerId;
@@ -2516,13 +2524,14 @@ actor Self {
       events,
       0,
       func(acc : Int16, event : FootballTypes.PlayerEventData) : Int16 {
-        return acc + BaseUtilities.calculateIndividualScoreForEvent(event, playerPosition);
+        return acc + Utilities.calculateIndividualScoreForEvent(event, playerPosition);
       },
     );
 
-    let aggregateScore = BaseUtilities.calculateAggregatePlayerEvents(events, playerPosition);
+    let aggregateScore = Utilities.calculateAggregatePlayerEvents(events, playerPosition);
     return totalScore + aggregateScore;
   };
+
 
   /* ----- Player ------ */
 
@@ -3335,11 +3344,11 @@ actor Self {
 
     switch (leagueResult) {
       case (?_) {
-        leagueClubs := Array.map<(FootballIds.LeagueId, [FootballTypes.Club]), (FootballIds.LeagueId, [FootballTypes.Club])>(
+        leagueClubs := Array.map<(FootballIds.LeagueId, [FootballTypes.FootballClub]), (FootballIds.LeagueId, [FootballTypes.FootballClub])>(
           leagueClubs,
-          func(leagueEntry : (FootballIds.LeagueId, [FootballTypes.Club])) {
+          func(leagueEntry : (FootballIds.LeagueId, [FootballTypes.FootballClub])) {
             if (leagueEntry.0 == dto.leagueId) {
-              let updatedClubsBuffer = Buffer.fromArray<FootballTypes.Club>(leagueEntry.1);
+              let updatedClubsBuffer = Buffer.fromArray<FootballTypes.FootballClub>(leagueEntry.1);
               updatedClubsBuffer.add({
                 abbreviatedName = dto.abbreviatedName;
                 friendlyName = dto.friendlyName;
@@ -3349,6 +3358,7 @@ actor Self {
                 secondaryColourHex = dto.secondaryColourHex;
                 shirtType = dto.shirtType;
                 thirdColourHex = dto.thirdColourHex;
+                gender = dto.gender;
               });
               nextClubId += 1;
               addRequireStatusToClub(leagueEntry.0, nextClubId);
@@ -3376,28 +3386,37 @@ actor Self {
 
     switch (leagueResult) {
       case (?_) {
-        leagueClubs := Array.map<(FootballIds.LeagueId, [FootballTypes.Club]), (FootballIds.LeagueId, [FootballTypes.Club])>(
+        leagueClubs := Array.map<(FootballIds.LeagueId, [FootballTypes.FootballClub]), (FootballIds.LeagueId, [FootballTypes.FootballClub])>(
           leagueClubs,
-          func(leagueEntry : (FootballIds.LeagueId, [FootballTypes.Club])) {
+          func(leagueEntry : (FootballIds.LeagueId, [FootballTypes.FootballClub])) {
             if (leagueEntry.0 == dto.leagueId) {
-              let updatedClubsBuffer = Buffer.fromArray<FootballTypes.Club>(
-                Array.filter<FootballTypes.Club>(
+              let updatedClubsBuffer = Buffer.fromArray<FootballTypes.FootballClub>(
+                Array.filter<FootballTypes.FootballClub>(
                   leagueEntry.1,
-                  func(club : FootballTypes.Club) {
+                  func(club : FootballTypes.FootballClub) {
                     club.id != dto.clubId;
                   },
                 )
               );
-              updatedClubsBuffer.add({
-                abbreviatedName = dto.abbreviatedName;
-                friendlyName = dto.friendlyName;
-                id = nextClubId;
-                name = dto.name;
-                primaryColourHex = dto.primaryColourHex;
-                secondaryColourHex = dto.secondaryColourHex;
-                shirtType = dto.shirtType;
-                thirdColourHex = dto.thirdColourHex;
+              let currentClub = Array.find<FootballTypes.FootballClub>(leagueEntry.1, func(clubEntry: FootballTypes.FootballClub) : Bool {
+                clubEntry.id == dto.clubId;
               });
+              switch(currentClub){
+                case (?foundClub){
+                  updatedClubsBuffer.add({
+                    abbreviatedName = dto.abbreviatedName;
+                    friendlyName = dto.friendlyName;
+                    id = foundClub.id;
+                    name = dto.name;
+                    primaryColourHex = dto.primaryColourHex;
+                    secondaryColourHex = dto.secondaryColourHex;
+                    shirtType = dto.shirtType;
+                    thirdColourHex = dto.thirdColourHex;
+                    gender = foundClub.gender
+                  });
+                };
+                case (null){};
+              };
               return (leagueEntry.0, Buffer.toArray(updatedClubsBuffer));
             } else {
               return leagueEntry;
@@ -3602,18 +3621,18 @@ actor Self {
 
   private func clubExists(leagueId : FootballIds.LeagueId, clubId : FootballIds.ClubId) : Bool {
 
-    let league = Array.find<(FootballIds.LeagueId, [FootballTypes.Club])>(
+    let league = Array.find<(FootballIds.LeagueId, [FootballTypes.FootballClub])>(
       leagueClubs,
-      func(league : (FootballIds.LeagueId, [FootballTypes.Club])) : Bool {
+      func(league : (FootballIds.LeagueId, [FootballTypes.FootballClub])) : Bool {
         league.0 == leagueId;
       },
     );
 
     switch (league) {
       case (?foundLeague) {
-        let foundClub = Array.find<FootballTypes.Club>(
+        let foundClub = Array.find<FootballTypes.FootballClub>(
           foundLeague.1,
-          func(club : FootballTypes.Club) : Bool {
+          func(club : FootballTypes.FootballClub) : Bool {
             return club.id == clubId;
           },
         );
@@ -4133,7 +4152,7 @@ actor Self {
       };
     };
 
-    let log : LogsCommands.AddApplicationLog = {
+    let log : LogCommands.AddApplicationLog = {
       app = #FootballGod;
       logType = #Success;
       title = "Fixture Timer Created";
@@ -4159,7 +4178,7 @@ actor Self {
 
       switch (leagueStatusResult) {
         case (?leagueState) {
-          let nextTransferWindowStartDate = BaseUtilities.getNextUnixTimestampForDayMonth(leagueState.transferWindowStartDay, leagueState.transferWindowStartMonth);
+          let nextTransferWindowStartDate = DateTimeUtilities.getNextUnixTimestampForDayMonth(leagueState.transferWindowStartDay, leagueState.transferWindowStartMonth);
           switch (nextTransferWindowStartDate) {
             case (?foundDate) {
               let triggerDuration = #nanoseconds(Int.abs((foundDate - Time.now())));
@@ -4173,7 +4192,7 @@ actor Self {
       };
     };
 
-    let log : LogsCommands.AddApplicationLog = {
+    let log : LogCommands.AddApplicationLog = {
       app = #FootballGod;
       logType = #Success;
       title = "Transfer Window Start Timer Created";
@@ -4212,7 +4231,7 @@ actor Self {
         case (null) {};
       };
     };
-    let log : LogsCommands.AddApplicationLog = {
+    let log : LogCommands.AddApplicationLog = {
       app = #FootballGod;
       logType = #Success;
       title = "Transfer Window End Timer Created";
@@ -4266,7 +4285,7 @@ actor Self {
       };
     };
 
-    let log : LogsCommands.AddApplicationLog = {
+    let log : LogCommands.AddApplicationLog = {
       app = #FootballGod;
       logType = #Success;
       title = "Fixture Activation Timer Created";
@@ -4320,7 +4339,7 @@ actor Self {
       };
     };
 
-    let log : LogsCommands.AddApplicationLog = {
+    let log : LogCommands.AddApplicationLog = {
       app = #FootballGod;
       logType = #Success;
       title = "Fixture Completion Timer Created";
@@ -4348,7 +4367,7 @@ actor Self {
       };
     };
 
-    let log : LogsCommands.AddApplicationLog = {
+    let log : LogCommands.AddApplicationLog = {
       app = #FootballGod;
       logType = #Success;
       title = "Loan Expired Timer Created";
@@ -4376,7 +4395,7 @@ actor Self {
       };
     };
 
-    let log : LogsCommands.AddApplicationLog = {
+    let log : LogCommands.AddApplicationLog = {
       app = #FootballGod;
       logType = #Success;
       title = "Injury Expired Timer Created";
@@ -4514,7 +4533,7 @@ actor Self {
         };
       };
     } catch (err) {
-      let log : LogsCommands.AddApplicationLog = {
+      let log : LogCommands.AddApplicationLog = {
         app = #FootballGod;
         logType = #Error;
         title = "Error in checkRollOverPickTeam";
@@ -4561,7 +4580,7 @@ actor Self {
         };
       };
     } catch (err) {
-      let log : LogsCommands.AddApplicationLog = {
+      let log : LogCommands.AddApplicationLog = {
         app = #FootballGod;
         logType = #Error;
         title = "Error in transferWindowStart";
@@ -4607,7 +4626,7 @@ actor Self {
         };
       };
     } catch (err) {
-      let log : LogsCommands.AddApplicationLog = {
+      let log : LogCommands.AddApplicationLog = {
         app = #FootballGod;
         logType = #Error;
         title = "Error in transferWindowEnd";
@@ -4689,7 +4708,7 @@ actor Self {
         },
       );
     } catch (err) {
-      let log : LogsCommands.AddApplicationLog = {
+      let log : LogCommands.AddApplicationLog = {
         app = #FootballGod;
         logType = #Error;
         title = "Error in setFixtureToActive";
@@ -4782,7 +4801,7 @@ actor Self {
         let _ = await notificationManager.distributeNotification(#CompleteFixture, #CompleteFixture { leagueId = completedFixtureLeagueId; seasonId = completedFixtureSeasonId; fixtureId = completedFixtureId });
       };
     } catch (err) {
-      let log : LogsCommands.AddApplicationLog = {
+      let log : LogCommands.AddApplicationLog = {
         app = #FootballGod;
         logType = #Error;
         title = "Error in setFixtureToComplete";
@@ -5026,7 +5045,7 @@ actor Self {
         };
       };
     } catch (err) {
-      let log : LogsCommands.AddApplicationLog = {
+      let log : LogCommands.AddApplicationLog = {
         app = #FootballGod;
         logType = #Error;
         title = "Error in loanExpiredCallback";
@@ -5081,7 +5100,7 @@ actor Self {
         },
       );
     } catch (err) {
-      let log : LogsCommands.AddApplicationLog = {
+      let log : LogCommands.AddApplicationLog = {
         app = #FootballGod;
         logType = #Error;
         title = "Error in injuryExpiredCallback";
@@ -5273,7 +5292,7 @@ actor Self {
     };
 
     clubSummaries := Buffer.toArray(updatedClubSummaryBuffer);
-    let log : LogsCommands.AddApplicationLog = {
+    let log : LogCommands.AddApplicationLog = {
       app = #FootballGod;
       logType = #Success;
       title = "Calculated Club Summaries";
@@ -5330,7 +5349,7 @@ actor Self {
 
     playerSummaries := Buffer.toArray(updatedPlayerSummaryBuffer);
 
-    let log : LogsCommands.AddApplicationLog = {
+    let log : LogCommands.AddApplicationLog = {
       app = #FootballGod;
       logType = #Success;
       title = "Calculated Player Summaries";
@@ -5369,7 +5388,7 @@ actor Self {
       totalProposals;
     };
 
-    let log : LogsCommands.AddApplicationLog = {
+    let log : LogCommands.AddApplicationLog = {
       app = #FootballGod;
       logType = #Success;
       title = "Calculated Data Totals";
@@ -5419,31 +5438,6 @@ actor Self {
     return canisterSnapshotsList;
   };
 
-  /*
-
-  private func backupCanister() : async () {
-
-    let IC : Management.Management = actor (CanisterIds.Default);
-    await IC.stop_canister({ canister_id = Principal.fromText(CanisterIds.ICFC_DATA_CANISTER_ID) });
-    let canisterSnapshotsList = await IC.list_canister_snapshots({ canister_id = Principal.fromText(CanisterIds.ICFC_DATA_CANISTER_ID) });
-
-
-
-   switch(canisterSnapshotsList){
-      case (?foundCanisterSnapshotList){
-
-    await IC.delete_canister_snapshot({ canister_id = Principal.fromText(CanisterIds.ICFC_DATA_CANISTER_ID); snapshot_id = snapshotId });
-
-      };
-      case (null){
-
-      };
-    };
-
-  };
-
-  */
-
   /* ----- WWL Canister Management Functions ----- */
   public shared ({ caller }) func getCanisterInfo() : async Result.Result<CanisterQueries.Canister, Enums.Error> {
     assert not Principal.isAnonymous(caller);
@@ -5469,18 +5463,5 @@ actor Self {
     };
 
   };
-
-  // public shared ({caller}) func fetchAllicationLogs(dto : CanisterCommands.FetchCanisterLogs) : async Result.Result<CanisterQueries.CanisterLog, Enums.Error> {
-  //   assert Principal.toText(caller) == CanisterIds.WATERWAY_LABS_BACKEND_CANISTER_ID;
-  //   let result = await canisterManager.fetchCanisterLogs(dto);
-  //   switch (result) {
-  //     case (#ok(logs)) {
-  //       return #ok(logs);
-  //     };
-  //     case (#err(err)) {
-  //       return #err(err);
-  //     };
-  //   };
-  // };
 
 };

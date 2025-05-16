@@ -1,6 +1,7 @@
-import SNSGovernance "mo:waterway-mops/sns-wrappers/governance";
 import Principal "mo:base/Principal";
-import CanisterIds "mo:waterway-mops/CanisterIds";
+
+import CanisterIds "mo:waterway-mops/product/wwl/canister-ids";
+import SNSGovernance "mo:waterway-mops/base/def/sns-wrappers/governance";
 
 module {
     public class SNSManager() {
