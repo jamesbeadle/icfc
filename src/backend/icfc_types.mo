@@ -86,7 +86,7 @@ module ICFCTypes {
   public type PayoutRequest = {
     seasonId : FootballIds.SeasonId;
     gameweek : FootballDefinitions.GameweekNumber;
-    app : Enums.WaterwayLabsApp;
+    app : Text;
     leaderboard : [LeaderboardPayoutCommands.LeaderboardEntry];
     token : Text;
     totalEntries : Nat;

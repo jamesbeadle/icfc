@@ -218,24 +218,6 @@ module Utilities {
 
     };
 
-    public func getAppCanisterId(app : Enums.WaterwayLabsApp) : ?Ids.PrincipalId {
-        switch (app) {
-            case (#OpenFPL) {
-                ?CanisterIds.OPENFPL_BACKEND_CANISTER_ID;
-            };
-            case (#OpenWSL) {
-                ?CanisterIds.OPENWSL_BACKEND_CANISTER_ID;
-            };
-            case (#JeffBets) {
-                ?CanisterIds.JEFF_BETS_BACKEND_CANISTER_ID;
-            };
-            case (#TransferKings) {
-                ?CanisterIds.TRANSFER_KINGS_BACKEND_CANISTER_ID;
-            };
-            case (_) { null };
-        };
-    };
-
     public func getTokenLedgerId(token : Text) : ?Ids.CanisterId {
         switch (token) {
             case ("ICFC") {
