@@ -6,7 +6,7 @@ module PayoutCommands {
     public type PayoutLeaderboard = {
         seasonId : FootballIds.SeasonId;
         gameweek : FootballDefinitions.GameweekNumber;
-        app : Enums.App;
+        app : Enums.SubApp;
     };
 
     public type Leaderboard = {

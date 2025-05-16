@@ -1,6 +1,6 @@
 import Blob "mo:base/Blob";
 
-import AppIds "./Ids";
+import AppIds "./ids";
 import Ids "mo:waterway-mops/base/ids";
 import Enums "mo:waterway-mops/base/enums";
 import FootballIds "mo:waterway-mops/domain/football/ids";
