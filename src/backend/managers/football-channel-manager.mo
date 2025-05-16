@@ -19,7 +19,6 @@ import AppIds "../ids";
 import FootballChannelQueries "../queries/football-channel-queries";
 import FootballChannelCommands "../commands/football-channel-commands";
 import FootballChannelsCanister "../canister-definitions/football-channels-canister";
-import T "../types";
 
 module {
     public class FootballChannelManager() {
@@ -187,6 +186,7 @@ module {
             };
             return await football_channel_canister.createFootballChannel(dto);
         };
+        
         public func updateFootballChannel(dto : FootballChannelCommands.UpdateFootballChannel) : async Result.Result<(), Enums.Error> {
             let existingChannel = await getChannel({ channelId = dto.channelId });
 

@@ -13,6 +13,7 @@ import TrieMap "mo:base/TrieMap";
 
 import CanisterIds "mo:waterway-mops/product/wwl/canister-ids";
 import CanisterUtilities "mo:waterway-mops/product/wwl/canister-management/utilities";
+import ConversionUtilities "mo:waterway-mops/base/utilities/conversion-utilities";
 import Enums "mo:waterway-mops/base/enums";
 import Ids "mo:waterway-mops/base/ids";
 import Management "mo:waterway-mops/base/def/management";
@@ -41,7 +42,7 @@ module {
                 case (?foundCanisterId) {
 
                     let profile_canister = actor (foundCanisterId) : actor {
-                        getProfile : (dto : ProfileQueries.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, Enums.Error>;
+                        getProfile : (dto : ProfileQueries.GetProfile) -> async Result.Result<ProfileQueries.Profile, Enums.Error>;
                     };
                     let dto : ProfileQueries.GetProfile = {
                         principalId = principalId;
@@ -84,13 +85,13 @@ module {
             return not isUsernameTaken(dto.username, dto.principalId);
         };
 
-        public func getProfile(dto : ProfileQueries.GetProfile) : async Result.Result<ProfileQueries.ProfileDTO, Enums.Error> {
+        public func getProfile(dto : ProfileQueries.GetProfile) : async Result.Result<ProfileQueries.Profile, Enums.Error> {
             let existingProfileCanisterId = profileCanisterIndex.get(dto.principalId);
             switch (existingProfileCanisterId) {
                 case (?foundCanisterId) {
 
                     let profile_canister = actor (foundCanisterId) : actor {
-                        getProfile : (dto : ProfileQueries.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, Enums.Error>;
+                        getProfile : (dto : ProfileQueries.GetProfile) -> async Result.Result<ProfileQueries.Profile, Enums.Error>;
                     };
 
                     let profile = await profile_canister.getProfile(dto);
@@ -197,7 +198,7 @@ module {
                     };
 
                     let profile_canister = actor (foundCanisterId) : actor {
-                        getProfile : (dto : ProfileQueries.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, Enums.Error>;
+                        getProfile : (dto : ProfileQueries.GetProfile) -> async Result.Result<ProfileQueries.Profile, Enums.Error>;
                     };
 
                     let profile = await profile_canister.getProfile(getProfile);
@@ -286,7 +287,7 @@ module {
                 return #err(#MaxDataExceeded);
             };
 
-            let lowerCaseNewUsername = BaseUtilities.toLowercase(dto.username);
+            let lowerCaseNewUsername = ConversionUtilities.toLowercase(dto.username);
             var existing_owner : ?Ids.PrincipalId = findUsernamePrincipalId(lowerCaseNewUsername);
 
             switch (existing_owner) {
@@ -299,7 +300,7 @@ module {
                         case (?foundCanisterId) {
                             let profile_canister = actor (foundCanisterId) : actor {
                                 updateUsername : (principalId : Ids.PrincipalId, dto : ProfileCommands.UpdateUserName) -> async Result.Result<(), Enums.Error>;
-                                getProfile : (dto : ProfileQueries.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, Enums.Error>;
+                                getProfile : (dto : ProfileQueries.GetProfile) -> async Result.Result<ProfileQueries.Profile, Enums.Error>;
                             };
 
                             let updateResult = await profile_canister.updateUsername(principalId, dto);
@@ -312,7 +313,7 @@ module {
 
                                 switch (profile) {
                                     case (#ok(existingProfile)) {
-                                        let profile : ProfileQueries.ProfileDTO = existingProfile;
+                                        let profile : ProfileQueries.Profile = existingProfile;
                                         for ((subApp, subAppPrincipal) in profile.appPrincipalIds.vals()) {
                                             let _ = notifyAppsofProfileUpdate({
                                                 membershipType = profile.membershipType;
@@ -350,7 +351,7 @@ module {
                 case (?foundCanisterId) {
                     let profile_canister = actor (foundCanisterId) : actor {
                         updateDisplayName : (principalId : Ids.PrincipalId, dto : ProfileCommands.UpdateDisplayName) -> async Result.Result<(), Enums.Error>;
-                        getProfile : (dto : ProfileQueries.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, Enums.Error>;
+                        getProfile : (dto : ProfileQueries.GetProfile) -> async Result.Result<ProfileQueries.Profile, Enums.Error>;
                     };
                     let res = await profile_canister.updateDisplayName(principalId, dto);
                     switch (res) {
@@ -361,7 +362,7 @@ module {
 
                             switch (profile) {
                                 case (#ok(existingProfile)) {
-                                    let profile : ProfileQueries.ProfileDTO = existingProfile;
+                                    let profile : ProfileQueries.Profile = existingProfile;
                                     for ((subApp, subAppPrincipal) in profile.appPrincipalIds.vals()) {
                                         let _ = notifyAppsofProfileUpdate({
                                             membershipType = profile.membershipType;
@@ -429,7 +430,7 @@ module {
                 case (?foundCanisterId) {
                     let profile_canister = actor (foundCanisterId) : actor {
                         updateProfilePicture : (principalId : Ids.PrincipalId, dto : ProfileCommands.UpdateProfilePicture) -> async Result.Result<(), Enums.Error>;
-                        getProfile : (dto : ProfileQueries.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, Enums.Error>;
+                        getProfile : (dto : ProfileQueries.GetProfile) -> async Result.Result<ProfileQueries.Profile, Enums.Error>;
                     };
                     let res = await profile_canister.updateProfilePicture(principalId, dto);
                     switch (res) {
@@ -440,7 +441,7 @@ module {
 
                             switch (profile) {
                                 case (#ok(existingProfile)) {
-                                    let profile : ProfileQueries.ProfileDTO = existingProfile;
+                                    let profile : ProfileQueries.Profile = existingProfile;
                                     for ((subApp, subAppPrincipal) in profile.appPrincipalIds.vals()) {
                                         let _ = notifyAppsofProfileUpdate({
                                             membershipType = profile.membershipType;
@@ -474,7 +475,7 @@ module {
             switch (existingProfileCanisterId) {
                 case (?foundCanisterId) {
                     let profile_canister = actor (foundCanisterId) : actor {
-                        getProfile : (dto : ProfileQueries.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, Enums.Error>;
+                        getProfile : (dto : ProfileQueries.GetProfile) -> async Result.Result<ProfileQueries.Profile, Enums.Error>;
                     };
 
                     let profile = await profile_canister.getProfile({
@@ -559,7 +560,7 @@ module {
                 case (?foundCanisterId) {
                     let profile_canister = actor (foundCanisterId) : actor {
                         updateMembership : (principalId : Ids.PrincipalId, dto : ProfileCommands.UpdateMembership) -> async Result.Result<(T.MembershipClaim), Enums.Error>;
-                        getProfile : (dto : ProfileQueries.GetProfile) -> async Result.Result<ProfileQueries.ProfileDTO, Enums.Error>;
+                        getProfile : (dto : ProfileQueries.GetProfile) -> async Result.Result<ProfileQueries.Profile, Enums.Error>;
                     };
                     let res = await profile_canister.updateMembership(principalId, dto);
 
@@ -571,7 +572,7 @@ module {
 
                             switch (profile) {
                                 case (#ok(existingProfile)) {
-                                    let profile : ProfileQueries.ProfileDTO = existingProfile;
+                                    let profile : ProfileQueries.Profile = existingProfile;
                                     for ((subApp, subAppPrincipal) in profile.appPrincipalIds.vals()) {
                                         let _ = notifyAppsofProfileUpdate({
                                             membershipType = profile.membershipType;
@@ -742,54 +743,6 @@ module {
             return null;
         };
 
-        private func hasValidMembership(profile : T.Profile) : Bool {
-            let membership = profile.membershipType;
-            switch (membership) {
-                case (#Founding) { return true };
-                case (#Lifetime) { return true };
-                case (#Seasonal) {
-                    let currentTimestamp = Time.now();
-                    let membershipClaim = List.last(List.fromArray(profile.membershipClaims));
-                    switch (membershipClaim) {
-                        case (?claim) {
-                            let expiresOn = claim.expiresOn;
-                            switch (expiresOn) {
-                                case (?exp) { return exp > currentTimestamp };
-                                case (null) { return true };
-                            };
-                        };
-                        case (null) { return false };
-                    };
-                };
-                case (#Monthly) {
-                    let currentTimestamp = Time.now();
-                    let membershipClaim = List.last(List.fromArray(profile.membershipClaims));
-                    switch (membershipClaim) {
-                        case (?claim) {
-                            let expiresOn = claim.expiresOn;
-                            switch (expiresOn) {
-                                case (?exp) { return exp > currentTimestamp };
-                                case (null) { return true };
-                            };
-                        };
-                        case (null) { return false };
-                    };
-                };
-                case (#Expired) { return false };
-                case (#NotClaimed) { return false };
-                case (#NotEligible) { return false };
-            };
-        };
-
-        private func generateUniqueUsername(principalId : Ids.PrincipalId) : Text {
-            let randomSuffix = Text.toArray(principalId);
-            var truncatedSuffix = "";
-            for (i in Iter.range(0, 5)) {
-                truncatedSuffix := truncatedSuffix # Text.fromChar(randomSuffix[i]);
-            };
-            return "user_" # truncatedSuffix;
-        };
-
         private func isProfilePictureValid(profilePicture : ?Blob) : Bool {
             switch (profilePicture) {
                 case (?foundProfilePicture) {
@@ -799,6 +752,8 @@ module {
                 case (null) { return true };
             };
         };
+
+        // TODO deal with deprecated cycles usage
 
         private func createNewCanister() : async () {
 

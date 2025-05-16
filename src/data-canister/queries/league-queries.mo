@@ -1,8 +1,8 @@
-import Enums "mo:waterway-mops/base/Enums";
-import Ids "mo:waterway-mops/base/Ids";
-import FootballIds "mo:waterway-mops/domain/football/Ids";
-import BaseDefinitions "mo:waterway-mops/base/Definitions";
-import FootballDefinitions "mo:waterway-mops/domain/football/Definitions";
+import BaseDefinitions "mo:waterway-mops/base/definitions";
+import Enums "mo:waterway-mops/base/enums";
+import FootballDefinitions "mo:waterway-mops/domain/football/definitions";
+import FootballIds "mo:waterway-mops/domain/football/ids";
+import Ids "mo:waterway-mops/base/ids";
 
 module LeagueQueries {
 

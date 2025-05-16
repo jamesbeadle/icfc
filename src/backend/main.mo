@@ -35,11 +35,9 @@ import ProfileCanister "canister-definitions/profile-canister";
 
 /* ----- Queries ----- */
 import AppQueries "queries/app-queries";
+import AppQueries "../data-canister/queries/app-queries";
 import ProfileQueries "queries/profile-queries";
 import PayoutQueries "queries/payout-queries";
-
-
-import AppQueries "../data-canister/queries/app-queries";
 import ClubQueries "../data-canister/queries/club-queries";
 import SeasonQueries "../data-canister/queries/season-queries";
 import PlayerQueries "../data-canister/queries/player-queries";

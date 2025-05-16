@@ -23,48 +23,48 @@ import { message } "mo:base/Error";
 
 /* ----- WWL Mops Packages ----- */
 
-import SHA224 "mo:waterway-mops/base/def/SHA224";
-import Countries "mo:waterway-mops/base/Countries";
-import Ids "mo:waterway-mops/base/Ids";
-import Enums "mo:waterway-mops/base/Enums";
+import SHA224 "mo:waterway-mops/base/def/sha224";
+import Countries "mo:waterway-mops/base/countries";
+import Ids "mo:waterway-mops/base/ids";
+import Enums "mo:waterway-mops/base/enums";
 
-import CanisterIds "mo:waterway-mops/product/wwl/CanisterIds";
-import FootballIds "mo:waterway-mops/domain/football/Ids";
-import FootballDefinitions "mo:waterway-mops/domain/football/Definitions";
-import FootballEnums "mo:waterway-mops/domain/football/Enums";
-import BaseDefinitions "mo:waterway-mops/base/Definitions";
-import DateTimeUtilities "mo:waterway-mops/base/utilities/DateTimeUtilities";
-import Utilities "utilities";
+import BaseQueries "mo:waterway-mops/base/queries";
+import CanisterIds "mo:waterway-mops/product/wwl/canister-ids";
+import FootballIds "mo:waterway-mops/domain/football/ids";
+import FootballDefinitions "mo:waterway-mops/domain/football/definitions";
+import FootballEnums "mo:waterway-mops/domain/football/enums";
+import BaseDefinitions "mo:waterway-mops/base/definitions";
+import DateTimeUtilities "mo:waterway-mops/base/utilities/date-time-utilities";
 
 /* ----- Queries ----- */
-import PlayerQueries "queries/player_queries";
-import FixtureQueries "queries/fixture_queries";
-import ClubQueries "queries/club_queries";
-import LeagueQueries "queries/league_queries";
-import SeasonQueries "queries/season_queries";
+import ClubQueries "queries/club-queries";
+import FixtureQueries "queries/fixture-queries";
+import LeagueQueries "queries/league-queries";
+import PlayerQueries "queries/player-queries";
+import SeasonQueries "queries/season-queries";
 
 /* ----- Commands ----- */
 
-import PlayerCommands "commands/player_commands";
-import LeagueCommands "commands/league_commands";
-import FixtureCommands "commands/fixture_commands";
-import ClubCommands "commands/club_commands";
+import ClubCommands "commands/club-commands";
+import FixtureCommands "commands/fixture-commands";
+import LeagueCommands "commands/league-commands";
+import PlayerCommands "commands/player-commands";
 
 import Environment "environment";
-import AppQueries "queries/app_queries";
-import SummaryTypes "summary_types";
-import NotificationManager "managers/notification_manager";
+import AppQueries "queries/app-queries";
+import NotificationManager "managers/notification-manager";
 
-import BaseTypes "mo:waterway-mops/base/Types";
-import Management "mo:waterway-mops/base/def/Management";
-import CanisterQueries "mo:waterway-mops/product/wwl/canister-management/CanisterQueries";
-import CanisterCommands "mo:waterway-mops/product/wwl/canister-management/CanisterCommands";
-import CanisterManager "mo:waterway-mops/product/wwl/canister-management/CanisterManager";
-import LogManager "mo:waterway-mops/product/wwl/log-management/LogManager";
-import LogCommands "mo:waterway-mops/product/wwl/log-management/LogCommands";
-import ComparisonUtilties "mo:waterway-mops/base/utilities/ComparisonUtilties";
+import BaseTypes "mo:waterway-mops/base/types";
+import Management "mo:waterway-mops/base/def/management";
+import CanisterQueries "mo:waterway-mops/product/wwl/canister-management/queries";
+import CanisterCommands "mo:waterway-mops/product/wwl/canister-management/commands";
+import CanisterManager "mo:waterway-mops/product/wwl/canister-management/manager";
+import LogManager "mo:waterway-mops/product/wwl/log-management/manager";
+import LogCommands "mo:waterway-mops/product/wwl/log-management/commands";
+import ComparisonUtilties "mo:waterway-mops/base/utilities/comparison-utilities";
 
 import FootballTypes "./types";
+import Utilities "utilities";
 
 actor Self {
 
@@ -86,10 +86,10 @@ actor Self {
   private stable var leagueTables : [FootballTypes.LeagueTable] = [];
   private stable var leagueClubsRequiringData : [(FootballIds.LeagueId, [FootballIds.ClubId])] = [];
   
-  private stable var clubSummaries : [SummaryTypes.ClubSummary] = [];
-  private stable var playerSummaries : [SummaryTypes.PlayerSummary] = [];
+  private stable var clubSummaries : [FootballTypes.ClubSummary] = [];
+  private stable var playerSummaries : [FootballTypes.PlayerSummary] = [];
   
-  private stable var dataTotals : SummaryTypes.DataTotals = {
+  private stable var dataTotals : FootballTypes.DataTotals = {
     totalClubs = 0;
     totalGovernanceRewards = 0;
     totalLeagues = 0;
@@ -118,7 +118,7 @@ actor Self {
 
   /* ----- General App Queries ----- */
 
-  public shared query ({ caller }) func getDataHashes(dto : AppQueries.GetDataHashes) : async Result.Result<AppQueries.DataHashes, Enums.Error> {
+  public shared query ({ caller }) func getDataHashes(dto : AppQueries.GetDataHashes) : async Result.Result<BaseQueries.DataHashes, Enums.Error> {
     assert callerAllowed(caller);
 
     let leagueDataHashesResult = Array.find<(FootballIds.LeagueId, [BaseTypes.DataHash])>(
@@ -1071,7 +1071,7 @@ actor Self {
               if (gwN < 1 or gwN > totalGWsN) {
                 return #Err("Fixture has invalid gameweek number.");
               };
-              let index = gwN - 1;
+              let index: Nat = gwN - 1;
               let oldCount = countsBuf.get(index);
               countsBuf.put(index, oldCount + 1);
             };
@@ -4040,7 +4040,7 @@ actor Self {
                 position = foundPlayer.position;
                 retirementDate = foundPlayer.retirementDate;
                 seasons = foundPlayer.seasons;
-                shirtNumber = foundPlayer.shirtNumber;
+                shirtNumber = shirtNumber;
                 status = foundPlayer.status;
                 transferHistory = List.fromArray(Buffer.toArray(transferHistoryBuffer));
                 valueHistory = foundPlayer.valueHistory;
@@ -4218,7 +4218,7 @@ actor Self {
 
       switch (leagueStatusResult) {
         case (?leagueState) {
-          let nextTransferWindowEndDate = BaseUtilities.getNextUnixTimestampForDayMonth(leagueState.transferWindowEndDay, leagueState.transferWindowEndMonth);
+          let nextTransferWindowEndDate = DateTimeUtilities.getNextUnixTimestampForDayMonth(leagueState.transferWindowEndDay, leagueState.transferWindowEndMonth);
           switch (nextTransferWindowEndDate) {
             case (?foundDate) {
               let triggerDuration = #nanoseconds(Int.abs((foundDate - Time.now())));
@@ -5114,7 +5114,7 @@ actor Self {
   /* ----- Summary Calculation Functions ----- */
 
   private func calculateClubSummaries() : async () {
-    let updatedClubSummaryBuffer = Buffer.fromArray<SummaryTypes.ClubSummary>([]);
+    let updatedClubSummaryBuffer = Buffer.fromArray<FootballTypes.ClubSummary>([]);
     for (league in Iter.fromArray(leagueClubs)) {
       let leaguePlayers = await getPlayers({ leagueId = league.0 });
       switch (leaguePlayers) {
@@ -5259,7 +5259,7 @@ actor Self {
 
     let size = updatedClubSummaryBuffer.size();
     let resultSize = if (size < 25) { size } else { 25 };
-    let result = Buffer.Buffer<SummaryTypes.ClubSummary>(resultSize);
+    let result = Buffer.Buffer<FootballTypes.ClubSummary>(resultSize);
 
     var i = 0;
     while (i < resultSize) {
@@ -5303,7 +5303,7 @@ actor Self {
   };
 
   private func calculatePlayerSummaries() : async () {
-    let updatedPlayerSummaryBuffer = Buffer.fromArray<SummaryTypes.PlayerSummary>([]);
+    let updatedPlayerSummaryBuffer = Buffer.fromArray<FootballTypes.PlayerSummary>([]);
     for (league in Iter.fromArray(leaguePlayers)) {
       for (player in Iter.fromArray(league.1)) {
         updatedPlayerSummaryBuffer.add({
@@ -5330,7 +5330,7 @@ actor Self {
 
     let size = updatedPlayerSummaryBuffer.size();
     let resultSize = if (size < 25) { size } else { 25 };
-    let result = Buffer.Buffer<SummaryTypes.PlayerSummary>(resultSize);
+    let result = Buffer.Buffer<FootballTypes.PlayerSummary>(resultSize);
 
     var i = 0;
     while (i < resultSize) {

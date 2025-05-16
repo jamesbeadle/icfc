@@ -1,9 +1,10 @@
-import Ids "mo:waterway-mops/base/ids";
-import AppIds "../ids";
 import FootballIds "mo:waterway-mops/domain/football/ids";
 import IcfcEnums "mo:waterway-mops/product/icfc/enums";
-import T "../types";
+import Ids "mo:waterway-mops/base/ids";
 import SNSGovernance "mo:waterway-mops/base/def/sns-wrappers/governance";
+
+import AppIds "../ids";
+import T "../types";
 
 module ProfileQueries {
     public type GetProfile = {

@@ -1,4 +1,4 @@
-import CanisterIds "mo:waterway-mops/product/wwl/CanisterIds";
+import CanisterIds "mo:waterway-mops/product/wwl/canister-ids";
 module Environment {
 
     public let APPROVED_CANISTERS = [

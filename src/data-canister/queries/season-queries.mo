@@ -1,4 +1,4 @@
-import FootballIds "mo:waterway-mops/domain/football/Ids";
+import FootballIds "mo:waterway-mops/domain/football/ids";
 
 module SeasonQueries {
     public type GetSeasons = {

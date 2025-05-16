@@ -1,6 +1,6 @@
-import FootballIds "mo:waterway-mops/domain/football/Ids";
-import FootballEnums "mo:waterway-mops/domain/football/Enums";
-import Enums "mo:waterway-mops/base/Enums";
+import FootballEnums "mo:waterway-mops/domain/football/enums";
+import FootballIds "mo:waterway-mops/domain/football/ids";
+import Enums "mo:waterway-mops/base/enums";
 
 module ClubQueries {
     public type GetClubs = {

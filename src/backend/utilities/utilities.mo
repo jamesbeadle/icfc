@@ -1,20 +1,21 @@
-import Nat64 "mo:base/Nat64";
-import Text "mo:base/Text";
-import Int64 "mo:base/Int64";
-import Float "mo:base/Float";
-import Time "mo:base/Time";
-import Int "mo:base/Int";
 import Array "mo:base/Array";
-import Principal "mo:base/Principal";
 import Blob "mo:base/Blob";
-import Ids "mo:waterway-mops/base/ids";
+import Float "mo:base/Float";
+import Int "mo:base/Int";
+import Int64 "mo:base/Int64";
+import Nat64 "mo:base/Nat64";
+import Principal "mo:base/Principal";
+import Text "mo:base/Text";
+import Time "mo:base/Time";
+
 import CanisterIds "mo:waterway-mops/product/wwl/canister-ids";
-import T "../types";
+import Ids "mo:waterway-mops/base/ids";
+import SHA224 "mo:waterway-mops/base/def/sha224";
 import SNSGovernance "mo:waterway-mops/base/def/sns-wrappers/governance";
-import Enums "mo:waterway-mops/base/enums";
+
+import T "../types";
 import Environment "../environment";
 import SNSManager "../managers/sns-manager";
-import SHA224 "mo:waterway-mops/base/def/sha224";
 
 module Utilities {
 

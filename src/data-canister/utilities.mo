@@ -1,8 +1,10 @@
-import FootballTypes "./types";
-import FootballEnums "mo:waterway-mops/domain/football/Enums";
 import Array "mo:base/Array";
 import Int16 "mo:base/Int16";
 import Nat16 "mo:base/Nat16";
+
+import FootballEnums "mo:waterway-mops/domain/football/enums";
+
+import FootballTypes "./types";
 
 module Utilities {
 

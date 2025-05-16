@@ -54,6 +54,7 @@ module ProfileCommands {
     public type RemoveSubApp = {
         subApp : ICFCEnums.SubApp;
     };
+
     public type VerifySubApp = {
         subAppUserPrincipalId : Ids.PrincipalId;
         subApp : ICFCEnums.SubApp;
@@ -66,10 +67,12 @@ module ProfileCommands {
         subApp : ICFCEnums.SubApp;
         icfcPrincipalId : Ids.PrincipalId;
     };
+
     public type NotifyAppofRemoveLink = {
         subApp : ICFCEnums.SubApp;
         icfcPrincipalId : Ids.PrincipalId;
     };
+
     public type UpdateICFCProfile = {
         subAppUserPrincipalId : Ids.PrincipalId;
         subApp : ICFCEnums.SubApp;
@@ -81,6 +84,7 @@ module ProfileCommands {
         purchasedOn : Int;
         expiresOn : ?Int;
     };
+    
     public type SubApp = {
         #OpenFPL;
         #OpenWSL;

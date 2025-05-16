@@ -1,7 +1,7 @@
-import Ids "mo:waterway-mops/base/Ids";
-import FootballIds "mo:waterway-mops/domain/football/Ids";
-import FootballEnums "mo:waterway-mops/domain/football/Enums";
-import FootballDefinitions "mo:waterway-mops/domain/football/Definitions";
+import FootballEnums "mo:waterway-mops/domain/football/enums";
+import FootballDefinitions "mo:waterway-mops/domain/football/definitions";
+import FootballIds "mo:waterway-mops/domain/football/ids";
+import Ids "mo:waterway-mops/base/ids";
 
 module PlayerQueries {
     public type GetPlayers = {

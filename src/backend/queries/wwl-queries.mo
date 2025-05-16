@@ -2,12 +2,14 @@ import Ids "mo:waterway-mops/base/ids";
 import T "../types";
 
 module {
+
     public type CanisterInfo = {
         total_num_changes : Nat64;
         recent_changes : [change];
         module_hash : ?Blob;
         controllers : [Principal];
     };
+
     public type change = {
         timestamp_nanos : Nat64;
         canister_version : Nat64;
@@ -24,6 +26,7 @@ module {
         reserved_cycles : Nat;
         idle_cycles_burned_per_day : Nat;
     };
+
     public type definite_canister_settings = {
         controllers : [Principal];
         compute_allocation : Nat;
@@ -31,6 +34,7 @@ module {
         freezing_threshold : Nat;
         reserved_cycles_limit : Nat;
     };
+
     public type change_details = {
         #creation : {
             controllers : [Principal];
@@ -54,6 +58,7 @@ module {
             canister_version : ?Nat64;
         };
     };
+
     public type CanisterDetails = {
         canister_id : Ids.PrincipalId;
         canister_name : Text;
@@ -61,4 +66,5 @@ module {
         canister_info : CanisterInfo;
         canister_status : CanisterStatus;
     };
+    
 };

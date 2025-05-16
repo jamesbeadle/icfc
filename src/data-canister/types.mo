@@ -1,10 +1,11 @@
 import List "mo:base/List";
-import FootballIds "mo:waterway-mops/domain/football/Ids";
-import FootballEnums "mo:waterway-mops/domain/football/Enums";
-import FootballDefinitions "mo:waterway-mops/domain/football/Definitions";
-import Enums "mo:waterway-mops/base/Enums";
-import Ids "mo:waterway-mops/base/Ids";
-import Definitions "mo:waterway-mops/base/Definitions";
+
+import Definitions "mo:waterway-mops/base/definitions";
+import Enums "mo:waterway-mops/base/enums";
+import FootballIds "mo:waterway-mops/domain/football/ids";
+import FootballEnums "mo:waterway-mops/domain/football/enums";
+import FootballDefinitions "mo:waterway-mops/domain/football/definitions";
+import Ids "mo:waterway-mops/base/ids";
 
 module FootballTypes {
 
