@@ -1,18 +1,12 @@
+import Blob "mo:base/Blob";
 import Ids "mo:waterway-mops/Ids";
 import FootballIds "mo:waterway-mops/football/FootballIds";
-import FootballDefinitions "mo:waterway-mops/football/FootballDefinitions";
 import Enums "mo:waterway-mops/Enums";
+import FootballDefinitions "mo:waterway-mops/football/FootballDefinitions";
 import LeaderboardPayoutCommands "mo:waterway-mops/football/LeaderboardPayoutCommands";
-import Blob "mo:base/Blob";
-//import ckBTCLedger "canister:ckbtc_ledger"; // TODO Use for ckBTC sale Q3 2025
+//import ckBTCLedger "canister:ckbtc_ledger"; // TODO Use for ckBTC subscription
 
 module ICFCTypes {
-
-  public type FootballChannelId = Nat;
-  type Subaccount = Blob;
-  type Tokens = Nat;
-  type Timestamp = Nat64;
-  type BlockIndex = Nat;
 
   public type Profile = {
     principalId : Ids.PrincipalId;
@@ -25,14 +19,14 @@ module ICFCTypes {
     profilePicture : ?Blob;
     termsAgreed : Bool;
     appPrincipalIds : [(SubApp, Ids.PrincipalId)];
-    podcastIds : [Ids.PrincipalId];
+    subscribedChannelIds : [Ids.FootballChannelId];
     favouriteLeagueId : ?FootballIds.LeagueId;
     favouriteClubId : ?FootballIds.ClubId;
     nationalityId : ?Ids.CountryId;
   };
 
   public type FootballChannel = {
-    id : FootballChannelId;
+    id : Ids.FootballChannelId;
     name : Text;
     createdBy : Ids.PrincipalId;
     createdOn : Int;
@@ -87,36 +81,6 @@ module ICFCTypes {
 
   public type Manager = {
 
-  };
-
-  public type TransferError = {
-    #BadFee : { expected_fee : Tokens };
-    #BadBurn : { min_burn_amount : Tokens };
-    #InsufficientFunds : { balance : Tokens };
-    #TooOld;
-    #CreatedInFuture : { ledger_time : Timestamp };
-    #TemporarilyUnavailable;
-    #Duplicate : { duplicate_of : BlockIndex };
-    #GenericError : { error_code : Nat; message : Text };
-  };
-
-  public type TransferResult = {
-    #Ok : BlockIndex;
-    #Err : TransferError;
-  };
-
-  public type TransferArg = {
-    from_subaccount : ?Subaccount;
-    to : Account;
-    amount : Tokens;
-    fee : ?Tokens;
-    memo : ?Blob;
-    created_at_time : ?Timestamp;
-  };
-
-  public type Account = {
-    owner : Principal;
-    subaccount : ?Subaccount;
   };
 
   public type PayoutRequest = {

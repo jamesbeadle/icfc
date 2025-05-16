@@ -12,7 +12,6 @@
   
   import Toasts from "$lib/components/toasts/toasts.svelte";
   import FullScreenSpinner from "$lib/components/shared/global/full-screen-spinner.svelte";
-  import PortalHost from 'svelte-portal';
   import HeaderController from "$lib/components/shared/header/header-controller.svelte";
 
   interface Props { children: Snippet }
@@ -57,5 +56,4 @@
     {@render children()}
   </HeaderController>
   <Toasts />
-  <PortalHost />
 {/if}

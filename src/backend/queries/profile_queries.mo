@@ -9,7 +9,7 @@ module ProfileQueries {
         principalId : Ids.PrincipalId;
     };
 
-    public type ProfileDTO = {
+    public type Profile = {
         principalId : Ids.PrincipalId;
         username : Text;
         displayName : Text;
@@ -19,7 +19,7 @@ module ProfileQueries {
         profilePicture : ?Blob;
         termsAgreed : Bool;
         appPrincipalIds : [(T.SubApp, Ids.PrincipalId)];
-        podcastIds : [Ids.PrincipalId];
+        subscribedChannelIds : [Ids.FootballChannelId];
         membershipExpiryTime : Int;
         favouriteLeagueId : ?FootballIds.LeagueId;
         favouriteClubId : ?FootballIds.ClubId;

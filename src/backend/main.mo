@@ -34,6 +34,14 @@ import AppQueries "queries/app_queries";
 import ProfileQueries "queries/profile_queries";
 import PayoutQueries "queries/payout_queries";
 
+
+import AppQueries "../data_canister/queries/app_queries";
+import ClubQueries "../data_canister/queries/club_queries";
+import SeasonQueries "../data_canister/queries/season_queries";
+import PlayerQueries "../data_canister/queries/player_queries";
+import LeagueQueries "../data_canister/queries/league_queries";
+import FixtureQueries "../data_canister/queries/fixture_queries";
+
 /* ----- Commands ----- */
 import ProfileCommands "commands/profile_commands";
 import PayoutCommands "commands/payout_commands";
@@ -59,12 +67,12 @@ actor class Self() = this {
   private stable var stable_total_profile : Nat = 0;
   private stable var stable_neurons_used_for_membership : [(Blob, Ids.PrincipalId)] = [];
 
-  private stable var stable_podcast_channel_canister_index : [(Ids.FootballChannelId, Ids.CanisterId)] = [];
-  private stable var stable_active_podcast_channel_canister_id : Ids.CanisterId = "";
-  private stable var stable_podcast_channel_names : [(Ids.FootballChannelId, Text)] = [];
-  private stable var stable_unique_podcast_channel_canister_ids : [Ids.CanisterId] = [];
-  private stable var stable_total_podcast_channels : Nat = 0;
-  private stable var stable_next_podcast_channel_id : Nat = 0;
+  private stable var stable_channel_canister_index : [(Ids.FootballChannelId, Ids.CanisterId)] = [];
+  private stable var stable_active_channel_canister_id : Ids.CanisterId = "";
+  private stable var stable_channel_names : [(Ids.FootballChannelId, Text)] = [];
+  private stable var stable_unique_channel_canister_ids : [Ids.CanisterId] = [];
+  private stable var stable_total_channels : Nat = 0;
+  private stable var stable_next_channel_id : Nat = 0;
 
   private stable var stable_leaderboard_payout_requests : [AppTypes.PayoutRequest] = [];
 
@@ -439,12 +447,12 @@ actor class Self() = this {
   };
 
   private func backupFootballChannelData() {
-    stable_podcast_channel_canister_index := footballChannelManager.getStableCanisterIndex();
-    stable_active_podcast_channel_canister_id := footballChannelManager.getStableActiveCanisterId();
-    stable_podcast_channel_names := footballChannelManager.getStableFootballChannelNames();
-    stable_unique_podcast_channel_canister_ids := footballChannelManager.getStableUniqueCanisterIds();
-    stable_total_podcast_channels := footballChannelManager.getStableTotalFootballChannels();
-    stable_next_podcast_channel_id := footballChannelManager.getStableNextFootballChannelId();
+    stable_channel_canister_index := footballChannelManager.getStableCanisterIndex();
+    stable_active_channel_canister_id := footballChannelManager.getStableActiveCanisterId();
+    stable_channel_names := footballChannelManager.getStableFootballChannelNames();
+    stable_unique_channel_canister_ids := footballChannelManager.getStableUniqueCanisterIds();
+    stable_total_channels := footballChannelManager.getStableTotalFootballChannels();
+    stable_next_channel_id := footballChannelManager.getStableNextFootballChannelId();
 
   };
 
@@ -579,7 +587,140 @@ actor class Self() = this {
         return #err(err);
       };
     };
+  };
 
+  //transferred from football god
+
+
+
+  /* ----- Data Canister Calls -----  */
+
+  public shared ({ caller }) func getDataHashes(dto : AppQueries.GetDataHashes) : async Result.Result<AppQueries.DataHashes, Enums.Error> {
+    assert not Principal.isAnonymous(caller);
+    // DevOps 480: Check caller has associated neuron
+
+    let data_canister = actor (CanisterIds.ICFC_DATA_CANISTER_ID) : actor {
+      getDataHashes : (dto : AppQueries.GetDataHashes) -> async Result.Result<AppQueries.DataHashes, Enums.Error>;
+    };
+    return await data_canister.getDataHashes(dto);
+  };
+
+  public shared ({ caller }) func getClubs(dto : ClubQueries.GetClubs) : async Result.Result<ClubQueries.Clubs, Enums.Error> {
+    assert not Principal.isAnonymous(caller);
+    // DevOps 480: Check caller has associated neuron
+
+    let data_canister = actor (CanisterIds.ICFC_DATA_CANISTER_ID) : actor {
+      getClubs : (dto : ClubQueries.GetClubs) -> async Result.Result<ClubQueries.Clubs, Enums.Error>;
+    };
+    return await data_canister.getClubs(dto);
+  };
+
+  public shared ({ caller }) func getCountries(dto : BaseQueries.GetCountries) : async Result.Result<BaseQueries.Countries, Enums.Error> {
+    assert not Principal.isAnonymous(caller);
+    return #ok({
+      countries = Countries.countries;
+    });
+  };
+
+  public shared ({ caller }) func getSeasons(dto : SeasonQueries.GetSeasons) : async Result.Result<SeasonQueries.Seasons, Enums.Error> {
+    assert not Principal.isAnonymous(caller);
+    // DevOps 480: Check caller has associated neuron
+
+    let data_canister = actor (CanisterIds.ICFC_DATA_CANISTER_ID) : actor {
+      getSeasons : (dto : SeasonQueries.GetSeasons) -> async Result.Result<SeasonQueries.Seasons, Enums.Error>;
+    };
+    return await data_canister.getSeasons(dto);
+  };
+
+  public shared ({ caller }) func getLoanedPlayers(dto : PlayerQueries.GetLoanedPlayers) : async Result.Result<PlayerQueries.LoanedPlayers, Enums.Error> {
+    assert not Principal.isAnonymous(caller);
+    // DevOps 480: Check caller has associated neuron
+
+    let data_canister = actor (CanisterIds.ICFC_DATA_CANISTER_ID) : actor {
+      getLoanedPlayers : (dto : PlayerQueries.GetLoanedPlayers) -> async Result.Result<PlayerQueries.LoanedPlayers, Enums.Error>;
+    };
+    return await data_canister.getLoanedPlayers(dto);
+  };
+
+  public shared ({ caller }) func getPlayers(dto : PlayerQueries.GetPlayers) : async Result.Result<PlayerQueries.Players, Enums.Error> {
+    assert not Principal.isAnonymous(caller);
+    // DevOps 480: Check caller has associated neuron
+
+    let data_canister = actor (CanisterIds.ICFC_DATA_CANISTER_ID) : actor {
+      getPlayers : (dto : PlayerQueries.GetPlayers) -> async Result.Result<PlayerQueries.Players, Enums.Error>;
+    };
+    return await data_canister.getPlayers(dto);
+  };
+
+  public shared ({ caller }) func getLeagues(dto : LeagueQueries.GetLeagues) : async Result.Result<LeagueQueries.Leagues, Enums.Error> {
+    assert not Principal.isAnonymous(caller);
+    // DevOps 480: Check caller has associated neuron
+
+    let data_canister = actor (CanisterIds.ICFC_DATA_CANISTER_ID) : actor {
+      getLeagues : (dto : LeagueQueries.GetLeagues) -> async Result.Result<LeagueQueries.Leagues, Enums.Error>;
+    };
+    let result = await data_canister.getLeagues(dto);
+    return result;
+  };
+
+  public shared ({ caller }) func getLeagueStatus(dto : LeagueQueries.GetLeagueStatus) : async Result.Result<LeagueQueries.LeagueStatus, Enums.Error> {
+    assert not Principal.isAnonymous(caller);
+    // DevOps 480: Check caller has associated neuron
+
+    let data_canister = actor (CanisterIds.ICFC_DATA_CANISTER_ID) : actor {
+      getLeagueStatus : (dto : LeagueQueries.GetLeagueStatus) -> async Result.Result<LeagueQueries.LeagueStatus, Enums.Error>;
+    };
+    return await data_canister.getLeagueStatus(dto);
+  };
+
+  public shared ({ caller }) func getFixtures(dto : FixtureQueries.GetFixtures) : async Result.Result<FixtureQueries.Fixtures, Enums.Error> {
+    assert not Principal.isAnonymous(caller);
+    // DevOps 480: Check caller has associated neuron
+
+    let data_canister = actor (CanisterIds.ICFC_DATA_CANISTER_ID) : actor {
+      getFixtures : (dto : FixtureQueries.GetFixtures) -> async Result.Result<FixtureQueries.Fixtures, Enums.Error>;
+    };
+    return await data_canister.getFixtures(dto);
+  };
+
+  public shared ({ caller }) func getPostponedFixtures(dto : FixtureQueries.GetPostponedFixtures) : async Result.Result<FixtureQueries.PostponedFixtures, Enums.Error> {
+    assert not Principal.isAnonymous(caller);
+    // DevOps 480: Check caller has associated neuron
+
+    let data_canister = actor (CanisterIds.ICFC_DATA_CANISTER_ID) : actor {
+      getPostponedFixtures : (dto : FixtureQueries.GetPostponedFixtures) -> async Result.Result<FixtureQueries.PostponedFixtures, Enums.Error>;
+    };
+    return await data_canister.getPostponedFixtures(dto);
+  };
+
+  public shared ({ caller }) func getClubValueLeaderboard(dto : ClubQueries.GetClubValueLeaderboard) : async Result.Result<ClubQueries.ClubValueLeaderboard, Enums.Error> {
+    assert not Principal.isAnonymous(caller);
+    // DevOps 480: Check caller has associated neuron
+
+    let data_canister = actor (CanisterIds.ICFC_DATA_CANISTER_ID) : actor {
+      getClubValueLeaderboard : (dto : ClubQueries.GetClubValueLeaderboard) -> async Result.Result<ClubQueries.ClubValueLeaderboard, Enums.Error>;
+    };
+    return await data_canister.getClubValueLeaderboard(dto);
+  };
+
+  public shared ({ caller }) func getPlayerValueLeaderboard(dto : PlayerQueries.GetPlayerValueLeaderboard) : async Result.Result<PlayerQueries.PlayerValueLeaderboard, Enums.Error> {
+    assert not Principal.isAnonymous(caller);
+    // DevOps 480: Check caller has associated neuron
+
+    let data_canister = actor (CanisterIds.ICFC_DATA_CANISTER_ID) : actor {
+      getPlayerValueLeaderboard : (dto : PlayerQueries.GetPlayerValueLeaderboard) -> async Result.Result<PlayerQueries.PlayerValueLeaderboard, Enums.Error>;
+    };
+    return await data_canister.getPlayerValueLeaderboard(dto);
+  };
+
+  public shared ({ caller }) func getDataTotals(dto : AppQueries.GetDataTotals) : async Result.Result<AppQueries.DataTotals, Enums.Error> {
+    assert not Principal.isAnonymous(caller);
+    // DevOps 480: Check caller has associated neuron
+
+    let data_canister = actor (CanisterIds.ICFC_DATA_CANISTER_ID) : actor {
+      getDataTotals : (dto : AppQueries.GetDataTotals) -> async Result.Result<AppQueries.DataTotals, Enums.Error>;
+    };
+    return await data_canister.getDataTotals(dto);
   };
 
 };
