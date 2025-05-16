@@ -2,6 +2,7 @@ import Blob "mo:base/Blob";
 
 import AppIds "./Ids";
 import Ids "mo:waterway-mops/base/ids";
+import Enums "mo:waterway-mops/base/enums";
 import FootballIds "mo:waterway-mops/domain/football/ids";
 import FootballDefinitions "mo:waterway-mops/domain/football/definitions";
 //import ckBTCLedger "canister:ckbtc_ledger"; // TODO Use for ckBTC subscription
@@ -94,6 +95,9 @@ module ICFCTypes {
   };
 
   public type LeaderboardEntry = {
-      amount : Nat64;
+        appPrincipalId : Ids.PrincipalId;
+        rewardAmount : ?Nat64;
+        payoutStatus : Enums.PayoutStatus;
+        payoutDate : ?Int;
   };
 };

@@ -9,6 +9,7 @@ import Text "mo:base/Text";
 
 import Account "mo:waterway-mops/base/def/account";
 import Enums "mo:waterway-mops/base/enums";
+import ICRCTokenManager "mo:waterway-mops/product/wwl/payout-management/manager";
 import Ids "mo:waterway-mops/base/ids";
 import InterAppCallCommands "mo:waterway-mops/product/icfc/inter-app-call-commands";
 import Ledger "mo:waterway-mops/base/def/sns-wrappers/ledger";
@@ -22,6 +23,7 @@ import T "../types";
 module {
     public class LeaderboardPayoutManager() {
 
+        private let tokenManager = ICRCTokenManager.ICRCTokenManager();
         private var leaderboard_payout_requests : [ICFCTypes.PayoutRequest] = [];
 
         public func getLeaderboardPayoutRequests() : [ICFCTypes.PayoutRequest] {
@@ -39,7 +41,7 @@ module {
 
             switch (request) {
                 case (null) {
-                    leaderboard_payout_requests := Array.append(
+                    leaderboard_payout_requests := Array.append<ICFCTypes.PayoutRequest>(
                         leaderboard_payout_requests,
                         [{
                             seasonId = dto.seasonId;
@@ -200,31 +202,7 @@ module {
         };
 
         private func payoutUser(principal : Ids.PrincipalId, amount : Nat64, tokenledgerId : Text) : async Result.Result<(), Ledger.TransferError> {
-            let token_ledger : SNSLedger.Interface = actor (tokenledgerId);
-            let transfer_fee = await token_ledger.icrc1_fee();
-
-            let e8s_amount = amount;
-
-            let transfer_dto : T.TransferArg = {
-                from_subaccount = ?Account.defaultSubaccount();
-                to = {
-                    owner = Principal.fromText(principal);
-                    subaccount = ?Account.defaultSubaccount();
-                };
-                amount = Nat64.toNat(e8s_amount) - transfer_fee;
-                created_at_time = ?Nat64.fromNat(Int.abs(Time.now()));
-                memo = null;
-                fee = ?transfer_fee;
-            };
-            let res : T.TransferResult = await token_ledger.icrc1_transfer(transfer_dto);
-            switch (res) {
-                case (#Ok(_)) {
-                    return #ok();
-                };
-                case (#Err(err)) {
-                    return #err(err);
-                };
-            };
+            let _ = await tokenManager.payoutUser(principal, amount, tokenledgerId);
         };
 
         private func hasValidSubscription(profile : ?PayoutQueries.ICFCLinks) : Bool{
