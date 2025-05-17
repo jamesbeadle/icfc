@@ -86,27 +86,9 @@ module {
             };
         };
 
-        public func getICFCProfileSummary(dto : ProfileCommands.GetICFCProfile) : async Result.Result<ProfileQueries.ICFCProfileSummary, Enums.Error> {
-            let existingProfileCanisterId = profileCanisterIndex.get(dto.principalId);
-            switch (existingProfileCanisterId) {
-                case (?foundCanisterId) {
-
-                    let profile_canister = actor (foundCanisterId) : actor {
-                        getProfileSummary : (dto : ProfileCommands.GetICFCProfile) -> async Result.Result<ProfileQueries.ICFCProfileSummary, Enums.Error>;
-                    };
-
-                    let profile = await profile_canister.getProfileSummary(dto);
-                    return profile;
-                };
-                case (null) {
-                    return #err(#NotFound);
-                };
-            };
-        };
-
         // Update Functions
-        
-        public func createProfile(principalId : Ids.PrincipalId, dto : ProfileCommands.CreateProfile, membership : T.EligibleMembership) : async Result.Result<(), Enums.Error> {
+
+        public func createProfile(principalId : Ids.PrincipalId, dto : ProfileCommands.CreateProfile) : async Result.Result<(), Enums.Error> {
 
             if (Text.size(dto.username) < 5 or Text.size(dto.username) > 20) {
                 return #err(#InvalidProperty);
@@ -115,15 +97,6 @@ module {
             let invalidUsername = isUsernameTaken(dto.username, principalId);
             if (invalidUsername) {
                 return #err(#AlreadyExists);
-            };
-
-            if (membership.membershipType == #NotEligible) {
-                return #err(#InEligible);
-            };
-
-            let isNeuronsValid = validNeurons(membership.eligibleNeuronIds, principalId);
-            if (not isNeuronsValid) {
-                return #err(#InEligible);
             };
 
             let existingProfileCanisterId = profileCanisterIndex.get(principalId);
@@ -138,7 +111,7 @@ module {
 
                     var profile_canister = actor (activeCanisterId) : actor {
                         isCanisterFull : () -> async Bool;
-                        createProfile : (principalId : Ids.PrincipalId, dto : ProfileCommands.CreateProfile, membership : T.EligibleMembership) -> async Result.Result<(), Enums.Error>;
+                        createProfile : (principalId : Ids.PrincipalId, dto : ProfileCommands.CreateProfile) -> async Result.Result<(), Enums.Error>;
                     };
 
                     let isCanisterFull = await profile_canister.isCanisterFull();
@@ -147,19 +120,16 @@ module {
                         await createNewCanister();
                         profile_canister := actor (activeCanisterId) : actor {
                             isCanisterFull : () -> async Bool;
-                            createProfile : (principalId : Ids.PrincipalId, dto : ProfileCommands.CreateProfile, membership : T.EligibleMembership) -> async Result.Result<(), Enums.Error>;
+                            createProfile : (principalId : Ids.PrincipalId, dto : ProfileCommands.CreateProfile) -> async Result.Result<(), Enums.Error>;
                         };
                     };
 
-                    let res = await profile_canister.createProfile(principalId, dto, membership);
+                    let res = await profile_canister.createProfile(principalId, dto);
                     switch (res) {
                         case (#ok(_)) {
                             profileCanisterIndex.put((principalId, activeCanisterId));
                             usernames.put(principalId, dto.username);
                             totalProfiles += 1;
-                            for (neuron in membership.eligibleNeuronIds.vals()) {
-                                neuronsUsedforMembership.put(neuron, principalId);
-                            };
                             return #ok;
                         };
 
@@ -192,7 +162,7 @@ module {
                                 icfcPrincipalId = principalId;
                                 subApp = subAppRecord.subApp;
                                 subAppUserPrincipalId = subAppRecord.subAppUserPrincipalId;
-                                membershipType = profile.membershipType;
+                                subscriptionType = profile.subscriptionType;
                             };
                             let res = await notifyAppsofLink(dto);
                             return res;
@@ -300,7 +270,7 @@ module {
                                         let profile : ProfileQueries.Profile = existingProfile;
                                         for ((subApp, subAppPrincipal) in profile.appPrincipalIds.vals()) {
                                             let _ = notifyAppsofProfileUpdate({
-                                                membershipType = profile.membershipType;
+                                                subscriptionType = profile.subscriptionType;
                                                 subApp = subApp;
                                                 subAppUserPrincipalId = subAppPrincipal;
                                             });
@@ -349,7 +319,7 @@ module {
                                     let profile : ProfileQueries.Profile = existingProfile;
                                     for ((subApp, subAppPrincipal) in profile.appPrincipalIds.vals()) {
                                         let _ = notifyAppsofProfileUpdate({
-                                            membershipType = profile.membershipType;
+                                            subscriptionType = profile.subscriptionType;
                                             subApp = subApp;
                                             subAppUserPrincipalId = subAppPrincipal;
                                         });
@@ -428,7 +398,7 @@ module {
                                     let profile : ProfileQueries.Profile = existingProfile;
                                     for ((subApp, subAppPrincipal) in profile.appPrincipalIds.vals()) {
                                         let _ = notifyAppsofProfileUpdate({
-                                            membershipType = profile.membershipType;
+                                            subscriptionType = profile.subscriptionType;
                                             subApp = subApp;
                                             subAppUserPrincipalId = subAppPrincipal;
                                         });

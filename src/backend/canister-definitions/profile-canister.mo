@@ -11,6 +11,7 @@ import CanisterIds "mo:waterway-mops/product/wwl/canister-ids";
 import CanisterManager "mo:waterway-mops/product/wwl/canister-management/manager";
 import Enums "mo:waterway-mops/base/enums";
 import Ids "mo:waterway-mops/base/ids";
+import Constants "mo:waterway-mops/product/wwl/constants";
 
 import ProfileQueries "../queries/profile-queries";
 import ProfileCommands "../commands/profile-commands";
@@ -63,8 +64,8 @@ actor class _ProfileCanister() {
                 switch (profile) {
                     case (?foundProfile) {
 
-                        let recent_5_membership_claims = List.take<T.MembershipClaim>(List.reverse(List.fromArray(foundProfile.membershipClaims)), 5);
-                        let membershipArray = List.toArray(recent_5_membership_claims);
+                        let recent_5_subscriptions = List.take<T.Subscription>(List.reverse(List.fromArray(foundProfile.subscriptions)), 5);
+                        let subscriptionsArray = List.toArray(recent_5_subscriptions);
 
                         let dto : ProfileQueries.Profile = {
                             principalId = foundProfile.principalId;
@@ -74,10 +75,10 @@ actor class _ProfileCanister() {
                             termsAgreed = foundProfile.termsAgreed;
                             appPrincipalIds = foundProfile.appPrincipalIds;
                             subscribedChannelIds = foundProfile.subscribedChannelIds;
-                            membershipType = foundProfile.membershipType;
-                            membershipClaims = membershipArray;
+                            subscriptionType = foundProfile.subscriptionType;
+                            subscriptions = subscriptionsArray;
                             createdOn = foundProfile.createdOn;
-                            membershipExpiryTime = foundProfile.membershipExpiryTime;
+                            subscriptionExpiryTime = foundProfile.subscriptionExpiryTime;
                             favouriteLeagueId = foundProfile.favouriteLeagueId;
                             favouriteClubId = foundProfile.favouriteClubId;
                             nationalityId = foundProfile.nationalityId;
@@ -95,7 +96,7 @@ actor class _ProfileCanister() {
 
     /* ----- Profile Commands ----- */
 
-    public shared ({ caller }) func createProfile(profilePrincipalId : Ids.PrincipalId, dto : ProfileCommands.CreateProfile, membership : T.EligibleMembership) : async Result.Result<(), Enums.Error> {
+    public shared ({ caller }) func createProfile(profilePrincipalId : Ids.PrincipalId, dto : ProfileCommands.CreateProfile) : async Result.Result<(), Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
         assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
@@ -121,14 +122,14 @@ actor class _ProfileCanister() {
             termsAgreed = false;
             appPrincipalIds = [];
             subscribedChannelIds = [];
-            membershipType = membership.membershipType;
-            membershipClaims = [{
+            subscriptionType = subscription.subscriptionType;
+            subscriptions = [{
                 purchasedOn = Time.now();
-                expiresOn = ?Utilities.getMembershipExpirationDate(membership.membershipType);
-                membershipType = membership.membershipType;
+                expiresOn = ?Utilities.getSubscriptionExpirationDate(subscription.subscriptionType);
+                subscriptionType = subscription.subscriptionType;
             }];
             createdOn = Time.now();
-            membershipExpiryTime = Utilities.getMembershipExpirationDate(membership.membershipType);
+            subscriptionExpiryTime = Utilities.getSubscriptionExpirationDate(subscription.subscriptionType);
             favouriteLeagueId = dto.favouriteLeagueId;
             favouriteClubId = dto.favouriteClubId;
             nationalityId = dto.nationalityId;
@@ -161,14 +162,14 @@ actor class _ProfileCanister() {
                             principalId = foundProfile.principalId;
                             username = dto.username;
                             displayName = foundProfile.displayName;
-                            membershipType = foundProfile.membershipType;
-                            membershipClaims = foundProfile.membershipClaims;
+                            subscriptionType = foundProfile.subscriptionType;
+                            subscriptions = foundProfile.subscriptions;
                             createdOn = foundProfile.createdOn;
                             profilePicture = foundProfile.profilePicture;
                             termsAgreed = foundProfile.termsAgreed;
                             appPrincipalIds = foundProfile.appPrincipalIds;
                             subscribedChannelIds = foundProfile.subscribedChannelIds;
-                            membershipExpiryTime = foundProfile.membershipExpiryTime;
+                            subscriptionExpiryTime = foundProfile.subscriptionExpiryTime;
                             favouriteLeagueId = foundProfile.favouriteLeagueId;
                             favouriteClubId = foundProfile.favouriteClubId;
                             nationalityId = foundProfile.nationalityId;
@@ -204,14 +205,14 @@ actor class _ProfileCanister() {
                             principalId = foundProfile.principalId;
                             username = foundProfile.username;
                             displayName = foundProfile.displayName;
-                            membershipType = foundProfile.membershipType;
-                            membershipClaims = foundProfile.membershipClaims;
+                            subscriptionType = foundProfile.subscriptionType;
+                            subscriptions = foundProfile.subscriptions;
                             createdOn = foundProfile.createdOn;
                             profilePicture = dto.profilePicture;
                             termsAgreed = foundProfile.termsAgreed;
                             appPrincipalIds = foundProfile.appPrincipalIds;
                             subscribedChannelIds = foundProfile.subscribedChannelIds;
-                            membershipExpiryTime = foundProfile.membershipExpiryTime;
+                            subscriptionExpiryTime = foundProfile.subscriptionExpiryTime;
                             favouriteLeagueId = foundProfile.favouriteLeagueId;
                             favouriteClubId = foundProfile.favouriteClubId;
                             nationalityId = foundProfile.nationalityId;
@@ -247,14 +248,14 @@ actor class _ProfileCanister() {
                             principalId = foundProfile.principalId;
                             username = foundProfile.username;
                             displayName = dto.displayName;
-                            membershipType = foundProfile.membershipType;
-                            membershipClaims = foundProfile.membershipClaims;
+                            subscriptionType = foundProfile.subscriptionType;
+                            subscriptions = foundProfile.subscriptions;
                             createdOn = foundProfile.createdOn;
                             profilePicture = foundProfile.profilePicture;
                             termsAgreed = foundProfile.termsAgreed;
                             appPrincipalIds = foundProfile.appPrincipalIds;
                             subscribedChannelIds = foundProfile.subscribedChannelIds;
-                            membershipExpiryTime = foundProfile.membershipExpiryTime;
+                            subscriptionExpiryTime = foundProfile.subscriptionExpiryTime;
                             favouriteLeagueId = foundProfile.favouriteLeagueId;
                             favouriteClubId = foundProfile.favouriteClubId;
                             nationalityId = foundProfile.nationalityId;
@@ -290,14 +291,14 @@ actor class _ProfileCanister() {
                             principalId = foundProfile.principalId;
                             username = foundProfile.username;
                             displayName = foundProfile.displayName;
-                            membershipType = foundProfile.membershipType;
-                            membershipClaims = foundProfile.membershipClaims;
+                            subscriptionType = foundProfile.subscriptionType;
+                            subscriptions = foundProfile.subscriptions;
                             createdOn = foundProfile.createdOn;
                             profilePicture = foundProfile.profilePicture;
                             termsAgreed = foundProfile.termsAgreed;
                             appPrincipalIds = foundProfile.appPrincipalIds;
                             subscribedChannelIds = foundProfile.subscribedChannelIds;
-                            membershipExpiryTime = foundProfile.membershipExpiryTime;
+                            subscriptionExpiryTime = foundProfile.subscriptionExpiryTime;
                             favouriteLeagueId = foundProfile.favouriteLeagueId;
                             favouriteClubId = foundProfile.favouriteClubId;
                             nationalityId = ?dto.nationalityId;
@@ -333,14 +334,14 @@ actor class _ProfileCanister() {
                             principalId = foundProfile.principalId;
                             username = foundProfile.username;
                             displayName = foundProfile.displayName;
-                            membershipType = foundProfile.membershipType;
-                            membershipClaims = foundProfile.membershipClaims;
+                            subscriptionType = foundProfile.subscriptionType;
+                            subscriptions = foundProfile.subscriptions;
                             createdOn = foundProfile.createdOn;
                             profilePicture = foundProfile.profilePicture;
                             termsAgreed = foundProfile.termsAgreed;
                             appPrincipalIds = foundProfile.appPrincipalIds;
                             subscribedChannelIds = foundProfile.subscribedChannelIds;
-                            membershipExpiryTime = foundProfile.membershipExpiryTime;
+                            subscriptionExpiryTime = foundProfile.subscriptionExpiryTime;
                             favouriteLeagueId = ?dto.favouriteLeagueId;
                             favouriteClubId = ?dto.favouriteClubId;
                             nationalityId = foundProfile.nationalityId;
@@ -356,15 +357,9 @@ actor class _ProfileCanister() {
     };
 
 
+    /* ----- Subscription Queries ----- */
 
-
-
-
-
-
-    //why 2 profiles
-
-    public shared ({ caller }) func getProfileSummary(dto : ProfileQueries.GetProfile) : async Result.Result<ProfileQueries.ICFCProfileSummary, Enums.Error> {
+    public shared ({ caller }) func getSubscriptionHistory(dto : ProfileQueries.GetSubscriptionHistory) : async Result.Result<ProfileQueries.SubscriptionHistory, Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
         assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
@@ -381,21 +376,82 @@ actor class _ProfileCanister() {
                 let profile = findProfile(foundGroupIndex, dto.principalId);
                 switch (profile) {
                     case (?foundProfile) {
-                        let dto : ProfileQueries.ICFCProfileSummary = {
+                        let allSubscriptions = List.fromArray(foundProfile.subscriptions);
+                        let droppedEntries = List.drop<T.Subscription>(allSubscriptions, dto.offset);
+                        let paginatedEntires = List.take<T.Subscription>(droppedEntries, Constants.DEFAULT_PAGINATION_COUNT);
+
+                        let subscriptions : ProfileQueries.Subscriptions = {
+                            subscriptions = List.toArray(paginatedEntires);
+                        };
+                        return #ok(subscriptions);
+                    };
+                    case (null) {
+                        return #err(#NotFound);
+                    };
+                };
+            };
+        };
+    };
+
+    /* ----- Subscription Commands ----- */ 
+
+    public shared ({ caller }) func subscribe(principalId : Ids.PrincipalId, dto : ProfileCommands.Subscribe) : async Result.Result<(T.Subscription), Enums.Error> {
+        assert not Principal.isAnonymous(caller);
+        let backendPrincipalId = Principal.toText(caller);
+        assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
+
+        var groupIndex : ?Nat8 = null;
+        for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
+            if (profileGroupIndex.0 == principalId) {
+                groupIndex := ?profileGroupIndex.1;
+            };
+        };
+
+        switch (groupIndex) {
+            case (null) { return #err(#NotFound) };
+            case (?foundGroupIndex) {
+                let profile = findProfile(foundGroupIndex, principalId);
+                switch (profile) {
+                    case (?foundProfile) {
+                        let subscriptionsBuffer = Buffer.fromArray<T.Subscription>(foundProfile.subscriptions);
+                        let newSubscription : T.Subscription = {
+                            subscriptionType = dto.subscriptionType;
+                            purchasedOn = Time.now();
+                            expiresOn = ?Utilities.getSubscriptionExpirationDate(dto.subscriptionType);
+                        };
+                        subscriptionsBuffer.add(newSubscription);
+                        let updatedSubscriptions = Buffer.toArray(subscriptionsBuffer);
+
+                        let updatedProfile : T.Profile = {
                             principalId = foundProfile.principalId;
                             username = foundProfile.username;
-                            profilePicture = foundProfile.profilePicture;
                             displayName = foundProfile.displayName;
-                            termsAgreed = foundProfile.termsAgreed;
-                            membershipType = foundProfile.membershipType;
+                            subscriptionType = dto.subscriptionType;
+                            subscriptions = updatedSubscriptions;
                             createdOn = foundProfile.createdOn;
-                            membershipExpiryTime = foundProfile.membershipExpiryTime;
+                            profilePicture = foundProfile.profilePicture;
+                            termsAgreed = foundProfile.termsAgreed;
+                            appPrincipalIds = foundProfile.appPrincipalIds;
+                            subscribedChannelIds = foundProfile.subscribedChannelIds;
+                            subscriptionExpiryTime = switch (newSubscription.expiresOn) {
+                                case (?expiryTime) {
+                                    expiryTime;
+                                };
+                                case (null) {
+                                    0;
+                                };
+                            };
                             favouriteLeagueId = foundProfile.favouriteLeagueId;
                             favouriteClubId = foundProfile.favouriteClubId;
                             nationalityId = foundProfile.nationalityId;
-                            membershipClaims = foundProfile.membershipClaims;
                         };
-                        return #ok(dto);
+
+                        let res = await saveProfile(foundGroupIndex, updatedProfile);
+                        switch (res) {
+                            case (#err(error)) { return #err(error) };
+                            case (#ok) { return #ok(newClaim) };
+                        };
+
                     };
                     case (null) {
                         return #err(#NotFound);
@@ -406,45 +462,8 @@ actor class _ProfileCanister() {
     };
 
 
-    //converrt
-    //get subscription history:
+    /* ----- ICFC Ecosystem App Linking Commands ----- */
 
-    public shared ({ caller }) func getClaimedMembership(dto : ProfileQueries.GetClaimedMemberships) : async Result.Result<ProfileQueries.ClaimedMembershipsDTO, Enums.Error> {
-        assert not Principal.isAnonymous(caller);
-        let backendPrincipalId = Principal.toText(caller);
-        assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
-
-        var groupIndex : ?Nat8 = null;
-        for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
-            if (profileGroupIndex.0 == dto.principalId) {
-                groupIndex := ?profileGroupIndex.1;
-            };
-        };
-        switch (groupIndex) {
-            case (null) { return #err(#NotFound) };
-            case (?foundGroupIndex) {
-                let profile = findProfile(foundGroupIndex, dto.principalId);
-                switch (profile) {
-                    case (?foundProfile) {
-                        let allMembershipClaims = List.fromArray(foundProfile.membershipClaims);
-                        let droppedEntries = List.drop<T.MembershipClaim>(allMembershipClaims, dto.offset);
-                        let paginatedEntires = List.take<T.MembershipClaim>(droppedEntries, MEMBERSHIPS_ROW_COUNT_LIMIT);
-
-                        let claimedMembershipsDTO : ProfileQueries.ClaimedMembershipsDTO = {
-                            claimedMemberships = List.toArray(paginatedEntires);
-                        };
-                        return #ok(claimedMembershipsDTO);
-                    };
-                    case (null) {
-                        return #err(#NotFound);
-                    };
-                };
-            };
-        };
-    };
-
-
-    //this linking is valid? profile linking commands? who calls these? users?
     public shared ({ caller }) func updateAppPrincipalIds(principalId : Ids.PrincipalId, dto : ProfileCommands.AddSubApp) : async Result.Result<(), Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
@@ -498,14 +517,14 @@ actor class _ProfileCanister() {
                             principalId = foundProfile.principalId;
                             username = foundProfile.username;
                             displayName = foundProfile.displayName;
-                            membershipType = foundProfile.membershipType;
-                            membershipClaims = foundProfile.membershipClaims;
+                            subscriptionType = foundProfile.subscriptionType;
+                            subscriptions = foundProfile.subscriptions;
                             createdOn = foundProfile.createdOn;
                             profilePicture = foundProfile.profilePicture;
                             termsAgreed = foundProfile.termsAgreed;
                             appPrincipalIds = Buffer.toArray(appPrincipalIdsBuffer);
                             subscribedChannelIds = foundProfile.subscribedChannelIds;
-                            membershipExpiryTime = foundProfile.membershipExpiryTime;
+                            subscriptionExpiryTime = foundProfile.subscriptionExpiryTime;
                             favouriteLeagueId = foundProfile.favouriteLeagueId;
                             favouriteClubId = foundProfile.favouriteClubId;
                             nationalityId = foundProfile.nationalityId;
@@ -549,14 +568,14 @@ actor class _ProfileCanister() {
                             principalId = foundProfile.principalId;
                             username = foundProfile.username;
                             displayName = foundProfile.displayName;
-                            membershipType = foundProfile.membershipType;
-                            membershipClaims = foundProfile.membershipClaims;
+                            subscriptionType = foundProfile.subscriptionType;
+                            subscriptions = foundProfile.subscriptions;
                             createdOn = foundProfile.createdOn;
                             profilePicture = foundProfile.profilePicture;
                             termsAgreed = foundProfile.termsAgreed;
                             appPrincipalIds = updatedAppPrincipalIds;
                             subscribedChannelIds = foundProfile.subscribedChannelIds;
-                            membershipExpiryTime = foundProfile.membershipExpiryTime;
+                            subscriptionExpiryTime = foundProfile.subscriptionExpiryTime;
                             favouriteLeagueId = foundProfile.favouriteLeagueId;
                             favouriteClubId = foundProfile.favouriteClubId;
                             nationalityId = foundProfile.nationalityId;
@@ -571,84 +590,6 @@ actor class _ProfileCanister() {
         };
     };
     
-    //is this not renew subscription? make it just add a year to the time and can be at any point
-    //provided membership time is < 3 months
-    public shared ({ caller }) func updateMembership(principalId : Ids.PrincipalId, dto : ProfileCommands.UpdateMembership) : async Result.Result<(T.MembershipClaim), Enums.Error> {
-        assert not Principal.isAnonymous(caller);
-        let backendPrincipalId = Principal.toText(caller);
-        assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
-
-        var groupIndex : ?Nat8 = null;
-        for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
-            if (profileGroupIndex.0 == principalId) {
-                groupIndex := ?profileGroupIndex.1;
-            };
-        };
-
-        switch (groupIndex) {
-            case (null) { return #err(#NotFound) };
-            case (?foundGroupIndex) {
-                let profile = findProfile(foundGroupIndex, principalId);
-                switch (profile) {
-                    case (?foundProfile) {
-                        let membershipClaimsBuffer = Buffer.fromArray<T.MembershipClaim>(foundProfile.membershipClaims);
-                        let newClaim : T.MembershipClaim = {
-                            membershipType = dto.membershipType;
-                            purchasedOn = Time.now();
-                            expiresOn = ?Utilities.getMembershipExpirationDate(dto.membershipType);
-                        };
-                        membershipClaimsBuffer.add(newClaim);
-                        let updatedMembershipClaims = Buffer.toArray(membershipClaimsBuffer);
-
-                        let updatedProfile : T.Profile = {
-                            principalId = foundProfile.principalId;
-                            username = foundProfile.username;
-                            displayName = foundProfile.displayName;
-                            membershipType = dto.membershipType;
-                            membershipClaims = updatedMembershipClaims;
-                            createdOn = foundProfile.createdOn;
-                            profilePicture = foundProfile.profilePicture;
-                            termsAgreed = foundProfile.termsAgreed;
-                            appPrincipalIds = foundProfile.appPrincipalIds;
-                            subscribedChannelIds = foundProfile.subscribedChannelIds;
-                            membershipExpiryTime = switch (newClaim.expiresOn) {
-                                case (?expiryTime) {
-                                    expiryTime;
-                                };
-                                case (null) {
-                                    0;
-                                };
-                            };
-                            favouriteLeagueId = foundProfile.favouriteLeagueId;
-                            favouriteClubId = foundProfile.favouriteClubId;
-                            nationalityId = foundProfile.nationalityId;
-                        };
-
-                        let res = await saveProfile(foundGroupIndex, updatedProfile);
-                        switch (res) {
-                            case (#err(error)) { return #err(error) };
-                            case (#ok) { return #ok(newClaim) };
-                        };
-
-                    };
-                    case (null) {
-                        return #err(#NotFound);
-                    };
-                };
-            };
-        };
-    };
-
-
-
-
-
-    
-
-
-
-
-
 
     /* ----- Private Functions ----- */
 
@@ -1062,35 +1003,22 @@ actor class _ProfileCanister() {
                             principalId = foundProfile.principalId;
                             username = foundProfile.username;
                             displayName = foundProfile.displayName;
-                            membershipType = #Expired;
-                            membershipClaims = foundProfile.membershipClaims;
+                            subscriptionType = #Expired;
+                            subscriptions = foundProfile.subscriptions;
                             createdOn = foundProfile.createdOn;
                             profilePicture = foundProfile.profilePicture;
                             termsAgreed = foundProfile.termsAgreed;
                             appPrincipalIds = foundProfile.appPrincipalIds;
                             subscribedChannelIds = foundProfile.subscribedChannelIds;
-                            membershipExpiryTime = 0;
+                            subscriptionExpiryTime = 0;
                             favouriteLeagueId = foundProfile.favouriteLeagueId;
                             favouriteClubId = foundProfile.favouriteClubId;
                             nationalityId = foundProfile.nationalityId;
                         };
 
-                        let res = await saveProfile(foundGroupIndex, updatedProfile);
-                        switch (res) {
-                            case (#err(_)) { return };
-                            case (#ok) {
-
-                                var backend = actor (CanisterIds.ICFC_BACKEND_CANISTER_ID) : actor {
-                                    removeNeuronsforExpiredMembership : shared query Ids.PrincipalId -> async ();
-                                };
-
-                                await backend.removeNeuronsforExpiredMembership(principalId);
-                            };
-                        };
+                        let _ = await saveProfile(foundGroupIndex, updatedProfile);
                     };
-                    case (null) {
-                        return;
-                    };
+                    case (null) {};
                 };
             };
         };
@@ -1117,7 +1045,7 @@ actor class _ProfileCanister() {
         return (totalProfiles >= MAX_PROFILES_PER_CANISTER);
     };
 
-    public shared ({ caller }) func checkAndExpireMembership() : async () {
+    public shared ({ caller }) func checkAndExpireSubscription() : async () {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
         assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
@@ -1126,85 +1054,85 @@ actor class _ProfileCanister() {
             switch (index) {
                 case 0 {
                     for (profile in Iter.fromArray(profileGroup1)) {
-                        if (profile.membershipExpiryTime < Time.now()) {
-                            let _ = expireMembership(profile.principalId);
+                        if (profile.subscriptionExpiryTime < Time.now()) {
+                            let _ = expireSubscription(profile.principalId);
                         };
                     };
                 };
                 case 1 {
                     for (profile in Iter.fromArray(profileGroup2)) {
-                        if (profile.membershipExpiryTime < Time.now()) {
-                            let _ = expireMembership(profile.principalId);
+                        if (profile.subscriptionExpiryTime < Time.now()) {
+                            let _ = expireSubscription(profile.principalId);
                         };
                     };
                 };
                 case 2 {
                     for (profile in Iter.fromArray(profileGroup3)) {
-                        if (profile.membershipExpiryTime < Time.now()) {
-                            let _ = expireMembership(profile.principalId);
+                        if (profile.subscriptionExpiryTime < Time.now()) {
+                            let _ = expireSubscription(profile.principalId);
                         };
                     };
                 };
                 case 3 {
                     for (profile in Iter.fromArray(profileGroup4)) {
-                        if (profile.membershipExpiryTime < Time.now()) {
-                            let _ = expireMembership(profile.principalId);
+                        if (profile.subscriptionExpiryTime < Time.now()) {
+                            let _ = expireSubscription(profile.principalId);
                         };
                     };
                 };
                 case 4 {
                     for (profile in Iter.fromArray(profileGroup5)) {
-                        if (profile.membershipExpiryTime < Time.now()) {
-                            let _ = expireMembership(profile.principalId);
+                        if (profile.subscriptionExpiryTime < Time.now()) {
+                            let _ = expireSubscription(profile.principalId);
                         };
                     };
                 };
                 case 5 {
                     for (profile in Iter.fromArray(profileGroup6)) {
-                        if (profile.membershipExpiryTime < Time.now()) {
-                            let _ = expireMembership(profile.principalId);
+                        if (profile.subscriptionExpiryTime < Time.now()) {
+                            let _ = expireSubscription(profile.principalId);
                         };
                     };
                 };
                 case 6 {
                     for (profile in Iter.fromArray(profileGroup7)) {
-                        if (profile.membershipExpiryTime < Time.now()) {
-                            let _ = expireMembership(profile.principalId);
+                        if (profile.subscriptionExpiryTime < Time.now()) {
+                            let _ = expireSubscription(profile.principalId);
                         };
                     };
                 };
                 case 7 {
                     for (profile in Iter.fromArray(profileGroup8)) {
-                        if (profile.membershipExpiryTime < Time.now()) {
-                            let _ = expireMembership(profile.principalId);
+                        if (profile.subscriptionExpiryTime < Time.now()) {
+                            let _ = expireSubscription(profile.principalId);
                         };
                     };
                 };
                 case 8 {
                     for (profile in Iter.fromArray(profileGroup9)) {
-                        if (profile.membershipExpiryTime < Time.now()) {
-                            let _ = expireMembership(profile.principalId);
+                        if (profile.subscriptionExpiryTime < Time.now()) {
+                            let _ = expireSubscription(profile.principalId);
                         };
                     };
                 };
                 case 9 {
                     for (profile in Iter.fromArray(profileGroup10)) {
-                        if (profile.membershipExpiryTime < Time.now()) {
-                            let _ = expireMembership(profile.principalId);
+                        if (profile.subscriptionExpiryTime < Time.now()) {
+                            let _ = expireSubscription(profile.principalId);
                         };
                     };
                 };
                 case 10 {
                     for (profile in Iter.fromArray(profileGroup11)) {
-                        if (profile.membershipExpiryTime < Time.now()) {
-                            let _ = expireMembership(profile.principalId);
+                        if (profile.subscriptionExpiryTime < Time.now()) {
+                            let _ = expireSubscription(profile.principalId);
                         };
                     };
                 };
                 case 11 {
                     for (profile in Iter.fromArray(profileGroup12)) {
-                        if (profile.membershipExpiryTime < Time.now()) {
-                            let _ = expireMembership(profile.principalId);
+                        if (profile.subscriptionExpiryTime < Time.now()) {
+                            let _ = expireSubscription(profile.principalId);
                         };
                     };
                 };

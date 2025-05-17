@@ -91,11 +91,8 @@ actor Self {
   
   private stable var dataTotals : FootballTypes.DataTotals = {
     totalClubs = 0;
-    totalGovernanceRewards = 0;
     totalLeagues = 0;
-    totalNeurons = 0;
     totalPlayers = 0;
-    totalProposals = 0;
   };
 
   /* DO NOT USE BaseTypes dot on lines ahead of this one. */
@@ -5363,9 +5360,6 @@ actor Self {
     var totalLeagues = Array.size(leagues);
     var totalClubs = 0;
     var totalPlayers = 0;
-    var totalGovernanceRewards = 0; // DevOps 476
-    var totalProposals = 0; // DevOps 476
-    var totalNeurons = 0; // DevOps 476
 
     for (league in Iter.fromArray(leagueClubs)) {
       for (club in Iter.fromArray(league.1)) {
@@ -5381,11 +5375,8 @@ actor Self {
 
     dataTotals := {
       totalClubs;
-      totalGovernanceRewards;
       totalLeagues;
-      totalNeurons;
       totalPlayers;
-      totalProposals;
     };
 
     let log : LogCommands.AddApplicationLog = {

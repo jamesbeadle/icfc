@@ -38,10 +38,6 @@ module ProfileCommands {
         confirm : Bool;
     };
 
-    public type UpdateMembership = {
-        membershipType : ICFCEnums.MembershipType;
-    };
-
     public type AddSubApp = {
         subAppUserPrincipalId : Ids.PrincipalId;
         subApp : ICFCEnums.SubApp;
@@ -62,7 +58,7 @@ module ProfileCommands {
     };
 
     public type NotifyAppofLink = {
-        membershipType : ICFCEnums.MembershipType;
+        subscriptionType : ICFCEnums.SubscriptionType;
         subAppUserPrincipalId : Ids.PrincipalId;
         subApp : ICFCEnums.SubApp;
         icfcPrincipalId : Ids.PrincipalId;
@@ -76,36 +72,13 @@ module ProfileCommands {
     public type UpdateICFCProfile = {
         subAppUserPrincipalId : Ids.PrincipalId;
         subApp : ICFCEnums.SubApp;
-        membershipType : ICFCEnums.MembershipType;
+        subscriptionType : ICFCEnums.SubscriptionType;
     };
 
-    public type MembershipClaim = {
-        membershipType : ICFCEnums.MembershipType;
+    public type Subscription = {
+        subscriptionType : ICFCEnums.SubscriptionType;
         purchasedOn : Int;
         expiresOn : ?Int;
-    };
-    
-    public type SubApp = {
-        #OpenFPL;
-        #OpenWSL;
-        #JeffBets;
-        #TransferKings;
-        #FootballGod;
-    };
-
-    public type MembershipType = {
-        #Monthly;
-        #Seasonal;
-        #Lifetime;
-        #Founding;
-        #Expired;
-        #NotClaimed;
-        #NotEligible;
-    };
-
-    public type EligibleMembership = {
-        membershipType : MembershipType;
-        eligibleNeuronIds : [Blob];
     };
 
 };

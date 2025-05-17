@@ -218,36 +218,30 @@ module {
             return false; // TODO
         };
 
-        /*
-
-            Moving away from membership based ICRC SNS token to subscription based ckBTC - So this code can be removed for now.
-
-            private func isValidICFCProfile(profile : ?PayoutQueries.ICFCLinks) : Bool {
-                switch (profile) {
-                    case (null) {
-                        return false;
-                    };
-                    case (?profile) {
-                        switch (profile.membershipType) {
-                            case (#Expired) {
-                                return false;
-                            };
-                            case (#NotClaimed) {
-                                return false;
-                            };
-                            case (#NotEligible) {
-                                return false;
-                            };
-                            case (_) {
-                                return true;
-                            };
+        private func isValidICFCProfile(profile : ?ICFCQueries.ICFCLinks) : Bool {
+            switch (profile) {
+                case (null) {
+                    return false;
+                };
+                case (?profile) {
+                    switch (profile.subscriptionType) {
+                        case (#Expired) {
+                            return false;
+                        };
+                        case (#NotClaimed) {
+                            return false;
+                        };
+                        case (#NotEligible) {
+                            return false;
+                        };
+                        case (_) {
+                            return true;
                         };
                     };
                 };
-
             };
 
-        */
+        };
 
     };
 

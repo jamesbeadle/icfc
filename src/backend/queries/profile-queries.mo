@@ -1,7 +1,6 @@
 import FootballIds "mo:waterway-mops/domain/football/ids";
 import IcfcEnums "mo:waterway-mops/product/icfc/enums";
 import Ids "mo:waterway-mops/base/ids";
-import SNSGovernance "mo:waterway-mops/base/def/sns-wrappers/governance";
 
 import AppIds "../ids";
 import T "../types";
@@ -15,29 +14,14 @@ module ProfileQueries {
         principalId : Ids.PrincipalId;
         username : Text;
         displayName : Text;
-        membershipType : IcfcEnums.MembershipType;
-        membershipClaims : [T.MembershipClaim];
+        subscriptionType : IcfcEnums.SubscriptionType;
+        subscriptions : [T.Subscription];
         createdOn : Int;
         profilePicture : ?Blob;
         termsAgreed : Bool;
-        appPrincipalIds : [(T.SubApp, Ids.PrincipalId)];
+        appPrincipalIds : [(IcfcEnums.SubApp, Ids.PrincipalId)];
         subscribedChannelIds : [AppIds.FootballChannelId];
-        membershipExpiryTime : Int;
-        favouriteLeagueId : ?FootballIds.LeagueId;
-        favouriteClubId : ?FootballIds.ClubId;
-        nationalityId : ?Ids.CountryId;
-    };
-
-    public type ICFCProfileSummary = {
-        principalId : Ids.PrincipalId;
-        username : Text;
-        displayName : Text;
-        membershipType : T.MembershipType;
-        membershipClaims : [T.MembershipClaim];
-        createdOn : Int;
-        profilePicture : ?Blob;
-        termsAgreed : Bool;
-        membershipExpiryTime : Int;
+        subscriptionExpiryTime : Int;
         favouriteLeagueId : ?FootballIds.LeagueId;
         favouriteClubId : ?FootballIds.ClubId;
         nationalityId : ?Ids.CountryId;
@@ -50,7 +34,7 @@ module ProfileQueries {
         offset : Nat;
     };
 
-    public type GetClaimedMemberships = {
+    public type GetSubscriptions = {
         principalId : Ids.PrincipalId;
         offset : Nat;
     };
@@ -74,35 +58,10 @@ module ProfileQueries {
         principalId : Ids.PrincipalId;
     };
 
-    public type UserNeuronsDTO = {
-        userNeurons : [SNSGovernance.Neuron];
-        totalMaxStaked : Nat64;
-        userMembershipEligibility : T.EligibleMembership;
-    };
-
-    public type ClaimedMembershipsDTO = {
-        claimedMemberships : [T.MembershipClaim];
-    };
-
     public type UsernameAvailable = Bool;
 
     public type IsUsernameValid = {
         username : Text;
-    };
-
-    public type MembershipType = {
-        #Monthly;
-        #Seasonal;
-        #Lifetime;
-        #Founding;
-        #Expired;
-        #NotClaimed;
-        #NotEligible;
-    };
-
-    public type EligibleMembership = {
-        membershipType : MembershipType;
-        eligibleNeuronIds : [Blob];
     };
 
 };

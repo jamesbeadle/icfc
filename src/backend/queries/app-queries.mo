@@ -13,8 +13,8 @@ module AppQueries {
         principalId: Ids.PrincipalId;
         username: Text;
         displayName: Text;
-        membershipType: T.MembershipType;
-        membershipClaims: [T.MembershipClaim];
+        subscriptionType: ICFCEnums.SubscriptionType;
+        subscriptions: [T.Subscription];
         createdOn: Int;
         profilePicture: Blob;
         termsAgreed: Bool;
