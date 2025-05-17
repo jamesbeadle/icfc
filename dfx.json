@@ -7,7 +7,7 @@
       "dependencies": []
     },
     "frontend": {
-      "dependencies": ["backend", "icfc_sale_2"],
+      "dependencies": ["backend"],
       "frontend": {
         "entrypoint": "build/index.html"
       },

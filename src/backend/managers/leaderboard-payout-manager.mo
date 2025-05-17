@@ -9,10 +9,11 @@ import Text "mo:base/Text";
 
 import Account "mo:waterway-mops/base/def/account";
 import Enums "mo:waterway-mops/base/enums";
-import ICRCTokenManager "mo:waterway-mops/product/wwl/payout-management/manager";
+import PayoutManager "mo:waterway-mops/product/wwl/payout-management/manager";
 import Ids "mo:waterway-mops/base/ids";
 import InterAppCallCommands "mo:waterway-mops/product/icfc/inter-app-call-commands";
 import Ledger "mo:waterway-mops/base/def/sns-wrappers/ledger";
+import ICFCQueries "mo:waterway-mops/product/icfc/queries";
 
 import ICFCTypes "../types";
 import PayoutCommands "../commands/payout-commands";
@@ -23,7 +24,7 @@ import T "../types";
 module {
     public class LeaderboardPayoutManager() {
 
-        private let tokenManager = ICRCTokenManager.ICRCTokenManager();
+        private let tokenManager = PayoutManager.PayoutManager();
         private var leaderboard_payout_requests : [ICFCTypes.PayoutRequest] = [];
 
         public func getLeaderboardPayoutRequests() : [ICFCTypes.PayoutRequest] {
@@ -63,15 +64,13 @@ module {
 
         public func payoutLeaderboard(dto : PayoutCommands.PayoutLeaderboard) : async Result.Result<ICFCTypes.PayoutRequest, Enums.Error> {
             // find the request in the list
-            let ?appText = BaseUtilities.appToText(dto.app)else{
-                return #err(#NotFound);
-            };
             var request = Array.find(
                 leaderboard_payout_requests,
                 func(entry : ICFCTypes.PayoutRequest) : Bool {
-                    entry.seasonId == dto.seasonId and entry.gameweek == dto.gameweek and Text.equal(entry.app, appText)
-                },
+                    entry.seasonId == dto.seasonId and entry.gameweek == dto.gameweek and entry.app == dto.app
+                }
             );
+            
 
             switch (request) {
                 case (null) {
@@ -205,7 +204,7 @@ module {
             let _ = await tokenManager.payoutUser(principal, amount, tokenledgerId);
         };
 
-        private func hasValidSubscription(profile : ?PayoutQueries.ICFCLinks) : Bool{
+        private func hasValidSubscription(profile : ?ICFCQueries.ICFCLinks) : Bool{
             return false; // TODO
         };
 

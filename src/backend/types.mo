@@ -5,6 +5,7 @@ import Ids "mo:waterway-mops/base/ids";
 import Enums "mo:waterway-mops/base/enums";
 import FootballIds "mo:waterway-mops/domain/football/ids";
 import FootballDefinitions "mo:waterway-mops/domain/football/definitions";
+import ICFCEnums "mo:waterway-mops/product/icfc/enums";
 //import ckBTCLedger "canister:ckbtc_ledger"; // TODO Use for ckBTC subscription
 
 module ICFCTypes {
@@ -87,7 +88,7 @@ module ICFCTypes {
   public type PayoutRequest = {
     seasonId : FootballIds.SeasonId;
     gameweek : FootballDefinitions.GameweekNumber;
-    app : Text;
+    app : ICFCEnums.App;
     leaderboard : [LeaderboardEntry];
     token : Text;
     totalEntries : Nat;

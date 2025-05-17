@@ -1,13 +1,11 @@
 import FootballIds "mo:waterway-mops/domain/football/ids";
 import FootballDefinitions "mo:waterway-mops/domain/football/definitions";
-import ICFCEnums "mo:waterway-mops/product/icfc/enums";
-import Ids "mo:waterway-mops/base/ids";
 import LeaderboardPayoutCommands "mo:waterway-mops/product/icfc/inter-app-call-commands";
 
 module PayoutQueries {
-    public type GetLeaderboardRequests = {};
+    public type GetPayoutRequests = {};
 
-    public type LeaderboardRequests = {
+    public type PayoutRequests = {
         requests : [PayoutRequest];
         totalRequest : Nat;
     };
@@ -20,15 +18,6 @@ module PayoutQueries {
         token : Text;
         totalEntries : Nat;
         totalEntriesPaid : Nat;
-    };
-
-    public type GetICFCLinks = {};
-
-    public type ICFCLinks = {
-        icfcPrincipalId : Ids.PrincipalId;
-        subAppUserPrincipalId : Ids.PrincipalId;
-        membershipType : ICFCEnums.MembershipType;
-        subApp : ICFCEnums.SubApp;
     };
 
 };

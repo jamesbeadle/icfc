@@ -1,6 +1,6 @@
 import Ids "mo:waterway-mops/base/ids";
 
-import AppIds "../Ids";
+import AppIds "../ids";
 
 module FootballChannelCommands {
 
