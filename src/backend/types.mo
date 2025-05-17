@@ -86,13 +86,14 @@ module ICFCTypes {
   };
 
   public type PayoutRequest = {
-    seasonId : FootballIds.SeasonId;
-    gameweek : FootballDefinitions.GameweekNumber;
     app : ICFCEnums.App;
     leaderboard : [LeaderboardEntry];
-    token : Text;
-    totalEntries : Nat;
-    totalEntriesPaid : Nat;
+    gameweek : FootballDefinitions.GameweekNumber;
+    seasonId : FootballIds.SeasonId;
+    currency : Enums.Currency;
+    status: Enums.PayoutStatus;
+    totalEntries: Nat;
+    totalPaid: Nat;
   };
 
   public type LeaderboardEntry = {

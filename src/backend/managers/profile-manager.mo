@@ -22,20 +22,18 @@ import SNSGovernance "mo:waterway-mops/base/def/sns-wrappers/governance";
 import ProfileQueries "../queries/profile-queries";
 import ProfileCommands "../commands/profile-commands";
 import ProfileCanister "../canister-definitions/profile-canister";
-import SNSManager "sns-manager";
 import T "../types";
 import Utilities "../utilities/utilities";
 
 module {
     public class ProfileManager() {
+
         private var profileCanisterIndex : TrieMap.TrieMap<Ids.PrincipalId, Ids.CanisterId> = TrieMap.TrieMap<Ids.PrincipalId, Ids.CanisterId>(Text.equal, Text.hash);
         private var activeCanisterId : Ids.CanisterId = "";
         private var usernames : TrieMap.TrieMap<Ids.PrincipalId, Text> = TrieMap.TrieMap<Ids.PrincipalId, Text>(Text.equal, Text.hash);
         private var uniqueProfileCanisterIds : List.List<Ids.CanisterId> = List.nil();
         private var totalProfiles : Nat = 0;
-        private var neuronsUsedforMembership : TrieMap.TrieMap<Blob, Ids.PrincipalId> = TrieMap.TrieMap<Blob, Ids.PrincipalId>(Blob.equal, Blob.hash);
-
-        //Getters
+        
         public func getProfilePicture(principalId : Ids.PrincipalId) : async Result.Result<ProfileQueries.ProfilePictureDTO, Enums.Error> {
             let existingProfileCanisterId = profileCanisterIndex.get(principalId);
             switch (existingProfileCanisterId) {
@@ -59,21 +57,6 @@ module {
                             return #err(#NotFound);
                         };
                     };
-                };
-                case (null) {
-                    return #err(#NotFound);
-                };
-            };
-        };
-
-        public func getClaimedMembership(dto : ProfileQueries.GetClaimedMemberships) : async Result.Result<ProfileQueries.ClaimedMembershipsDTO, Enums.Error> {
-            let existingProfileCanisterId = profileCanisterIndex.get(dto.principalId);
-            switch (existingProfileCanisterId) {
-                case (?foundCanisterId) {
-                    let profile_canister = actor (foundCanisterId) : actor {
-                        getClaimedMembership : (dto : ProfileQueries.GetClaimedMemberships) -> async Result.Result<ProfileQueries.ClaimedMembershipsDTO, Enums.Error>;
-                    };
-                    return await profile_canister.getClaimedMembership(dto);
                 };
                 case (null) {
                     return #err(#NotFound);
@@ -122,6 +105,7 @@ module {
         };
 
         // Update Functions
+        
         public func createProfile(principalId : Ids.PrincipalId, dto : ProfileCommands.CreateProfile, membership : T.EligibleMembership) : async Result.Result<(), Enums.Error> {
 
             if (Text.size(dto.username) < 5 or Text.size(dto.username) > 20) {
@@ -470,133 +454,18 @@ module {
             return #err(#NotFound);
         };
 
-        public func claimMembership(principalId : Ids.PrincipalId) : async Result.Result<(T.MembershipClaim), Enums.Error> {
-            let existingProfileCanisterId = profileCanisterIndex.get(principalId);
-            switch (existingProfileCanisterId) {
-                case (?foundCanisterId) {
-                    let profile_canister = actor (foundCanisterId) : actor {
-                        getProfile : (dto : ProfileQueries.GetProfile) -> async Result.Result<ProfileQueries.Profile, Enums.Error>;
-                    };
+        public func isUsernameTaken(username : Text, principalId : Text) : Bool {
+            for (managerUsername in usernames.entries()) {
 
-                    let profile = await profile_canister.getProfile({
-                        principalId;
-                    });
+                let lowerCaseUsername = toLowercase(username);
+                let existingUsername = toLowercase(managerUsername.1);
 
-                    switch (profile) {
-                        case (#ok(profileDTO)) {
-                            let profile = profileDTO;
-                            let currentMembership = profile.membershipType;
-
-                            let snsManager = SNSManager.SNSManager();
-                            let userNeurons : [SNSGovernance.Neuron] = await snsManager.getUsersNeurons(Principal.fromText(principalId));
-                            let eligibleMembership : T.EligibleMembership = Utilities.getMembershipType(userNeurons);
-
-                            let isNeuronsValid = validNeurons(eligibleMembership.eligibleNeuronIds, principalId);
-                            if (not isNeuronsValid) {
-                                return #err(#InEligible);
-                            };
-
-                            switch (eligibleMembership.membershipType) {
-                                case (newMembershipType) {
-                                    if (newMembershipType == #NotEligible) {
-                                        return #err(#NotAuthorized);
-                                    };
-
-                                    let canUpgrade : Bool = Utilities.canUpgradeMembership(currentMembership, newMembershipType);
-
-                                    if (not canUpgrade) {
-                                        switch (currentMembership) {
-                                            case (#Monthly or #Seasonal or #Lifetime or #Founding) {
-                                                let currentTimestamp = Time.now();
-
-                                                let expiresOn = profile.membershipExpiryTime;
-
-                                                if (expiresOn > currentTimestamp) {
-                                                    return #err(#AlreadyExists);
-                                                };
-
-                                            };
-                                            case (_) {
-                                                return #err(#InEligible);
-                                            };
-                                        };
-                                    };
-
-                                    let updateMembershipCommand : ProfileCommands.UpdateMembership = {
-                                        membershipType = newMembershipType;
-                                    };
-                                    let res = await updateMembership(principalId, updateMembershipCommand);
-
-                                    switch (res) {
-                                        case (#ok(claim)) {
-                                            for (neuron in eligibleMembership.eligibleNeuronIds.vals()) {
-                                                neuronsUsedforMembership.put(neuron, principalId);
-                                            };
-                                            return #ok(claim);
-                                        };
-                                        case (#err(err)) {
-                                            return #err(err);
-                                        };
-                                    };
-                                };
-
-                            };
-
-                        };
-                        case (#err(_)) {
-                            return #err(#NotFound);
-                        };
-                    };
-                };
-                case (null) {
-                    return #err(#NotFound);
+                if (lowerCaseUsername == existingUsername and managerUsername.0 != principalId) {
+                    return true;
                 };
             };
-        };
 
-        public func updateMembership(principalId : Ids.PrincipalId, dto : ProfileCommands.UpdateMembership) : async Result.Result<(T.MembershipClaim), Enums.Error> {
-            let existingProfileCanisterId = profileCanisterIndex.get(principalId);
-            switch (existingProfileCanisterId) {
-                case (?foundCanisterId) {
-                    let profile_canister = actor (foundCanisterId) : actor {
-                        updateMembership : (principalId : Ids.PrincipalId, dto : ProfileCommands.UpdateMembership) -> async Result.Result<(T.MembershipClaim), Enums.Error>;
-                        getProfile : (dto : ProfileQueries.GetProfile) -> async Result.Result<ProfileQueries.Profile, Enums.Error>;
-                    };
-                    let res = await profile_canister.updateMembership(principalId, dto);
-
-                    switch (res) {
-                        case (#ok(claim)) {
-                            let profile = await profile_canister.getProfile({
-                                principalId = principalId;
-                            });
-
-                            switch (profile) {
-                                case (#ok(existingProfile)) {
-                                    let profile : ProfileQueries.Profile = existingProfile;
-                                    for ((subApp, subAppPrincipal) in profile.appPrincipalIds.vals()) {
-                                        let _ = notifyAppsofProfileUpdate({
-                                            membershipType = profile.membershipType;
-                                            subApp = subApp;
-                                            subAppUserPrincipalId = subAppPrincipal;
-                                        });
-                                    };
-                                };
-                                case (#err(err)) {
-                                    return #err(err);
-                                };
-                            };
-
-                            return #ok(claim);
-                        };
-                        case (#err(err)) {
-                            return #err(err);
-                        };
-                    };
-                };
-                case (null) {
-                    return #err(#NotFound);
-                };
-            };
+            return false;
         };
 
         // private functions
@@ -633,8 +502,8 @@ module {
                     return await footballGodCanister.notifyAppLink(dto);
                 };
             };
-
         };
+
         private func notifyAppsofRemoveLink(dto : ProfileCommands.NotifyAppofRemoveLink) : async Result.Result<(), Enums.Error> {
             switch (dto.subApp) {
                 case (#OpenFPL) {
@@ -668,8 +537,8 @@ module {
                     return await footballGodCanister.notifyAppRemoveLink(dto);
                 };
             };
-
         };
+
         private func notifyAppsofProfileUpdate(dto : ProfileCommands.UpdateICFCProfile) : async Result.Result<(), Enums.Error> {
             switch (dto.subApp) {
                 case (#OpenFPL) {
@@ -704,31 +573,6 @@ module {
                 };
             };
 
-        };
-
-        public func toLowercase(t : Text.Text) : Text.Text {
-            func charToLower(c : Char) : Char {
-                if (Char.isUppercase(c)) {
-                    Char.fromNat32(Char.toNat32(c) + 32);
-                } else {
-                    c;
-                };
-            };
-            Text.map(t, charToLower);
-        };
-
-        public func isUsernameTaken(username : Text, principalId : Text) : Bool {
-            for (managerUsername in usernames.entries()) {
-
-                let lowerCaseUsername = toLowercase(username);
-                let existingUsername = toLowercase(managerUsername.1);
-
-                if (lowerCaseUsername == existingUsername and managerUsername.0 != principalId) {
-                    return true;
-                };
-            };
-
-            return false;
         };
 
         private func findUsernamePrincipalId(username : Text) : ?Ids.PrincipalId {
@@ -779,21 +623,6 @@ module {
             uniqueProfileCanisterIds := List.fromArray(Buffer.toArray(uniqueCanisterIdBuffer));
         };
 
-        public func validNeurons(neurons : [Blob], newPrinciaplId : Ids.PrincipalId) : Bool {
-            for (neuron in neurons.vals()) {
-                let existingPrincipalId = neuronsUsedforMembership.get(neuron);
-                switch (existingPrincipalId) {
-                    case (?foundPrincipalId) {
-                        if (foundPrincipalId != newPrinciaplId) {
-                            return false;
-                        };
-                    };
-                    case (null) {};
-                };
-            };
-            return true;
-        };
-
         public func isProfileCanister(callerId : Ids.PrincipalId) : Bool {
             for (canister in List.toArray(uniqueProfileCanisterIds).vals()) {
                 if (canister == callerId) {
@@ -804,6 +633,7 @@ module {
         };
 
         // stable storage getters and setters
+
         public func getStableCanisterIndex() : [(Ids.PrincipalId, Ids.CanisterId)] {
             return Iter.toArray(profileCanisterIndex.entries());
         };
@@ -859,43 +689,12 @@ module {
             totalProfiles := stable_total_profiles;
         };
 
-        public func getStableNeuronsUsedforMembership() : [(Blob, Ids.PrincipalId)] {
-            return Iter.toArray(neuronsUsedforMembership.entries());
-        };
-
-        public func setStableNeuronsUsedforMembership(stable_neurons_used_for_membership : [(Blob, Ids.PrincipalId)]) : () {
-            let neuronsUsedMap : TrieMap.TrieMap<Blob, Ids.PrincipalId> = TrieMap.TrieMap<Blob, Ids.PrincipalId>(Blob.equal, Blob.hash);
-
-            for (neuron in Iter.fromArray(stable_neurons_used_for_membership)) {
-                neuronsUsedMap.put(neuron);
-            };
-            neuronsUsedforMembership := neuronsUsedMap;
-        };
-
-        public func removeNeuronsforExpiredMembership(principalId : Ids.PrincipalId) : async () {
-            let existingProfileCanisterId = profileCanisterIndex.get(principalId);
-            switch (existingProfileCanisterId) {
-                case (?_) {
-                    for (neuron in neuronsUsedforMembership.entries()) {
-                        if (neuron.1 == principalId) {
-                            neuronsUsedforMembership.delete(neuron.0);
-                        };
-                    };
-
-                    let _ = await claimMembership(principalId);
-
-                };
-                case (null) {};
-            };
-
-        };
-
-        public func checkMemberships() : async () {
+        public func checkSubscriptions() : async () {
             for (canisterId in List.toArray(uniqueProfileCanisterIds).vals()) {
                 let profile_canister = actor (canisterId) : actor {
-                    checkAndExpireMembership : () -> async ();
+                    checkAndExpireSubscriptions : () -> async ();
                 };
-                await profile_canister.checkAndExpireMembership();
+                await profile_canister.checkAndExpireSubscriptions();
             };
         };
     };

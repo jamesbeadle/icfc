@@ -14,6 +14,7 @@ import Ids "mo:waterway-mops/base/ids";
 import InterAppCallCommands "mo:waterway-mops/product/icfc/inter-app-call-commands";
 import Ledger "mo:waterway-mops/base/def/sns-wrappers/ledger";
 import ICFCQueries "mo:waterway-mops/product/icfc/queries";
+import CanisterIds "mo:waterway-mops/product/wwl/canister-ids";
 
 import ICFCTypes "../types";
 import PayoutCommands "../commands/payout-commands";
@@ -49,9 +50,10 @@ module {
                             gameweek = dto.gameweek;
                             app = dto.app;
                             leaderboard = dto.leaderboard;
-                            token = dto.token;
+                            currency = dto.currency;
                             totalEntries = Array.size(dto.leaderboard);
-                            totalEntriesPaid = 0;
+                            totalPaid = 0;
+                            status = #Pending;
                         }],
                     );
                     return #ok(());
@@ -77,22 +79,22 @@ module {
                     return #err(#NotFound);
                 };
                 case (?request) {
-                    if (request.totalEntries == request.totalEntriesPaid) {
+                    if (request.status == #Paid) {
                         return #err(#NotAllowed);
                     } else {
-                        let token = request.token;
+                        let token = request.currency;
                         let ?ledgerCanisterID = Utilities.getTokenLedgerId(token) else {
                             return #err(#InvalidData);
                         };
 
                         // get the ICFC links
-                        let ?appCanisterId = BaseUtilities.getAppCanisterId(dto.app) else {
+                        let ?appCanisterId = CanisterIds.getAppCanisterId(dto.app) else {
                             return #err(#NotFound);
                         };
-                        var icfcLinks : [PayoutQueries.ICFCLinks] = [];
+                        var icfcLinks : [ICFCQueries.ICFCLinks] = [];
 
                         var appCanister = actor (appCanisterId) : actor {
-                            getICFCProfileLinks : (dto : PayoutQueries.GetICFCLinks) -> async Result.Result<[PayoutQueries.ICFCLinks], Enums.Error>;
+                            getICFCProfileLinks : (dto : ICFCQueries.GetICFCLinks) -> async Result.Result<[ICFCQueries.ICFCLinks], Enums.Error>;
                         };
 
                         let res = await appCanister.getICFCProfileLinks({});
@@ -104,8 +106,12 @@ module {
                                 return #err(err);
                             };
                         };
+                        var leaderboardPayout = request.leaderboard;
+                        var totalPaid = request.totalEntries;
 
-                        // pay out the users
+                        /*
+
+                        // TODO pay out the users
                         var leaderboardPayout = request.leaderboard;
                         var totalPaid = request.totalEntriesPaid;
                         for (entry : LeaderboardPayoutCommands.LeaderboardEntry in Iter.fromArray(leaderboardPayout)) {
@@ -159,19 +165,22 @@ module {
                             };
                         };
 
+                        */
+
                         // update the request
                         leaderboard_payout_requests := Array.map(
                             leaderboard_payout_requests,
                             func(entry : ICFCTypes.PayoutRequest) : ICFCTypes.PayoutRequest {
-                                if (entry.seasonId == dto.seasonId and entry.gameweek == dto.gameweek and Text.equal(entry.app, appText)) {
+                                if (entry.seasonId == dto.seasonId and entry.gameweek == dto.gameweek and entry.app == dto.app) {
                                     return {
                                         seasonId = entry.seasonId;
                                         gameweek = entry.gameweek;
                                         app = entry.app;
                                         leaderboard = leaderboardPayout;
-                                        token = entry.token;
+                                        currency = entry.currency;
                                         totalEntries = entry.totalEntries;
-                                        totalEntriesPaid = totalPaid;
+                                        totalPaid = totalPaid;
+                                        status = #Pending;
                                     };
                                 } else {
                                     return entry;
@@ -181,11 +190,12 @@ module {
                         return #ok({
                             seasonId = dto.seasonId;
                             gameweek = dto.gameweek;
-                            app = appText;
+                            app = dto.app;
                             leaderboard = leaderboardPayout;
-                            token = request.token;
+                            currency = request.currency;
                             totalEntries = request.totalEntries;
-                            totalEntriesPaid = totalPaid;
+                            totalPaid = totalPaid;
+                            status = #Pending;
                         });
                     };
                 };

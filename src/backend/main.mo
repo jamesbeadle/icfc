@@ -11,69 +11,80 @@ import Text "mo:base/Text";
 import Timer "mo:base/Timer";
 import Array "mo:base/Array";
 
+
 /* ----- WWL Mops Packages ----- */
 
 import Account "mo:waterway-mops/base/def/account";
 import BaseQueries "mo:waterway-mops/base/queries";
+import BaseTypes "mo:waterway-mops/base/types";
 import CanisterIds "mo:waterway-mops/product/wwl/canister-ids";
 import CanisterCommands "mo:waterway-mops/product/wwl/canister-management/commands";
 import CanisterManager "mo:waterway-mops/product/wwl/canister-management/manager";
 import CanisterQueries "mo:waterway-mops/product/wwl/canister-management/queries";
-import ClubQueries "mo:waterway-mops/product/icfc/data-canister-queries/club-queries";
 import Countries "mo:waterway-mops/base/countries";
 import Enums "mo:waterway-mops/base/enums";
 import FootballIds "mo:waterway-mops/domain/football/ids";
 import Ids "mo:waterway-mops/base/ids";
 import InterAppCallCommands "mo:waterway-mops/product/icfc/inter-app-call-commands";
-import LeagueQueries "mo:waterway-mops/product/icfc/data-canister-queries/league-queries";
 import Management "mo:waterway-mops/base/def/management";
 import SNSToken "mo:waterway-mops/base/def/sns-wrappers/ledger";
+
+
+/* ----- Data Canister Queries ----- */
+
+import SeasonQueries "mo:waterway-mops/product/icfc/data-canister-queries/season-queries";
+import ClubQueries "mo:waterway-mops/product/icfc/data-canister-queries/club-queries";
+import FixtureQueries "mo:waterway-mops/product/icfc/data-canister-queries/fixture-queries";
+import LeagueQueries "mo:waterway-mops/product/icfc/data-canister-queries/league-queries";
+import PlayerQueries "mo:waterway-mops/product/icfc/data-canister-queries/player-queries";
+
 
 /* ----- Canister Definition Files ----- */
 
 import ProfileCanister "canister-definitions/profile-canister";
 
+
 /* ----- Queries ----- */
+
 import AppQueries "queries/app-queries";
-import AppQueries "../data-canister/queries/app-queries";
 import ProfileQueries "queries/profile-queries";
 import PayoutQueries "queries/payout-queries";
-import ClubQueries "../data-canister/queries/club-queries";
-import SeasonQueries "../data-canister/queries/season-queries";
-import PlayerQueries "../data-canister/queries/player-queries";
-import LeagueQueries "../data-canister/queries/league-queries";
-import FixtureQueries "../data-canister/queries/fixture-queries";
+
 
 /* ----- Commands ----- */
+
 import ProfileCommands "commands/profile-commands";
 import PayoutCommands "commands/payout-commands";
 
+
 /* ----- Managers ----- */
 
+import LeaderboardPayoutManager "managers/leaderboard-payout-manager";
 import ProfileManager "managers/profile-manager";
 import FootballChannelManager "managers/football-channel-manager";
-import SNSManager "managers/sns-manager";
 
-/* ----- Environment ----- */
-import Environment "environment";
-import Utilities "utilities/utilities";
-import LeaderboardPayoutManager "managers/leaderboard-payout-manager";
+
+/* ----- Local Types, Environment and Utilities ----- */
 
 import AppTypes "./types";
+import AppIds "./ids";
+import Environment "environment";
+import Utilities "utilities/utilities";
+
 
 actor class Self() = this {
 
   /* ----- Stable Canister Variables ----- */
+
   private stable var stable_profile_canister_index : [(Ids.PrincipalId, Ids.CanisterId)] = [];
   private stable var stable_active_profile_canister_id : Ids.CanisterId = "";
   private stable var stable_usernames : [(Ids.PrincipalId, Text)] = [];
   private stable var stable_unique_profile_canister_ids : [Ids.CanisterId] = [];
   private stable var stable_total_profile : Nat = 0;
-  private stable var stable_neurons_used_for_membership : [(Blob, Ids.PrincipalId)] = [];
-
-  private stable var stable_channel_canister_index : [(Ids.FootballChannelId, Ids.CanisterId)] = [];
+  
+  private stable var stable_channel_canister_index : [(AppIds.FootballChannelId, Ids.CanisterId)] = [];
   private stable var stable_active_channel_canister_id : Ids.CanisterId = "";
-  private stable var stable_channel_names : [(Ids.FootballChannelId, Text)] = [];
+  private stable var stable_channel_names : [(AppIds.FootballChannelId, Text)] = [];
   private stable var stable_unique_channel_canister_ids : [Ids.CanisterId] = [];
   private stable var stable_total_channels : Nat = 0;
   private stable var stable_next_channel_id : Nat = 0;
@@ -82,10 +93,11 @@ actor class Self() = this {
 
   private stable var stable_membership_timer_id : Nat = 0;
 
+
   /* ----- Domain Object Managers ----- */
+
   private let profileManager = ProfileManager.ProfileManager();
   private let footballChannelManager = FootballChannelManager.FootballChannelManager();
-  private let snsManager = SNSManager.SNSManager();
   private let canisterManager = CanisterManager.CanisterManager();
   private let leaderboardPayoutManager = LeaderboardPayoutManager.LeaderboardPayoutManager();
 
@@ -94,13 +106,17 @@ actor class Self() = this {
     version = "0.0.1";
   };
 
+
+  /* ----- App Queries ----- */
+
   public shared query func getAppStatus() : async Result.Result<AppQueries.AppStatus, Enums.Error> {
     return #ok(appStatus);
   };
 
-  //Profile Queries
 
-  public shared ({ caller }) func getProfile() : async Result.Result<ProfileQueries.ProfileDTO, Enums.Error> {
+  /* ----- Profile Queries ----- */
+
+  public shared ({ caller }) func getProfile() : async Result.Result<ProfileQueries.Profile, Enums.Error> {
     assert not Principal.isAnonymous(caller);
     let dto : ProfileQueries.GetProfile = {
       principalId = Principal.toText(caller);
@@ -115,6 +131,8 @@ actor class Self() = this {
     return usernameValid and not usernameTaken;
   };
 
+  /* // TODO Removed SNS Manager until SNS is viable again. */
+  /*
   public shared ({ caller }) func getUserNeurons() : async Result.Result<ProfileQueries.UserNeuronsDTO, Enums.Error> {
     assert not Principal.isAnonymous(caller);
 
@@ -143,18 +161,31 @@ actor class Self() = this {
     return #ok(result);
 
   };
+  */
 
-  //Profile Commands
+
+  /* ----- Profile Commands ----- */
 
   public shared ({ caller }) func createProfile(dto : ProfileCommands.CreateProfile) : async Result.Result<(), Enums.Error> {
     assert not Principal.isAnonymous(caller);
     let principalId = Principal.toText(caller);
 
-    let neurons = await snsManager.getUsersNeurons(caller);
-    let userEligibility : ProfileCommands.EligibleMembership = Utilities.getMembershipType(neurons);
-
-    return await profileManager.createProfile(principalId, dto, userEligibility);
+    //let neurons = await snsManager.getUsersNeurons(caller);
+    //let userEligibility : ProfileCommands.EligibleMembership = Utilities.getMembershipType(neurons);
+    let subscription = await subscriptionManager.getUserSubscription(principalId);
+    switch(subscription){
+      case (?foundSubscription){
+        return await profileManager.createProfile(principalId, dto, foundSubscription);
+      };
+      case (null){
+        return #err(#NotAllowed);
+      }
+    };
   };
+
+
+  /* // TODO Removed SNS Manager until SNS is viable again. */
+  /*
 
   public shared ({ caller }) func claimMembership() : async Result.Result<(ProfileCommands.MembershipClaim), Enums.Error> {
     assert not Principal.isAnonymous(caller);
@@ -162,6 +193,18 @@ actor class Self() = this {
     let principalId = Principal.toText(caller);
     return await profileManager.claimMembership(principalId);
   };
+
+
+
+
+  */
+
+
+  //Profile Queries
+
+  //Profile Commands
+
+
 
   public shared ({ caller }) func addSubApp(dto : ProfileCommands.AddSubApp) : async Result.Result<(), Enums.Error> {
     assert not Principal.isAnonymous(caller);
@@ -209,6 +252,12 @@ actor class Self() = this {
     return await profileManager.updateProfilePicture(principalId, dto);
   };
 
+
+
+
+
+
+
   public shared ({ caller }) func getTokenBalances() : async Result.Result<AppQueries.TokenBalances, Enums.Error> {
     assert not Principal.isAnonymous(caller);
 
@@ -237,7 +286,12 @@ actor class Self() = this {
     });
   };
 
-  public shared ({ caller }) func getICFCProfile(dto : ProfileCommands.GetICFCProfile) : async Result.Result<ProfileQueries.ProfileDTO, Enums.Error> {
+
+
+
+
+
+  public shared ({ caller }) func getICFCProfile(dto : ProfileCommands.GetICFCProfile) : async Result.Result<ProfileQueries.Profile, Enums.Error> {
     assert not Principal.isAnonymous(caller);
     assert Utilities.isSubApp(Principal.toText(caller));
     return await profileManager.getProfile(dto);
@@ -282,7 +336,7 @@ actor class Self() = this {
 
   };
 
-  public shared ({ caller }) func getLeaderboardRequests(_ : PayoutQueries.GetLeaderboardRequests) : async Result.Result<PayoutQueries.LeaderboardRequests, Enums.Error> {
+  public shared ({ caller }) func getLeaderboardRequests(_ : PayoutQueries.GetPayoutRequests) : async Result.Result<PayoutQueries.PayoutRequests, Enums.Error> {
     assert not Principal.isAnonymous(caller);
     let principalId = Principal.toText(caller);
     assert await Utilities.isDeveloperNeuron(principalId);
@@ -333,6 +387,8 @@ actor class Self() = this {
     return profileManager.getStableCanisterIndex();
   };
 
+  /*
+
   public shared ({ caller }) func getClubs(dto : ClubQueries.GetClubs) : async Result.Result<ClubQueries.Clubs, Enums.Error> {
     assert not Principal.isAnonymous(caller);
     // TODO: Check caller is a member
@@ -342,6 +398,7 @@ actor class Self() = this {
     };
     return await data_canister.getClubs(dto);
   };
+  */
 
   // public shared ({ caller }) func getCountries(dto : AppQueries.GetCountries) : async Result.Result<AppQueries.Countries, Enums.Error> {
   //   assert not Principal.isAnonymous(caller);
@@ -373,6 +430,13 @@ actor class Self() = this {
     stable_membership_timer_id := Timer.recurringTimer<system>(#seconds(86_400), checkMembership);
     ignore Timer.setTimer<system>(#nanoseconds(Int.abs(1)), postUpgradeCallback);
   };
+
+
+
+
+
+
+
 
   public shared func getCanisterIds() : async [Ids.CanisterId] {
     return profileManager.getStableUniqueCanisterIds();
@@ -463,6 +527,13 @@ actor class Self() = this {
     await profileManager.checkMemberships();
   };
 
+
+
+
+
+
+
+
   //functions for WWL backend to communicate
   public shared ({ caller }) func getProjectCanisters() : async Result.Result<CanisterQueries.ProjectCanisters, Enums.Error> {
     assert not Principal.isAnonymous(caller);
@@ -535,7 +606,7 @@ actor class Self() = this {
 
   /* ----- Data Canister Calls -----  */
 
-  public shared ({ caller }) func getDataHashes(dto : AppQueries.GetDataHashes) : async Result.Result<AppQueries.DataHashes, Enums.Error> {
+  public shared ({ caller }) func getDataHashes(dto : BaseQueries.GetDataHashes) : async Result.Result<BaseQueries.DataHashes, Enums.Error> {
     assert not Principal.isAnonymous(caller);
     // DevOps 480: Check caller has associated neuron
 
@@ -555,12 +626,14 @@ actor class Self() = this {
     return await data_canister.getClubs(dto);
   };
 
+  /*
   public shared ({ caller }) func getCountries(dto : BaseQueries.GetCountries) : async Result.Result<BaseQueries.Countries, Enums.Error> {
     assert not Principal.isAnonymous(caller);
     return #ok({
       countries = Countries.countries;
     });
   };
+  */
 
   public shared ({ caller }) func getSeasons(dto : SeasonQueries.GetSeasons) : async Result.Result<SeasonQueries.Seasons, Enums.Error> {
     assert not Principal.isAnonymous(caller);
@@ -592,6 +665,7 @@ actor class Self() = this {
     return await data_canister.getPlayers(dto);
   };
 
+  /*
   public shared ({ caller }) func getLeagues(dto : LeagueQueries.GetLeagues) : async Result.Result<LeagueQueries.Leagues, Enums.Error> {
     assert not Principal.isAnonymous(caller);
     // DevOps 480: Check caller has associated neuron
@@ -602,6 +676,7 @@ actor class Self() = this {
     let result = await data_canister.getLeagues(dto);
     return result;
   };
+  */
 
   public shared ({ caller }) func getLeagueStatus(dto : LeagueQueries.GetLeagueStatus) : async Result.Result<LeagueQueries.LeagueStatus, Enums.Error> {
     assert not Principal.isAnonymous(caller);

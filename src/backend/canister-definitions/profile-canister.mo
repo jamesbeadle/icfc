@@ -18,7 +18,6 @@ import T "../types";
 import Utilities "../utilities/utilities";
 
 actor class _ProfileCanister() {
-    let canisterManager = CanisterManager.CanisterManager();
 
     private stable var stable_profile_group_indexes : [(Ids.PrincipalId, Nat8)] = [];
     private stable var profileGroup1 : [T.Profile] = [];
@@ -40,9 +39,10 @@ actor class _ProfileCanister() {
     private stable var MAX_PROFILES_PER_CANISTER : Nat = 12000;
     private stable var canisterFull = false;
 
-    private let MEMBERSHIPS_ROW_COUNT_LIMIT = 20;
+    private let canisterManager = CanisterManager.CanisterManager();
 
-    //Public endpoints
+
+    /* ----- Profile Queries ----- */
 
     public shared ({ caller }) func getProfile(dto : ProfileQueries.GetProfile) : async Result.Result<ProfileQueries.Profile, Enums.Error> {
         assert not Principal.isAnonymous(caller);
@@ -91,80 +91,8 @@ actor class _ProfileCanister() {
         };
     };
 
-    public shared ({ caller }) func getProfileSummary(dto : ProfileQueries.GetProfile) : async Result.Result<ProfileQueries.ICFCProfileSummary, Enums.Error> {
-        assert not Principal.isAnonymous(caller);
-        let backendPrincipalId = Principal.toText(caller);
-        assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
 
-        var groupIndex : ?Nat8 = null;
-        for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
-            if (profileGroupIndex.0 == dto.principalId) {
-                groupIndex := ?profileGroupIndex.1;
-            };
-        };
-        switch (groupIndex) {
-            case (null) { return #err(#NotFound) };
-            case (?foundGroupIndex) {
-                let profile = findProfile(foundGroupIndex, dto.principalId);
-                switch (profile) {
-                    case (?foundProfile) {
-                        let dto : ProfileQueries.ICFCProfileSummary = {
-                            principalId = foundProfile.principalId;
-                            username = foundProfile.username;
-                            profilePicture = foundProfile.profilePicture;
-                            displayName = foundProfile.displayName;
-                            termsAgreed = foundProfile.termsAgreed;
-                            membershipType = foundProfile.membershipType;
-                            createdOn = foundProfile.createdOn;
-                            membershipExpiryTime = foundProfile.membershipExpiryTime;
-                            favouriteLeagueId = foundProfile.favouriteLeagueId;
-                            favouriteClubId = foundProfile.favouriteClubId;
-                            nationalityId = foundProfile.nationalityId;
-                            membershipClaims = foundProfile.membershipClaims;
-                        };
-                        return #ok(dto);
-                    };
-                    case (null) {
-                        return #err(#NotFound);
-                    };
-                };
-            };
-        };
-    };
-
-    public shared ({ caller }) func getClaimedMembership(dto : ProfileQueries.GetClaimedMemberships) : async Result.Result<ProfileQueries.ClaimedMembershipsDTO, Enums.Error> {
-        assert not Principal.isAnonymous(caller);
-        let backendPrincipalId = Principal.toText(caller);
-        assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
-
-        var groupIndex : ?Nat8 = null;
-        for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
-            if (profileGroupIndex.0 == dto.principalId) {
-                groupIndex := ?profileGroupIndex.1;
-            };
-        };
-        switch (groupIndex) {
-            case (null) { return #err(#NotFound) };
-            case (?foundGroupIndex) {
-                let profile = findProfile(foundGroupIndex, dto.principalId);
-                switch (profile) {
-                    case (?foundProfile) {
-                        let allMembershipClaims = List.fromArray(foundProfile.membershipClaims);
-                        let droppedEntries = List.drop<T.MembershipClaim>(allMembershipClaims, dto.offset);
-                        let paginatedEntires = List.take<T.MembershipClaim>(droppedEntries, MEMBERSHIPS_ROW_COUNT_LIMIT);
-
-                        let claimedMembershipsDTO : ProfileQueries.ClaimedMembershipsDTO = {
-                            claimedMemberships = List.toArray(paginatedEntires);
-                        };
-                        return #ok(claimedMembershipsDTO);
-                    };
-                    case (null) {
-                        return #err(#NotFound);
-                    };
-                };
-            };
-        };
-    };
+    /* ----- Profile Commands ----- */
 
     public shared ({ caller }) func createProfile(profilePrincipalId : Ids.PrincipalId, dto : ProfileCommands.CreateProfile, membership : T.EligibleMembership) : async Result.Result<(), Enums.Error> {
         assert not Principal.isAnonymous(caller);
@@ -236,6 +164,49 @@ actor class _ProfileCanister() {
                             membershipClaims = foundProfile.membershipClaims;
                             createdOn = foundProfile.createdOn;
                             profilePicture = foundProfile.profilePicture;
+                            termsAgreed = foundProfile.termsAgreed;
+                            appPrincipalIds = foundProfile.appPrincipalIds;
+                            subscribedChannelIds = foundProfile.subscribedChannelIds;
+                            membershipExpiryTime = foundProfile.membershipExpiryTime;
+                            favouriteLeagueId = foundProfile.favouriteLeagueId;
+                            favouriteClubId = foundProfile.favouriteClubId;
+                            nationalityId = foundProfile.nationalityId;
+                        };
+                        await saveProfile(foundGroupIndex, updatedProfile);
+                    };
+                    case (null) {
+                        return #err(#NotFound);
+                    };
+                };
+            };
+        };
+    };
+
+    public shared ({ caller }) func updateProfilePicture(principalId : Ids.PrincipalId, dto : ProfileCommands.UpdateProfilePicture) : async Result.Result<(), Enums.Error> {
+        assert not Principal.isAnonymous(caller);
+        let backendPrincipalId = Principal.toText(caller);
+        assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
+
+        var groupIndex : ?Nat8 = null;
+        for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
+            if (profileGroupIndex.0 == principalId) {
+                groupIndex := ?profileGroupIndex.1;
+            };
+        };
+        switch (groupIndex) {
+            case (null) { return #err(#NotFound) };
+            case (?foundGroupIndex) {
+                let profile = findProfile(foundGroupIndex, principalId);
+                switch (profile) {
+                    case (?foundProfile) {
+                        let updatedProfile : T.Profile = {
+                            principalId = foundProfile.principalId;
+                            username = foundProfile.username;
+                            displayName = foundProfile.displayName;
+                            membershipType = foundProfile.membershipType;
+                            membershipClaims = foundProfile.membershipClaims;
+                            createdOn = foundProfile.createdOn;
+                            profilePicture = dto.profilePicture;
                             termsAgreed = foundProfile.termsAgreed;
                             appPrincipalIds = foundProfile.appPrincipalIds;
                             subscribedChannelIds = foundProfile.subscribedChannelIds;
@@ -383,6 +354,96 @@ actor class _ProfileCanister() {
         };
     };
 
+
+
+
+
+
+
+
+    //why 2 profiles
+
+    public shared ({ caller }) func getProfileSummary(dto : ProfileQueries.GetProfile) : async Result.Result<ProfileQueries.ICFCProfileSummary, Enums.Error> {
+        assert not Principal.isAnonymous(caller);
+        let backendPrincipalId = Principal.toText(caller);
+        assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
+
+        var groupIndex : ?Nat8 = null;
+        for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
+            if (profileGroupIndex.0 == dto.principalId) {
+                groupIndex := ?profileGroupIndex.1;
+            };
+        };
+        switch (groupIndex) {
+            case (null) { return #err(#NotFound) };
+            case (?foundGroupIndex) {
+                let profile = findProfile(foundGroupIndex, dto.principalId);
+                switch (profile) {
+                    case (?foundProfile) {
+                        let dto : ProfileQueries.ICFCProfileSummary = {
+                            principalId = foundProfile.principalId;
+                            username = foundProfile.username;
+                            profilePicture = foundProfile.profilePicture;
+                            displayName = foundProfile.displayName;
+                            termsAgreed = foundProfile.termsAgreed;
+                            membershipType = foundProfile.membershipType;
+                            createdOn = foundProfile.createdOn;
+                            membershipExpiryTime = foundProfile.membershipExpiryTime;
+                            favouriteLeagueId = foundProfile.favouriteLeagueId;
+                            favouriteClubId = foundProfile.favouriteClubId;
+                            nationalityId = foundProfile.nationalityId;
+                            membershipClaims = foundProfile.membershipClaims;
+                        };
+                        return #ok(dto);
+                    };
+                    case (null) {
+                        return #err(#NotFound);
+                    };
+                };
+            };
+        };
+    };
+
+
+    //converrt
+    //get subscription history:
+
+    public shared ({ caller }) func getClaimedMembership(dto : ProfileQueries.GetClaimedMemberships) : async Result.Result<ProfileQueries.ClaimedMembershipsDTO, Enums.Error> {
+        assert not Principal.isAnonymous(caller);
+        let backendPrincipalId = Principal.toText(caller);
+        assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
+
+        var groupIndex : ?Nat8 = null;
+        for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
+            if (profileGroupIndex.0 == dto.principalId) {
+                groupIndex := ?profileGroupIndex.1;
+            };
+        };
+        switch (groupIndex) {
+            case (null) { return #err(#NotFound) };
+            case (?foundGroupIndex) {
+                let profile = findProfile(foundGroupIndex, dto.principalId);
+                switch (profile) {
+                    case (?foundProfile) {
+                        let allMembershipClaims = List.fromArray(foundProfile.membershipClaims);
+                        let droppedEntries = List.drop<T.MembershipClaim>(allMembershipClaims, dto.offset);
+                        let paginatedEntires = List.take<T.MembershipClaim>(droppedEntries, MEMBERSHIPS_ROW_COUNT_LIMIT);
+
+                        let claimedMembershipsDTO : ProfileQueries.ClaimedMembershipsDTO = {
+                            claimedMemberships = List.toArray(paginatedEntires);
+                        };
+                        return #ok(claimedMembershipsDTO);
+                    };
+                    case (null) {
+                        return #err(#NotFound);
+                    };
+                };
+            };
+        };
+    };
+
+
+    //this linking is valid? profile linking commands? who calls these? users?
     public shared ({ caller }) func updateAppPrincipalIds(principalId : Ids.PrincipalId, dto : ProfileCommands.AddSubApp) : async Result.Result<(), Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
@@ -508,50 +569,9 @@ actor class _ProfileCanister() {
             };
         };
     };
-
-    public shared ({ caller }) func updateProfilePicture(principalId : Ids.PrincipalId, dto : ProfileCommands.UpdateProfilePicture) : async Result.Result<(), Enums.Error> {
-        assert not Principal.isAnonymous(caller);
-        let backendPrincipalId = Principal.toText(caller);
-        assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
-
-        var groupIndex : ?Nat8 = null;
-        for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
-            if (profileGroupIndex.0 == principalId) {
-                groupIndex := ?profileGroupIndex.1;
-            };
-        };
-        switch (groupIndex) {
-            case (null) { return #err(#NotFound) };
-            case (?foundGroupIndex) {
-                let profile = findProfile(foundGroupIndex, principalId);
-                switch (profile) {
-                    case (?foundProfile) {
-                        let updatedProfile : T.Profile = {
-                            principalId = foundProfile.principalId;
-                            username = foundProfile.username;
-                            displayName = foundProfile.displayName;
-                            membershipType = foundProfile.membershipType;
-                            membershipClaims = foundProfile.membershipClaims;
-                            createdOn = foundProfile.createdOn;
-                            profilePicture = dto.profilePicture;
-                            termsAgreed = foundProfile.termsAgreed;
-                            appPrincipalIds = foundProfile.appPrincipalIds;
-                            subscribedChannelIds = foundProfile.subscribedChannelIds;
-                            membershipExpiryTime = foundProfile.membershipExpiryTime;
-                            favouriteLeagueId = foundProfile.favouriteLeagueId;
-                            favouriteClubId = foundProfile.favouriteClubId;
-                            nationalityId = foundProfile.nationalityId;
-                        };
-                        await saveProfile(foundGroupIndex, updatedProfile);
-                    };
-                    case (null) {
-                        return #err(#NotFound);
-                    };
-                };
-            };
-        };
-    };
-
+    
+    //is this not renew subscription? make it just add a year to the time and can be at any point
+    //provided membership time is < 3 months
     public shared ({ caller }) func updateMembership(principalId : Ids.PrincipalId, dto : ProfileCommands.UpdateMembership) : async Result.Result<(T.MembershipClaim), Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
@@ -618,163 +638,18 @@ actor class _ProfileCanister() {
         };
     };
 
-    public shared ({ caller }) func isCanisterFull() : async Bool {
-        assert not Principal.isAnonymous(caller);
-        let backendPrincipalId = Principal.toText(caller);
-        assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
-        return (totalProfiles >= MAX_PROFILES_PER_CANISTER);
-    };
 
-    public shared ({ caller }) func checkAndExpireMembership() : async () {
-        assert not Principal.isAnonymous(caller);
-        let backendPrincipalId = Principal.toText(caller);
-        assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
 
-        for (index in Iter.range(0, 11)) {
-            switch (index) {
-                case 0 {
-                    for (profile in Iter.fromArray(profileGroup1)) {
-                        if (profile.membershipExpiryTime < Time.now()) {
-                            let _ = expireMembership(profile.principalId);
-                        };
-                    };
-                };
-                case 1 {
-                    for (profile in Iter.fromArray(profileGroup2)) {
-                        if (profile.membershipExpiryTime < Time.now()) {
-                            let _ = expireMembership(profile.principalId);
-                        };
-                    };
-                };
-                case 2 {
-                    for (profile in Iter.fromArray(profileGroup3)) {
-                        if (profile.membershipExpiryTime < Time.now()) {
-                            let _ = expireMembership(profile.principalId);
-                        };
-                    };
-                };
-                case 3 {
-                    for (profile in Iter.fromArray(profileGroup4)) {
-                        if (profile.membershipExpiryTime < Time.now()) {
-                            let _ = expireMembership(profile.principalId);
-                        };
-                    };
-                };
-                case 4 {
-                    for (profile in Iter.fromArray(profileGroup5)) {
-                        if (profile.membershipExpiryTime < Time.now()) {
-                            let _ = expireMembership(profile.principalId);
-                        };
-                    };
-                };
-                case 5 {
-                    for (profile in Iter.fromArray(profileGroup6)) {
-                        if (profile.membershipExpiryTime < Time.now()) {
-                            let _ = expireMembership(profile.principalId);
-                        };
-                    };
-                };
-                case 6 {
-                    for (profile in Iter.fromArray(profileGroup7)) {
-                        if (profile.membershipExpiryTime < Time.now()) {
-                            let _ = expireMembership(profile.principalId);
-                        };
-                    };
-                };
-                case 7 {
-                    for (profile in Iter.fromArray(profileGroup8)) {
-                        if (profile.membershipExpiryTime < Time.now()) {
-                            let _ = expireMembership(profile.principalId);
-                        };
-                    };
-                };
-                case 8 {
-                    for (profile in Iter.fromArray(profileGroup9)) {
-                        if (profile.membershipExpiryTime < Time.now()) {
-                            let _ = expireMembership(profile.principalId);
-                        };
-                    };
-                };
-                case 9 {
-                    for (profile in Iter.fromArray(profileGroup10)) {
-                        if (profile.membershipExpiryTime < Time.now()) {
-                            let _ = expireMembership(profile.principalId);
-                        };
-                    };
-                };
-                case 10 {
-                    for (profile in Iter.fromArray(profileGroup11)) {
-                        if (profile.membershipExpiryTime < Time.now()) {
-                            let _ = expireMembership(profile.principalId);
-                        };
-                    };
-                };
-                case 11 {
-                    for (profile in Iter.fromArray(profileGroup12)) {
-                        if (profile.membershipExpiryTime < Time.now()) {
-                            let _ = expireMembership(profile.principalId);
-                        };
-                    };
-                };
-                case _ {};
-            };
-        };
-    };
 
-    private func expireMembership(principalId : Ids.PrincipalId) : async () {
 
-        var groupIndex : ?Nat8 = null;
-        for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
-            if (profileGroupIndex.0 == principalId) {
-                groupIndex := ?profileGroupIndex.1;
-            };
-        };
+    
 
-        switch (groupIndex) {
-            case (null) { return };
-            case (?foundGroupIndex) {
-                let profile = findProfile(foundGroupIndex, principalId);
-                switch (profile) {
-                    case (?foundProfile) {
 
-                        let updatedProfile : T.Profile = {
-                            principalId = foundProfile.principalId;
-                            username = foundProfile.username;
-                            displayName = foundProfile.displayName;
-                            membershipType = #Expired;
-                            membershipClaims = foundProfile.membershipClaims;
-                            createdOn = foundProfile.createdOn;
-                            profilePicture = foundProfile.profilePicture;
-                            termsAgreed = foundProfile.termsAgreed;
-                            appPrincipalIds = foundProfile.appPrincipalIds;
-                            subscribedChannelIds = foundProfile.subscribedChannelIds;
-                            membershipExpiryTime = 0;
-                            favouriteLeagueId = foundProfile.favouriteLeagueId;
-                            favouriteClubId = foundProfile.favouriteClubId;
-                            nationalityId = foundProfile.nationalityId;
-                        };
 
-                        let res = await saveProfile(foundGroupIndex, updatedProfile);
-                        switch (res) {
-                            case (#err(_)) { return };
-                            case (#ok) {
 
-                                var backend = actor (CanisterIds.ICFC_BACKEND_CANISTER_ID) : actor {
-                                    removeNeuronsforExpiredMembership : shared query Ids.PrincipalId -> async ();
-                                };
 
-                                await backend.removeNeuronsforExpiredMembership(principalId);
-                            };
-                        };
-                    };
-                    case (null) {
-                        return;
-                    };
-                };
-            };
-        };
 
-    };
+    /* ----- Private Functions ----- */
 
     private func findProfile(profileGroupIndex : Nat8, profilePrincipalId : Ids.PrincipalId) : ?T.Profile {
         switch (profileGroupIndex) {
@@ -1165,6 +1040,180 @@ actor class _ProfileCanister() {
             };
         };
     };
+    
+    private func expireSubscription(principalId : Ids.PrincipalId) : async () {
+
+        var groupIndex : ?Nat8 = null;
+        for (profileGroupIndex in Iter.fromArray(stable_profile_group_indexes)) {
+            if (profileGroupIndex.0 == principalId) {
+                groupIndex := ?profileGroupIndex.1;
+            };
+        };
+
+        switch (groupIndex) {
+            case (null) { return };
+            case (?foundGroupIndex) {
+                let profile = findProfile(foundGroupIndex, principalId);
+                switch (profile) {
+                    case (?foundProfile) {
+
+                        let updatedProfile : T.Profile = {
+                            principalId = foundProfile.principalId;
+                            username = foundProfile.username;
+                            displayName = foundProfile.displayName;
+                            membershipType = #Expired;
+                            membershipClaims = foundProfile.membershipClaims;
+                            createdOn = foundProfile.createdOn;
+                            profilePicture = foundProfile.profilePicture;
+                            termsAgreed = foundProfile.termsAgreed;
+                            appPrincipalIds = foundProfile.appPrincipalIds;
+                            subscribedChannelIds = foundProfile.subscribedChannelIds;
+                            membershipExpiryTime = 0;
+                            favouriteLeagueId = foundProfile.favouriteLeagueId;
+                            favouriteClubId = foundProfile.favouriteClubId;
+                            nationalityId = foundProfile.nationalityId;
+                        };
+
+                        let res = await saveProfile(foundGroupIndex, updatedProfile);
+                        switch (res) {
+                            case (#err(_)) { return };
+                            case (#ok) {
+
+                                var backend = actor (CanisterIds.ICFC_BACKEND_CANISTER_ID) : actor {
+                                    removeNeuronsforExpiredMembership : shared query Ids.PrincipalId -> async ();
+                                };
+
+                                await backend.removeNeuronsforExpiredMembership(principalId);
+                            };
+                        };
+                    };
+                    case (null) {
+                        return;
+                    };
+                };
+            };
+        };
+
+    };
+
+
+    /* ----- Canister Lifecycle Functions ----- */
+
+    system func preupgrade() {};
+
+    system func postupgrade() {};
+
+
+    /* ---------- Public Calls Made by External Canisters ---------- */
+
+
+    /* ----- Endpoints called by Parent Management Canister ----- */
+
+    public shared ({ caller }) func isCanisterFull() : async Bool {
+        assert not Principal.isAnonymous(caller);
+        let backendPrincipalId = Principal.toText(caller);
+        assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
+        return (totalProfiles >= MAX_PROFILES_PER_CANISTER);
+    };
+
+    public shared ({ caller }) func checkAndExpireMembership() : async () {
+        assert not Principal.isAnonymous(caller);
+        let backendPrincipalId = Principal.toText(caller);
+        assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
+
+        for (index in Iter.range(0, 11)) {
+            switch (index) {
+                case 0 {
+                    for (profile in Iter.fromArray(profileGroup1)) {
+                        if (profile.membershipExpiryTime < Time.now()) {
+                            let _ = expireMembership(profile.principalId);
+                        };
+                    };
+                };
+                case 1 {
+                    for (profile in Iter.fromArray(profileGroup2)) {
+                        if (profile.membershipExpiryTime < Time.now()) {
+                            let _ = expireMembership(profile.principalId);
+                        };
+                    };
+                };
+                case 2 {
+                    for (profile in Iter.fromArray(profileGroup3)) {
+                        if (profile.membershipExpiryTime < Time.now()) {
+                            let _ = expireMembership(profile.principalId);
+                        };
+                    };
+                };
+                case 3 {
+                    for (profile in Iter.fromArray(profileGroup4)) {
+                        if (profile.membershipExpiryTime < Time.now()) {
+                            let _ = expireMembership(profile.principalId);
+                        };
+                    };
+                };
+                case 4 {
+                    for (profile in Iter.fromArray(profileGroup5)) {
+                        if (profile.membershipExpiryTime < Time.now()) {
+                            let _ = expireMembership(profile.principalId);
+                        };
+                    };
+                };
+                case 5 {
+                    for (profile in Iter.fromArray(profileGroup6)) {
+                        if (profile.membershipExpiryTime < Time.now()) {
+                            let _ = expireMembership(profile.principalId);
+                        };
+                    };
+                };
+                case 6 {
+                    for (profile in Iter.fromArray(profileGroup7)) {
+                        if (profile.membershipExpiryTime < Time.now()) {
+                            let _ = expireMembership(profile.principalId);
+                        };
+                    };
+                };
+                case 7 {
+                    for (profile in Iter.fromArray(profileGroup8)) {
+                        if (profile.membershipExpiryTime < Time.now()) {
+                            let _ = expireMembership(profile.principalId);
+                        };
+                    };
+                };
+                case 8 {
+                    for (profile in Iter.fromArray(profileGroup9)) {
+                        if (profile.membershipExpiryTime < Time.now()) {
+                            let _ = expireMembership(profile.principalId);
+                        };
+                    };
+                };
+                case 9 {
+                    for (profile in Iter.fromArray(profileGroup10)) {
+                        if (profile.membershipExpiryTime < Time.now()) {
+                            let _ = expireMembership(profile.principalId);
+                        };
+                    };
+                };
+                case 10 {
+                    for (profile in Iter.fromArray(profileGroup11)) {
+                        if (profile.membershipExpiryTime < Time.now()) {
+                            let _ = expireMembership(profile.principalId);
+                        };
+                    };
+                };
+                case 11 {
+                    for (profile in Iter.fromArray(profileGroup12)) {
+                        if (profile.membershipExpiryTime < Time.now()) {
+                            let _ = expireMembership(profile.principalId);
+                        };
+                    };
+                };
+                case _ {};
+            };
+        };
+    };
+
+
+    /* ----- Endpoints called by Waterway Labs Management Canister ----- */
 
     public shared ({ caller }) func transferCycles(dto : CanisterCommands.TopupCanister) : async Result.Result<(), Enums.Error> {
         assert Principal.toText(caller) == CanisterIds.WATERWAY_LABS_BACKEND_CANISTER_ID;
@@ -1179,8 +1228,4 @@ actor class _ProfileCanister() {
         };
 
     };
-
-    system func preupgrade() {};
-
-    system func postupgrade() {};
 };
