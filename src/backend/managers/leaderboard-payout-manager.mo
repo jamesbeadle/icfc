@@ -19,13 +19,13 @@ import PayoutCommands "../commands/payout-commands";
 import Utilities "../utilities/utilities";
 
 module {
-    public class LeaderboardPayoutManager() {
+    public class RewardPayoutManager() {
 
         private let tokenManager = PayoutManager.PayoutManager();
-        private var leaderboard_payout_requests : [ICFCTypes.PayoutRequest] = [];
+        private var openfpl_reward_requests : [ICFCTypes.OpenFPLPayoutRequest] = [];
 
-        public func getLeaderboardPayoutRequests() : [ICFCTypes.PayoutRequest] {
-            return leaderboard_payout_requests;
+        public func getOpenFPLRewardRequests() : [ICFCTypes.OpenFPLPayoutRequest] {
+            return openfpl_reward_requests;
         };
 
         public func addLeaderboardPayoutRequest(dto : InterAppCallCommands.LeaderboardPayoutRequest) : async Result.Result<(), Enums.Error> {
@@ -158,6 +158,9 @@ module {
                         };
 
                         // update the request
+                        //todo: add the response result
+
+
                         leaderboard_payout_requests := Array.map(
                             leaderboard_payout_requests,
                             func(entry : ICFCTypes.PayoutRequest) : ICFCTypes.PayoutRequest {
