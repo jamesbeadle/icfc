@@ -1,3 +1,4 @@
+import Array "mo:base/Array";
 import Buffer "mo:base/Buffer";
 import Cycles "mo:base/ExperimentalCycles";
 import Iter "mo:base/Iter";
@@ -62,8 +63,8 @@ module {
 
             return #ok({
                 entries = Buffer.toArray(channelsBuffer);
-                total = 0; //TODO
-                pageSize = 10;
+                total = Array.size(Buffer.toArray(channelsBuffer));
+                pageSize = Constants.DEFAULT_PAGINATION_COUNT;
                 page = dto.page;
             });
         };

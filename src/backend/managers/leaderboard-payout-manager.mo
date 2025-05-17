@@ -6,13 +6,14 @@ import Result "mo:base/Result";
 import Time "mo:base/Time";
 import Text "mo:base/Text";
 
+import CanisterIds "mo:waterway-mops/product/wwl/canister-ids";
 import Enums "mo:waterway-mops/base/enums";
 import PayoutManager "mo:waterway-mops/product/wwl/payout-management/manager";
 import Ids "mo:waterway-mops/base/ids";
-import InterAppCallCommands "mo:waterway-mops/product/icfc/inter-app-call-commands";
 import Ledger "mo:waterway-mops/base/def/sns-wrappers/ledger";
 import ICFCQueries "mo:waterway-mops/product/icfc/queries";
-import CanisterIds "mo:waterway-mops/product/wwl/canister-ids";
+import RewardPayoutCommands "mo:waterway-mops/product/openfpl/reward-payout-commands";
+import RewardPayoutResponses "mo:waterway-mops/product/openfpl/reward-payout-responses";
 
 import ICFCTypes "../types";
 import PayoutCommands "../commands/payout-commands";
@@ -28,24 +29,21 @@ module {
             return openfpl_reward_requests;
         };
 
-        public func addLeaderboardPayoutRequest(dto : InterAppCallCommands.LeaderboardPayoutRequest) : async Result.Result<(), Enums.Error> {
+        public func addLeaderboardPayoutRequest(dto : RewardPayoutCommands.PayoutRequest) : async Result.Result<(), Enums.Error> {
             // check if the request already exists
             var request = Array.find(
-                leaderboard_payout_requests,
-                func(entry : ICFCTypes.PayoutRequest) : Bool {
+                openfpl_reward_requests,
+                func(entry : ICFCTypes.OpenFPLPayoutRequest) : Bool {
                     entry.seasonId == dto.seasonId and entry.gameweek == dto.gameweek and entry.app == dto.app
                 },
             );
 
             switch (request) {
                 case (null) {
-                    leaderboard_payout_requests := Array.append<ICFCTypes.PayoutRequest>(
-                        leaderboard_payout_requests,
+                    openfpl_reward_requests := Array.append<ICFCTypes.OpenFPLPayoutRequest>(
+                        openfpl_reward_requests,
                         [{
-                            seasonId = dto.seasonId;
-                            gameweek = dto.gameweek;
                             app = dto.app;
-                            leaderboard = dto.leaderboard;
                             currency = dto.currency;
                             totalEntries = Array.size(dto.leaderboard);
                             totalPaid = 0;
@@ -60,11 +58,11 @@ module {
             };
         };
 
-        public func payoutLeaderboard(dto : PayoutCommands.PayoutLeaderboard) : async Result.Result<ICFCTypes.PayoutRequest, Enums.Error> {
+        public func payoutLeaderboard(dto : PayoutCommands.PayoutLeaderboard) : async Result.Result<RewardPayoutResponses.LeaderboardPayoutResponse, Enums.Error> {
             // find the request in the list
             var request = Array.find(
-                leaderboard_payout_requests,
-                func(entry : ICFCTypes.PayoutRequest) : Bool {
+                openfpl_reward_requests,
+                func(entry : ICFCTypes.OpenFPLPayoutRequest) : Bool {
                     entry.seasonId == dto.seasonId and entry.gameweek == dto.gameweek and entry.app == dto.app
                 }
             );
@@ -195,12 +193,12 @@ module {
             };
         };
 
-        public func getStableLeaderboardPayoutRequests() : [ICFCTypes.PayoutRequest] {
-            return leaderboard_payout_requests;
+        public func getStableLeaderboardPayoutRequests() : [ICFCTypes.OpenFPLPayoutRequest] {
+            return openfpl_reward_requests;
         };
 
-        public func setStableLeaderboardPayoutRequests(requests : [ICFCTypes.PayoutRequest]) {
-            leaderboard_payout_requests := requests;
+        public func setStableLeaderboardPayoutRequests(requests : [ICFCTypes.OpenFPLPayoutRequest]) {
+            openfpl_reward_requests := requests;
         };
 
         private func payoutUser(principal : Ids.PrincipalId, amount : Nat64, tokenledgerId : Text) : async Result.Result<(), Ledger.TransferError> {
