@@ -19,6 +19,9 @@ import Utilities "../utilities/utilities";
 
 actor class _ProfileCanister() {
 
+    private let MAX_PROFILES_PER_GROUP : Nat = 1000;
+    private let MAX_PROFILES_PER_CANISTER : Nat = 12000;
+
     private stable var stable_profile_group_indexes : [(Ids.PrincipalId, Nat8)] = [];
     private stable var profileGroup1 : [T.Profile] = [];
     private stable var profileGroup2 : [T.Profile] = [];
@@ -35,8 +38,6 @@ actor class _ProfileCanister() {
 
     private stable var activeGroupIndex : Nat8 = 0;
     private stable var totalProfiles = 0;
-    private stable var MAX_PROFILES_PER_GROUP : Nat = 1000;
-    private stable var MAX_PROFILES_PER_CANISTER : Nat = 12000;
     private stable var canisterFull = false;
 
     private let canisterManager = CanisterManager.CanisterManager();
