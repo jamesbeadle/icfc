@@ -14,6 +14,7 @@ import ComparisonUtilities "mo:waterway-mops/base/utilities/comparison-utilities
 import Enums "mo:waterway-mops/base/enums";
 import Ids "mo:waterway-mops/base/ids";
 import Management "mo:waterway-mops/base/def/management";
+import Constants "mo:waterway-mops/product/wwl/constants";
 
 import AppIds "../ids";
 import FootballChannelQueries "../queries/football-channel-queries";
@@ -44,9 +45,9 @@ module {
                 },
             );
 
-            let droppedEntries = List.drop<(AppIds.FootballChannelId, Text)>(filteredEntries, 0); //TODO USE PAGE
-            let paginatedEntries = List.take<(AppIds.FootballChannelId, Text)>(droppedEntries, 10);
-
+            let droppedEntries = List.drop<(AppIds.FootballChannelId, Text)>(filteredEntries, ((dto.page - 1) * Constants.DEFAULT_PAGINATION_COUNT));
+            let paginatedEntries = List.take<(AppIds.FootballChannelId, Text)>(droppedEntries, Constants.DEFAULT_PAGINATION_COUNT);
+ 
             let channelsBuffer = Buffer.fromArray<FootballChannelQueries.FootballChannel>([]);
 
             for (entry in Iter.fromList(paginatedEntries)) {

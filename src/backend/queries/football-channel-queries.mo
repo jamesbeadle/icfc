@@ -8,7 +8,6 @@ module FootballChannelQueries {
         principalId : Ids.PrincipalId;
         page : Nat;
         searchTerm : Text;
-
     };
 
     public type FootballChannels = {

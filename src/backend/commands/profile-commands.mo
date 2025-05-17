@@ -43,10 +43,6 @@ module ProfileCommands {
         subApp : ICFCEnums.SubApp;
     };
 
-    public type GetICFCProfile = {
-        principalId : Ids.PrincipalId;
-    };
-
     public type RemoveSubApp = {
         subApp : ICFCEnums.SubApp;
     };
@@ -75,10 +71,8 @@ module ProfileCommands {
         subscriptionType : ICFCEnums.SubscriptionType;
     };
 
-    public type Subscription = {
+    public type Subscribe = {
         subscriptionType : ICFCEnums.SubscriptionType;
-        purchasedOn : Int;
-        expiresOn : ?Int;
     };
 
 };

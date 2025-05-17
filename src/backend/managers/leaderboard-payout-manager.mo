@@ -2,12 +2,10 @@ import Array "mo:base/Array";
 import Int "mo:base/Int";
 import Iter "mo:base/Iter";
 import Nat64 "mo:base/Nat64";
-import Principal "mo:base/Principal";
 import Result "mo:base/Result";
 import Time "mo:base/Time";
 import Text "mo:base/Text";
 
-import Account "mo:waterway-mops/base/def/account";
 import Enums "mo:waterway-mops/base/enums";
 import PayoutManager "mo:waterway-mops/product/wwl/payout-management/manager";
 import Ids "mo:waterway-mops/base/ids";
@@ -18,9 +16,7 @@ import CanisterIds "mo:waterway-mops/product/wwl/canister-ids";
 
 import ICFCTypes "../types";
 import PayoutCommands "../commands/payout-commands";
-import PayoutQueries "../queries/payout-queries";
 import Utilities "../utilities/utilities";
-import T "../types";
 
 module {
     public class LeaderboardPayoutManager() {
@@ -106,18 +102,14 @@ module {
                                 return #err(err);
                             };
                         };
-                        var leaderboardPayout = request.leaderboard;
-                        var totalPaid = request.totalEntries;
-
-                        /*
 
                         // TODO pay out the users
                         var leaderboardPayout = request.leaderboard;
-                        var totalPaid = request.totalEntriesPaid;
-                        for (entry : LeaderboardPayoutCommands.LeaderboardEntry in Iter.fromArray(leaderboardPayout)) {
+                        var totalPaid = request.totalPaid;
+                        for (entry : InterAppCallCommands.LeaderboardEntry in Iter.fromArray(leaderboardPayout)) {
                             let icfcProfileLink = Array.find(
                                 icfcLinks,
-                                func(link : PayoutQueries.ICFCLinks) : Bool {
+                                func(link : ICFCQueries.ICFCLinks) : Bool {
                                     link.subAppUserPrincipalId == entry.appPrincipalId;
                                 },
                             );
@@ -139,7 +131,7 @@ module {
                                                 // update the leaderboard entry
                                                 leaderboardPayout := Array.map(
                                                     leaderboardPayout,
-                                                    func(entry : LeaderboardPayoutCommands.LeaderboardEntry) : LeaderboardPayoutCommands.LeaderboardEntry {
+                                                    func(entry : InterAppCallCommands.LeaderboardEntry) : InterAppCallCommands.LeaderboardEntry {
                                                         if (entry.appPrincipalId == appPrincipal) {
                                                             return {
                                                                 appPrincipalId = entry.appPrincipalId;
@@ -164,8 +156,6 @@ module {
                                 };
                             };
                         };
-
-                        */
 
                         // update the request
                         leaderboard_payout_requests := Array.map(
@@ -215,10 +205,6 @@ module {
         };
 
         private func hasValidSubscription(profile : ?ICFCQueries.ICFCLinks) : Bool{
-            return false; // TODO
-        };
-
-        private func isValidICFCProfile(profile : ?ICFCQueries.ICFCLinks) : Bool {
             switch (profile) {
                 case (null) {
                     return false;
@@ -240,7 +226,6 @@ module {
                     };
                 };
             };
-
         };
 
     };

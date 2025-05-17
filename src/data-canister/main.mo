@@ -1,3 +1,4 @@
+
 /* ----- Mops Packages ----- */
 
 import Array "mo:base/Array";
@@ -37,11 +38,12 @@ import BaseDefinitions "mo:waterway-mops/base/definitions";
 import DateTimeUtilities "mo:waterway-mops/base/utilities/date-time-utilities";
 
 /* ----- Queries ----- */
-import ClubQueries "queries/club-queries";
-import FixtureQueries "queries/fixture-queries";
-import LeagueQueries "queries/league-queries";
-import PlayerQueries "queries/player-queries";
-import SeasonQueries "queries/season-queries";
+
+import SeasonQueries "mo:waterway-mops/product/icfc/data-canister-queries/season-queries";
+import ClubQueries "mo:waterway-mops/product/icfc/data-canister-queries/club-queries";
+import FixtureQueries "mo:waterway-mops/product/icfc/data-canister-queries/fixture-queries";
+import LeagueQueries "mo:waterway-mops/product/icfc/data-canister-queries/league-queries";
+import PlayerQueries "mo:waterway-mops/product/icfc/data-canister-queries/player-queries";
 
 /* ----- Commands ----- */
 
@@ -51,7 +53,6 @@ import LeagueCommands "commands/league-commands";
 import PlayerCommands "commands/player-commands";
 
 import Environment "environment";
-import AppQueries "queries/app-queries";
 import NotificationManager "managers/notification-manager";
 
 import BaseTypes "mo:waterway-mops/base/types";
@@ -59,6 +60,7 @@ import Management "mo:waterway-mops/base/def/management";
 import CanisterQueries "mo:waterway-mops/product/wwl/canister-management/queries";
 import CanisterCommands "mo:waterway-mops/product/wwl/canister-management/commands";
 import CanisterManager "mo:waterway-mops/product/wwl/canister-management/manager";
+import ICFCQueries "mo:waterway-mops/product/icfc/queries";
 import LogManager "mo:waterway-mops/product/wwl/log-management/manager";
 import LogCommands "mo:waterway-mops/product/wwl/log-management/commands";
 import ComparisonUtilties "mo:waterway-mops/base/utilities/comparison-utilities";
@@ -115,7 +117,7 @@ actor Self {
 
   /* ----- General App Queries ----- */
 
-  public shared query ({ caller }) func getDataHashes(dto : AppQueries.GetDataHashes) : async Result.Result<BaseQueries.DataHashes, Enums.Error> {
+  public shared query ({ caller }) func getDataHashes(dto : ICFCQueries.GetDataHashes) : async Result.Result<BaseQueries.DataHashes, Enums.Error> {
     assert callerAllowed(caller);
 
     let leagueDataHashesResult = Array.find<(FootballIds.LeagueId, [BaseTypes.DataHash])>(
@@ -916,7 +918,7 @@ actor Self {
     return #ok({ players = playerSummaries });
   };
 
-  public shared ({ caller }) func getDataTotals(_ : AppQueries.GetDataTotals) : async Result.Result<AppQueries.DataTotals, Enums.Error> {
+  public shared ({ caller }) func getDataTotals(_ : ICFCQueries.GetDataTotals) : async Result.Result<ICFCQueries.DataTotals, Enums.Error> {
     assert callerAllowed(caller);
     return #ok(dataTotals);
   };
@@ -957,7 +959,7 @@ actor Self {
   /* ----- League ------ */
 
   public shared ({ caller }) func validateCreateLeague(dto : LeagueCommands.CreateLeague) : async BaseTypes.RustResult {
-    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
+    assert isAdmin(Principal.toText(caller));
     assert countryExists(dto.countryId);
     switch (dto.logo) {
       case (?foundLogo) {
@@ -989,8 +991,7 @@ actor Self {
   };
 
   public shared ({ caller }) func validateUpdateLeague(dto : LeagueCommands.UpdateLeague) : async BaseTypes.RustResult {
-    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
-
+    assert isAdmin(Principal.toText(caller));
     assert leagueExists(dto.leagueId);
     assert countryExists(dto.countryId);
     assert logoSizeValid(dto.logo);
@@ -1019,7 +1020,7 @@ actor Self {
   };
 
   public shared ({ caller }) func validateAddInitialFixtures(dto : FixtureCommands.AddInitialFixtures) : async BaseTypes.RustResult {
-    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
+    assert isAdmin(Principal.toText(caller));
     assert not seasonActive(dto.leagueId);
 
     let maybeLeague = Array.find<FootballTypes.League>(
@@ -1116,7 +1117,7 @@ actor Self {
   };
 
   public shared ({ caller }) func validateMoveFixture(dto : FixtureCommands.MoveFixture) : async BaseTypes.RustResult {
-    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
+    assert isAdmin(Principal.toText(caller));
     assert leagueExists(dto.leagueId);
     assert seasonExists(dto.leagueId, dto.seasonId);
     assert fixtureExists(dto.leagueId, dto.seasonId, dto.fixtureId);
@@ -1149,21 +1150,21 @@ actor Self {
   };
 
   public shared ({ caller }) func validatePostponeFixture(dto : FixtureCommands.PostponeFixture) : async BaseTypes.RustResult {
-    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
+    assert isAdmin(Principal.toText(caller));
     assert leagueExists(dto.leagueId);
     assert fixtureExists(dto.leagueId, dto.seasonId, dto.fixtureId);
     return #Ok("Valid");
   };
 
   public shared ({ caller }) func validateRescheduleFixture(dto : FixtureCommands.RescheduleFixture) : async BaseTypes.RustResult {
-    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
+    assert isAdmin(Principal.toText(caller));
     assert leagueExists(dto.leagueId);
     assert postponedFixtureExists(dto.leagueId, dto.seasonId, dto.fixtureId);
     return #Ok("Valid");
   };
 
   public shared ({ caller }) func validateSubmitFixtureData(dto : FixtureCommands.SubmitFixtureData) : async BaseTypes.RustResult {
-    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
+    assert isAdmin(Principal.toText(caller));
     assert leagueExists(dto.leagueId);
     assert fixtureExists(dto.leagueId, dto.seasonId, dto.fixtureId);
     assert validatePlayerEvents(dto.playerEventData);
@@ -1173,7 +1174,7 @@ actor Self {
   /* ----- Player ------ */
 
   public shared ({ caller }) func validateRevaluePlayerUp(dto : PlayerCommands.RevaluePlayerUp) : async BaseTypes.RustResult {
-    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
+    assert isAdmin(Principal.toText(caller));
     assert leagueExists(dto.leagueId);
     switch (playerExists(dto.leagueId, dto.playerId)) {
       case (?player) {
@@ -1190,7 +1191,7 @@ actor Self {
   };
 
   public shared ({ caller }) func validateRevaluePlayerDown(dto : PlayerCommands.RevaluePlayerDown) : async BaseTypes.RustResult {
-    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
+    assert isAdmin(Principal.toText(caller));
     assert leagueExists(dto.leagueId);
     switch (playerExists(dto.leagueId, dto.playerId)) {
       case (?player) {
@@ -1207,7 +1208,7 @@ actor Self {
   };
 
   public shared ({ caller }) func validateLoanPlayer(dto : PlayerCommands.LoanPlayer) : async BaseTypes.RustResult {
-    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
+    assert isAdmin(Principal.toText(caller));
     assert leagueExists(dto.leagueId);
     assert leagueExists(dto.loanLeagueId);
     assert clubExists(dto.loanLeagueId, dto.loanClubId);
@@ -1217,7 +1218,7 @@ actor Self {
   };
 
   public shared ({ caller }) func validateTransferPlayer(dto : PlayerCommands.TransferPlayer) : async BaseTypes.RustResult {
-    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
+    assert isAdmin(Principal.toText(caller));
     assert leagueExists(dto.leagueId);
     assert leagueExists(dto.newLeagueId);
     assert clubExists(dto.leagueId, dto.clubId);
@@ -1227,21 +1228,21 @@ actor Self {
   };
 
   public shared ({ caller }) func validateSetFreeAgent(dto : PlayerCommands.SetFreeAgent) : async BaseTypes.RustResult {
-    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
+    assert isAdmin(Principal.toText(caller));
     assert leagueExists(dto.leagueId);
     assert Option.isSome(playerExists(dto.leagueId, dto.playerId));
     return #Ok("Valid");
   };
 
   public shared ({ caller }) func validateRecallPlayer(dto : PlayerCommands.RecallPlayer) : async BaseTypes.RustResult {
-    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
+    assert isAdmin(Principal.toText(caller));
     assert leagueExists(dto.leagueId);
     assert Option.isSome(playerExists(dto.leagueId, dto.playerId));
     return #Ok("Valid");
   };
 
   public shared ({ caller }) func validateCreatePlayer(dto : PlayerCommands.CreatePlayer) : async BaseTypes.RustResult {
-    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
+    assert isAdmin(Principal.toText(caller));
     assert leagueExists(dto.leagueId);
     assert clubExists(dto.leagueId, dto.clubId);
     assert countryExists(dto.nationality);
@@ -1264,7 +1265,7 @@ actor Self {
   };
 
   public shared ({ caller }) func validateUpdatePlayer(dto : PlayerCommands.UpdatePlayer) : async BaseTypes.RustResult {
-    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
+    assert isAdmin(Principal.toText(caller));
     assert leagueExists(dto.leagueId);
     assert Option.isSome(playerExists(dto.leagueId, dto.playerId));
 
@@ -1291,21 +1292,21 @@ actor Self {
   };
 
   public shared ({ caller }) func validateSetPlayerInjury(dto : PlayerCommands.SetPlayerInjury) : async BaseTypes.RustResult {
-    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
+    assert isAdmin(Principal.toText(caller));
     assert leagueExists(dto.leagueId);
     assert Option.isSome(playerExists(dto.leagueId, dto.playerId));
     return #Ok("Valid");
   };
 
   public shared ({ caller }) func validateRetirePlayer(dto : PlayerCommands.RetirePlayer) : async BaseTypes.RustResult {
-    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
+    assert isAdmin(Principal.toText(caller));
     assert leagueExists(dto.leagueId);
     assert Option.isSome(playerExists(dto.leagueId, dto.playerId));
     return #Ok("Valid");
   };
 
   public shared ({ caller }) func validateUnretirePlayer(dto : PlayerCommands.UnretirePlayer) : async BaseTypes.RustResult {
-    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
+    assert isAdmin(Principal.toText(caller));
     assert leagueExists(dto.leagueId);
     assert Option.isSome(playerExists(dto.leagueId, dto.playerId));
     return #Ok("Valid");
@@ -1314,7 +1315,7 @@ actor Self {
   /* ----- Club ------ */
 
   public shared ({ caller }) func validateCreateClub(dto : ClubCommands.CreateClub) : async BaseTypes.RustResult {
-    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
+    assert isAdmin(Principal.toText(caller));
     assert leagueExists(dto.leagueId);
     if (Text.size(dto.name) > 100) {
       return #Err("Error: Name greater than 100 characters.");
@@ -1344,7 +1345,7 @@ actor Self {
   };
 
   public shared ({ caller }) func validateUpdateClub(dto : ClubCommands.UpdateClub) : async BaseTypes.RustResult {
-    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
+    assert isAdmin(Principal.toText(caller));
     assert leagueExists(dto.leagueId);
     assert clubExists(dto.leagueId, dto.clubId);
 
@@ -1376,7 +1377,7 @@ actor Self {
   };
 
   public shared ({ caller }) func validatePromoteClub(dto : ClubCommands.PromoteClub) : async BaseTypes.RustResult {
-    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
+    assert isAdmin(Principal.toText(caller));
     assert leagueExists(dto.leagueId);
     assert leagueExists(dto.toLeagueId);
     assert clubExists(dto.leagueId, dto.clubId);
@@ -1386,7 +1387,7 @@ actor Self {
   };
 
   public shared ({ caller }) func validateRelegateClub(dto : ClubCommands.RelegateClub) : async BaseTypes.RustResult {
-    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
+    assert isAdmin(Principal.toText(caller));
     assert leagueExists(dto.leagueId);
     assert leagueExists(dto.relegatedToLeagueId);
     assert clubExists(dto.leagueId, dto.clubId);
@@ -1398,7 +1399,7 @@ actor Self {
   /* ----- League ------ */
 
   public shared ({ caller }) func createLeague(dto : LeagueCommands.CreateLeague) : async () {
-    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
+    assert isAdmin(Principal.toText(caller));
 
     var logo : Blob = Blob.fromArray([]);
 
@@ -1444,7 +1445,7 @@ actor Self {
   };
 
   public shared ({ caller }) func updateLeague(dto : LeagueCommands.UpdateLeague) : async () {
-    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
+    assert isAdmin(Principal.toText(caller));
 
     let league = Array.find<FootballTypes.League>(
       leagues,
@@ -1482,7 +1483,7 @@ actor Self {
   };
 
   public shared ({ caller }) func addInitialFixtures(dto : FixtureCommands.AddInitialFixtures) : async () {
-    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
+    assert isAdmin(Principal.toText(caller));
 
     leagueSeasons := Array.map<(FootballIds.LeagueId, [FootballTypes.Season]), (FootballIds.LeagueId, [FootballTypes.Season])>(
       leagueSeasons,
@@ -1539,7 +1540,7 @@ actor Self {
   };
 
   public shared ({ caller }) func moveFixture(dto : FixtureCommands.MoveFixture) : async () {
-    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
+    assert isAdmin(Principal.toText(caller));
 
     leagueSeasons := Array.map<(FootballIds.LeagueId, [FootballTypes.Season]), (FootballIds.LeagueId, [FootballTypes.Season])>(
       leagueSeasons,
@@ -1593,7 +1594,7 @@ actor Self {
   };
 
   public shared ({ caller }) func postponeFixture(dto : FixtureCommands.PostponeFixture) : async () {
-    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
+    assert isAdmin(Principal.toText(caller));
 
     leagueSeasons := Array.map<(FootballIds.LeagueId, [FootballTypes.Season]), (FootballIds.LeagueId, [FootballTypes.Season])>(
       leagueSeasons,
@@ -1645,7 +1646,7 @@ actor Self {
   };
 
   public shared ({ caller }) func rescheduleFixture(dto : FixtureCommands.RescheduleFixture) : async () {
-    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
+    assert isAdmin(Principal.toText(caller));
 
     leagueSeasons := Array.map<(FootballIds.LeagueId, [FootballTypes.Season]), (FootballIds.LeagueId, [FootballTypes.Season])>(
       leagueSeasons,
@@ -1696,7 +1697,7 @@ actor Self {
   };
 
   public shared ({ caller }) func submitFixtureData(dto : FixtureCommands.SubmitFixtureData) : async () {
-    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
+    assert isAdmin(Principal.toText(caller));
 
     let leaguePlayerArray = Array.find<(FootballIds.LeagueId, [FootballTypes.Player])>(
       leaguePlayers,
@@ -2533,7 +2534,7 @@ actor Self {
   /* ----- Player ------ */
 
   public shared ({ caller }) func revaluePlayerUp(dto : PlayerCommands.RevaluePlayerUp) : async () {
-    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
+    assert isAdmin(Principal.toText(caller));
 
     let updatedLeaguePlayersBuffer = Buffer.fromArray<(FootballIds.LeagueId, [FootballTypes.Player])>([]);
 
@@ -2610,7 +2611,7 @@ actor Self {
   };
 
   public shared ({ caller }) func revaluePlayerDown(dto : PlayerCommands.RevaluePlayerDown) : async () {
-    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
+    assert isAdmin(Principal.toText(caller));
 
     let updatedLeaguePlayersBuffer = Buffer.fromArray<(FootballIds.LeagueId, [FootballTypes.Player])>([]);
 
@@ -2689,7 +2690,7 @@ actor Self {
   };
 
   public shared ({ caller }) func loanPlayer(dto : PlayerCommands.LoanPlayer) : async () {
-    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
+    assert isAdmin(Principal.toText(caller));
 
     if (dto.leagueId == dto.loanLeagueId) {
       leaguePlayers := Array.map<(FootballIds.LeagueId, [FootballTypes.Player]), (FootballIds.LeagueId, [FootballTypes.Player])>(
@@ -2839,7 +2840,7 @@ actor Self {
   };
 
   public shared ({ caller }) func transferPlayer(dto : PlayerCommands.TransferPlayer) : async () {
-    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
+    assert isAdmin(Principal.toText(caller));
 
     if (dto.newClubId == 0 and dto.newLeagueId == 0) {
       movePlayerToFreeAgents(dto.leagueId, dto.playerId, dto.newValueQuarterMillions);
@@ -2859,7 +2860,7 @@ actor Self {
   };
 
   public shared ({ caller }) func setFreeAgent(dto : PlayerCommands.SetFreeAgent) : async () {
-    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
+    assert isAdmin(Principal.toText(caller));
 
     movePlayerToFreeAgents(dto.leagueId, dto.playerId, dto.newValueQuarterMillions);
     let _ = await updateDataHash(dto.leagueId, "players");
@@ -2868,7 +2869,7 @@ actor Self {
   };
 
   public shared ({ caller }) func recallPlayer(dto : PlayerCommands.RecallPlayer) : async () {
-    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
+    assert isAdmin(Principal.toText(caller));
 
     let fromPlayerLeagueResult = Array.find(
       leaguePlayers,
@@ -2978,7 +2979,7 @@ actor Self {
   };
 
   public shared ({ caller }) func createPlayer(dto : PlayerCommands.CreatePlayer) : async () {
-    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
+    assert isAdmin(Principal.toText(caller));
 
     let foundLeague = Array.find<FootballTypes.League>(
       leagues,
@@ -3038,7 +3039,7 @@ actor Self {
   };
 
   public shared ({ caller }) func updatePlayer(dto : PlayerCommands.UpdatePlayer) : async () {
-    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
+    assert isAdmin(Principal.toText(caller));
 
     var positionUpdated = false;
 
@@ -3114,7 +3115,7 @@ actor Self {
   };
 
   public shared ({ caller }) func setPlayerInjury(dto : PlayerCommands.SetPlayerInjury) : async () {
-    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
+    assert isAdmin(Principal.toText(caller));
 
     leaguePlayers := Array.map<(FootballIds.LeagueId, [FootballTypes.Player]), (FootballIds.LeagueId, [FootballTypes.Player])>(
       leaguePlayers,
@@ -3192,7 +3193,7 @@ actor Self {
   };
 
   public shared ({ caller }) func retirePlayer(dto : PlayerCommands.RetirePlayer) : async () {
-    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
+    assert isAdmin(Principal.toText(caller));
 
     leaguePlayers := Array.map<(FootballIds.LeagueId, [FootballTypes.Player]), (FootballIds.LeagueId, [FootballTypes.Player])>(
       leaguePlayers,
@@ -3238,7 +3239,7 @@ actor Self {
   };
 
   public shared ({ caller }) func unretirePlayer(dto : PlayerCommands.UnretirePlayer) : async () {
-    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
+    assert isAdmin(Principal.toText(caller));
 
     let leagueRetiredPlayers = Array.find<(FootballIds.LeagueId, [FootballTypes.Player])>(
       retiredLeaguePlayers,
@@ -3330,7 +3331,7 @@ actor Self {
   /* ----- Club ------ */
 
   public shared ({ caller }) func createClub(dto : ClubCommands.CreateClub) : async () {
-    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
+    assert isAdmin(Principal.toText(caller));
 
     let leagueResult = Array.find<FootballTypes.League>(
       leagues,
@@ -3372,7 +3373,7 @@ actor Self {
   };
 
   public shared ({ caller }) func updateClub(dto : ClubCommands.UpdateClub) : async () {
-    assert Principal.toText(caller) == CanisterIds.ICFC_SNS_GOVERNANCE_CANISTER_ID;
+    assert isAdmin(Principal.toText(caller));
 
     let leagueResult = Array.find<FootballTypes.League>(
       leagues,
@@ -4075,6 +4076,10 @@ actor Self {
         );
       };
     };
+  };
+
+  private func isAdmin(principalId: Text) : Bool {
+    return false; // TODO
   };
 
   /* ----- Canister Lifecycle Functions ----- */

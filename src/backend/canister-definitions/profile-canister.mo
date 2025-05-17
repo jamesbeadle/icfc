@@ -10,8 +10,10 @@ import CanisterCommands "mo:waterway-mops/product/wwl/canister-management/comman
 import CanisterIds "mo:waterway-mops/product/wwl/canister-ids";
 import CanisterManager "mo:waterway-mops/product/wwl/canister-management/manager";
 import Enums "mo:waterway-mops/base/enums";
+import ICFCEnums "mo:waterway-mops/product/icfc/enums";
 import Ids "mo:waterway-mops/base/ids";
 import Constants "mo:waterway-mops/product/wwl/constants";
+import DateTimeUtilities "mo:waterway-mops/base/utilities/date-time-utilities";
 
 import ProfileQueries "../queries/profile-queries";
 import ProfileCommands "../commands/profile-commands";
@@ -96,7 +98,7 @@ actor class _ProfileCanister() {
 
     /* ----- Profile Commands ----- */
 
-    public shared ({ caller }) func createProfile(profilePrincipalId : Ids.PrincipalId, dto : ProfileCommands.CreateProfile) : async Result.Result<(), Enums.Error> {
+    public shared ({ caller }) func createProfile(profilePrincipalId : Ids.PrincipalId, dto : ProfileCommands.CreateProfile, subscriptionType: ICFCEnums.SubscriptionType) : async Result.Result<(), Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
         assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
@@ -122,14 +124,14 @@ actor class _ProfileCanister() {
             termsAgreed = false;
             appPrincipalIds = [];
             subscribedChannelIds = [];
-            subscriptionType = subscription.subscriptionType;
+            subscriptionType = subscriptionType;
             subscriptions = [{
                 purchasedOn = Time.now();
-                expiresOn = ?Utilities.getSubscriptionExpirationDate(subscription.subscriptionType);
-                subscriptionType = subscription.subscriptionType;
+                expiresOn = ?DateTimeUtilities.getSubscriptionExpiration(Time.now());
+                subscriptionType = subscriptionType;
             }];
             createdOn = Time.now();
-            subscriptionExpiryTime = Utilities.getSubscriptionExpirationDate(subscription.subscriptionType);
+            subscriptionExpiryTime = DateTimeUtilities.getSubscriptionExpiration(Time.now());
             favouriteLeagueId = dto.favouriteLeagueId;
             favouriteClubId = dto.favouriteClubId;
             nationalityId = dto.nationalityId;
@@ -359,7 +361,7 @@ actor class _ProfileCanister() {
 
     /* ----- Subscription Queries ----- */
 
-    public shared ({ caller }) func getSubscriptionHistory(dto : ProfileQueries.GetSubscriptionHistory) : async Result.Result<ProfileQueries.SubscriptionHistory, Enums.Error> {
+    public shared ({ caller }) func getSubscriptionHistory(dto : ProfileQueries.GetSubscriptions) : async Result.Result<ProfileQueries.Subscriptions, Enums.Error> {
         assert not Principal.isAnonymous(caller);
         let backendPrincipalId = Principal.toText(caller);
         assert backendPrincipalId == CanisterIds.ICFC_BACKEND_CANISTER_ID;
@@ -377,11 +379,13 @@ actor class _ProfileCanister() {
                 switch (profile) {
                     case (?foundProfile) {
                         let allSubscriptions = List.fromArray(foundProfile.subscriptions);
-                        let droppedEntries = List.drop<T.Subscription>(allSubscriptions, dto.offset);
+                        let droppedEntries = List.drop<T.Subscription>(allSubscriptions, ((dto.page - 1) * Constants.DEFAULT_PAGINATION_COUNT));
                         let paginatedEntires = List.take<T.Subscription>(droppedEntries, Constants.DEFAULT_PAGINATION_COUNT);
 
                         let subscriptions : ProfileQueries.Subscriptions = {
                             subscriptions = List.toArray(paginatedEntires);
+                            page = dto.page;
+                            totalEntries = List.size(allSubscriptions);
                         };
                         return #ok(subscriptions);
                     };
@@ -417,7 +421,7 @@ actor class _ProfileCanister() {
                         let newSubscription : T.Subscription = {
                             subscriptionType = dto.subscriptionType;
                             purchasedOn = Time.now();
-                            expiresOn = ?Utilities.getSubscriptionExpirationDate(dto.subscriptionType);
+                            expiresOn =  ?DateTimeUtilities.getSubscriptionExpiration(Time.now());
                         };
                         subscriptionsBuffer.add(newSubscription);
                         let updatedSubscriptions = Buffer.toArray(subscriptionsBuffer);
@@ -449,7 +453,7 @@ actor class _ProfileCanister() {
                         let res = await saveProfile(foundGroupIndex, updatedProfile);
                         switch (res) {
                             case (#err(error)) { return #err(error) };
-                            case (#ok) { return #ok(newClaim) };
+                            case (#ok) { return #ok(newSubscription) };
                         };
 
                     };
@@ -482,11 +486,11 @@ actor class _ProfileCanister() {
                 switch (profile) {
                     case (?foundProfile) {
 
-                        var appPrincipalIdsBuffer = Buffer.fromArray<(T.SubApp, Ids.PrincipalId)>(foundProfile.appPrincipalIds);
+                        var appPrincipalIdsBuffer = Buffer.fromArray<(ICFCEnums.SubApp, Ids.PrincipalId)>(foundProfile.appPrincipalIds);
 
-                        let subAppAlreadyLinked = Array.find<(T.SubApp, Ids.PrincipalId)>(
+                        let subAppAlreadyLinked = Array.find<(ICFCEnums.SubApp, Ids.PrincipalId)>(
                             foundProfile.appPrincipalIds,
-                            func(appPrincipalId : (T.SubApp, Ids.PrincipalId)) {
+                            func(appPrincipalId : (ICFCEnums.SubApp, Ids.PrincipalId)) {
                                 appPrincipalId.0 == dto.subApp;
                             },
                         );
@@ -557,9 +561,9 @@ actor class _ProfileCanister() {
                 let profile = findProfile(foundGroupIndex, principalId);
                 switch (profile) {
                     case (?foundProfile) {
-                        let updatedAppPrincipalIds = Array.filter<(T.SubApp, Ids.PrincipalId)>(
+                        let updatedAppPrincipalIds = Array.filter<(ICFCEnums.SubApp, Ids.PrincipalId)>(
                             foundProfile.appPrincipalIds,
-                            func(appPrincipalId : (T.SubApp, Ids.PrincipalId)) {
+                            func(appPrincipalId : (ICFCEnums.SubApp, Ids.PrincipalId)) {
                                 appPrincipalId.0 != dto.subApp;
                             },
                         );

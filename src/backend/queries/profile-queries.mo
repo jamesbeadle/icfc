@@ -36,8 +36,21 @@ module ProfileQueries {
 
     public type GetSubscriptions = {
         principalId : Ids.PrincipalId;
-        offset : Nat;
+        page : Nat;
     };
+
+    public type Subscriptions = {
+        subscriptions: [Subscription];
+        page: Nat;
+        totalEntries: Nat;
+    };
+
+    public type Subscription = {
+        subscriptionType : IcfcEnums.SubscriptionType;
+        purchasedOn : Int;
+        expiresOn : ?Int;
+    };
+
     public type ProfilePictureDTO = {
         profilePicture : ?Blob;
     };

@@ -212,18 +212,14 @@ actor class Self() = this {
   public shared ({ caller }) func getTokenBalances() : async Result.Result<AppQueries.TokenBalances, Enums.Error> {
     assert not Principal.isAnonymous(caller);
 
-    let icfc_ledger : SNSToken.Interface = actor (CanisterIds.ICFC_SNS_LEDGER_CANISTER_ID);
     let ckBTC_ledger : SNSToken.Interface = actor (Environment.CKBTC_LEDGER_CANISTER_ID);
     let icp_ledger : SNSToken.Interface = actor (CanisterIds.NNS_LEDGER_CANISTER_ID);
 
-    let icfc_tokens = await icfc_ledger.icrc1_balance_of({
-      owner = Principal.fromText(CanisterIds.ICFC_BACKEND_CANISTER_ID);
-      subaccount = null;
-    });
     let ckBTC_tokens = await ckBTC_ledger.icrc1_balance_of({
       owner = Principal.fromText(CanisterIds.ICFC_BACKEND_CANISTER_ID);
       subaccount = null;
     });
+    
     let icp_tokens = await icp_ledger.icrc1_balance_of({
       owner = Principal.fromText(CanisterIds.ICFC_BACKEND_CANISTER_ID);
       subaccount = null;
@@ -231,9 +227,7 @@ actor class Self() = this {
 
     return #ok({
       ckBTCBalance = ckBTC_tokens;
-      icfcBalance = icfc_tokens;
       icpBalance = icp_tokens;
-      icgcBalance = 0; // TODO after ICGC SNS
     });
   };
 

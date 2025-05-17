@@ -50,9 +50,6 @@ module Utilities {
             case (#CKBTC) {
                 ?CanisterIds.CKBTC_LEDGER_CANISTER_ID;
             };
-            case (#ICFC) {
-                ?CanisterIds.ICFC_SNS_LEDGER_CANISTER_ID;
-            };
             case (_) { null };
         };
     };
