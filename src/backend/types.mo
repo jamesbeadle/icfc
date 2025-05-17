@@ -6,6 +6,8 @@ import Enums "mo:waterway-mops/base/enums";
 import FootballIds "mo:waterway-mops/domain/football/ids";
 import FootballDefinitions "mo:waterway-mops/domain/football/definitions";
 import ICFCEnums "mo:waterway-mops/product/icfc/enums";
+import OpenFPLEnums "mo:waterway-mops/product/openfpl/enums";
+import Definitions "mo:waterway-mops/base/definitions";
 
 module ICFCTypes {
 
@@ -48,9 +50,54 @@ module ICFCTypes {
     name : Text;
   };
 
-  public type PayoutRequest = {
+  public type OpenFPLPayoutRequest = {
     app : ICFCEnums.App;
+    rewardType: OpenFPLEnums.RewardType;
+    detail: OpenFPLPayoutDetail;
+    currency : Enums.Currency;
+    status: Enums.PayoutStatus;
+    totalEntries: Nat;
+    totalPaid: Nat;
+  };
+
+  public type OpenFPLPayoutDetail = {
+    #Weekly : WeeklyLeaderboardPayoutDetails;
+    #Monthly : MonthlyLeaderboardPayoutDetails;
+    #HighestScoringPlayer : HighestScoringPlayerPayoutDetails
+  };
+
+  public type WeeklyLeaderboardPayoutDetails = {
+    seasonId : ?FootballIds.SeasonId;
+    gameweek : FootballDefinitions.GameweekNumber;
     leaderboard : [LeaderboardEntry];
+  };
+
+  public type MonthlyLeaderboardPayoutDetails = {
+    detail: OpenFPLPayoutDetail;
+    leaderboard : [LeaderboardEntry];
+    month : Definitions.CalendarMonth;
+    seasonId : FootballIds.SeasonId;
+  };
+
+  public type HighestScoringPlayerPayoutDetails = {
+    detail: OpenFPLPayoutDetail;
+    managers : [ManagerEntry];
+    seasonId : ?FootballIds.SeasonId;
+    gameweek : FootballDefinitions.GameweekNumber;
+    fixtureId : FootballIds.FixtureId;
+  };
+
+  public type LeaderboardEntry = {
+    appPrincipalId : Ids.PrincipalId;
+  };
+
+  public type ManagerEntry = {
+    appPrincipalId : Ids.PrincipalId;
+  };
+
+  public type LeaderboardPayout = {
+    app : ICFCEnums.App;
+    entriesPaid: [PaidLeaderboardEntry];
     gameweek : FootballDefinitions.GameweekNumber;
     seasonId : FootballIds.SeasonId;
     currency : Enums.Currency;
@@ -59,10 +106,10 @@ module ICFCTypes {
     totalPaid: Nat;
   };
 
-  public type LeaderboardEntry = {
-        appPrincipalId : Ids.PrincipalId;
-        rewardAmount : ?Nat64;
-        payoutStatus : Enums.PayoutStatus;
-        payoutDate : ?Int;
+  public type PaidLeaderboardEntry = {
+    appPrincipalId : Ids.PrincipalId;
+    rewardAmount : ?Nat64;
+    payoutStatus : Enums.PayoutStatus;
+    payoutDate : ?Int;
   };
 };

@@ -89,14 +89,10 @@ actor class Self() = this {
   private stable var stable_total_channels : Nat = 0;
   private stable var stable_next_channel_id : Nat = 0;
 
-  private stable var stable_leaderboard_payout_requests : [AppTypes.PayoutRequest] = [];
+  private stable var openfpl_reward_payout_requests : [AppTypes.OpenFPLPayoutRequest] = [];
+  private stable var openfpl_reward_payouts : [AppTypes.OpenFPLPayouts] = [];
 
   private stable var stable_subscription_timer_id : Nat = 0;
-
-
-    //is this not renew subscription? make it just add a year to the time and can be at any point
-    //provided subscription time is < 3 months
-
 
   /* ----- Domain Object Managers ----- */
 
@@ -158,8 +154,9 @@ actor class Self() = this {
     */
   };
 
-
-
+  //TODO add subscribe
+    //make idempotent subscription renewel it just add a year to the time and can be at any point
+    //provided subscription time is < 3 months
 
 
   public shared ({ caller }) func addSubApp(dto : ProfileCommands.AddSubApp) : async Result.Result<(), Enums.Error> {
@@ -276,7 +273,7 @@ actor class Self() = this {
   public shared ({ caller }) func getLeaderboardRequests(_ : PayoutQueries.GetPayoutRequests) : async Result.Result<PayoutQueries.PayoutRequests, Enums.Error> {
     assert not Principal.isAnonymous(caller);
     let principalId = Principal.toText(caller);
-    assert await Utilities.callerIsAdmin(principalId);
+    assert callerIsAdmin(principalId);
     let result = leaderboardPayoutManager.getLeaderboardPayoutRequests();
     return #ok({
       requests = result;
@@ -288,23 +285,31 @@ actor class Self() = this {
   public shared ({ caller }) func payoutLeaderboard(dto : PayoutCommands.PayoutLeaderboard) : async Result.Result<(), Enums.Error> {
     assert not Principal.isAnonymous(caller);
     let principalId = Principal.toText(caller);
-    assert await Utilities.callerIsAdmin(principalId);
+    assert callerIsAdmin(principalId);
 
-    let ?appCanisterId = BaseUtilities.getAppCanisterId(dto.app) else {
+    let ?appCanisterId = CanisterIds.getAppCanisterId(dto.app) else {
       return #err(#NotFound);
     };
 
     let res = await leaderboardPayoutManager.payoutLeaderboard(dto);
     switch (res) {
       case (#ok(paidResult)) {
+
         var callbackCanister = actor (appCanisterId) : actor {
-          leaderboardPaid : (dto : LeaderboardPayoutCommands.CompleteLeaderboardPayout) -> async Result.Result<(), Enums.Error>;
+          leaderboardPaid : (dto : InterAppCallCommands.LeaderboardPayoutRequest) -> async Result.Result<InterAppCallCommands.LeaderboardPayoutResponse, Enums.Error>;
         };
-        await callbackCanister.leaderboardPaid({
+
+        let response = await callbackCanister.leaderboardPaid({
           seasonId = paidResult.seasonId;
           gameweek = paidResult.gameweek;
           leaderboard = paidResult.leaderboard;
+          app = dto.app;
+          currency = dto.currency;
         });
+
+        storeLeaderboardPayoutResponse(response);
+
+        return #ok();
       };
       case (#err(err)) {
         return #err(err);
