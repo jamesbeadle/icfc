@@ -18,7 +18,6 @@ import DateTimeUtilities "mo:waterway-mops/base/utilities/date-time-utilities";
 import ProfileQueries "../queries/profile-queries";
 import ProfileCommands "../commands/profile-commands";
 import T "../types";
-import Utilities "../utilities/utilities";
 
 actor class _ProfileCanister() {
 

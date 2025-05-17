@@ -17,7 +17,7 @@ import ConversionUtilities "mo:waterway-mops/base/utilities/conversion-utilities
 import Enums "mo:waterway-mops/base/enums";
 import Ids "mo:waterway-mops/base/ids";
 import Management "mo:waterway-mops/base/def/management";
-import SNSGovernance "mo:waterway-mops/base/def/sns-wrappers/governance";
+import ICFCEnums "mo:waterway-mops/product/icfc/enums";
 
 import ProfileQueries "../queries/profile-queries";
 import ProfileCommands "../commands/profile-commands";
@@ -178,7 +178,7 @@ module {
             };
         };
 
-        public func removeSubApp(principalId : Ids.PrincipalId, subApp : T.SubApp) : async Result.Result<(), Enums.Error> {
+        public func removeSubApp(principalId : Ids.PrincipalId, subApp : ICFCEnums.SubApp) : async Result.Result<(), Enums.Error> {
             let existingProfileCanisterId = profileCanisterIndex.get(principalId);
             switch (existingProfileCanisterId) {
                 case (?foundCanisterId) {
@@ -427,8 +427,8 @@ module {
         public func isUsernameTaken(username : Text, principalId : Text) : Bool {
             for (managerUsername in usernames.entries()) {
 
-                let lowerCaseUsername = toLowercase(username);
-                let existingUsername = toLowercase(managerUsername.1);
+                let lowerCaseUsername = ConversionUtilities.toLowercase(username);
+                let existingUsername = ConversionUtilities.toLowercase(managerUsername.1);
 
                 if (lowerCaseUsername == existingUsername and managerUsername.0 != principalId) {
                     return true;
@@ -547,8 +547,8 @@ module {
 
         private func findUsernamePrincipalId(username : Text) : ?Ids.PrincipalId {
             for (profileUsername in usernames.entries()) {
-                let lowerCaseUsername = toLowercase(username);
-                let existingUsername = toLowercase(profileUsername.1);
+                let lowerCaseUsername = ConversionUtilities.toLowercase(username);
+                let existingUsername = ConversionUtilities.toLowercase(profileUsername.1);
 
                 if (lowerCaseUsername == existingUsername) {
                     return ?profileUsername.0;
